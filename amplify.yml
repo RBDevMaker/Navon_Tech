@@ -1,0 +1,25 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - cd frontend
+        - node --version
+        - npm --version
+        - npm ci
+    build:
+      commands:
+        - cd frontend
+        - npm run build
+        - ls -la dist/
+  artifacts:
+    baseDirectory: frontend/dist
+    files:
+      - "**/*"
+  cache:
+    paths:
+      - frontend/node_modules/**/*
+backend:
+  phases:
+    build:
+      commands: []
