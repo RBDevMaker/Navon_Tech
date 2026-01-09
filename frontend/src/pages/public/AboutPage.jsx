@@ -1,9 +1,8 @@
 import React from 'react';
-// import OptimizedImage from '../../components/OptimizedImage';
 
 const AboutPage = () => {
     return (
-        <div className="container" style={{ padding: '40px 20px' }}>
+        <div style={{ padding: '40px 20px' }}>
             {/* AWS Partnership Header */}
             <div style={{ textAlign: 'center', marginBottom: '40px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '20px', marginBottom: '20px' }}>
