@@ -1,4 +1,5 @@
-import { uploadData, getUrl, remove } from 'aws-amplify/storage';
+// Temporarily disabled for build - aws-amplify not configured
+// import { uploadData, getUrl, remove } from 'aws-amplify/storage';
 
 class S3Service {
     constructor() {

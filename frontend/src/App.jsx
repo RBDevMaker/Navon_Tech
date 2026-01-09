@@ -10,7 +10,7 @@ import CareersPage from './pages/public/CareersPage.jsx';
 import ContactPage from './pages/public/ContactPage.jsx';
 
 // Components
-import Navigation from './components/Navigation.js';
+import Navigation from './components/Navigation.jsx';
 import Footer from './components/Footer.jsx';
 
 import './App.css';
