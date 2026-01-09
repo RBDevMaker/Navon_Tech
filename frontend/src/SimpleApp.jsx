@@ -592,39 +592,425 @@ function SimpleApp() {
 
             {/* Secure Portal Section */}
             <section id="portal" style={{ padding: '4rem 2rem', background: '#f1f5f9' }}>
-                <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
-                    <h2 style={{
-                        fontSize: '2.5rem',
-                        marginBottom: '2rem',
-                        color: '#1e3a8a',
-                        fontWeight: '600'
-                    }}>
-                        Secure Employee Portal
-                    </h2>
-                    <p style={{
-                        fontSize: '1.1rem',
-                        marginBottom: '2rem',
-                        color: '#475569'
-                    }}>
-                        Multi-factor authentication, role-based access control, and encrypted communications
-                        for classified and sensitive project management.
-                    </p>
+                <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                    <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                        <h2 style={{
+                            fontSize: '2.5rem',
+                            marginBottom: '1rem',
+                            color: '#1e3a8a',
+                            fontWeight: '600'
+                        }}>
+                            Secure Employee Portal
+                        </h2>
+                        <p style={{
+                            fontSize: '1.1rem',
+                            marginBottom: '2rem',
+                            color: '#475569',
+                            maxWidth: '800px',
+                            margin: '0 auto 2rem auto'
+                        }}>
+                            Multi-factor authentication, role-based access control, and encrypted communications
+                            for classified and sensitive project management.
+                        </p>
+                        <div style={{
+                            background: 'white',
+                            padding: '1.5rem',
+                            borderRadius: '12px',
+                            border: '1px solid #e2e8f0',
+                            boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
+                            display: 'inline-block'
+                        }}>
+                            <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
+                                🔒 Authentication powered by AWS Cognito
+                            </p>
+                            <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
+                                🛡️ Security clearance verification required
+                            </p>
+                            <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
+                                📋 End-to-end encrypted document management
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Portal Features Grid */}
                     <div style={{
-                        background: 'white',
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                        gap: '2rem',
+                        marginBottom: '3rem'
+                    }}>
+                        {/* Tools Section */}
+                        <div style={{
+                            background: 'white',
+                            padding: '2rem',
+                            borderRadius: '12px',
+                            border: '1px solid #e2e8f0',
+                            boxShadow: '0 4px 6px rgba(0,0,0,0.05)'
+                        }}>
+                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                <div style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    padding: '0.75rem',
+                                    borderRadius: '8px',
+                                    marginRight: '1rem'
+                                }}>
+                                    🛠️
+                                </div>
+                                <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.3rem' }}>
+                                    Secure Tools & Applications
+                                </h3>
+                            </div>
+                            <div style={{ marginBottom: '1.5rem' }}>
+                                {[
+                                    { name: 'AWS Console Access', status: 'Active', clearance: 'Secret' },
+                                    { name: 'Project Management Suite', status: 'Active', clearance: 'Public Trust' },
+                                    { name: 'Secure Code Repository', status: 'Active', clearance: 'Secret' },
+                                    { name: 'Encrypted Communications', status: 'Active', clearance: 'Top Secret' },
+                                    { name: 'Time Tracking System', status: 'Active', clearance: 'Public Trust' },
+                                    { name: 'Security Compliance Dashboard', status: 'Active', clearance: 'Secret' }
+                                ].map((tool, index) => (
+                                    <div key={index} style={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        padding: '0.75rem',
+                                        background: '#f8fafc',
+                                        borderRadius: '6px',
+                                        marginBottom: '0.5rem',
+                                        border: '1px solid #e2e8f0'
+                                    }}>
+                                        <div>
+                                            <div style={{ fontWeight: '600', color: '#1e3a8a', fontSize: '0.9rem' }}>
+                                                {tool.name}
+                                            </div>
+                                            <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                                                Clearance: {tool.clearance}
+                                            </div>
+                                        </div>
+                                        <span style={{
+                                            background: '#10b981',
+                                            color: 'white',
+                                            padding: '0.25rem 0.5rem',
+                                            borderRadius: '12px',
+                                            fontSize: '0.75rem',
+                                            fontWeight: '600'
+                                        }}>
+                                            {tool.status}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                            <button style={{
+                                background: '#1e3a8a',
+                                color: 'white',
+                                border: 'none',
+                                padding: '0.75rem 1.5rem',
+                                borderRadius: '6px',
+                                cursor: 'pointer',
+                                fontWeight: '600',
+                                width: '100%'
+                            }}>
+                                Access Tools Dashboard
+                            </button>
+                        </div>
+
+                        {/* Employee Profile Section */}
+                        <div style={{
+                            background: 'white',
+                            padding: '2rem',
+                            borderRadius: '12px',
+                            border: '1px solid #e2e8f0',
+                            boxShadow: '0 4px 6px rgba(0,0,0,0.05)'
+                        }}>
+                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                <div style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    padding: '0.75rem',
+                                    borderRadius: '8px',
+                                    marginRight: '1rem'
+                                }}>
+                                    👤
+                                </div>
+                                <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.3rem' }}>
+                                    Employee Profile & Directory
+                                </h3>
+                            </div>
+                            <div style={{ marginBottom: '1.5rem' }}>
+                                <div style={{
+                                    background: '#f8fafc',
+                                    padding: '1.5rem',
+                                    borderRadius: '8px',
+                                    border: '1px solid #e2e8f0',
+                                    marginBottom: '1rem'
+                                }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+                                        <div style={{
+                                            width: '60px',
+                                            height: '60px',
+                                            background: '#1e3a8a',
+                                            borderRadius: '50%',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            color: 'white',
+                                            fontWeight: 'bold',
+                                            fontSize: '1.5rem',
+                                            marginRight: '1rem'
+                                        }}>
+                                            JD
+                                        </div>
+                                        <div>
+                                            <div style={{ fontWeight: '600', color: '#1e3a8a' }}>John Doe</div>
+                                            <div style={{ color: '#64748b', fontSize: '0.9rem' }}>Senior Cloud Engineer</div>
+                                            <div style={{ color: '#64748b', fontSize: '0.8rem' }}>Clearance: Secret</div>
+                                        </div>
+                                    </div>
+                                    <div style={{ fontSize: '0.9rem', color: '#475569' }}>
+                                        <div style={{ marginBottom: '0.5rem' }}>📧 john.doe@navontech.com</div>
+                                        <div style={{ marginBottom: '0.5rem' }}>📱 +1 (555) 123-4567</div>
+                                        <div style={{ marginBottom: '0.5rem' }}>🏢 Remote - DC Metro Area</div>
+                                        <div>📅 Start Date: January 15, 2024</div>
+                                    </div>
+                                </div>
+                                <div style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: '1fr 1fr',
+                                    gap: '0.5rem',
+                                    fontSize: '0.85rem'
+                                }}>
+                                    <div style={{
+                                        background: '#fef3c7',
+                                        color: '#92400e',
+                                        padding: '0.5rem',
+                                        borderRadius: '6px',
+                                        textAlign: 'center',
+                                        fontWeight: '600'
+                                    }}>
+                                        AWS Certified
+                                    </div>
+                                    <div style={{
+                                        background: '#dcfce7',
+                                        color: '#166534',
+                                        padding: '0.5rem',
+                                        borderRadius: '6px',
+                                        textAlign: 'center',
+                                        fontWeight: '600'
+                                    }}>
+                                        Security+ Cert
+                                    </div>
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                <button style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 1rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    flex: 1,
+                                    fontSize: '0.9rem'
+                                }}>
+                                    Edit Profile
+                                </button>
+                                <button style={{
+                                    background: 'transparent',
+                                    color: '#1e3a8a',
+                                    border: '2px solid #1e3a8a',
+                                    padding: '0.75rem 1rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    flex: 1,
+                                    fontSize: '0.9rem'
+                                }}>
+                                    Directory
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Documents Section */}
+                        <div style={{
+                            background: 'white',
+                            padding: '2rem',
+                            borderRadius: '12px',
+                            border: '1px solid #e2e8f0',
+                            boxShadow: '0 4px 6px rgba(0,0,0,0.05)'
+                        }}>
+                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                <div style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    padding: '0.75rem',
+                                    borderRadius: '8px',
+                                    marginRight: '1rem'
+                                }}>
+                                    📁
+                                </div>
+                                <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.3rem' }}>
+                                    Secure Document Management
+                                </h3>
+                            </div>
+                            <div style={{ marginBottom: '1.5rem' }}>
+                                {[
+                                    {
+                                        name: 'Project Alpha - Technical Specs',
+                                        type: 'PDF',
+                                        classification: 'Secret',
+                                        modified: '2 hours ago',
+                                        size: '2.4 MB'
+                                    },
+                                    {
+                                        name: 'Security Compliance Report Q1',
+                                        type: 'DOCX',
+                                        classification: 'Confidential',
+                                        modified: '1 day ago',
+                                        size: '856 KB'
+                                    },
+                                    {
+                                        name: 'AWS Architecture Diagrams',
+                                        type: 'ZIP',
+                                        classification: 'Internal',
+                                        modified: '3 days ago',
+                                        size: '15.2 MB'
+                                    },
+                                    {
+                                        name: 'Employee Handbook 2026',
+                                        type: 'PDF',
+                                        classification: 'Unclassified',
+                                        modified: '1 week ago',
+                                        size: '1.8 MB'
+                                    }
+                                ].map((doc, index) => (
+                                    <div key={index} style={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        padding: '0.75rem',
+                                        background: '#f8fafc',
+                                        borderRadius: '6px',
+                                        marginBottom: '0.5rem',
+                                        border: '1px solid #e2e8f0'
+                                    }}>
+                                        <div style={{ flex: 1 }}>
+                                            <div style={{
+                                                fontWeight: '600',
+                                                color: '#1e3a8a',
+                                                fontSize: '0.9rem',
+                                                marginBottom: '0.25rem'
+                                            }}>
+                                                {doc.name}
+                                            </div>
+                                            <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                                                {doc.type} • {doc.size} • Modified {doc.modified}
+                                            </div>
+                                        </div>
+                                        <div style={{ textAlign: 'right', marginLeft: '1rem' }}>
+                                            <span style={{
+                                                background: doc.classification === 'Secret' ? '#fecaca' :
+                                                    doc.classification === 'Confidential' ? '#fed7aa' :
+                                                        doc.classification === 'Internal' ? '#fef3c7' : '#e0f2fe',
+                                                color: doc.classification === 'Secret' ? '#991b1b' :
+                                                    doc.classification === 'Confidential' ? '#9a3412' :
+                                                        doc.classification === 'Internal' ? '#92400e' : '#0369a1',
+                                                padding: '0.25rem 0.5rem',
+                                                borderRadius: '12px',
+                                                fontSize: '0.7rem',
+                                                fontWeight: '600',
+                                                display: 'block',
+                                                marginBottom: '0.25rem'
+                                            }}>
+                                                {doc.classification}
+                                            </span>
+                                            <button style={{
+                                                background: 'transparent',
+                                                color: '#1e3a8a',
+                                                border: '1px solid #1e3a8a',
+                                                padding: '0.25rem 0.5rem',
+                                                borderRadius: '4px',
+                                                cursor: 'pointer',
+                                                fontSize: '0.75rem',
+                                                fontWeight: '600'
+                                            }}>
+                                                View
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                <button style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 1rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    flex: 1,
+                                    fontSize: '0.9rem'
+                                }}>
+                                    Upload Document
+                                </button>
+                                <button style={{
+                                    background: 'transparent',
+                                    color: '#1e3a8a',
+                                    border: '2px solid #1e3a8a',
+                                    padding: '0.75rem 1rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    flex: 1,
+                                    fontSize: '0.9rem'
+                                }}>
+                                    Browse All
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Portal Access Notice */}
+                    <div style={{
+                        background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
+                        color: 'white',
                         padding: '2rem',
                         borderRadius: '12px',
-                        border: '1px solid #e2e8f0',
-                        boxShadow: '0 4px 6px rgba(0,0,0,0.05)'
+                        textAlign: 'center'
                     }}>
-                        <p style={{ color: '#64748b', marginBottom: '1rem' }}>
-                            🔒 Authentication powered by AWS Cognito
+                        <h3 style={{ marginBottom: '1rem', fontSize: '1.3rem' }}>
+                            🔐 Secure Access Required
+                        </h3>
+                        <p style={{ marginBottom: '1.5rem', opacity: '0.9' }}>
+                            Access to the employee portal requires multi-factor authentication and valid security clearance.
+                            All activities are logged and monitored for compliance.
                         </p>
-                        <p style={{ color: '#64748b', marginBottom: '1rem' }}>
-                            🛡️ Security clearance verification required
-                        </p>
-                        <p style={{ color: '#64748b' }}>
-                            📋 Project management and secure document sharing
-                        </p>
+                        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                            <button style={{
+                                background: 'white',
+                                color: '#1e3a8a',
+                                border: 'none',
+                                padding: '1rem 2rem',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                fontWeight: '600'
+                            }}>
+                                Employee Login
+                            </button>
+                            <button style={{
+                                background: 'transparent',
+                                color: 'white',
+                                border: '2px solid white',
+                                padding: '1rem 2rem',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                fontWeight: '600'
+                            }}>
+                                Request Access
+                            </button>
+                        </div>
                     </div>
                 </div>
             </section>
