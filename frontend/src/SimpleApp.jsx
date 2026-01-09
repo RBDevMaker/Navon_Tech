@@ -890,8 +890,8 @@ function SimpleApp() {
                                 { name: 'IAM', file: 'IAM.jpg' },
                                 { name: 'React & Amplify', file: 'React_and_Amplify.jpg' },
                                 { name: 'Route 53 & Domains', file: 'Route_53_Domains.jpg' },
-                                { name: 'DynamoDB', file: 'DynamoDB.jpg' },
-                                { name: 'AWS Shield / WAF', file: 'AWS_Shield_WAF.jpg' }
+                                { name: 'DynamoDB', file: 'Dynamo_DB.jpeg' },
+                                { name: 'AWS Shield / WAF', file: 'AWS_Shield_WAF.jpeg' }
                             ].map((service, index) => (
                                 <div key={index} style={{
                                     background: '#f8fafc',
