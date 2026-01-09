@@ -19,6 +19,16 @@ function SimpleApp() {
 
     return (
         <div style={{ fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif', lineHeight: '1.6' }}>
+            <style>{`
+                button:hover, .btn:hover, a[style*="background"]:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2), 0 4px 10px rgba(0, 0, 0, 0.15) !important;
+                    transition: all 0.3s ease;
+                }
+                button, .btn, a[style*="background"] {
+                    transition: all 0.3s ease;
+                }
+            `}</style>
             {/* Header */}
             <header style={{
                 background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
@@ -76,6 +86,47 @@ function SimpleApp() {
                             }}>
                                 Trusted Government Technology Solutions
                             </h1>
+                            
+                            <div 
+                                style={{
+                                backgroundColor: '#f8fafc',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                margin: '0 auto 2rem auto',
+                                maxWidth: '900px',
+                                border: '1px solid #e2e8f0',
+                                boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15), 0 4px 10px rgba(0, 0, 0, 0.1)'
+                            }}>
+                                <h2 style={{
+                                    fontSize: '1.8rem',
+                                    color: '#1e3a8a',
+                                    fontStyle: 'italic',
+                                    textAlign: 'center',
+                                    margin: '0 0 1.5rem 0',
+                                    fontWeight: '700'
+                                }}>
+                                    Welcome to wiser technology solutions, we take technology higher!
+                                </h2>
+                                
+                                <p style={{
+                                    fontSize: '1.1rem',
+                                    color: '#475569',
+                                    lineHeight: '1.7',
+                                    marginBottom: '1.5rem'
+                                }}>
+                                    Navon Technologies is a Service-Disabled Veteran-Owned Small Business and AWS Partner serving both public and private sectors. We provide technical services for development, automation, testing, implementation, and maintenance support for our customers' mission and business for critical applications whether they are on-prem or in the cloud.
+                                </p>
+                                
+                                <p style={{
+                                    fontSize: '1.1rem',
+                                    color: '#475569',
+                                    lineHeight: '1.7',
+                                    margin: '0'
+                                }}>
+                                    At Navon Technologies, we started as a small team of IT enthusiasts who wanted to help businesses overcome their technology challenges. We have partnered with AWS (Amazon Web Services) to provide our customers with the best cloud solutions in the industry. This partnership gained us access to over 200 AWS services. We specialize in Migration, Networking, Security, Web Site and App Development.
+                                </p>
+                            </div>
+                            
                             <p style={{
                                 fontSize: '1.3rem',
                                 color: '#475569',
@@ -221,7 +272,9 @@ function SimpleApp() {
                                     'AWS Certified Cloud Practitioner',
                                     'AWS Certified Developer',
                                     'AWS Solutions Architect',
-                                    'AWS Cloud Business Accreditation'
+                                    'AWS Cloud Business Accreditation',
+                                    'Certified Scrum Master (CSM)',
+                                    'Agile Certified Practitioner'
                                 ].map((awsCert, index) => (
                                     <div key={`aws-${index}`} style={{
                                         background: 'white',
@@ -347,6 +400,112 @@ function SimpleApp() {
                             </div>
                         </div>
                     </section>
+                    
+                    {/* Additional Home Sections */}
+                    <section style={{ padding: '4rem 2rem', background: 'white' }}>
+                        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                            <div style={{ 
+                                display: 'grid', 
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', 
+                                gap: '3rem' 
+                            }}>
+                                {/* Satisfaction Guaranteed */}
+                                <div style={{
+                                    backgroundColor: '#f8fafc',
+                                    padding: '2rem',
+                                    borderRadius: '12px',
+                                    border: '1px solid #e2e8f0',
+                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
+                                }}>
+                                    <h3 style={{ 
+                                        color: '#1e3a8a', 
+                                        marginBottom: '1.5rem', 
+                                        fontSize: '1.5rem',
+                                        fontWeight: '600'
+                                    }}>
+                                        Satisfaction Guaranteed
+                                    </h3>
+                                    <p style={{ 
+                                        color: '#475569', 
+                                        lineHeight: '1.7',
+                                        marginBottom: '1rem'
+                                    }}>
+                                        The world of technology can be fast-paced and scary. That's why our goal is to provide an experience that is tailored to your company's needs. No matter the budget, we pride ourselves on providing professional customer service.
+                                    </p>
+                                    <p style={{ 
+                                        color: '#1e3a8a', 
+                                        fontWeight: '600',
+                                        margin: '0'
+                                    }}>
+                                        We guarantee you will be satisfied with our work.
+                                    </p>
+                                </div>
+                                
+                                {/* Services and Solutions */}
+                                <div style={{
+                                    backgroundColor: '#f8fafc',
+                                    padding: '2rem',
+                                    borderRadius: '12px',
+                                    border: '1px solid #e2e8f0',
+                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
+                                }}>
+                                    <h3 style={{ 
+                                        color: '#1e3a8a', 
+                                        marginBottom: '1.5rem', 
+                                        fontSize: '1.5rem',
+                                        fontWeight: '600'
+                                    }}>
+                                        Services and Solutions
+                                    </h3>
+                                    <p style={{ 
+                                        color: '#475569', 
+                                        lineHeight: '1.7',
+                                        marginBottom: '1.5rem'
+                                    }}>
+                                        Do you spend most of your IT budget on maintaining your current system? Many companies find that constant maintenance eats into their budget for new technology. By outsourcing your IT management to us, you can focus on what you do best--running your business.
+                                    </p>
+                                    <div style={{ textAlign: 'center' }}>
+                                        <a href="#capabilities" style={{
+                                            background: '#1e3a8a',
+                                            color: 'white',
+                                            padding: '0.75rem 1.5rem',
+                                            borderRadius: '6px',
+                                            textDecoration: 'none',
+                                            fontWeight: '500',
+                                            display: 'inline-block'
+                                        }}>
+                                            See Services
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                {/* Technical Experience */}
+                                <div style={{
+                                    backgroundColor: '#f8fafc',
+                                    padding: '2rem',
+                                    borderRadius: '12px',
+                                    border: '1px solid #e2e8f0',
+                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
+                                }}>
+                                    <h3 style={{ 
+                                        color: '#1e3a8a', 
+                                        marginBottom: '1.5rem', 
+                                        fontSize: '1.5rem',
+                                        fontWeight: '600'
+                                    }}>
+                                        Technical Experience
+                                    </h3>
+                                    <p style={{ 
+                                        color: '#475569', 
+                                        lineHeight: '1.7',
+                                        margin: '0'
+                                    }}>
+                                        Navon employees highly skilled personnel and maintains certifications at the highest level of expertise. We are well-versed in a variety of operating systems, networks, and databases. We have a history with working with complex projects with just about any technology that a business would encounter. We use this expertise to help customers with small to large projects.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
                 </div>
             )}
 
@@ -363,11 +522,32 @@ function SimpleApp() {
                         }}>
                             About NAVON Technologies
                         </h2>
+                        
+                        <div style={{
+                            backgroundColor: '#f8fafc',
+                            padding: '2rem',
+                            borderRadius: '8px',
+                            marginBottom: '3rem',
+                            border: '1px solid #e2e8f0'
+                        }}>
+                            <p style={{ 
+                                color: '#1e3a8a', 
+                                lineHeight: '1.8', 
+                                fontSize: '1.1rem',
+                                margin: '0',
+                                textAlign: 'center',
+                                fontWeight: '500'
+                            }}>
+                                Navon Technologies is a Service-Disabled Veteran-Owned Small Business based in Leesburg, Virginia. We provide Network, System, and Security Engineering for Small, Medium, and Large businesses to include Federal/SLED (State, Local, Education) Government enterprise networks. We also specialize in Cable, Satellite, and Telco Internet Service Provider backbone networks in the US.
+                            </p>
+                        </div>
+                        
                         <div style={{
                             display: 'grid',
                             gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
                             gap: '3rem',
-                            alignItems: 'center'
+                            alignItems: 'flex-start',
+                            marginBottom: '3rem'
                         }}>
                             <div>
                                 <h3 style={{ color: '#1e3a8a', marginBottom: '1.5rem', fontSize: '1.5rem' }}>
@@ -399,7 +579,7 @@ function SimpleApp() {
                                     </ul>
                                 </div>
                             </div>
-                            <div style={{ textAlign: 'center' }}>
+                            <div style={{ textAlign: 'center', marginTop: '3rem' }}>
                                 <img
                                     src={`${s3BaseUrl}/public/images/Poster_no_logo.png`}
                                     alt="NAVON Technologies Overview"
@@ -412,6 +592,89 @@ function SimpleApp() {
                                     onError={(e) => { e.target.style.display = 'none'; }}
                                 />
                             </div>
+                        </div>
+                        
+                        {/* Mission, Vision, Values, Brand */}
+                        <div style={{ marginTop: '4rem' }}>
+                            <div style={{ 
+                                display: 'grid', 
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
+                                gap: '2rem',
+                                marginBottom: '3rem'
+                            }}>
+                                <div style={{ 
+                                    backgroundColor: '#dbeafe', 
+                                    padding: '2rem', 
+                                    borderRadius: '8px',
+                                    borderLeft: '4px solid #3b82f6'
+                                }}>
+                                    <h3 style={{ color: '#1e40af', marginBottom: '1rem', fontSize: '1.3rem' }}>Our Mission</h3>
+                                    <p style={{ color: '#1e3a8a', lineHeight: '1.6', margin: '0' }}>
+                                        We strive to exceed the highest standards of excellence in all we do; while strategically creating and delivering reliable, secure, and innovative technology solutions.
+                                    </p>
+                                </div>
+                                
+                                <div style={{ 
+                                    backgroundColor: '#e0f2fe', 
+                                    padding: '2rem', 
+                                    borderRadius: '8px',
+                                    borderLeft: '4px solid #0ea5e9'
+                                }}>
+                                    <h3 style={{ color: '#0c4a6e', marginBottom: '1rem', fontSize: '1.3rem' }}>Our Vision</h3>
+                                    <p style={{ color: '#075985', lineHeight: '1.6', margin: '0' }}>
+                                        To bring the best innovation and highest value to our customers.
+                                    </p>
+                                </div>
+                                
+                                <div style={{ 
+                                    backgroundColor: '#f0f9ff', 
+                                    padding: '2rem', 
+                                    borderRadius: '8px',
+                                    borderLeft: '4px solid #0284c7'
+                                }}>
+                                    <h3 style={{ color: '#0c4a6e', marginBottom: '1rem', fontSize: '1.3rem' }}>Our Values</h3>
+                                    <ul style={{ color: '#075985', margin: '0', paddingLeft: '1.5rem' }}>
+                                        <li style={{ marginBottom: '0.5rem' }}>Reliability</li>
+                                        <li style={{ marginBottom: '0.5rem' }}>Security</li>
+                                        <li style={{ marginBottom: '0.5rem' }}>Innovation</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            {/* Brand Story */}
+                            <div style={{
+                                backgroundColor: 'white',
+                                padding: '2rem',
+                                borderRadius: '8px',
+                                border: '1px solid #e2e8f0'
+                            }}>
+                                <h3 style={{ color: '#1e3a8a', marginBottom: '1.5rem', fontSize: '1.3rem' }}>Our Brand</h3>
+                                <p style={{ color: '#475569', lineHeight: '1.8', marginBottom: '1rem' }}>
+                                    Our logo was inspired by a plane (F-117 Nighthawk, Stealth Aircraft) and our founders' prior service in the US Air Force. Our name Navon means wisdom.
+                                </p>
+                                <p style={{ color: '#475569', lineHeight: '1.8', margin: '0' }}>
+                                    Like a plane and a wise owl, we strive to reach the highest point of excellence. Our goal is to soar in every component of business; in the technology aspect, like the plane and in our behaviors, like a wise owl.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        {/* Capability Statement Link */}
+                        <div style={{ textAlign: 'center', marginTop: '3rem' }}>
+                            <a href={`${s3BaseUrl}/public/images/NAVON_Technologies_Capability_Statement_2026.pdf`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    padding: '1rem 2rem',
+                                    borderRadius: '8px',
+                                    textDecoration: 'none',
+                                    fontWeight: '600',
+                                    display: 'inline-block',
+                                    fontSize: '1.1rem'
+                                }}>
+                                📄 Download Our Capability Statement
+                            </a>
                         </div>
                     </div>
                 </section>
@@ -514,13 +777,103 @@ function SimpleApp() {
                     <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
                         <h2 style={{
                             fontSize: '2.5rem',
-                            marginBottom: '3rem',
+                            marginBottom: '2rem',
                             textAlign: 'center',
                             color: '#1e3a8a',
                             fontWeight: '600'
                         }}>
                             AWS Expertise & Services
                         </h2>
+                        
+                        {/* NEWS FLASH - AWS Partnership Announcement */}
+                        <div style={{
+                            backgroundColor: '#1e3a8a',
+                            color: 'white',
+                            padding: '2rem',
+                            borderRadius: '12px',
+                            marginBottom: '3rem',
+                            border: '3px solid #3b82f6',
+                            boxShadow: '0 8px 25px rgba(30, 58, 138, 0.3)',
+                            position: 'relative',
+                            overflow: 'hidden'
+                        }}>
+                            <div style={{
+                                position: 'absolute',
+                                top: '0',
+                                left: '0',
+                                right: '0',
+                                height: '4px',
+                                background: 'linear-gradient(90deg, #ef4444, #f97316, #eab308, #22c55e, #3b82f6, #8b5cf6)',
+                                animation: 'pulse 2s infinite'
+                            }}></div>
+                            
+                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+                                <span style={{ 
+                                    fontSize: '1.5rem', 
+                                    marginRight: '1rem',
+                                    animation: 'pulse 1.5s infinite'
+                                }}>🚨</span>
+                                <h3 style={{ 
+                                    color: '#fbbf24', 
+                                    margin: '0', 
+                                    fontSize: '1.4rem',
+                                    fontWeight: '700',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '1px'
+                                }}>
+                                    BREAKING NEWS
+                                </h3>
+                            </div>
+                            
+                            <h4 style={{ 
+                                color: 'white', 
+                                marginBottom: '1.5rem', 
+                                fontSize: '1.6rem',
+                                fontWeight: '600',
+                                lineHeight: '1.3'
+                            }}>
+                                Navon Technologies Achieves AWS Select Tier and Public Sector Partnership
+                            </h4>
+                            
+                            <div style={{ fontSize: '1rem', lineHeight: '1.7', color: '#e2e8f0' }}>
+                                <p style={{ marginBottom: '1rem' }}>
+                                    At Navon Technologies, we started as a small team of IT enthusiasts who wanted to help small businesses overcome their technology challenges. Today, we have grown into a leading provider of IT services.
+                                </p>
+                                
+                                <p style={{ marginBottom: '1rem' }}>
+                                    We have partnered with Ingram Micro and AWS (Amazon Web Services) to provide our customers with the best cloud solutions in the industry. This partnership gained us access to over 200 services, greatly expanded Navon Technologies' ability to offer a comprehensive range of solutions to our customers.
+                                </p>
+                                
+                                <p style={{ marginBottom: '1rem' }}>
+                                    Having access to a wide array of services from AWS has clearly enhanced Navon Technologies' solutions across several key dimensions: speed, cost-effectiveness, security, reliability, and availability. These improvements are crucial for small businesses looking to optimize their IT infrastructure and operations.
+                                </p>
+                                
+                                <div style={{ 
+                                    backgroundColor: 'rgba(255, 255, 255, 0.1)', 
+                                    padding: '1.5rem', 
+                                    borderRadius: '8px',
+                                    marginTop: '1.5rem'
+                                }}>
+                                    <h5 style={{ color: '#fbbf24', marginBottom: '1rem', fontSize: '1.1rem' }}>
+                                        Key Partnership Benefits:
+                                    </h5>
+                                    <ul style={{ margin: '0', paddingLeft: '1.5rem', color: '#cbd5e0' }}>
+                                        <li style={{ marginBottom: '0.5rem' }}>
+                                            <strong>Data Validation & Integrity:</strong> Built-in validation mechanisms and automatic error handling during migration
+                                        </li>
+                                        <li style={{ marginBottom: '0.5rem' }}>
+                                            <strong>Cost Optimization:</strong> Right-sized data storage and processing solutions using Amazon S3 and AWS Lambda
+                                        </li>
+                                        <li style={{ marginBottom: '0.5rem' }}>
+                                            <strong>DevSecOps Services:</strong> Integrated security measures throughout the entire development lifecycle
+                                        </li>
+                                        <li style={{ marginBottom: '0' }}>
+                                            <strong>Automated Compliance:</strong> AWS Config and Security Hub for automated compliance checks and security best practices
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                         <div style={{
                             display: 'grid',
                             gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
@@ -536,7 +889,9 @@ function SimpleApp() {
                                 { name: 'ECS & EKS', file: 'Amazon_ECS_and_EKS.jpg' },
                                 { name: 'IAM', file: 'IAM.jpg' },
                                 { name: 'React & Amplify', file: 'React_and_Amplify.jpg' },
-                                { name: 'Route 53 & Domains', file: 'Route_53_Domains.jpg' }
+                                { name: 'Route 53 & Domains', file: 'Route_53_Domains.jpg' },
+                                { name: 'DynamoDB', file: 'DynamoDB.jpg' },
+                                { name: 'AWS Shield / WAF', file: 'AWS_Shield_WAF.jpg' }
                             ].map((service, index) => (
                                 <div key={index} style={{
                                     background: '#f8fafc',
@@ -561,6 +916,18 @@ function SimpleApp() {
                                     </h4>
                                 </div>
                             ))}
+                        </div>
+                        
+                        {/* And many more text */}
+                        <div style={{ 
+                            textAlign: 'center', 
+                            marginTop: '2rem',
+                            fontSize: '1.2rem',
+                            color: '#1e3a8a',
+                            fontWeight: '600',
+                            fontStyle: 'italic'
+                        }}>
+                            ...and many more!
                         </div>
                     </div>
                 </section>
@@ -773,6 +1140,7 @@ function SimpleApp() {
                                 </p>
                             </div>
                         </div>
+                        
                         <div style={{ textAlign: 'center', marginTop: '3rem' }}>
                             <a href={`${s3BaseUrl}/public/images/NAVON_Technologies_Capability_Statement_2026.pdf`}
                                 target="_blank"
@@ -800,6 +1168,46 @@ function SimpleApp() {
                             }}>
                                 Request Security Briefing
                             </button>
+                        </div>
+                        
+                        {/* Social Media Section */}
+                        <div style={{ textAlign: 'center', marginTop: '3rem' }}>
+                            <h3 style={{ marginBottom: '1.5rem', fontSize: '1.3rem' }}>Connect With Us</h3>
+                            <div style={{ display: 'flex', gap: '2rem', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' }}>
+                                <a href="https://facebook.com/navontechnologies" target="_blank" rel="noopener noreferrer" style={{
+                                    color: 'white',
+                                    textDecoration: 'none',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem',
+                                    fontSize: '1.1rem',
+                                    transition: 'opacity 0.3s ease'
+                                }}>
+                                    📘 Facebook
+                                </a>
+                                <a href="https://instagram.com/navontechnologies" target="_blank" rel="noopener noreferrer" style={{
+                                    color: 'white',
+                                    textDecoration: 'none',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem',
+                                    fontSize: '1.1rem',
+                                    transition: 'opacity 0.3s ease'
+                                }}>
+                                    📷 Instagram
+                                </a>
+                                <a href="https://linkedin.com/company/navon-technologies" target="_blank" rel="noopener noreferrer" style={{
+                                    color: 'white',
+                                    textDecoration: 'none',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem',
+                                    fontSize: '1.1rem',
+                                    transition: 'opacity 0.3s ease'
+                                }}>
+                                    💼 LinkedIn
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -1230,8 +1638,8 @@ function SimpleApp() {
 
             {/* Footer */}
             <footer style={{
-                padding: '2rem',
-                background: '#0f172a',
+                padding: '1rem',
+                background: '#1e3a8a',
                 color: 'white'
             }}>
                 <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
@@ -1247,9 +1655,12 @@ function SimpleApp() {
                             <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '1.2rem', color: '#e2e8f0' }}>
                                 Navon Technologies
                             </h4>
+                            <p style={{ margin: '0', fontSize: '0.9rem', fontStyle: 'italic', color: '#94a3b8' }}>
+                                A wiser technology solutions, we take technology higher!
+                            </p>
                         </div>
                         <div style={{ textAlign: 'center', flex: 1 }}>
-                            <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '1rem', color: '#e2e8f0' }}>
+                            <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '1.2rem', color: '#e2e8f0' }}>
                                 Contact us
                             </h4>
                             <p style={{ margin: '0.5rem 0', fontSize: '0.95rem' }}>
@@ -1259,8 +1670,31 @@ function SimpleApp() {
                                 Phone: 571-477-2727 &nbsp;&nbsp; Fax: 571-477-2727
                             </p>
                         </div>
+                        <div style={{ textAlign: 'right' }}>
+                            <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '1.2rem', color: '#e2e8f0' }}>
+                                Compliance & Trust
+                            </h4>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', alignItems: 'flex-end' }}>
+                                <a href="#accessibility" style={{
+                                    color: '#cbd5e0',
+                                    fontSize: '0.9rem',
+                                    textDecoration: 'none',
+                                    transition: 'color 0.3s ease'
+                                }}>
+                                    Accessibility Statement
+                                </a>
+                                <a href="#security-compliance" style={{
+                                    color: '#cbd5e0',
+                                    fontSize: '0.9rem',
+                                    textDecoration: 'none',
+                                    transition: 'color 0.3s ease'
+                                }}>
+                                    Security & Compliance
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                    <div style={{ textAlign: 'center', borderTop: '1px solid #334155', paddingTop: '1rem' }}>
+                    <div style={{ textAlign: 'center', borderTop: '1px solid white', paddingTop: '1rem' }}>
                         <p style={{ margin: 0, fontSize: '0.9rem', opacity: '0.8' }}>
                             Copyright © 2021 Navon Technologies - All Rights Reserved | Secure by Design | Built with AWS.
                         </p>
