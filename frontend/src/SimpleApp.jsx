@@ -146,7 +146,8 @@ function SimpleApp() {
                                     'jacobs.jpeg',
                                     'ingram_micro.jpeg',
                                     'vmware.jpeg',
-                                    'linux.jpeg'
+                                    'linux.jpeg',
+                                    'archfield.jpeg'
                                 ].map((partner, index) => (
                                     <div key={index} style={{
                                         background: 'white',
@@ -460,9 +461,19 @@ function SimpleApp() {
                                     description: 'Enterprise-grade network architecture and security implementation.'
                                 },
                                 {
-                                    title: 'Application Development',
+                                    title: 'Application & Software Development',
                                     image: 'App_and_Software_Development.jpeg',
                                     description: 'Custom software solutions with security-first development practices.'
+                                },
+                                {
+                                    title: 'Hardware & Product Development',
+                                    image: 'Hardware_and_Product_Development.jpeg',
+                                    description: 'Custom hardware solutions and product development for specialized government requirements.'
+                                },
+                                {
+                                    title: 'Artificial Intelligence & Machine Learning',
+                                    image: 'AI_Machine_Learning.jpeg',
+                                    description: 'Advanced AI/ML solutions for data analysis, automation, and intelligent decision-making systems.'
                                 }
                             ].map((capability, index) => (
                                 <div key={index} style={{
@@ -523,7 +534,9 @@ function SimpleApp() {
                                 { name: 'AWS DevOps', file: 'AWS_DevOps.jpeg' },
                                 { name: 'AWS Security Hub', file: 'AWS_Security_Hub.jpeg' },
                                 { name: 'ECS & EKS', file: 'Amazon_ECS_and_EKS.jpg' },
-                                { name: 'IAM', file: 'IAM.jpg' }
+                                { name: 'IAM', file: 'IAM.jpg' },
+                                { name: 'React & Amplify', file: 'React_and_Amplify.jpg' },
+                                { name: 'Route 53 & Domains', file: 'Route_53_Domains.jpg' }
                             ].map((service, index) => (
                                 <div key={index} style={{
                                     background: '#f8fafc',
@@ -536,8 +549,8 @@ function SimpleApp() {
                                         src={`${s3BaseUrl}/public/images/services/${service.file}`}
                                         alt={service.name}
                                         style={{
-                                            width: '60px',
-                                            height: '60px',
+                                            width: '100px',
+                                            height: '100px',
                                             objectFit: 'contain',
                                             marginBottom: '1rem'
                                         }}
@@ -1217,43 +1230,40 @@ function SimpleApp() {
 
             {/* Footer */}
             <footer style={{
-                padding: '3rem 2rem 2rem 2rem',
+                padding: '2rem',
                 background: '#0f172a',
                 color: 'white'
             }}>
                 <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
                     <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                        gap: '2rem',
-                        marginBottom: '2rem'
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                        marginBottom: '1.5rem',
+                        flexWrap: 'wrap',
+                        gap: '2rem'
                     }}>
-                        <div>
-                            <h4 style={{ marginBottom: '1rem', color: '#e2e8f0' }}>NAVON Technologies</h4>
-                            <p style={{ opacity: '0.8', fontSize: '0.9rem' }}>
-                                Trusted government technology solutions with security clearance and compliance expertise.
+                        <div style={{ textAlign: 'left' }}>
+                            <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '1.2rem', color: '#e2e8f0' }}>
+                                Navon Technologies
+                            </h4>
+                        </div>
+                        <div style={{ textAlign: 'center', flex: 1 }}>
+                            <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '1rem', color: '#e2e8f0' }}>
+                                Contact us
+                            </h4>
+                            <p style={{ margin: '0.5rem 0', fontSize: '0.95rem' }}>
+                                161 Fort Evans Rd NE Suite 210, Leesburg, VA 20176
+                            </p>
+                            <p style={{ margin: '0.5rem 0', fontSize: '0.95rem' }}>
+                                Phone: 571-477-2727 &nbsp;&nbsp; Fax: 571-477-2727
                             </p>
                         </div>
-                        <div>
-                            <h4 style={{ marginBottom: '1rem', color: '#e2e8f0' }}>Services</h4>
-                            <p style={{ opacity: '0.8', fontSize: '0.9rem', margin: '0.5rem 0' }}>Cybersecurity</p>
-                            <p style={{ opacity: '0.8', fontSize: '0.9rem', margin: '0.5rem 0' }}>System Engineering</p>
-                            <p style={{ opacity: '0.8', fontSize: '0.9rem', margin: '0.5rem 0' }}>Cloud Migration</p>
-                        </div>
-                        <div>
-                            <h4 style={{ marginBottom: '1rem', color: '#e2e8f0' }}>Compliance</h4>
-                            <p style={{ opacity: '0.8', fontSize: '0.9rem', margin: '0.5rem 0' }}>FedRAMP Ready</p>
-                            <p style={{ opacity: '0.8', fontSize: '0.9rem', margin: '0.5rem 0' }}>NIST Framework</p>
-                            <p style={{ opacity: '0.8', fontSize: '0.9rem', margin: '0.5rem 0' }}>SOC 2 Compliant</p>
-                        </div>
                     </div>
-                    <div style={{
-                        borderTop: '1px solid #334155',
-                        paddingTop: '2rem',
-                        textAlign: 'center',
-                        opacity: '0.7'
-                    }}>
-                        <p>&copy; 2026 NAVON Technologies. Secure by Design. Built with AWS.</p>
+                    <div style={{ textAlign: 'center', borderTop: '1px solid #334155', paddingTop: '1rem' }}>
+                        <p style={{ margin: 0, fontSize: '0.9rem', opacity: '0.8' }}>
+                            Copyright © 2021 Navon Technologies - All Rights Reserved | Secure by Design | Built with AWS.
+                        </p>
                     </div>
                 </div>
             </footer>
