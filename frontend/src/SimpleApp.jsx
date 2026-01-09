@@ -119,8 +119,8 @@ function SimpleApp() {
                         </div>
                     </section>
 
-                    {/* Partners Section */}
-                    <section style={{ padding: '4rem 2rem', background: '#f8fafc' }}>
+                    {/* Trusted Partners Section */}
+                    <section style={{ padding: '4rem 2rem', background: 'white' }}>
                         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
                             <h2 style={{
                                 fontSize: '2.5rem',
@@ -129,7 +129,7 @@ function SimpleApp() {
                                 color: '#1e3a8a',
                                 fontWeight: '600'
                             }}>
-                                Trusted Partners & Certifications
+                                Trusted Partners
                             </h2>
                             <div style={{
                                 display: 'grid',
@@ -142,10 +142,10 @@ function SimpleApp() {
                                     'microsoft.jpeg',
                                     'cisco.jpeg',
                                     'ratheon.jpeg',
-                                    'sba.jpeg',
-                                    'public_sector_partner.jpeg',
-                                    'select_tier_partner.jpeg',
-                                    'gdit.jpeg'
+                                    'gdit.jpeg',
+                                    'jacobs.jpeg',
+                                    'ingram_micro.jpeg',
+                                    'vmware.jpeg'
                                 ].map((partner, index) => (
                                     <div key={index} style={{
                                         background: 'white',
@@ -167,6 +167,131 @@ function SimpleApp() {
                                         />
                                     </div>
                                 ))}
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Certifications & AWS Badges Section */}
+                    <section style={{ padding: '4rem 2rem', background: '#f8fafc' }}>
+                        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                            <h2 style={{
+                                fontSize: '2.5rem',
+                                marginBottom: '3rem',
+                                textAlign: 'center',
+                                color: '#1e3a8a',
+                                fontWeight: '600'
+                            }}>
+                                Certifications & AWS Badges
+                            </h2>
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                                gap: '2rem',
+                                alignItems: 'center'
+                            }}>
+                                {[
+                                    'public_sector_partner.jpeg',
+                                    'select_tier_partner.jpeg',
+                                    'linux.jpeg'
+                                ].map((cert, index) => (
+                                    <div key={index} style={{
+                                        background: 'white',
+                                        padding: '2rem',
+                                        borderRadius: '12px',
+                                        textAlign: 'center',
+                                        border: '1px solid #e2e8f0',
+                                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+                                    }}>
+                                        <img
+                                            src={`${s3BaseUrl}/public/images/partners/${cert}`}
+                                            alt={`Certification ${index + 1}`}
+                                            style={{
+                                                maxWidth: '100%',
+                                                height: '100px',
+                                                objectFit: 'contain'
+                                            }}
+                                            onError={(e) => { e.target.style.display = 'none'; }}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Contract Vehicles & SBA Section */}
+                    <section style={{ padding: '4rem 2rem', background: 'white' }}>
+                        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                            <h2 style={{
+                                fontSize: '2.5rem',
+                                marginBottom: '3rem',
+                                textAlign: 'center',
+                                color: '#1e3a8a',
+                                fontWeight: '600'
+                            }}>
+                                Contract Vehicles & SBA Certification
+                            </h2>
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                                gap: '3rem',
+                                alignItems: 'center'
+                            }}>
+                                <div style={{
+                                    background: '#f8fafc',
+                                    padding: '2rem',
+                                    borderRadius: '12px',
+                                    textAlign: 'center',
+                                    border: '1px solid #e2e8f0',
+                                    boxShadow: '0 4px 6px rgba(0,0,0,0.05)'
+                                }}>
+                                    <img
+                                        src={`${s3BaseUrl}/public/images/partners/sba.jpeg`}
+                                        alt="SBA Small Business Certification"
+                                        style={{
+                                            maxWidth: '100%',
+                                            height: '120px',
+                                            objectFit: 'contain',
+                                            marginBottom: '1rem'
+                                        }}
+                                        onError={(e) => { e.target.style.display = 'none'; }}
+                                    />
+                                    <h3 style={{ color: '#1e3a8a', marginBottom: '1rem' }}>
+                                        SBA Certified Small Business
+                                    </h3>
+                                    <p style={{ color: '#475569', lineHeight: '1.6' }}>
+                                        Certified Small Business Enterprise with SBA registration,
+                                        enabling participation in federal set-aside contracts and
+                                        small business procurement opportunities.
+                                    </p>
+                                </div>
+                                <div style={{
+                                    background: '#f8fafc',
+                                    padding: '2rem',
+                                    borderRadius: '12px',
+                                    border: '1px solid #e2e8f0',
+                                    boxShadow: '0 4px 6px rgba(0,0,0,0.05)'
+                                }}>
+                                    <h3 style={{ color: '#1e3a8a', marginBottom: '1.5rem', textAlign: 'center' }}>
+                                        Available Contract Vehicles
+                                    </h3>
+                                    <div style={{ textAlign: 'left' }}>
+                                        {[
+                                            { name: 'GSA Schedule 70', desc: 'IT Products, Services & Solutions' },
+                                            { name: 'SEWP VI', desc: 'Solutions for Enterprise-Wide Procurement' },
+                                            { name: 'CIO-SP3', desc: 'Chief Information Officer-Solutions and Partners 3' },
+                                            { name: 'Direct Awards', desc: 'Prime and subcontractor opportunities' }
+                                        ].map((vehicle, index) => (
+                                            <div key={index} style={{ marginBottom: '1rem', padding: '0.75rem', background: 'white', borderRadius: '6px' }}>
+                                                <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.25rem' }}>
+                                                    {vehicle.name}
+                                                </div>
+                                                <div style={{ fontSize: '0.9rem', color: '#64748b' }}>
+                                                    {vehicle.desc}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </section>
