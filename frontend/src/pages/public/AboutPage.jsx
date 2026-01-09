@@ -1,5 +1,5 @@
 import React from 'react';
-import OptimizedImage from '../../components/OptimizedImage';
+// import OptimizedImage from '../../components/OptimizedImage';
 
 const AboutPage = () => {
     return (
@@ -8,12 +8,9 @@ const AboutPage = () => {
             <div style={{ textAlign: 'center', marginBottom: '40px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '20px', marginBottom: '20px' }}>
                     <h1>Navon Technologies Achieves AWS Public Sector Partnership</h1>
-                    <OptimizedImage
-                        src="badges/aws-public-sector-partner.png"
-                        alt="AWS Public Sector Partner Badge"
-                        size="thumbnail"
-                        style={{ maxHeight: '80px' }}
-                    />
+                    <div style={{ width: '80px', height: '80px', backgroundColor: '#e3f2fd', border: '2px solid #1976d2', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', textAlign: 'center' }}>
+                        AWS Partner Badge
+                    </div>
                 </div>
             </div>
 
@@ -170,12 +167,9 @@ const AboutPage = () => {
                         </p>
                     </div>
                     <div style={{ textAlign: 'center' }}>
-                        <OptimizedImage
-                            src="brand/f117-nighthawk.jpg"
-                            alt="F-117 Nighthawk Stealth Aircraft"
-                            size="medium"
-                            style={{ marginBottom: '10px' }}
-                        />
+                        <div style={{ width: '200px', height: '150px', backgroundColor: '#f0f0f0', border: '2px solid #ccc', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 15px', fontSize: '14px', textAlign: 'center' }}>
+                            F-117 Nighthawk Image
+                        </div>
                         <p style={{ fontSize: '0.9em', color: '#666', fontStyle: 'italic' }}>
                             F-117 Nighthawk - Our Logo Inspiration
                         </p>
@@ -211,32 +205,23 @@ const AboutPage = () => {
                 <h3>Our Specialties</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '30px', marginTop: '30px' }}>
                     <div style={{ textAlign: 'center' }}>
-                        <OptimizedImage
-                            src="specialties/networking.jpg"
-                            alt="Secure Networking"
-                            size="medium"
-                            style={{ marginBottom: '15px' }}
-                        />
+                        <div style={{ width: '200px', height: '150px', backgroundColor: '#e3f2fd', border: '2px solid #1976d2', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 15px', fontSize: '14px', textAlign: 'center' }}>
+                            Networking Image
+                        </div>
                         <h4>Networking</h4>
                         <p>Secure Networking Solutions</p>
                     </div>
                     <div style={{ textAlign: 'center' }}>
-                        <OptimizedImage
-                            src="specialties/app-development.jpg"
-                            alt="App Development"
-                            size="medium"
-                            style={{ marginBottom: '15px' }}
-                        />
+                        <div style={{ width: '200px', height: '150px', backgroundColor: '#e8f5e8', border: '2px solid #388e3c', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 15px', fontSize: '14px', textAlign: 'center' }}>
+                            App Development Image
+                        </div>
                         <h4>App Development</h4>
                         <p>Custom Solutions</p>
                     </div>
                     <div style={{ textAlign: 'center' }}>
-                        <OptimizedImage
-                            src="specialties/migrations.jpg"
-                            alt="Cloud Migrations"
-                            size="medium"
-                            style={{ marginBottom: '15px' }}
-                        />
+                        <div style={{ width: '200px', height: '150px', backgroundColor: '#fff3e0', border: '2px solid #f57c00', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 15px', fontSize: '14px', textAlign: 'center' }}>
+                            Cloud Migration Image
+                        </div>
                         <h4>Migrations</h4>
                         <p>Migration to the Cloud</p>
                     </div>
