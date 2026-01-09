@@ -1116,7 +1116,7 @@ function SimpleApp() {
                                 color: '#1e3a8a',
                                 fontWeight: '600'
                             }}>
-                                Boost Your Project with Navon Technologies's IT Services
+                                Boost Your Project with Navon Technologies IT Services
                             </h2>
                             
                             <div style={{
