@@ -1061,7 +1061,14 @@ function SimpleApp() {
                                 { name: 'Route 53 & Domains', file: 'Route_53_Domains.jpg' },
                                 { name: 'DynamoDB', file: 'Dynamo_DB.jpeg' },
                                 { name: 'AWS Shield / WAF', file: 'AWS_Shield_WAF.jpeg' }
-                            ].map((service, index) => (
+                            ].map((service, index) => {
+                                const getImageSrc = (service) => {
+                                    if (service.name === 'DynamoDB') return `${s3BaseUrl}/Dynamo_DB.jpeg`;
+                                    if (service.name === 'AWS Shield / WAF') return `${s3BaseUrl}/AWS_Shield_WAF.jpeg`;
+                                    return `${s3BaseUrl}/public/images/services/${service.file}`;
+                                };
+                                
+                                return (
                                 <div key={index} style={{
                                     background: '#f8fafc',
                                     padding: '1.5rem',
@@ -1070,9 +1077,7 @@ function SimpleApp() {
                                     border: '1px solid #e2e8f0'
                                 }}>
                                     <img
-                                        src={service.name === 'DynamoDB' ? `${s3BaseUrl}/Dynamo_DB.jpeg` : 
-                                             service.name === 'AWS Shield / WAF' ? `${s3BaseUrl}/AWS_Shield_WAF.jpeg` : 
-                                             `${s3BaseUrl}/public/images/services/${service.file}`}
+                                        src={getImageSrc(service)}
                                         alt={service.name}
                                         style={{
                                             width: '100px',
@@ -1086,7 +1091,8 @@ function SimpleApp() {
                                         {service.name}
                                     </h4>
                                 </div>
-                            ))}
+                                );
+                            })}
                         </div>
                         
                         {/* And many more text */}
