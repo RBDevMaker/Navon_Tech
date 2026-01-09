@@ -1,0 +1,17 @@
+.optimized-image-container {
+    display: inline-block;
+}
+
+.optimized-image {
+    max-width: 100%;
+    height: auto;
+    transition: opacity 0.3s ease;
+}
+
+.optimized-image.loading {
+    opacity: 0.7;
+}
+
+.optimized-image.loaded {
+    opacity: 1;
+}
