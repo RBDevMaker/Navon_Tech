@@ -1,0 +1,26 @@
+{
+    "name": "tech-company-backend",
+    "version": "1.0.0",
+    "description": "Serverless backend for tech company platform",
+    "main": "index.js",
+    "engines": {
+        "node": ">=20.0.0"
+    },
+    "scripts": {
+        "test": "jest",
+        "lint": "eslint .",
+        "build": "sam build",
+        "deploy": "sam deploy",
+        "local": "sam local start-api"
+    },
+    "dependencies": {
+        "@aws-sdk/client-dynamodb": "^3.490.0",
+        "@aws-sdk/client-s3": "^3.490.0",
+        "@aws-sdk/lib-dynamodb": "^3.490.0",
+        "uuid": "^9.0.0"
+    },
+    "devDependencies": {
+        "jest": "^29.7.0",
+        "eslint": "^8.50.0"
+    }
+}
