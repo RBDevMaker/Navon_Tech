@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 function SimpleApp() {
-    const s3BaseUrl = "https://navon-tech-images.s3.amazonaws.com";
+    const s3BaseUrl = "https://navon-tech-images.s3.us-east-1.amazonaws.com";
     const [currentPage, setCurrentPage] = useState('home');
 
     // Handle hash changes for navigation
@@ -768,6 +768,175 @@ function SimpleApp() {
                                 </div>
                             ))}
                         </div>
+
+                        {/* Professional IT Services Section */}
+                        <section style={{ marginTop: '4rem' }}>
+                            <h2 style={{
+                                fontSize: '2.5rem',
+                                marginBottom: '3rem',
+                                textAlign: 'center',
+                                color: '#1e3a8a',
+                                fontWeight: '600'
+                            }}>
+                                Professional IT Services for Your Business
+                            </h2>
+                            
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                                gap: '2rem'
+                            }}>
+                                {/* Managed IT Services */}
+                                <div style={{
+                                    background: 'white',
+                                    padding: '2rem',
+                                    borderRadius: '12px',
+                                    border: '1px solid #e2e8f0',
+                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
+                                }}>
+                                    <h3 style={{
+                                        color: '#1e3a8a',
+                                        marginBottom: '1rem',
+                                        fontSize: '1.3rem',
+                                        fontWeight: '600'
+                                    }}>
+                                        Managed IT Services
+                                    </h3>
+                                    <p style={{
+                                        color: '#475569',
+                                        lineHeight: '1.7',
+                                        margin: '0'
+                                    }}>
+                                        Our Managed IT Services provide comprehensive IT support and management for your business. We will proactively monitor your network and systems, handle all updates and patches, and provide fast and reliable support when you need it.
+                                    </p>
+                                </div>
+
+                                {/* Cloud Services */}
+                                <div style={{
+                                    background: 'white',
+                                    padding: '2rem',
+                                    borderRadius: '12px',
+                                    border: '1px solid #e2e8f0',
+                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
+                                }}>
+                                    <h3 style={{
+                                        color: '#1e3a8a',
+                                        marginBottom: '1rem',
+                                        fontSize: '1.3rem',
+                                        fontWeight: '600'
+                                    }}>
+                                        Cloud Services
+                                    </h3>
+                                    <p style={{
+                                        color: '#475569',
+                                        lineHeight: '1.7',
+                                        margin: '0'
+                                    }}>
+                                        Our Cloud Services provide a reliable and scalable solution for your business needs. We offer cloud migration, secure data storage, and cloud-based software solutions to help your business operate more efficiently and effectively.
+                                    </p>
+                                </div>
+
+                                {/* Cybersecurity Services */}
+                                <div style={{
+                                    background: 'white',
+                                    padding: '2rem',
+                                    borderRadius: '12px',
+                                    border: '1px solid #e2e8f0',
+                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
+                                }}>
+                                    <h3 style={{
+                                        color: '#1e3a8a',
+                                        marginBottom: '1rem',
+                                        fontSize: '1.3rem',
+                                        fontWeight: '600'
+                                    }}>
+                                        Cybersecurity Services
+                                    </h3>
+                                    <p style={{
+                                        color: '#475569',
+                                        lineHeight: '1.7',
+                                        margin: '0'
+                                    }}>
+                                        Our Cybersecurity Services provide comprehensive protection for your business against cyber threats. We offer risk assessments, vulnerability testing, threat monitoring, and training to ensure your business is secure.
+                                    </p>
+                                </div>
+
+                                {/* Network Design and Implementation */}
+                                <div style={{
+                                    background: 'white',
+                                    padding: '2rem',
+                                    borderRadius: '12px',
+                                    border: '1px solid #e2e8f0',
+                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
+                                }}>
+                                    <h3 style={{
+                                        color: '#1e3a8a',
+                                        marginBottom: '1rem',
+                                        fontSize: '1.3rem',
+                                        fontWeight: '600'
+                                    }}>
+                                        Network Design and Implementation
+                                    </h3>
+                                    <p style={{
+                                        color: '#475569',
+                                        lineHeight: '1.7',
+                                        margin: '0'
+                                    }}>
+                                        Our Network Design and Implementation services provide customized network solutions for your business. We will assess your needs, design a network architecture, and implement the solution to ensure your business runs smoothly.
+                                    </p>
+                                </div>
+
+                                {/* Data Backup and Recovery */}
+                                <div style={{
+                                    background: 'white',
+                                    padding: '2rem',
+                                    borderRadius: '12px',
+                                    border: '1px solid #e2e8f0',
+                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
+                                }}>
+                                    <h3 style={{
+                                        color: '#1e3a8a',
+                                        marginBottom: '1rem',
+                                        fontSize: '1.3rem',
+                                        fontWeight: '600'
+                                    }}>
+                                        Data Backup and Recovery
+                                    </h3>
+                                    <p style={{
+                                        color: '#475569',
+                                        lineHeight: '1.7',
+                                        margin: '0'
+                                    }}>
+                                        Our Data Backup and Recovery services provide peace of mind knowing your business data is secure and recoverable. We will set up automatic backups, test recovery processes, and ensure your data is safe in the event of a disaster.
+                                    </p>
+                                </div>
+
+                                {/* IT Consulting Services */}
+                                <div style={{
+                                    background: 'white',
+                                    padding: '2rem',
+                                    borderRadius: '12px',
+                                    border: '1px solid #e2e8f0',
+                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
+                                }}>
+                                    <h3 style={{
+                                        color: '#1e3a8a',
+                                        marginBottom: '1rem',
+                                        fontSize: '1.3rem',
+                                        fontWeight: '600'
+                                    }}>
+                                        IT Consulting Services
+                                    </h3>
+                                    <p style={{
+                                        color: '#475569',
+                                        lineHeight: '1.7',
+                                        margin: '0'
+                                    }}>
+                                        Our IT Consulting Services provide expert advice and guidance to help your business make informed decisions about technology. We will assess your current systems, identify areas for improvement, and provide recommendations to help your business grow.
+                                    </p>
+                                </div>
+                            </div>
+                        </section>
                     </div>
                 </section>
             )}
@@ -901,7 +1070,9 @@ function SimpleApp() {
                                     border: '1px solid #e2e8f0'
                                 }}>
                                     <img
-                                        src={`${s3BaseUrl}/public/images/services/${service.file}`}
+                                        src={service.name === 'DynamoDB' ? `${s3BaseUrl}/Dynamo_DB.jpeg` : 
+                                             service.name === 'AWS Shield / WAF' ? `${s3BaseUrl}/AWS_Shield_WAF.jpeg` : 
+                                             `${s3BaseUrl}/public/images/services/${service.file}`}
                                         alt={service.name}
                                         style={{
                                             width: '100px',
