@@ -3,17 +3,12 @@ frontend:
   phases:
     preBuild:
       commands:
-        - echo "=== Build Environment Info ==="
-        - pwd
-        - ls -la
-        - echo "=== Installing Dependencies ==="
-        - cd frontend && npm ci
+        - npm --version
+        - node --version
+        - npm ci --prefix frontend
     build:
       commands:
-        - echo "=== Building Application ==="
-        - cd frontend && npm run build
-        - echo "=== Verifying Build Output ==="
-        - cd frontend && ls -la dist/
+        - npm run build --prefix frontend
   artifacts:
     baseDirectory: frontend/dist
     files:
