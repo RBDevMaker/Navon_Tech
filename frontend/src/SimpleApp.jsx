@@ -917,18 +917,6 @@ function SimpleApp() {
                                 </div>
                             ))}
                         </div>
-                        
-                        {/* And many more text */}
-                        <div style={{ 
-                            textAlign: 'center', 
-                            marginTop: '2rem',
-                            fontSize: '1.2rem',
-                            color: '#1e3a8a',
-                            fontWeight: '600',
-                            fontStyle: 'italic'
-                        }}>
-                            ...and many more!
-                        </div>
                     </div>
                 </section>
             )}
