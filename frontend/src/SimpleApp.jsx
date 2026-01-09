@@ -1106,6 +1106,175 @@ function SimpleApp() {
                         }}>
                             ...and many more!
                         </div>
+
+                        {/* IT Services Section */}
+                        <div style={{ marginTop: '4rem' }}>
+                            <h2 style={{
+                                fontSize: '2.5rem',
+                                marginBottom: '3rem',
+                                textAlign: 'center',
+                                color: '#1e3a8a',
+                                fontWeight: '600'
+                            }}>
+                                Boost Your Project with Navon Technologies's IT Services
+                            </h2>
+                            
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                                gap: '2rem'
+                            }}>
+                                {/* Custom Software Development */}
+                                <div style={{
+                                    background: 'white',
+                                    padding: '2rem',
+                                    borderRadius: '12px',
+                                    border: '1px solid #e2e8f0',
+                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
+                                }}>
+                                    <h3 style={{
+                                        color: '#1e3a8a',
+                                        marginBottom: '1rem',
+                                        fontSize: '1.3rem',
+                                        fontWeight: '600'
+                                    }}>
+                                        Custom Software Development
+                                    </h3>
+                                    <p style={{
+                                        color: '#475569',
+                                        lineHeight: '1.7',
+                                        margin: '0'
+                                    }}>
+                                        Our team of developers can help you create custom software tailored to your project needs. From web applications to mobile apps, we can develop software that can help streamline your project processes.
+                                    </p>
+                                </div>
+
+                                {/* Hardware Procurement and Installation */}
+                                <div style={{
+                                    background: 'white',
+                                    padding: '2rem',
+                                    borderRadius: '12px',
+                                    border: '1px solid #e2e8f0',
+                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
+                                }}>
+                                    <h3 style={{
+                                        color: '#1e3a8a',
+                                        marginBottom: '1rem',
+                                        fontSize: '1.3rem',
+                                        fontWeight: '600'
+                                    }}>
+                                        Hardware Procurement and Installation
+                                    </h3>
+                                    <p style={{
+                                        color: '#475569',
+                                        lineHeight: '1.7',
+                                        margin: '0'
+                                    }}>
+                                        We help small businesses procure and install hardware that is best suited to their business needs. Our team can provide expert advice on hardware selection and installation.
+                                    </p>
+                                </div>
+
+                                {/* IT Training and Support */}
+                                <div style={{
+                                    background: 'white',
+                                    padding: '2rem',
+                                    borderRadius: '12px',
+                                    border: '1px solid #e2e8f0',
+                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
+                                }}>
+                                    <h3 style={{
+                                        color: '#1e3a8a',
+                                        marginBottom: '1rem',
+                                        fontSize: '1.3rem',
+                                        fontWeight: '600'
+                                    }}>
+                                        IT Training and Support
+                                    </h3>
+                                    <p style={{
+                                        color: '#475569',
+                                        lineHeight: '1.7',
+                                        margin: '0'
+                                    }}>
+                                        We provide IT training and support to ensure that your employees can make the most of the technology available to them. Our training and support services include on-site training, virtual training, and support via phone and email.
+                                    </p>
+                                </div>
+
+                                {/* Website Design and Development */}
+                                <div style={{
+                                    background: 'white',
+                                    padding: '2rem',
+                                    borderRadius: '12px',
+                                    border: '1px solid #e2e8f0',
+                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
+                                }}>
+                                    <h3 style={{
+                                        color: '#1e3a8a',
+                                        marginBottom: '1rem',
+                                        fontSize: '1.3rem',
+                                        fontWeight: '600'
+                                    }}>
+                                        Website Design and Development
+                                    </h3>
+                                    <p style={{
+                                        color: '#475569',
+                                        lineHeight: '1.7',
+                                        margin: '0'
+                                    }}>
+                                        We specialize in designing and developing websites that are visually appealing, user-friendly, and optimized for search engines. Our websites are designed to help small businesses establish a strong online presence.
+                                    </p>
+                                </div>
+
+                                {/* Cloud Migration */}
+                                <div style={{
+                                    background: 'white',
+                                    padding: '2rem',
+                                    borderRadius: '12px',
+                                    border: '1px solid #e2e8f0',
+                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
+                                }}>
+                                    <h3 style={{
+                                        color: '#1e3a8a',
+                                        marginBottom: '1rem',
+                                        fontSize: '1.3rem',
+                                        fontWeight: '600'
+                                    }}>
+                                        Cloud Migration
+                                    </h3>
+                                    <p style={{
+                                        color: '#475569',
+                                        lineHeight: '1.7',
+                                        margin: '0'
+                                    }}>
+                                        We help small businesses migrate to the cloud to enable greater flexibility and scalability. Our team can help you choose the best cloud solution for your business and ensure a smooth migration process.
+                                    </p>
+                                </div>
+
+                                {/* IT Project Management */}
+                                <div style={{
+                                    background: 'white',
+                                    padding: '2rem',
+                                    borderRadius: '12px',
+                                    border: '1px solid #e2e8f0',
+                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
+                                }}>
+                                    <h3 style={{
+                                        color: '#1e3a8a',
+                                        marginBottom: '1rem',
+                                        fontSize: '1.3rem',
+                                        fontWeight: '600'
+                                    }}>
+                                        IT Project Management
+                                    </h3>
+                                    <p style={{
+                                        color: '#475569',
+                                        lineHeight: '1.7',
+                                        margin: '0'
+                                    }}>
+                                        We provide IT project management services to ensure that your IT projects are completed on time, within budget, and to your satisfaction. Our project management services include project planning, resource allocation, and risk management.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </section>
             )}
