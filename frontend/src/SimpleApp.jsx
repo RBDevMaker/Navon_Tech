@@ -145,7 +145,8 @@ function SimpleApp() {
                                     'gdit.jpeg',
                                     'jacobs.jpeg',
                                     'ingram_micro.jpeg',
-                                    'vmware.jpeg'
+                                    'vmware.jpeg',
+                                    'linux.jpeg'
                                 ].map((partner, index) => (
                                     <div key={index} style={{
                                         background: 'white',
@@ -191,8 +192,7 @@ function SimpleApp() {
                             }}>
                                 {[
                                     'public_sector_partner.jpeg',
-                                    'select_tier_partner.jpeg',
-                                    'linux.jpeg'
+                                    'select_tier_partner.jpeg'
                                 ].map((cert, index) => (
                                     <div key={index} style={{
                                         background: 'white',
@@ -212,6 +212,57 @@ function SimpleApp() {
                                             }}
                                             onError={(e) => { e.target.style.display = 'none'; }}
                                         />
+                                    </div>
+                                ))}
+
+                                {/* AWS Certification Placeholders */}
+                                {[
+                                    'AWS Certified Cloud Practitioner',
+                                    'AWS Certified Developer',
+                                    'AWS Solutions Architect',
+                                    'AWS Cloud Business Accreditation'
+                                ].map((awsCert, index) => (
+                                    <div key={`aws-${index}`} style={{
+                                        background: 'white',
+                                        padding: '2rem',
+                                        borderRadius: '12px',
+                                        textAlign: 'center',
+                                        border: '2px dashed #e2e8f0',
+                                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                                        minHeight: '140px',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        justifyContent: 'center'
+                                    }}>
+                                        <div style={{
+                                            width: '60px',
+                                            height: '60px',
+                                            background: '#f1f5f9',
+                                            borderRadius: '8px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            margin: '0 auto 1rem auto',
+                                            color: '#64748b',
+                                            fontSize: '1.5rem'
+                                        }}>
+                                            ☁️
+                                        </div>
+                                        <h4 style={{
+                                            color: '#64748b',
+                                            margin: 0,
+                                            fontSize: '0.9rem',
+                                            fontWeight: '600'
+                                        }}>
+                                            {awsCert}
+                                        </h4>
+                                        <p style={{
+                                            color: '#94a3b8',
+                                            fontSize: '0.75rem',
+                                            margin: '0.5rem 0 0 0'
+                                        }}>
+                                            Coming Soon
+                                        </p>
                                     </div>
                                 ))}
                             </div>
