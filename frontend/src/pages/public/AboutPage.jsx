@@ -25,7 +25,7 @@ const AboutPage = () => {
                 <div style={{ marginBottom: '30px' }}>
                     <h4>Our Partners Include:</h4>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '15px' }}>
-                        {['AWS', 'Cisco', 'VMware', 'Microsoft', 'Red Hat Linux', 'Ansible', 'Puppet', 'KVM', 'Vagrant', 'Palo Alto', 'IXIA', 'Spirent', 'HP', 'Dell', 'Splunk', 'Citrix', 'Oracle'].map(partner => (
+                        {['AWS', 'Cisco', 'VMware', 'Microsoft', 'Ansible', 'Puppet', 'KVM', 'Vagrant', 'Palo Alto', 'IXIA', 'Spirent', 'HP', 'Dell', 'Splunk', 'Citrix', 'Oracle', 'SAIC', 'Amentum', 'Nightwing', 'BAE Systems', 'Versa'].map(partner => (
                             <span key={partner} style={{ 
                                 backgroundColor: '#e3f2fd', 
                                 padding: '5px 12px', 

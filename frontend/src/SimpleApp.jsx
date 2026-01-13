@@ -42,16 +42,15 @@ function SimpleApp() {
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     <img
                         src={`${s3BaseUrl}/public/images/logo_double_framed.jpeg`}
-                        alt="Navon Technologies Logo"
-                        style={{ height: '50px', marginRight: '15px' }}
+                        alt="Logo"
+                        style={{ height: '50px' }}
                         onError={(e) => { e.target.style.display = 'none'; }}
                     />
-                    <h1 style={{ margin: 0, fontSize: '1.8rem', fontWeight: '600' }}>NAVON Technologies</h1>
                 </div>
                 <nav>
                     <a href="#home" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500' }}>Home</a>
                     <a href="#about" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500' }}>About</a>
-                    <a href="#capabilities" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500' }}>Capabilities</a>
+                    <a href="#capabilities" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500' }}>Services</a>
                     <a href="#aws" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500' }}>AWS</a>
                     <a href="#careers" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500' }}>Careers</a>
                     <a href="#contact" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500' }}>Contact</a>
@@ -189,16 +188,20 @@ function SimpleApp() {
                                 alignItems: 'center'
                             }}>
                                 {[
-                                    'AWS.jpeg',
-                                    'microsoft.jpeg',
-                                    'cisco.jpeg',
-                                    'ratheon.jpeg',
-                                    'gdit.jpeg',
-                                    'jacobs.jpeg',
-                                    'ingram_micro.jpeg',
-                                    'vmware.jpeg',
-                                    'linux.jpeg',
-                                    'archfield.jpeg'
+                                    { file: 'AWS.jpeg', name: 'AWS' },
+                                    { file: 'microsoft.jpeg', name: 'Microsoft' },
+                                    { file: 'cisco.jpeg', name: 'Cisco' },
+                                    { file: 'ratheon.jpeg', name: 'Raytheon' },
+                                    { file: 'gdit.jpeg', name: 'GDIT' },
+                                    { file: 'jacobs.jpeg', name: 'Jacobs' },
+                                    { file: 'ingram_micro.jpeg', name: 'Ingram Micro' },
+                                    { file: 'vmware.jpeg', name: 'VMware' },
+                                    { file: 'archfield.jpeg', name: 'Archfield' },
+                                    { file: 'saic.jpeg', name: 'SAIC' },
+                                    { file: 'amentum.jpeg', name: 'Amentum' },
+                                    { file: 'nightwing.jpeg', name: 'Nightwing' },
+                                    { file: 'bae_systems.jpeg', name: 'BAE Systems' },
+                                    { file: 'versa.jpeg', name: 'Versa' }
                                 ].map((partner, index) => (
                                     <div key={index} style={{
                                         background: 'white',
@@ -206,25 +209,41 @@ function SimpleApp() {
                                         borderRadius: '12px',
                                         textAlign: 'center',
                                         border: '1px solid #e2e8f0',
-                                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+                                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                                        minHeight: '120px',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        justifyContent: 'center',
+                                        alignItems: 'center'
                                     }}>
                                         <img
-                                            src={`${s3BaseUrl}/public/images/partners/${partner}`}
-                                            alt={`Partner ${index + 1}`}
+                                            src={`${s3BaseUrl}/public/images/partners/${partner.file}`}
+                                            alt={partner.name}
                                             style={{
                                                 maxWidth: '100%',
                                                 height: '80px',
                                                 objectFit: 'contain'
                                             }}
-                                            onError={(e) => { e.target.style.display = 'none'; }}
+                                            onError={(e) => { 
+                                                e.target.style.display = 'none';
+                                                e.target.nextSibling.style.display = 'block';
+                                            }}
                                         />
+                                        <div style={{
+                                            display: 'none',
+                                            color: '#1e3a8a',
+                                            fontWeight: '600',
+                                            fontSize: '1.1rem'
+                                        }}>
+                                            {partner.name}
+                                        </div>
                                     </div>
                                 ))}
                             </div>
                         </div>
                     </section>
 
-                    {/* Certifications & AWS Badges Section */}
+                    {/* Certifications Section */}
                     <section style={{ padding: '4rem 2rem', background: '#f8fafc' }}>
                         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
                             <h2 style={{
@@ -234,7 +253,7 @@ function SimpleApp() {
                                 color: '#1e3a8a',
                                 fontWeight: '600'
                             }}>
-                                Certifications & AWS Badges
+                                Certifications
                             </h2>
                             <div style={{
                                 display: 'grid',
@@ -273,8 +292,12 @@ function SimpleApp() {
                                     'AWS Certified Developer',
                                     'AWS Solutions Architect',
                                     'AWS Cloud Business Accreditation',
-                                    'Certified Scrum Master (CSM)',
-                                    'Agile Certified Practitioner'
+                                    'Scrum Alliance (CSM) Certified',
+                                    'Agile Certified Practitioner',
+                                    'CCIE Routing and Switching',
+                                    'CCIE Service Provider',
+                                    'CCIE Data Center',
+                                    'Project Management Professional (PMP)'
                                 ].map((awsCert, index) => (
                                     <div key={`aws-${index}`} style={{
                                         background: 'white',
@@ -310,13 +333,6 @@ function SimpleApp() {
                                         }}>
                                             {awsCert}
                                         </h4>
-                                        <p style={{
-                                            color: '#94a3b8',
-                                            fontSize: '0.75rem',
-                                            margin: '0.5rem 0 0 0'
-                                        }}>
-                                            Coming Soon
-                                        </p>
                                     </div>
                                 ))}
                             </div>
@@ -2001,9 +2017,10 @@ function SimpleApp() {
                             <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '1.2rem', color: '#e2e8f0' }}>
                                 Navon Technologies
                             </h4>
-                            <p style={{ margin: '0', fontSize: '0.9rem', fontStyle: 'italic', color: '#94a3b8' }}>
-                                A wiser technology solutions, we take technology higher!
-                            </p>
+                            <div style={{ margin: '0', fontSize: '0.9rem', fontStyle: 'italic', color: '#94a3b8' }}>
+                                <div>A wiser technology solutions,</div>
+                                <div>we take technology higher!</div>
+                            </div>
                         </div>
                         <div style={{ textAlign: 'center', flex: 1 }}>
                             <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '1.2rem', color: '#e2e8f0' }}>
