@@ -938,10 +938,10 @@ function SimpleApp() {
                             color: '#1e3a8a',
                             fontWeight: '600'
                         }}>
-                            AWS Expertise & Services
+                            AWS Expertise
                         </h2>
                         
-                        {/* NEWS FLASH - AWS Partnership Announcement */}
+                        {/* AWS Partnership Announcement */}
                         <div style={{
                             backgroundColor: '#1e3a8a',
                             color: 'white',
@@ -962,24 +962,6 @@ function SimpleApp() {
                                 background: 'linear-gradient(90deg, #ef4444, #f97316, #eab308, #22c55e, #3b82f6, #8b5cf6)',
                                 animation: 'pulse 2s infinite'
                             }}></div>
-                            
-                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
-                                <span style={{ 
-                                    fontSize: '1.5rem', 
-                                    marginRight: '1rem',
-                                    animation: 'pulse 1.5s infinite'
-                                }}>🚨</span>
-                                <h3 style={{ 
-                                    color: '#fbbf24', 
-                                    margin: '0', 
-                                    fontSize: '1.4rem',
-                                    fontWeight: '700',
-                                    textTransform: 'uppercase',
-                                    letterSpacing: '1px'
-                                }}>
-                                    BREAKING NEWS
-                                </h3>
-                            </div>
                             
                             <h4 style={{ 
                                 color: 'white', 
@@ -1030,6 +1012,18 @@ function SimpleApp() {
                                 </div>
                             </div>
                         </div>
+                        
+                        <h3 style={{
+                            fontSize: '2rem',
+                            marginBottom: '2rem',
+                            marginTop: '3rem',
+                            textAlign: 'center',
+                            color: '#1e3a8a',
+                            fontWeight: '600'
+                        }}>
+                            AWS Services
+                        </h3>
+                        
                         <div style={{
                             display: 'grid',
                             gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
@@ -1058,7 +1052,7 @@ function SimpleApp() {
                                 return (
                                 <div key={index} style={{
                                     background: '#f8fafc',
-                                    padding: '1.5rem',
+                                    padding: '0.5rem',
                                     borderRadius: '8px',
                                     textAlign: 'center',
                                     border: '1px solid #e2e8f0'
@@ -1067,10 +1061,10 @@ function SimpleApp() {
                                         src={getImageSrc(service)}
                                         alt={service.name}
                                         style={{
-                                            width: '100px',
-                                            height: '100px',
+                                            width: ['AWS Cognito', 'AWS DevOps', 'AWS Security Hub'].includes(service.name) ? '200px' : (['AWS Lambda', 'React & Amplify'].includes(service.name) ? '180px' : '150px'),
+                                            height: ['AWS Cognito', 'AWS DevOps', 'AWS Security Hub'].includes(service.name) ? '200px' : (['AWS Lambda', 'React & Amplify'].includes(service.name) ? '180px' : '150px'),
                                             objectFit: 'contain',
-                                            marginBottom: '1rem'
+                                            marginBottom: '0.25rem'
                                         }}
                                         onError={(e) => { e.target.style.display = 'none'; }}
                                     />
@@ -1286,25 +1280,28 @@ function SimpleApp() {
                         }}>
                             {[
                                 {
-                                    title: 'Senior Cloud Security Engineer',
-                                    clearance: 'Secret Clearance Required',
-                                    location: 'Remote/DC Metro',
-                                    description: 'Lead cybersecurity initiatives for federal cloud infrastructure. AWS certifications preferred.',
-                                    requirements: ['Security+ Certification', '5+ years AWS experience', 'Federal contracting experience']
+                                    title: 'AWS Solution Architect',
+                                    category: 'AWS Solution Architect',
+                                    type: 'Full-time and Part-time',
+                                    location: 'DMV',
+                                    description: 'Design and implement scalable AWS cloud solutions for government clients. Lead architectural decisions and provide technical guidance.',
+                                    requirements: ['AWS Solutions Architect Certification', 'Government contracting experience', '5+ years cloud architecture']
                                 },
                                 {
-                                    title: 'DevOps Systems Engineer',
-                                    clearance: 'Public Trust',
-                                    location: 'Hybrid - DC Area',
-                                    description: 'Design and implement CI/CD pipelines for government applications using AWS services.',
-                                    requirements: ['AWS Solutions Architect', 'Kubernetes experience', 'Infrastructure as Code']
+                                    title: 'Network Engineer',
+                                    category: 'Network Engineer',
+                                    type: 'Full-time',
+                                    location: 'Reston',
+                                    description: 'Design, implement, and maintain secure network infrastructure for federal agencies and defense contractors.',
+                                    requirements: ['CCNA/CCNP Certification', 'Network security experience', 'Government networking protocols']
                                 },
                                 {
-                                    title: 'Project Manager - Federal Contracts',
-                                    clearance: 'Secret Clearance Preferred',
-                                    location: 'Remote',
-                                    description: 'Manage complex government technology projects with agile methodologies.',
-                                    requirements: ['PMP Certification', 'Government contracting', 'Agile/Scrum Master']
+                                    title: 'Systems Integrator/Comms Expert',
+                                    category: 'Systems Integrator/Comms Expert',
+                                    type: 'Full-time',
+                                    location: 'Herndon',
+                                    description: 'Integrate complex communication systems and ensure seamless interoperability across government platforms.',
+                                    requirements: ['Systems integration experience', 'Communications protocols', 'Federal systems knowledge']
                                 }
                             ].map((job, index) => (
                                 <div key={index} style={{
@@ -1317,18 +1314,7 @@ function SimpleApp() {
                                     <h3 style={{ color: '#1e3a8a', marginBottom: '1rem', fontSize: '1.3rem' }}>
                                         {job.title}
                                     </h3>
-                                    <div style={{ marginBottom: '1rem' }}>
-                                        <span style={{
-                                            background: '#fef3c7',
-                                            color: '#92400e',
-                                            padding: '0.25rem 0.75rem',
-                                            borderRadius: '20px',
-                                            fontSize: '0.85rem',
-                                            fontWeight: '600',
-                                            marginRight: '0.5rem'
-                                        }}>
-                                            {job.clearance}
-                                        </span>
+                                    <div style={{ marginBottom: '1rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                                         <span style={{
                                             background: '#e0f2fe',
                                             color: '#0369a1',
@@ -1338,6 +1324,16 @@ function SimpleApp() {
                                             fontWeight: '600'
                                         }}>
                                             {job.location}
+                                        </span>
+                                        <span style={{
+                                            background: '#f0fdf4',
+                                            color: '#166534',
+                                            padding: '0.25rem 0.75rem',
+                                            borderRadius: '20px',
+                                            fontSize: '0.85rem',
+                                            fontWeight: '600'
+                                        }}>
+                                            {job.type}
                                         </span>
                                     </div>
                                     <p style={{ color: '#475569', lineHeight: '1.6', marginBottom: '1.5rem' }}>
@@ -1367,6 +1363,32 @@ function SimpleApp() {
                                     </button>
                                 </div>
                             ))}
+                        </div>
+                        
+                        <div style={{
+                            background: 'white',
+                            padding: '2rem',
+                            borderRadius: '12px',
+                            border: '1px solid #e2e8f0',
+                            textAlign: 'center',
+                            marginBottom: '3rem'
+                        }}>
+                            <h4 style={{ color: '#1e3a8a', marginBottom: '1.5rem', fontSize: '1.5rem' }}>
+                                🔒 Secure Application Process
+                            </h4>
+                            <p style={{ 
+                                color: '#475569', 
+                                fontSize: '1.1rem',
+                                lineHeight: '1.7',
+                                marginBottom: '2rem',
+                                maxWidth: '700px',
+                                margin: '0 auto 2rem auto'
+                            }}>
+                                Due to the sensitive nature of our government contracts, detailed position information 
+                                and applications for senior-level roles are processed through our secure employee portal. 
+                                This ensures compliance with federal security requirements and protects sensitive project details. 
+                                Security clearance verification and background checks are required for all positions.
+                            </p>
                         </div>
                         <div style={{
                             background: 'white',
@@ -1407,18 +1429,6 @@ function SimpleApp() {
                             </div>
                             <div style={{ marginTop: '2rem' }}>
                                 <button style={{
-                                    background: 'transparent',
-                                    color: '#1e3a8a',
-                                    border: '2px solid #1e3a8a',
-                                    padding: '1rem 2rem',
-                                    borderRadius: '8px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600',
-                                    marginRight: '1rem'
-                                }}>
-                                    View All Positions
-                                </button>
-                                <button style={{
                                     background: '#1e3a8a',
                                     color: 'white',
                                     border: 'none',
@@ -1451,24 +1461,17 @@ function SimpleApp() {
                             Ready to Secure Your Mission?
                         </h2>
                         <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                            gap: '3rem',
+                            display: 'flex',
+                            justifyContent: 'center',
                             marginTop: '3rem'
                         }}>
-                            <div>
-                                <h3 style={{ marginBottom: '1rem', fontSize: '1.3rem' }}>Government Contracting</h3>
-                                <p style={{ marginBottom: '1rem', opacity: '0.9' }}>
-                                    CAGE Code: Available upon request<br />
-                                    DUNS Number: Available upon request<br />
-                                    Security Clearance: Available
-                                </p>
-                            </div>
-                            <div>
-                                <h3 style={{ marginBottom: '1rem', fontSize: '1.3rem' }}>Contact Information</h3>
-                                <p style={{ marginBottom: '1rem', opacity: '0.9' }}>
-                                    Email: contracts@navontech.com<br />
-                                    Phone: Available upon request<br />
+                            <div style={{ textAlign: 'center', maxWidth: '600px' }}>
+                                <h3 style={{ marginBottom: '2rem', fontSize: '2rem', fontWeight: '600' }}>Contact Information</h3>
+                                <p style={{ marginBottom: '1rem', opacity: '0.9', fontSize: '1.3rem', lineHeight: '1.8' }}>
+                                    Email: info@navontechnologies.com<br />
+                                    Questions regarding application: HR@navontech.com<br />
+                                    Phone: 571-477-2727<br />
+                                    Fax: 571-477-2727<br />
                                     Response Time: 24 hours
                                 </p>
                             </div>
@@ -1619,12 +1622,12 @@ function SimpleApp() {
                                 </div>
                                 <div style={{ marginBottom: '1.5rem' }}>
                                     {[
-                                        { name: 'AWS Console Access', status: 'Active', clearance: 'Secret' },
-                                        { name: 'Project Management Suite', status: 'Active', clearance: 'Public Trust' },
-                                        { name: 'Secure Code Repository', status: 'Active', clearance: 'Secret' },
-                                        { name: 'Encrypted Communications', status: 'Active', clearance: 'Top Secret' },
-                                        { name: 'Time Tracking System', status: 'Active', clearance: 'Public Trust' },
-                                        { name: 'Security Compliance Dashboard', status: 'Active', clearance: 'Secret' }
+                                        { name: 'AWS Console Access', status: 'Active' },
+                                        { name: 'Project Management Suite', status: 'Active' },
+                                        { name: 'Secure Code Repository', status: 'Active' },
+                                        { name: 'Encrypted Communications', status: 'Active' },
+                                        { name: 'Time Tracking System', status: 'Active' },
+                                        { name: 'Security Compliance Dashboard', status: 'Active' }
                                     ].map((tool, index) => (
                                         <div key={index} style={{
                                             display: 'flex',
@@ -1639,9 +1642,6 @@ function SimpleApp() {
                                             <div>
                                                 <div style={{ fontWeight: '600', color: '#1e3a8a', fontSize: '0.9rem' }}>
                                                     {tool.name}
-                                                </div>
-                                                <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                                                    Clearance: {tool.clearance}
                                                 </div>
                                             </div>
                                             <span style={{
@@ -1785,6 +1785,103 @@ function SimpleApp() {
                                         Directory
                                     </button>
                                 </div>
+                            </div>
+                            {/* Job Vacancy Portal Section */}
+                            <div style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '1px solid #e2e8f0',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.05)'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        background: '#1e3a8a',
+                                        color: 'white',
+                                        padding: '0.75rem',
+                                        borderRadius: '8px',
+                                        marginRight: '1rem'
+                                    }}>
+                                        💼
+                                    </div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.3rem' }}>
+                                        Job Vacancy Portal
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    {[
+                                        {
+                                            title: 'Senior Cloud Security Engineer',
+                                            location: 'Remote/DC Metro',
+                                            description: 'Lead cybersecurity initiatives for federal cloud infrastructure. AWS certifications preferred.',
+                                            requirements: ['Security+ Certification', '5+ years AWS experience', 'Federal contracting experience']
+                                        },
+                                        {
+                                            title: 'DevOps Systems Engineer',
+                                            location: 'Hybrid - DC Area',
+                                            description: 'Design and implement CI/CD pipelines for government applications using AWS services.',
+                                            requirements: ['AWS Solutions Architect', 'Kubernetes experience', 'Infrastructure as Code']
+                                        },
+                                        {
+                                            title: 'Project Manager - Federal Contracts',
+                                            location: 'Remote',
+                                            description: 'Manage complex government technology projects with agile methodologies.',
+                                            requirements: ['PMP Certification', 'Government contracting', 'Agile/Scrum Master']
+                                        }
+                                    ].map((job, index) => (
+                                        <div key={index} style={{
+                                            padding: '1rem',
+                                            background: '#f8fafc',
+                                            borderRadius: '8px',
+                                            marginBottom: '1rem',
+                                            border: '1px solid #e2e8f0'
+                                        }}>
+                                            <div style={{
+                                                fontWeight: '600',
+                                                color: '#1e3a8a',
+                                                fontSize: '1rem',
+                                                marginBottom: '0.5rem'
+                                            }}>
+                                                {job.title}
+                                            </div>
+                                            <div style={{ marginBottom: '0.5rem' }}>
+                                                <span style={{
+                                                    background: '#e0f2fe',
+                                                    color: '#0369a1',
+                                                    padding: '0.25rem 0.5rem',
+                                                    borderRadius: '12px',
+                                                    fontSize: '0.75rem',
+                                                    fontWeight: '600'
+                                                }}>
+                                                    {job.location}
+                                                </span>
+                                            </div>
+                                            <p style={{ 
+                                                color: '#475569', 
+                                                fontSize: '0.85rem', 
+                                                lineHeight: '1.4',
+                                                marginBottom: '0.5rem'
+                                            }}>
+                                                {job.description}
+                                            </p>
+                                            <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                                                Requirements: {job.requirements.join(', ')}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                                <button style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    width: '100%'
+                                }}>
+                                    Apply for Position
+                                </button>
                             </div>
                             {/* Documents Section */}
                             <div style={{
