@@ -153,18 +153,6 @@ function SimpleApp() {
                                     }}>
                                     Download Capability Statement
                                 </a>
-                                <button style={{
-                                    background: 'transparent',
-                                    color: '#1e3a8a',
-                                    border: '2px solid #1e3a8a',
-                                    padding: '1rem 2rem',
-                                    fontSize: '1.1rem',
-                                    borderRadius: '8px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600'
-                                }}>
-                                    Request Proposal
-                                </button>
                             </div>
                         </div>
                     </section>
@@ -239,180 +227,6 @@ function SimpleApp() {
                                         </div>
                                     </div>
                                 ))}
-                            </div>
-                        </div>
-                    </section>
-
-                    {/* Certifications Section */}
-                    <section style={{ padding: '4rem 2rem', background: '#f8fafc' }}>
-                        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-                            <h2 style={{
-                                fontSize: '2.5rem',
-                                marginBottom: '3rem',
-                                textAlign: 'center',
-                                color: '#1e3a8a',
-                                fontWeight: '600'
-                            }}>
-                                Certifications
-                            </h2>
-                            <div style={{
-                                display: 'grid',
-                                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                                gap: '2rem',
-                                alignItems: 'center'
-                            }}>
-                                {[
-                                    'public_sector_partner.jpeg',
-                                    'select_tier_partner.jpeg'
-                                ].map((cert, index) => (
-                                    <div key={index} style={{
-                                        background: 'white',
-                                        padding: '2rem',
-                                        borderRadius: '12px',
-                                        textAlign: 'center',
-                                        border: '1px solid #e2e8f0',
-                                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
-                                    }}>
-                                        <img
-                                            src={`${s3BaseUrl}/public/images/partners/${cert}`}
-                                            alt={`Certification ${index + 1}`}
-                                            style={{
-                                                maxWidth: '100%',
-                                                height: '100px',
-                                                objectFit: 'contain'
-                                            }}
-                                            onError={(e) => { e.target.style.display = 'none'; }}
-                                        />
-                                    </div>
-                                ))}
-
-                                {/* AWS Certification Placeholders */}
-                                {[
-                                    'AWS Certified Cloud Practitioner',
-                                    'AWS Certified Developer',
-                                    'AWS Solutions Architect',
-                                    'AWS Cloud Business Accreditation',
-                                    'Scrum Alliance (CSM) Certified',
-                                    'Agile Certified Practitioner',
-                                    'CCIE Routing and Switching',
-                                    'CCIE Service Provider',
-                                    'CCIE Data Center',
-                                    'Project Management Professional (PMP)'
-                                ].map((awsCert, index) => (
-                                    <div key={`aws-${index}`} style={{
-                                        background: 'white',
-                                        padding: '2rem',
-                                        borderRadius: '12px',
-                                        textAlign: 'center',
-                                        border: '2px dashed #e2e8f0',
-                                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-                                        minHeight: '140px',
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        justifyContent: 'center'
-                                    }}>
-                                        <div style={{
-                                            width: '60px',
-                                            height: '60px',
-                                            background: '#f1f5f9',
-                                            borderRadius: '8px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            margin: '0 auto 1rem auto',
-                                            color: '#64748b',
-                                            fontSize: '1.5rem'
-                                        }}>
-                                            ☁️
-                                        </div>
-                                        <h4 style={{
-                                            color: '#64748b',
-                                            margin: 0,
-                                            fontSize: '0.9rem',
-                                            fontWeight: '600'
-                                        }}>
-                                            {awsCert}
-                                        </h4>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </section>
-
-                    {/* Contract Vehicles & SBA Section */}
-                    <section style={{ padding: '4rem 2rem', background: 'white' }}>
-                        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-                            <h2 style={{
-                                fontSize: '2.5rem',
-                                marginBottom: '3rem',
-                                textAlign: 'center',
-                                color: '#1e3a8a',
-                                fontWeight: '600'
-                            }}>
-                                Contract Vehicles & SBA Certification
-                            </h2>
-                            <div style={{
-                                display: 'grid',
-                                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                                gap: '3rem',
-                                alignItems: 'center'
-                            }}>
-                                <div style={{
-                                    background: '#f8fafc',
-                                    padding: '2rem',
-                                    borderRadius: '12px',
-                                    textAlign: 'center',
-                                    border: '1px solid #e2e8f0',
-                                    boxShadow: '0 4px 6px rgba(0,0,0,0.05)'
-                                }}>
-                                    <img
-                                        src={`${s3BaseUrl}/public/images/partners/sba.jpeg`}
-                                        alt="SBA Small Business Certification"
-                                        style={{
-                                            maxWidth: '100%',
-                                            height: '120px',
-                                            objectFit: 'contain',
-                                            marginBottom: '1rem'
-                                        }}
-                                        onError={(e) => { e.target.style.display = 'none'; }}
-                                    />
-                                    <h3 style={{ color: '#1e3a8a', marginBottom: '1rem' }}>
-                                        SBA Certified Small Business
-                                    </h3>
-                                    <p style={{ color: '#475569', lineHeight: '1.6' }}>
-                                        Certified Small Business Enterprise with SBA registration,
-                                        enabling participation in federal set-aside contracts and
-                                        small business procurement opportunities.
-                                    </p>
-                                </div>
-                                <div style={{
-                                    background: '#f8fafc',
-                                    padding: '2rem',
-                                    borderRadius: '12px',
-                                    border: '1px solid #e2e8f0',
-                                    boxShadow: '0 4px 6px rgba(0,0,0,0.05)'
-                                }}>
-                                    <h3 style={{ color: '#1e3a8a', marginBottom: '1.5rem', textAlign: 'center' }}>
-                                        Available Contract Vehicles
-                                    </h3>
-                                    <div style={{ textAlign: 'left' }}>
-                                        {[
-                                            { name: 'GSA Schedule 70', desc: 'IT Products, Services & Solutions' },
-                                            { name: 'SEWP VI', desc: 'Solutions for Enterprise-Wide Procurement' },
-                                            { name: 'CIO-SP3', desc: 'Chief Information Officer-Solutions and Partners 3' },
-                                            { name: 'Direct Awards', desc: 'Prime and subcontractor opportunities' }
-                                        ].map((vehicle, index) => (
-                                            <div key={index} style={{ marginBottom: '1rem', padding: '0.75rem', background: 'white', borderRadius: '6px' }}>
-                                                <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.25rem' }}>
-                                                    {vehicle.name}
-                                                </div>
-                                                <div style={{ fontSize: '0.9rem', color: '#64748b' }}>
-                                                    {vehicle.desc}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </section>
@@ -543,7 +357,7 @@ function SimpleApp() {
                             backgroundColor: '#f8fafc',
                             padding: '2rem',
                             borderRadius: '8px',
-                            marginBottom: '3rem',
+                            marginBottom: '2rem',
                             border: '1px solid #e2e8f0'
                         }}>
                             <p style={{ 
@@ -557,25 +371,43 @@ function SimpleApp() {
                                 Navon Technologies is a Service-Disabled Veteran-Owned Small Business based in Leesburg, Virginia. We provide Network, System, and Security Engineering for Small, Medium, and Large businesses to include Federal/SLED (State, Local, Education) Government enterprise networks. We also specialize in Cable, Satellite, and Telco Internet Service Provider backbone networks in the US.
                             </p>
                         </div>
+
+                        {/* Capability Statement Link */}
+                        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                            <a href={`${s3BaseUrl}/public/images/NAVON_Technologies_Capability_Statement_2026.pdf`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    padding: '1rem 2rem',
+                                    borderRadius: '8px',
+                                    textDecoration: 'none',
+                                    fontWeight: '600',
+                                    display: 'inline-block',
+                                    fontSize: '1.1rem'
+                                }}>
+                                📄 Download Our Capability Statement
+                            </a>
+                        </div>
                         
                         <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
-                            gap: '3rem',
-                            alignItems: 'flex-start',
+                            maxWidth: '800px',
+                            margin: '0 auto',
+                            textAlign: 'center',
                             marginBottom: '3rem'
                         }}>
                             <div>
                                 <h3 style={{ color: '#1e3a8a', marginBottom: '1.5rem', fontSize: '1.5rem' }}>
                                     Mission-Critical Technology Solutions
                                 </h3>
-                                <p style={{ color: '#475569', lineHeight: '1.8', marginBottom: '1.5rem' }}>
+                                <p style={{ color: '#475569', lineHeight: '1.8', marginBottom: '1.5rem', textAlign: 'left' }}>
                                     NAVON Technologies is a trusted government contractor specializing in secure,
                                     scalable technology solutions for federal agencies and defense organizations.
                                     We combine deep technical expertise with security clearance capabilities to
                                     deliver mission-critical systems.
                                 </p>
-                                <p style={{ color: '#475569', lineHeight: '1.8', marginBottom: '1.5rem' }}>
+                                <p style={{ color: '#475569', lineHeight: '1.8', marginBottom: '1.5rem', textAlign: 'left' }}>
                                     Our team of certified engineers and security professionals brings decades of
                                     experience in government contracting, ensuring compliance with federal standards
                                     and regulations while delivering innovative solutions.
@@ -584,9 +416,10 @@ function SimpleApp() {
                                     background: 'white',
                                     padding: '1.5rem',
                                     borderRadius: '8px',
-                                    border: '1px solid #e2e8f0'
+                                    border: '1px solid #e2e8f0',
+                                    textAlign: 'left'
                                 }}>
-                                    <h4 style={{ color: '#1e3a8a', marginBottom: '1rem' }}>Key Differentiators</h4>
+                                    <h4 style={{ color: '#1e3a8a', marginBottom: '1rem', textAlign: 'center' }}>Key Differentiators</h4>
                                     <ul style={{ color: '#475569', paddingLeft: '1.5rem' }}>
                                         <li style={{ marginBottom: '0.5rem' }}>Security clearance certified team</li>
                                         <li style={{ marginBottom: '0.5rem' }}>FedRAMP and NIST compliance expertise</li>
@@ -594,19 +427,6 @@ function SimpleApp() {
                                         <li style={{ marginBottom: '0.5rem' }}>Proven government contracting track record</li>
                                     </ul>
                                 </div>
-                            </div>
-                            <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-                                <img
-                                    src={`${s3BaseUrl}/public/images/Poster_no_logo.png`}
-                                    alt="NAVON Technologies Overview"
-                                    style={{
-                                        maxWidth: '100%',
-                                        height: 'auto',
-                                        borderRadius: '12px',
-                                        boxShadow: '0 8px 25px rgba(0,0,0,0.1)'
-                                    }}
-                                    onError={(e) => { e.target.style.display = 'none'; }}
-                                />
                             </div>
                         </div>
                         
@@ -673,24 +493,175 @@ function SimpleApp() {
                                 </p>
                             </div>
                         </div>
-                        
-                        {/* Capability Statement Link */}
-                        <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-                            <a href={`${s3BaseUrl}/public/images/NAVON_Technologies_Capability_Statement_2026.pdf`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{
-                                    background: '#1e3a8a',
-                                    color: 'white',
-                                    padding: '1rem 2rem',
-                                    borderRadius: '8px',
-                                    textDecoration: 'none',
-                                    fontWeight: '600',
-                                    display: 'inline-block',
-                                    fontSize: '1.1rem'
+
+                        {/* Certifications Section */}
+                        <div style={{ marginTop: '4rem' }}>
+                            <h3 style={{
+                                fontSize: '2rem',
+                                marginBottom: '2rem',
+                                textAlign: 'center',
+                                color: '#1e3a8a',
+                                fontWeight: '600'
+                            }}>
+                                Certifications
+                            </h3>
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                                gap: '2rem',
+                                alignItems: 'center'
+                            }}>
+                                {[
+                                    'public_sector_partner.jpeg',
+                                    'select_tier_partner.jpeg'
+                                ].map((cert, index) => (
+                                    <div key={index} style={{
+                                        background: 'white',
+                                        padding: '2rem',
+                                        borderRadius: '12px',
+                                        textAlign: 'center',
+                                        border: '1px solid #e2e8f0',
+                                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+                                    }}>
+                                        <img
+                                            src={`${s3BaseUrl}/public/images/partners/${cert}`}
+                                            alt={`Certification ${index + 1}`}
+                                            style={{
+                                                maxWidth: '100%',
+                                                height: '100px',
+                                                objectFit: 'contain'
+                                            }}
+                                            onError={(e) => { e.target.style.display = 'none'; }}
+                                        />
+                                    </div>
+                                ))}
+
+                                {/* AWS Certification Placeholders */}
+                                {[
+                                    'AWS Certified Cloud Practitioner',
+                                    'AWS Certified Developer',
+                                    'AWS Solutions Architect',
+                                    'AWS Cloud Business Accreditation',
+                                    'Scrum Alliance (CSM) Certified',
+                                    'Agile Certified Practitioner',
+                                    'CCIE Routing and Switching',
+                                    'CCIE Service Provider',
+                                    'CCIE Data Center',
+                                    'Project Management Professional (PMP)'
+                                ].map((awsCert, index) => (
+                                    <div key={`aws-${index}`} style={{
+                                        background: 'white',
+                                        padding: '2rem',
+                                        borderRadius: '12px',
+                                        textAlign: 'center',
+                                        border: '2px dashed #e2e8f0',
+                                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                                        minHeight: '140px',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        justifyContent: 'center'
+                                    }}>
+                                        <div style={{
+                                            width: '60px',
+                                            height: '60px',
+                                            background: '#f1f5f9',
+                                            borderRadius: '8px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            margin: '0 auto 1rem auto',
+                                            color: '#64748b',
+                                            fontSize: '1.5rem'
+                                        }}>
+                                            ☁️
+                                        </div>
+                                        <h4 style={{
+                                            color: '#64748b',
+                                            margin: 0,
+                                            fontSize: '0.9rem',
+                                            fontWeight: '600'
+                                        }}>
+                                            {awsCert}
+                                        </h4>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Contract Vehicles & SBA Section */}
+                        <div style={{ marginTop: '4rem' }}>
+                            <h3 style={{
+                                fontSize: '2rem',
+                                marginBottom: '2rem',
+                                textAlign: 'center',
+                                color: '#1e3a8a',
+                                fontWeight: '600'
+                            }}>
+                                Contract Vehicles & SBA Certification
+                            </h3>
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                                gap: '3rem',
+                                alignItems: 'center'
+                            }}>
+                                <div style={{
+                                    background: 'white',
+                                    padding: '2rem',
+                                    borderRadius: '12px',
+                                    textAlign: 'center',
+                                    border: '1px solid #e2e8f0',
+                                    boxShadow: '0 4px 6px rgba(0,0,0,0.05)'
                                 }}>
-                                📄 Download Our Capability Statement
-                            </a>
+                                    <img
+                                        src={`${s3BaseUrl}/public/images/partners/sba.jpeg`}
+                                        alt="SBA Small Business Certification"
+                                        style={{
+                                            maxWidth: '100%',
+                                            height: '120px',
+                                            objectFit: 'contain',
+                                            marginBottom: '1rem'
+                                        }}
+                                        onError={(e) => { e.target.style.display = 'none'; }}
+                                    />
+                                    <h4 style={{ color: '#1e3a8a', marginBottom: '1rem' }}>
+                                        SBA Certified Small Business
+                                    </h4>
+                                    <p style={{ color: '#475569', lineHeight: '1.6' }}>
+                                        Certified Small Business Enterprise with SBA registration,
+                                        enabling participation in federal set-aside contracts and
+                                        small business procurement opportunities.
+                                    </p>
+                                </div>
+                                <div style={{
+                                    background: 'white',
+                                    padding: '2rem',
+                                    borderRadius: '12px',
+                                    border: '1px solid #e2e8f0',
+                                    boxShadow: '0 4px 6px rgba(0,0,0,0.05)'
+                                }}>
+                                    <h4 style={{ color: '#1e3a8a', marginBottom: '1.5rem', textAlign: 'center' }}>
+                                        Available Contract Vehicles
+                                    </h4>
+                                    <div style={{ textAlign: 'left' }}>
+                                        {[
+                                            { name: 'GSA Schedule 70', desc: 'IT Products, Services & Solutions' },
+                                            { name: 'SEWP VI', desc: 'Solutions for Enterprise-Wide Procurement' },
+                                            { name: 'CIO-SP3', desc: 'Chief Information Officer-Solutions and Partners 3' },
+                                            { name: 'Direct Awards', desc: 'Prime and subcontractor opportunities' }
+                                        ].map((vehicle, index) => (
+                                            <div key={index} style={{ marginBottom: '1rem', padding: '0.75rem', background: '#f8fafc', borderRadius: '6px' }}>
+                                                <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.25rem' }}>
+                                                    {vehicle.name}
+                                                </div>
+                                                <div style={{ fontSize: '0.9rem', color: '#64748b' }}>
+                                                    {vehicle.desc}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
