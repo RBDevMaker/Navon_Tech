@@ -816,6 +816,27 @@ function SimpleApp() {
                             </div>
                         </div>
                     </section>
+
+                    {/* Computer Screen Strip - Right Above Footer */}
+                    <div style={{
+                        width: '100%',
+                        height: '120px',
+                        backgroundImage: 'url("https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=80")',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center 65%',
+                        position: 'relative',
+                        overflow: 'hidden'
+                    }}>
+                        {/* Overlay for better contrast */}
+                        <div style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            background: 'linear-gradient(90deg, rgba(15, 23, 42, 0.3) 0%, rgba(212, 175, 55, 0.2) 50%, rgba(15, 23, 42, 0.3) 100%)'
+                        }}></div>
+                    </div>
                 </div>
             )}
 
@@ -2454,15 +2475,81 @@ function SimpleApp() {
             {currentPage === 'contact' && (
                 <section style={{
                     padding: '4rem 2rem',
-                    background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
-                    color: 'white'
+                    background: 'linear-gradient(135deg, #f8fafc 0%, #e0e7ef 50%, #f8fafc 100%)',
+                    position: 'relative',
+                    overflow: 'hidden'
                 }}>
-                    <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-                        <h2 style={{
+                    {/* Diagonal Gold Lines Background - Multiple Directions */}
+                    <div style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background: `
+                            repeating-linear-gradient(
+                                45deg,
+                                transparent,
+                                transparent 200px,
+                                rgba(212, 175, 55, 0.3) 200px,
+                                rgba(212, 175, 55, 0.3) 206px,
+                                transparent 206px,
+                                transparent 400px
+                            ),
+                            repeating-linear-gradient(
+                                -45deg,
+                                transparent,
+                                transparent 250px,
+                                rgba(212, 175, 55, 0.2) 250px,
+                                rgba(212, 175, 55, 0.2) 256px,
+                                transparent 256px,
+                                transparent 500px
+                            ),
+                            repeating-linear-gradient(
+                                135deg,
+                                transparent,
+                                transparent 300px,
+                                rgba(212, 175, 55, 0.15) 300px,
+                                rgba(212, 175, 55, 0.15) 305px,
+                                transparent 305px,
+                                transparent 600px
+                            )
+                        `,
+                        pointerEvents: 'none',
+                        zIndex: 0
+                    }}></div>
+
+                    {/* Subtle Dark Blue Accent Areas with Float Animation */}
+                    <div className="animate-float-slow" style={{
+                        position: 'absolute',
+                        top: '10%',
+                        left: '5%',
+                        width: '300px',
+                        height: '300px',
+                        background: 'radial-gradient(circle, rgba(15, 23, 42, 0.08) 0%, transparent 70%)',
+                        borderRadius: '50%',
+                        pointerEvents: 'none',
+                        zIndex: 0
+                    }}></div>
+                    <div className="animate-float" style={{
+                        position: 'absolute',
+                        bottom: '15%',
+                        right: '10%',
+                        width: '400px',
+                        height: '400px',
+                        background: 'radial-gradient(circle, rgba(15, 23, 42, 0.06) 0%, transparent 70%)',
+                        borderRadius: '50%',
+                        pointerEvents: 'none',
+                        zIndex: 0
+                    }}></div>
+
+                    <div style={{ maxWidth: '1000px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+                        <h2 className="animate-fade-in-up" style={{
                             fontSize: '2.5rem',
                             marginBottom: '2rem',
                             textAlign: 'center',
-                            fontWeight: '600'
+                            fontWeight: '800',
+                            color: '#0f172a'
                         }}>
                             Ready to Secure Your Mission?
                         </h2>
@@ -2471,9 +2558,19 @@ function SimpleApp() {
                             justifyContent: 'center',
                             marginTop: '3rem'
                         }}>
-                            <div style={{ textAlign: 'center', maxWidth: '600px' }}>
-                                <h3 style={{ marginBottom: '2rem', fontSize: '2rem', fontWeight: '600' }}>Contact Information</h3>
-                                <p style={{ marginBottom: '1rem', opacity: '0.9', fontSize: '1.3rem', lineHeight: '1.8' }}>
+                            <div className="hover-lift animate-scale-in" style={{ 
+                                textAlign: 'center', 
+                                maxWidth: '600px',
+                                background: 'white',
+                                padding: '2.5rem',
+                                borderRadius: '20px',
+                                border: '3px solid #d4af37',
+                                boxShadow: '0 10px 40px rgba(212, 175, 55, 0.3)',
+                                animationDelay: '0.2s',
+                                opacity: 0
+                            }}>
+                                <h3 style={{ marginBottom: '2rem', fontSize: '2rem', fontWeight: '800', color: '#0f172a' }}>Contact Information</h3>
+                                <p style={{ marginBottom: '1rem', fontSize: '1.3rem', lineHeight: '1.8', color: '#1e293b' }}>
                                     Email: info@navontechnologies.com<br />
                                     Questions regarding application: HR@navontech.com<br />
                                     Phone: 571-477-2727<br />
@@ -2483,69 +2580,120 @@ function SimpleApp() {
                             </div>
                         </div>
                         
-                        <div style={{ textAlign: 'center', marginTop: '3rem' }}>
+                        <div className="animate-fade-in-up" style={{ 
+                            textAlign: 'center', 
+                            marginTop: '3rem',
+                            animationDelay: '0.4s',
+                            opacity: 0
+                        }}>
                             <a href={`${s3BaseUrl}/public/images/NAVON_Technologies_Capability_Statement_2026.pdf`}
                                 target="_blank"
                                 rel="noopener noreferrer"
+                                className="hover-lift"
                                 style={{
-                                    background: 'white',
-                                    color: '#1e3a8a',
+                                    background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
+                                    color: '#0f172a',
                                     padding: '1rem 2rem',
                                     borderRadius: '8px',
                                     textDecoration: 'none',
-                                    fontWeight: '600',
+                                    fontWeight: '700',
                                     display: 'inline-block',
-                                    marginRight: '1rem'
+                                    marginRight: '1rem',
+                                    fontSize: '1rem',
+                                    boxShadow: '0 4px 15px rgba(212, 175, 55, 0.4)',
+                                    transition: 'all 0.3s ease'
                                 }}>
                                 Download Capability Statement
                             </a>
-                            <button style={{
-                                background: 'transparent',
-                                color: 'white',
-                                border: '2px solid white',
+                            <button className="hover-lift" style={{
+                                background: 'white',
+                                color: '#0f172a',
+                                border: '3px solid #d4af37',
                                 padding: '1rem 2rem',
                                 borderRadius: '8px',
                                 cursor: 'pointer',
-                                fontWeight: '600'
+                                fontWeight: '700',
+                                fontSize: '1rem',
+                                transition: 'all 0.3s ease'
                             }}>
                                 Request Security Briefing
                             </button>
                         </div>
                         
                         {/* Social Media Section */}
-                        <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-                            <h3 style={{ marginBottom: '1.5rem', fontSize: '1.3rem' }}>Connect With Us</h3>
+                        <div className="hover-lift animate-slide-in-top" style={{ 
+                            textAlign: 'center', 
+                            marginTop: '3rem',
+                            background: 'white',
+                            padding: '2rem',
+                            borderRadius: '20px',
+                            border: '3px solid #d4af37',
+                            boxShadow: '0 10px 40px rgba(212, 175, 55, 0.3)',
+                            animationDelay: '0.6s',
+                            opacity: 0
+                        }}>
+                            <h3 style={{ marginBottom: '1.5rem', fontSize: '1.5rem', fontWeight: '800', color: '#0f172a' }}>Connect With Us</h3>
                             <div style={{ display: 'flex', gap: '2rem', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' }}>
                                 <a href="https://facebook.com/navontechnologies" target="_blank" rel="noopener noreferrer" style={{
-                                    color: 'white',
+                                    color: '#0f172a',
                                     textDecoration: 'none',
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: '0.5rem',
                                     fontSize: '1.1rem',
-                                    transition: 'opacity 0.3s ease'
+                                    fontWeight: '600',
+                                    transition: 'all 0.3s ease',
+                                    transform: 'translateY(0)'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.transform = 'translateY(-5px)';
+                                    e.currentTarget.style.color = '#d4af37';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                    e.currentTarget.style.color = '#0f172a';
                                 }}>
                                     📘 Facebook
                                 </a>
                                 <a href="https://instagram.com/navontechnologies" target="_blank" rel="noopener noreferrer" style={{
-                                    color: 'white',
+                                    color: '#0f172a',
                                     textDecoration: 'none',
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: '0.5rem',
                                     fontSize: '1.1rem',
-                                    transition: 'opacity 0.3s ease'
+                                    fontWeight: '600',
+                                    transition: 'all 0.3s ease',
+                                    transform: 'translateY(0)'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.transform = 'translateY(-5px)';
+                                    e.currentTarget.style.color = '#d4af37';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                    e.currentTarget.style.color = '#0f172a';
                                 }}>
                                     📷 Instagram
                                 </a>
                                 <a href="https://linkedin.com/company/navon-technologies" target="_blank" rel="noopener noreferrer" style={{
-                                    color: 'white',
+                                    color: '#0f172a',
                                     textDecoration: 'none',
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: '0.5rem',
                                     fontSize: '1.1rem',
-                                    transition: 'opacity 0.3s ease'
+                                    fontWeight: '600',
+                                    transition: 'all 0.3s ease',
+                                    transform: 'translateY(0)'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.transform = 'translateY(-5px)';
+                                    e.currentTarget.style.color = '#d4af37';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                    e.currentTarget.style.color = '#0f172a';
                                 }}>
                                     💼 LinkedIn
                                 </a>
