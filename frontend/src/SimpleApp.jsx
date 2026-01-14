@@ -297,7 +297,7 @@ function SimpleApp() {
                 <div>
                     {/* Hero Section */}
                     <section style={{
-                        background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.80) 50%, rgba(51, 65, 85, 0.85) 100%), url("https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=1920&q=80") center/cover',
+                        background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.35) 0%, rgba(30, 41, 59, 0.30) 50%, rgba(51, 65, 85, 0.35) 100%), url("https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=1920&q=80") center 15%/cover',
                         padding: '8rem 2rem',
                         textAlign: 'center',
                         position: 'relative',
@@ -314,7 +314,7 @@ function SimpleApp() {
                             right: '10%',
                             width: '400px',
                             height: '400px',
-                            background: 'radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%)',
+                            background: 'radial-gradient(circle, rgba(212, 175, 55, 0.2) 0%, transparent 70%)',
                             borderRadius: '50%'
                         }}></div>
                         <div className="animate-float-slow" style={{
@@ -323,7 +323,7 @@ function SimpleApp() {
                             left: '10%',
                             width: '300px',
                             height: '300px',
-                            background: 'radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, transparent 70%)',
+                            background: 'radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%)',
                             borderRadius: '50%'
                         }}></div>
                         <div className="animate-pulse" style={{
@@ -341,78 +341,73 @@ function SimpleApp() {
                             left: '50%',
                             width: '250px',
                             height: '250px',
-                            background: 'radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, transparent 70%)',
+                            background: 'radial-gradient(circle, rgba(212, 175, 55, 0.12) 0%, transparent 70%)',
                             borderRadius: '50%'
                         }}></div>
                         
                         <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
                             <h1 className="animate-fade-in-up" style={{
-                                fontSize: '4rem',
-                                margin: '0 0 2rem 0',
+                                fontSize: '4.5rem',
+                                margin: '0 0 3rem 0',
                                 color: 'white',
                                 fontWeight: '800',
                                 letterSpacing: '-0.02em',
-                                lineHeight: '1.1'
+                                lineHeight: '1.1',
+                                textShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
                             }}>
                                 Trusted Government <span className="gradient-text">Technology Solutions</span>
                             </h1>
                             
-                            <div className="animate-fade-in-up"
-                                style={{
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                padding: '3rem',
-                                borderRadius: '20px',
-                                margin: '0 auto 3rem auto',
-                                maxWidth: '900px',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
-                                backdropFilter: 'blur(10px)',
+                            <h2 className="animate-fade-in-up" style={{
+                                fontSize: '1.8rem',
+                                background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                backgroundClip: 'text',
+                                fontStyle: 'italic',
+                                textAlign: 'center',
+                                margin: '4rem auto 0 auto',
+                                fontWeight: '800',
+                                textShadow: '0 2px 10px rgba(212, 175, 55, 0.3)',
                                 animationDelay: '0.2s',
                                 opacity: 0,
                                 animation: 'fadeInUp 0.8s ease-out 0.2s forwards'
                             }}>
-                                <h2 style={{
-                                    fontSize: '2rem',
-                                    color: '#d4af37',
-                                    fontStyle: 'italic',
-                                    textAlign: 'center',
-                                    margin: '0 0 2rem 0',
-                                    fontWeight: '700'
-                                }}>
-                                    Welcome to wiser technology solutions, we take technology higher!
-                                </h2>
-                                
+                                Welcome to wiser technology solutions, we take technology higher!
+                            </h2>
+                            
+                            <div className="animate-fade-in-up" style={{
+                                maxWidth: '900px',
+                                margin: '4rem auto 3rem auto',
+                                background: 'rgba(15, 23, 42, 0.6)',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '1px solid rgba(212, 175, 55, 0.3)',
+                                animationDelay: '0.4s',
+                                opacity: 0,
+                                animation: 'fadeInUp 0.8s ease-out 0.4s forwards'
+                            }}>
                                 <p style={{
                                     fontSize: '1.15rem',
-                                    color: '#e2e8f0',
+                                    color: '#f1f5f9',
                                     lineHeight: '1.8',
-                                    marginBottom: '1.5rem'
+                                    marginBottom: '1.5rem',
+                                    textShadow: '0 2px 10px rgba(0, 0, 0, 0.5)'
                                 }}>
                                     Navon Technologies is a Service-Disabled Veteran-Owned Small Business and AWS Partner serving both public and private sectors. We provide technical services for development, automation, testing, implementation, and maintenance support for our customers' mission and business for critical applications whether they are on-prem or in the cloud.
                                 </p>
                                 
                                 <p style={{
                                     fontSize: '1.15rem',
-                                    color: '#cbd5e1',
+                                    color: '#e2e8f0',
                                     lineHeight: '1.8',
-                                    margin: '0'
+                                    margin: '0',
+                                    textShadow: '0 2px 10px rgba(0, 0, 0, 0.5)'
                                 }}>
                                     At Navon Technologies, we started as a small team of IT enthusiasts who wanted to help businesses overcome their technology challenges. We have partnered with AWS (Amazon Web Services) to provide our customers with the best cloud solutions in the industry. This partnership gained us access to over 200 AWS services. We specialize in Migration, Networking, Security, Web Site and App Development.
                                 </p>
                             </div>
                             
-                            <p className="animate-fade-in-up" style={{
-                                fontSize: '1.4rem',
-                                color: '#94a3b8',
-                                maxWidth: '800px',
-                                margin: '0 auto 3rem auto',
-                                animationDelay: '0.4s',
-                                opacity: 0,
-                                animation: 'fadeInUp 0.8s ease-out 0.4s forwards'
-                            }}>
-                                NAVON Technologies delivers mission-critical cloud infrastructure, cybersecurity,
-                                and system engineering solutions to federal agencies and defense contractors.
-                            </p>
                             <div className="animate-fade-in-up" style={{ 
                                 display: 'flex', 
                                 gap: '1.5rem', 
@@ -490,7 +485,8 @@ function SimpleApp() {
                                 margin: '0 auto 4rem auto',
                                 animationDelay: '0.2s',
                                 opacity: 0,
-                                animation: 'fadeInUp 0.8s ease-out 0.2s forwards'
+                                animation: 'fadeInUp 0.8s ease-out 0.2s forwards',
+                                whiteSpace: 'nowrap'
                             }}>
                                 Collaborating with industry leaders to deliver exceptional solutions
                             </p>
