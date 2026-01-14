@@ -51,7 +51,7 @@ function SimpleApp() {
                     <a href="#home" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500' }}>Home</a>
                     <a href="#about" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500' }}>About</a>
                     <a href="#capabilities" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500' }}>Services</a>
-                    <a href="#aws" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500' }}>AWS</a>
+                    <a href="#aws" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500' }}>Cloud Services</a>
                     <a href="#careers" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500' }}>Careers</a>
                     <a href="#contact" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500' }}>Contact</a>
                     <a href="#portal" style={{
@@ -178,6 +178,7 @@ function SimpleApp() {
                                 {[
                                     { file: 'AWS.jpeg', name: 'AWS' },
                                     { file: 'microsoft.jpeg', name: 'Microsoft' },
+                                    { file: 'google.jpeg', name: 'Google' },
                                     { file: 'cisco.jpeg', name: 'Cisco' },
                                     { file: 'ratheon.jpeg', name: 'Raytheon' },
                                     { file: 'gdit.jpeg', name: 'GDIT' },
@@ -209,7 +210,7 @@ function SimpleApp() {
                                             alt={partner.name}
                                             style={{
                                                 maxWidth: '100%',
-                                                height: '80px',
+                                                height: '110px',
                                                 objectFit: 'contain'
                                             }}
                                             onError={(e) => { 
@@ -765,7 +766,7 @@ function SimpleApp() {
                                 color: '#1e3a8a',
                                 fontWeight: '600'
                             }}>
-                                Professional IT Services for Your Business
+                                Boost Your Project with Navon Technologies IT Services
                             </h2>
                             
                             <div style={{
@@ -773,7 +774,7 @@ function SimpleApp() {
                                 gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
                                 gap: '2rem'
                             }}>
-                                {/* Managed IT Services */}
+                                {/* Custom Software Development */}
                                 <div style={{
                                     background: 'white',
                                     padding: '2rem',
@@ -787,18 +788,18 @@ function SimpleApp() {
                                         fontSize: '1.3rem',
                                         fontWeight: '600'
                                     }}>
-                                        Managed IT Services
+                                        Custom Software Development
                                     </h3>
                                     <p style={{
                                         color: '#475569',
                                         lineHeight: '1.7',
                                         margin: '0'
                                     }}>
-                                        Our Managed IT Services provide comprehensive IT support and management for your business. We will proactively monitor your network and systems, handle all updates and patches, and provide fast and reliable support when you need it.
+                                        Our team of developers can help you create custom software tailored to your project needs. From web applications to mobile apps, we can develop software that can help streamline your project processes.
                                     </p>
                                 </div>
 
-                                {/* Cloud Services */}
+                                {/* Hardware Procurement and Installation */}
                                 <div style={{
                                     background: 'white',
                                     padding: '2rem',
@@ -812,18 +813,18 @@ function SimpleApp() {
                                         fontSize: '1.3rem',
                                         fontWeight: '600'
                                     }}>
-                                        Cloud Services
+                                        Hardware Procurement and Installation
                                     </h3>
                                     <p style={{
                                         color: '#475569',
                                         lineHeight: '1.7',
                                         margin: '0'
                                     }}>
-                                        Our Cloud Services provide a reliable and scalable solution for your business needs. We offer cloud migration, secure data storage, and cloud-based software solutions to help your business operate more efficiently and effectively.
+                                        We help small businesses procure and install hardware that is best suited to their business needs. Our team can provide expert advice on hardware selection and installation.
                                     </p>
                                 </div>
 
-                                {/* Cybersecurity Services */}
+                                {/* IT Training and Support */}
                                 <div style={{
                                     background: 'white',
                                     padding: '2rem',
@@ -837,18 +838,18 @@ function SimpleApp() {
                                         fontSize: '1.3rem',
                                         fontWeight: '600'
                                     }}>
-                                        Cybersecurity Services
+                                        IT Training and Support
                                     </h3>
                                     <p style={{
                                         color: '#475569',
                                         lineHeight: '1.7',
                                         margin: '0'
                                     }}>
-                                        Our Cybersecurity Services provide comprehensive protection for your business against cyber threats. We offer risk assessments, vulnerability testing, threat monitoring, and training to ensure your business is secure.
+                                        We provide IT training and support to ensure that your employees can make the most of the technology available to them. Our training and support services include on-site training, virtual training, and support via phone and email.
                                     </p>
                                 </div>
 
-                                {/* Network Design and Implementation */}
+                                {/* Website Design and Development */}
                                 <div style={{
                                     background: 'white',
                                     padding: '2rem',
@@ -862,18 +863,18 @@ function SimpleApp() {
                                         fontSize: '1.3rem',
                                         fontWeight: '600'
                                     }}>
-                                        Network Design and Implementation
+                                        Website Design and Development
                                     </h3>
                                     <p style={{
                                         color: '#475569',
                                         lineHeight: '1.7',
                                         margin: '0'
                                     }}>
-                                        Our Network Design and Implementation services provide customized network solutions for your business. We will assess your needs, design a network architecture, and implement the solution to ensure your business runs smoothly.
+                                        We specialize in designing and developing websites that are visually appealing, user-friendly, and optimized for search engines. Our websites are designed to help small businesses establish a strong online presence.
                                     </p>
                                 </div>
 
-                                {/* Data Backup and Recovery */}
+                                {/* Cloud Migration */}
                                 <div style={{
                                     background: 'white',
                                     padding: '2rem',
@@ -887,18 +888,18 @@ function SimpleApp() {
                                         fontSize: '1.3rem',
                                         fontWeight: '600'
                                     }}>
-                                        Data Backup and Recovery
+                                        Cloud Migration
                                     </h3>
                                     <p style={{
                                         color: '#475569',
                                         lineHeight: '1.7',
                                         margin: '0'
                                     }}>
-                                        Our Data Backup and Recovery services provide peace of mind knowing your business data is secure and recoverable. We will set up automatic backups, test recovery processes, and ensure your data is safe in the event of a disaster.
+                                        We help small businesses migrate to the cloud to enable greater flexibility and scalability. Our team can help you choose the best cloud solution for your business and ensure a smooth migration process.
                                     </p>
                                 </div>
 
-                                {/* IT Consulting Services */}
+                                {/* IT Project Management */}
                                 <div style={{
                                     background: 'white',
                                     padding: '2rem',
@@ -912,14 +913,14 @@ function SimpleApp() {
                                         fontSize: '1.3rem',
                                         fontWeight: '600'
                                     }}>
-                                        IT Consulting Services
+                                        IT Project Management
                                     </h3>
                                     <p style={{
                                         color: '#475569',
                                         lineHeight: '1.7',
                                         margin: '0'
                                     }}>
-                                        Our IT Consulting Services provide expert advice and guidance to help your business make informed decisions about technology. We will assess your current systems, identify areas for improvement, and provide recommendations to help your business grow.
+                                        We provide IT project management services to ensure that your IT projects are completed on time, within budget, and to your satisfaction. Our project management services include project planning, resource allocation, and risk management.
                                     </p>
                                 </div>
                             </div>
@@ -1097,7 +1098,7 @@ function SimpleApp() {
                                 color: '#1e3a8a',
                                 fontWeight: '600'
                             }}>
-                                Boost Your Project with Navon Technologies IT Services
+                                Professional IT Services for Your Business
                             </h2>
                             
                             <div style={{
@@ -1105,7 +1106,7 @@ function SimpleApp() {
                                 gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
                                 gap: '2rem'
                             }}>
-                                {/* Custom Software Development */}
+                                {/* Managed IT Services */}
                                 <div style={{
                                     background: 'white',
                                     padding: '2rem',
@@ -1119,18 +1120,18 @@ function SimpleApp() {
                                         fontSize: '1.3rem',
                                         fontWeight: '600'
                                     }}>
-                                        Custom Software Development
+                                        AWS Managed IT Services
                                     </h3>
                                     <p style={{
                                         color: '#475569',
                                         lineHeight: '1.7',
                                         margin: '0'
                                     }}>
-                                        Our team of developers can help you create custom software tailored to your project needs. From web applications to mobile apps, we can develop software that can help streamline your project processes.
+                                        Our AWS Managed IT Services provide comprehensive IT support and management for your business. We will proactively monitor your network and systems, handle all updates and patches, and provide fast and reliable support when you need it.
                                     </p>
                                 </div>
 
-                                {/* Hardware Procurement and Installation */}
+                                {/* Cloud Services */}
                                 <div style={{
                                     background: 'white',
                                     padding: '2rem',
@@ -1144,18 +1145,18 @@ function SimpleApp() {
                                         fontSize: '1.3rem',
                                         fontWeight: '600'
                                     }}>
-                                        Hardware Procurement and Installation
+                                        Cloud Services
                                     </h3>
                                     <p style={{
                                         color: '#475569',
                                         lineHeight: '1.7',
                                         margin: '0'
                                     }}>
-                                        We help small businesses procure and install hardware that is best suited to their business needs. Our team can provide expert advice on hardware selection and installation.
+                                        Our Cloud Services provide a reliable and scalable solution for your business needs. We offer cloud migration, secure data storage, and cloud-based software solutions to help your business operate more efficiently and effectively.
                                     </p>
                                 </div>
 
-                                {/* IT Training and Support */}
+                                {/* Cybersecurity Services */}
                                 <div style={{
                                     background: 'white',
                                     padding: '2rem',
@@ -1169,18 +1170,18 @@ function SimpleApp() {
                                         fontSize: '1.3rem',
                                         fontWeight: '600'
                                     }}>
-                                        IT Training and Support
+                                        Cybersecurity Services
                                     </h3>
                                     <p style={{
                                         color: '#475569',
                                         lineHeight: '1.7',
                                         margin: '0'
                                     }}>
-                                        We provide IT training and support to ensure that your employees can make the most of the technology available to them. Our training and support services include on-site training, virtual training, and support via phone and email.
+                                        Our Cybersecurity Services provide comprehensive protection for your business against cyber threats. We offer risk assessments, vulnerability testing, threat monitoring, and training to ensure your business is secure.
                                     </p>
                                 </div>
 
-                                {/* Website Design and Development */}
+                                {/* Network Design and Implementation */}
                                 <div style={{
                                     background: 'white',
                                     padding: '2rem',
@@ -1194,18 +1195,18 @@ function SimpleApp() {
                                         fontSize: '1.3rem',
                                         fontWeight: '600'
                                     }}>
-                                        Website Design and Development
+                                        Network Design and Implementation
                                     </h3>
                                     <p style={{
                                         color: '#475569',
                                         lineHeight: '1.7',
                                         margin: '0'
                                     }}>
-                                        We specialize in designing and developing websites that are visually appealing, user-friendly, and optimized for search engines. Our websites are designed to help small businesses establish a strong online presence.
+                                        Our Network Design and Implementation services provide customized network solutions for your business. We will assess your needs, design a network architecture, and implement the solution to ensure your business runs smoothly.
                                     </p>
                                 </div>
 
-                                {/* Cloud Migration */}
+                                {/* Data Backup and Recovery */}
                                 <div style={{
                                     background: 'white',
                                     padding: '2rem',
@@ -1219,18 +1220,18 @@ function SimpleApp() {
                                         fontSize: '1.3rem',
                                         fontWeight: '600'
                                     }}>
-                                        Cloud Migration
+                                        Data Backup and Recovery
                                     </h3>
                                     <p style={{
                                         color: '#475569',
                                         lineHeight: '1.7',
                                         margin: '0'
                                     }}>
-                                        We help small businesses migrate to the cloud to enable greater flexibility and scalability. Our team can help you choose the best cloud solution for your business and ensure a smooth migration process.
+                                        Our Data Backup and Recovery services provide peace of mind knowing your business data is secure and recoverable. We will set up automatic backups, test recovery processes, and ensure your data is safe in the event of a disaster.
                                     </p>
                                 </div>
 
-                                {/* IT Project Management */}
+                                {/* IT Consulting Services */}
                                 <div style={{
                                     background: 'white',
                                     padding: '2rem',
@@ -1244,14 +1245,14 @@ function SimpleApp() {
                                         fontSize: '1.3rem',
                                         fontWeight: '600'
                                     }}>
-                                        IT Project Management
+                                        IT Consulting Services
                                     </h3>
                                     <p style={{
                                         color: '#475569',
                                         lineHeight: '1.7',
                                         margin: '0'
                                     }}>
-                                        We provide IT project management services to ensure that your IT projects are completed on time, within budget, and to your satisfaction. Our project management services include project planning, resource allocation, and risk management.
+                                        Our IT Consulting Services provide expert advice and guidance to help your business make informed decisions about technology. We will assess your current systems, identify areas for improvement, and provide recommendations to help your business grow.
                                     </p>
                                 </div>
                             </div>
