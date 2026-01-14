@@ -3,12 +3,14 @@ import { useState, useEffect } from 'react';
 function SimpleApp() {
     const s3BaseUrl = "https://navon-tech-images.s3.us-east-1.amazonaws.com";
     const [currentPage, setCurrentPage] = useState('home');
+    const [scrollY, setScrollY] = useState(0);
 
     // Handle hash changes for navigation
     useEffect(() => {
         const handleHashChange = () => {
             const hash = window.location.hash.slice(1) || 'home';
             setCurrentPage(hash);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
         handleHashChange(); // Set initial page
@@ -17,52 +19,231 @@ function SimpleApp() {
         return () => window.removeEventListener('hashchange', handleHashChange);
     }, []);
 
+    // Handle scroll for parallax effects
+    useEffect(() => {
+        const handleScroll = () => setScrollY(window.scrollY);
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
     return (
-        <div style={{ fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif', lineHeight: '1.6' }}>
+        <div style={{ fontFamily: '"Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif', lineHeight: '1.6' }}>
             <style>{`
+                @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+                
+                * {
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                }
+                
+                @keyframes fadeInUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(30px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                
+                @keyframes slideInLeft {
+                    from {
+                        opacity: 0;
+                        transform: translateX(-50px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateX(0);
+                    }
+                }
+                
+                @keyframes slideInRight {
+                    from {
+                        opacity: 0;
+                        transform: translateX(50px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateX(0);
+                    }
+                }
+                
+                @keyframes float {
+                    0%, 100% { transform: translateY(0px); }
+                    50% { transform: translateY(-20px); }
+                }
+                
+                @keyframes floatSlow {
+                    0%, 100% { transform: translateY(0px) translateX(0px); }
+                    50% { transform: translateY(-30px) translateX(10px); }
+                }
+                
+                @keyframes pulse {
+                    0%, 100% { transform: scale(1); opacity: 1; }
+                    50% { transform: scale(1.05); opacity: 0.8; }
+                }
+                
+                @keyframes rotate {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
+                }
+                
+                @keyframes shimmer {
+                    0% { background-position: -1000px 0; }
+                    100% { background-position: 1000px 0; }
+                }
+                
+                @keyframes bounce {
+                    0%, 100% { transform: translateY(0); }
+                    50% { transform: translateY(-10px); }
+                }
+                
+                @keyframes scaleIn {
+                    from {
+                        opacity: 0;
+                        transform: scale(0.8);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: scale(1);
+                    }
+                }
+                
+                .animate-fade-in-up {
+                    animation: fadeInUp 0.8s ease-out forwards;
+                }
+                
+                .animate-fade-in {
+                    animation: fadeIn 1s ease-out forwards;
+                }
+                
+                .animate-slide-in-left {
+                    animation: slideInLeft 0.8s ease-out forwards;
+                }
+                
+                .animate-slide-in-right {
+                    animation: slideInRight 0.8s ease-out forwards;
+                }
+                
+                .animate-float {
+                    animation: float 3s ease-in-out infinite;
+                }
+                
+                .animate-float-slow {
+                    animation: floatSlow 4s ease-in-out infinite;
+                }
+                
+                .animate-pulse {
+                    animation: pulse 2s ease-in-out infinite;
+                }
+                
+                .animate-scale-in {
+                    animation: scaleIn 0.6s ease-out forwards;
+                }
+                
+                .hover-lift {
+                    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                }
+                
+                .hover-lift:hover {
+                    transform: translateY(-8px);
+                    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+                }
+                
+                .hover-scale {
+                    transition: all 0.3s ease;
+                }
+                
+                .hover-scale:hover {
+                    transform: scale(1.05);
+                }
+                
+                .hover-rotate {
+                    transition: all 0.5s ease;
+                }
+                
+                .hover-rotate:hover {
+                    transform: rotate(5deg) scale(1.05);
+                }
+                
+                .gradient-text {
+                    background: linear-gradient(135deg, #d4af37 0%, #f4e5a1 50%, #d4af37 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                    animation: shimmer 3s linear infinite;
+                    background-size: 2000px 100%;
+                }
+                
+                .glass-effect {
+                    background: rgba(255, 255, 255, 0.1);
+                    backdrop-filter: blur(10px);
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                }
+                
                 button:hover, .btn:hover, a[style*="background"]:hover {
                     transform: translateY(-3px);
                     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2), 0 4px 10px rgba(0, 0, 0, 0.15) !important;
                     transition: all 0.3s ease;
                 }
+                
                 button, .btn, a[style*="background"] {
                     transition: all 0.3s ease;
                 }
             `}</style>
             {/* Header */}
             <header style={{
-                background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
+                background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
                 color: 'white',
-                padding: '1rem 2rem',
+                padding: '1.5rem 2rem',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
+                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+                position: 'sticky',
+                top: 0,
+                zIndex: 1000,
+                backdropFilter: 'blur(10px)',
+                borderBottom: '3px solid transparent',
+                borderImage: 'linear-gradient(90deg, transparent 0%, #d4af37 20%, #f4e5a1 50%, #d4af37 80%, transparent 100%) 1',
+                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3), 0 3px 15px rgba(212, 175, 55, 0.3)'
             }}>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center' }} className="animate-slide-in-left">
                     <img
                         src={`${s3BaseUrl}/public/images/logo_double_framed.jpeg`}
                         alt="Logo"
-                        style={{ height: '50px' }}
+                        style={{ height: '70px', transition: 'transform 0.3s ease' }}
                         onError={(e) => { e.target.style.display = 'none'; }}
+                        onMouseOver={(e) => e.target.style.transform = 'scale(1.1)'}
+                        onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
                     />
                 </div>
-                <nav>
-                    <a href="#home" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500' }}>Home</a>
-                    <a href="#about" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500' }}>About</a>
-                    <a href="#capabilities" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500' }}>Services</a>
-                    <a href="#aws" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500' }}>Cloud Services</a>
-                    <a href="#careers" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500' }}>Careers</a>
-                    <a href="#contact" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500' }}>Contact</a>
-                    <a href="#portal" style={{
-                        background: 'white',
-                        color: '#1e3a8a',
-                        padding: '0.7rem 1.5rem',
-                        borderRadius: '6px',
-                        textDecoration: 'none',
-                        fontWeight: '600',
-                        marginLeft: '1rem'
-                    }}>Secure Portal</a>
+                <nav className="animate-slide-in-right">
+                    <a href="#home" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500', transition: 'all 0.3s ease', position: 'relative', display: 'inline-block' }} 
+                       onMouseOver={(e) => { e.target.style.color = '#d4af37'; e.target.style.transform = 'translateY(-3px) scale(1.1)'; }}
+                       onMouseOut={(e) => { e.target.style.color = 'white'; e.target.style.transform = 'translateY(0) scale(1)'; }}>Home</a>
+                    <a href="#about" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500', transition: 'all 0.3s ease', display: 'inline-block' }}
+                       onMouseOver={(e) => { e.target.style.color = '#d4af37'; e.target.style.transform = 'translateY(-3px) scale(1.1)'; }}
+                       onMouseOut={(e) => { e.target.style.color = 'white'; e.target.style.transform = 'translateY(0) scale(1)'; }}>About</a>
+                    <a href="#capabilities" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500', transition: 'all 0.3s ease', display: 'inline-block' }}
+                       onMouseOver={(e) => { e.target.style.color = '#d4af37'; e.target.style.transform = 'translateY(-3px) scale(1.1)'; }}
+                       onMouseOut={(e) => { e.target.style.color = 'white'; e.target.style.transform = 'translateY(0) scale(1)'; }}>Services</a>
+                    <a href="#aws" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500', transition: 'all 0.3s ease', display: 'inline-block' }}
+                       onMouseOver={(e) => { e.target.style.color = '#d4af37'; e.target.style.transform = 'translateY(-3px) scale(1.1)'; }}
+                       onMouseOut={(e) => { e.target.style.color = 'white'; e.target.style.transform = 'translateY(0) scale(1)'; }}>Cloud Services</a>
+                    <a href="#careers" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500', transition: 'all 0.3s ease', display: 'inline-block' }}
+                       onMouseOver={(e) => { e.target.style.color = '#d4af37'; e.target.style.transform = 'translateY(-3px) scale(1.1)'; }}
+                       onMouseOut={(e) => { e.target.style.color = 'white'; e.target.style.transform = 'translateY(0) scale(1)'; }}>Careers</a>
+                    <a href="#contact" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500', transition: 'all 0.3s ease', display: 'inline-block' }}
+                       onMouseOver={(e) => { e.target.style.color = '#d4af37'; e.target.style.transform = 'translateY(-3px) scale(1.1)'; }}
+                       onMouseOut={(e) => { e.target.style.color = 'white'; e.target.style.transform = 'translateY(0) scale(1)'; }}>Contact</a>
                 </nav>
             </header>
 
@@ -71,104 +252,294 @@ function SimpleApp() {
                 <div>
                     {/* Hero Section */}
                     <section style={{
-                        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-                        padding: '4rem 2rem',
+                        background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.80) 50%, rgba(51, 65, 85, 0.85) 100%), url("https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=1920&q=80") center/cover',
+                        padding: '8rem 2rem',
                         textAlign: 'center',
-                        position: 'relative'
+                        position: 'relative',
+                        overflow: 'hidden',
+                        minHeight: '90vh',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
                     }}>
-                        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-                            <h1 style={{
-                                fontSize: '3.5rem',
-                                margin: '0 0 1.5rem 0',
-                                color: '#1e3a8a',
-                                fontWeight: '700'
+                        {/* Animated background elements */}
+                        <div className="animate-float" style={{
+                            position: 'absolute',
+                            top: '10%',
+                            right: '10%',
+                            width: '400px',
+                            height: '400px',
+                            background: 'radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%)',
+                            borderRadius: '50%'
+                        }}></div>
+                        <div className="animate-float-slow" style={{
+                            position: 'absolute',
+                            bottom: '10%',
+                            left: '10%',
+                            width: '300px',
+                            height: '300px',
+                            background: 'radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, transparent 70%)',
+                            borderRadius: '50%'
+                        }}></div>
+                        <div className="animate-pulse" style={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '5%',
+                            width: '200px',
+                            height: '200px',
+                            background: 'radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%)',
+                            borderRadius: '50%'
+                        }}></div>
+                        <div className="animate-float" style={{
+                            position: 'absolute',
+                            top: '20%',
+                            left: '50%',
+                            width: '250px',
+                            height: '250px',
+                            background: 'radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, transparent 70%)',
+                            borderRadius: '50%'
+                        }}></div>
+                        
+                        <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+                            <h1 className="animate-fade-in-up" style={{
+                                fontSize: '4rem',
+                                margin: '0 0 2rem 0',
+                                color: 'white',
+                                fontWeight: '800',
+                                letterSpacing: '-0.02em',
+                                lineHeight: '1.1'
                             }}>
-                                Trusted Government Technology Solutions
+                                Trusted Government <span className="gradient-text">Technology Solutions</span>
                             </h1>
                             
-                            <div 
+                            <div className="animate-fade-in-up"
                                 style={{
-                                backgroundColor: '#f8fafc',
-                                padding: '2rem',
-                                borderRadius: '12px',
-                                margin: '0 auto 2rem auto',
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                padding: '3rem',
+                                borderRadius: '20px',
+                                margin: '0 auto 3rem auto',
                                 maxWidth: '900px',
-                                border: '1px solid #e2e8f0',
-                                boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15), 0 4px 10px rgba(0, 0, 0, 0.1)'
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+                                backdropFilter: 'blur(10px)',
+                                animationDelay: '0.2s',
+                                opacity: 0,
+                                animation: 'fadeInUp 0.8s ease-out 0.2s forwards'
                             }}>
                                 <h2 style={{
-                                    fontSize: '1.8rem',
-                                    color: '#1e3a8a',
+                                    fontSize: '2rem',
+                                    color: '#d4af37',
                                     fontStyle: 'italic',
                                     textAlign: 'center',
-                                    margin: '0 0 1.5rem 0',
+                                    margin: '0 0 2rem 0',
                                     fontWeight: '700'
                                 }}>
                                     Welcome to wiser technology solutions, we take technology higher!
                                 </h2>
                                 
                                 <p style={{
-                                    fontSize: '1.1rem',
-                                    color: '#475569',
-                                    lineHeight: '1.7',
+                                    fontSize: '1.15rem',
+                                    color: '#e2e8f0',
+                                    lineHeight: '1.8',
                                     marginBottom: '1.5rem'
                                 }}>
                                     Navon Technologies is a Service-Disabled Veteran-Owned Small Business and AWS Partner serving both public and private sectors. We provide technical services for development, automation, testing, implementation, and maintenance support for our customers' mission and business for critical applications whether they are on-prem or in the cloud.
                                 </p>
                                 
                                 <p style={{
-                                    fontSize: '1.1rem',
-                                    color: '#475569',
-                                    lineHeight: '1.7',
+                                    fontSize: '1.15rem',
+                                    color: '#cbd5e1',
+                                    lineHeight: '1.8',
                                     margin: '0'
                                 }}>
                                     At Navon Technologies, we started as a small team of IT enthusiasts who wanted to help businesses overcome their technology challenges. We have partnered with AWS (Amazon Web Services) to provide our customers with the best cloud solutions in the industry. This partnership gained us access to over 200 AWS services. We specialize in Migration, Networking, Security, Web Site and App Development.
                                 </p>
                             </div>
                             
-                            <p style={{
-                                fontSize: '1.3rem',
-                                color: '#475569',
+                            <p className="animate-fade-in-up" style={{
+                                fontSize: '1.4rem',
+                                color: '#94a3b8',
                                 maxWidth: '800px',
-                                margin: '0 auto 2rem auto'
+                                margin: '0 auto 3rem auto',
+                                animationDelay: '0.4s',
+                                opacity: 0,
+                                animation: 'fadeInUp 0.8s ease-out 0.4s forwards'
                             }}>
                                 NAVON Technologies delivers mission-critical cloud infrastructure, cybersecurity,
                                 and system engineering solutions to federal agencies and defense contractors.
                             </p>
-                            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                            <div className="animate-fade-in-up" style={{ 
+                                display: 'flex', 
+                                gap: '1.5rem', 
+                                justifyContent: 'center', 
+                                flexWrap: 'wrap',
+                                animationDelay: '0.6s',
+                                opacity: 0,
+                                animation: 'fadeInUp 0.8s ease-out 0.6s forwards'
+                            }}>
                                 <a href={`${s3BaseUrl}/public/images/NAVON_Technologies_Capability_Statement_2026.pdf`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     style={{
-                                        background: '#1e3a8a',
+                                        background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
                                         color: 'white',
                                         border: 'none',
-                                        padding: '1rem 2rem',
+                                        padding: '1.2rem 2.5rem',
                                         fontSize: '1.1rem',
-                                        borderRadius: '8px',
+                                        borderRadius: '12px',
                                         cursor: 'pointer',
                                         fontWeight: '600',
                                         textDecoration: 'none',
-                                        display: 'inline-block'
+                                        display: 'inline-block',
+                                        boxShadow: '0 10px 30px rgba(245, 158, 11, 0.3)',
+                                        transition: 'all 0.3s ease'
                                     }}>
-                                    Download Capability Statement
+                                    📄 Download Capability Statement
                                 </a>
                             </div>
                         </div>
                     </section>
 
+                    {/* Gold Divider */}
+                    <div style={{
+                        height: '2px',
+                        background: 'linear-gradient(90deg, transparent 0%, #d4af37 50%, transparent 100%)',
+                        boxShadow: '0 0 20px rgba(212, 175, 55, 0.4)',
+                        margin: '0'
+                    }}></div>
+
                     {/* Trusted Partners Section */}
-                    <section style={{ padding: '4rem 2rem', background: 'white' }}>
-                        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-                            <h2 style={{
-                                fontSize: '2.5rem',
-                                marginBottom: '3rem',
+                    <section style={{ 
+                        padding: '3rem 2rem', 
+                        background: 'linear-gradient(135deg, #d4af37 0%, #f4e5a1 50%, #d4af37 100%)',
+                        position: 'relative',
+                        overflow: 'hidden'
+                    }}>
+                        {/* Gold diamond pattern background */}
+                        <div style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            backgroundImage: `
+                                repeating-linear-gradient(
+                                    45deg,
+                                    transparent,
+                                    transparent 35px,
+                                    rgba(212, 175, 55, 0.08) 35px,
+                                    rgba(212, 175, 55, 0.08) 36px
+                                ),
+                                repeating-linear-gradient(
+                                    -45deg,
+                                    transparent,
+                                    transparent 35px,
+                                    rgba(212, 175, 55, 0.08) 35px,
+                                    rgba(212, 175, 55, 0.08) 36px
+                                )
+                            `,
+                            opacity: 0.8
+                        }}></div>
+                        
+                        {/* Small gold diamond accents */}
+                        <div style={{
+                            position: 'absolute',
+                            top: '40px',
+                            left: '60px',
+                            width: '30px',
+                            height: '30px',
+                            border: '2px solid rgba(212, 175, 55, 0.4)',
+                            transform: 'rotate(45deg)',
+                            boxShadow: '0 0 15px rgba(212, 175, 55, 0.2)'
+                        }}></div>
+                        <div style={{
+                            position: 'absolute',
+                            top: '60px',
+                            right: '80px',
+                            width: '25px',
+                            height: '25px',
+                            border: '2px solid rgba(212, 175, 55, 0.35)',
+                            transform: 'rotate(45deg)'
+                        }}></div>
+                        <div style={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '100px',
+                            width: '20px',
+                            height: '20px',
+                            border: '2px solid rgba(212, 175, 55, 0.4)',
+                            transform: 'rotate(45deg)'
+                        }}></div>
+                        <div style={{
+                            position: 'absolute',
+                            top: '50%',
+                            right: '120px',
+                            width: '28px',
+                            height: '28px',
+                            border: '2px solid rgba(212, 175, 55, 0.38)',
+                            transform: 'rotate(45deg)',
+                            boxShadow: '0 0 12px rgba(212, 175, 55, 0.2)'
+                        }}></div>
+                        <div style={{
+                            position: 'absolute',
+                            bottom: '60px',
+                            left: '90px',
+                            width: '32px',
+                            height: '32px',
+                            border: '2px solid rgba(212, 175, 55, 0.42)',
+                            transform: 'rotate(45deg)'
+                        }}></div>
+                        <div style={{
+                            position: 'absolute',
+                            bottom: '70px',
+                            right: '70px',
+                            width: '26px',
+                            height: '26px',
+                            border: '2px solid rgba(212, 175, 55, 0.36)',
+                            transform: 'rotate(45deg)',
+                            boxShadow: '0 0 10px rgba(212, 175, 55, 0.18)'
+                        }}></div>
+                        
+                        {/* Gold accent lines */}
+                        <div style={{
+                            position: 'absolute',
+                            top: '25%',
+                            left: 0,
+                            right: 0,
+                            height: '1px',
+                            background: 'linear-gradient(90deg, transparent 0%, rgba(212, 175, 55, 0.25) 50%, transparent 100%)',
+                            boxShadow: '0 0 8px rgba(212, 175, 55, 0.15)'
+                        }}></div>
+                        <div style={{
+                            position: 'absolute',
+                            bottom: '25%',
+                            left: 0,
+                            right: 0,
+                            height: '1px',
+                            background: 'linear-gradient(90deg, transparent 0%, rgba(212, 175, 55, 0.25) 50%, transparent 100%)',
+                            boxShadow: '0 0 8px rgba(212, 175, 55, 0.15)'
+                        }}></div>
+                        
+                        <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+                            <h2 className="animate-fade-in-up" style={{
+                                fontSize: '3rem',
+                                marginBottom: '1rem',
                                 textAlign: 'center',
-                                color: '#1e3a8a',
-                                fontWeight: '600'
+                                color: '#1e293b',
+                                fontWeight: '700'
                             }}>
                                 Trusted Partners
                             </h2>
+                            <p className="animate-fade-in-up" style={{
+                                fontSize: '1.2rem',
+                                color: '#64748b',
+                                textAlign: 'center',
+                                marginBottom: '4rem',
+                                maxWidth: '600px',
+                                margin: '0 auto 4rem auto'
+                            }}>
+                                Collaborating with industry leaders to deliver exceptional solutions
+                            </p>
                             <div style={{
                                 display: 'grid',
                                 gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
@@ -192,26 +563,43 @@ function SimpleApp() {
                                     { file: 'bae_systems.jpeg', name: 'BAE Systems' },
                                     { file: 'versa.jpeg', name: 'Versa' }
                                 ].map((partner, index) => (
-                                    <div key={index} style={{
+                                    <div key={index} className="hover-lift animate-scale-in" style={{
                                         background: 'white',
-                                        padding: '1.5rem',
-                                        borderRadius: '12px',
+                                        padding: '2rem',
+                                        borderRadius: '16px',
                                         textAlign: 'center',
                                         border: '1px solid #e2e8f0',
-                                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-                                        minHeight: '120px',
+                                        boxShadow: '0 4px 15px rgba(0,0,0,0.08)',
+                                        minHeight: '140px',
                                         display: 'flex',
                                         flexDirection: 'column',
                                         justifyContent: 'center',
-                                        alignItems: 'center'
+                                        alignItems: 'center',
+                                        cursor: 'pointer',
+                                        position: 'relative',
+                                        overflow: 'hidden',
+                                        animationDelay: `${index * 0.1}s`,
+                                        opacity: 0
                                     }}>
+                                        <div style={{
+                                            position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            right: 0,
+                                            height: '3px',
+                                            background: 'linear-gradient(90deg, #2563eb 0%, #d4af37 100%)',
+                                            transform: 'scaleX(0)',
+                                            transition: 'transform 0.3s ease'
+                                        }} className="partner-accent"></div>
                                         <img
                                             src={`${s3BaseUrl}/public/images/partners/${partner.file}`}
                                             alt={partner.name}
+                                            className="hover-scale"
                                             style={{
                                                 maxWidth: '100%',
                                                 height: '110px',
-                                                objectFit: 'contain'
+                                                objectFit: 'contain',
+                                                transition: 'all 0.3s ease'
                                             }}
                                             onError={(e) => { 
                                                 e.target.style.display = 'none';
@@ -220,7 +608,7 @@ function SimpleApp() {
                                         />
                                         <div style={{
                                             display: 'none',
-                                            color: '#1e3a8a',
+                                            color: '#1e293b',
                                             fontWeight: '600',
                                             fontSize: '1.1rem'
                                         }}>
@@ -230,109 +618,246 @@ function SimpleApp() {
                                 ))}
                             </div>
                         </div>
+                        <style>{`
+                            .hover-lift:hover .partner-accent {
+                                transform: scaleX(1);
+                            }
+                        `}</style>
                     </section>
                     
+                    {/* Gold Divider */}
+                    <div style={{
+                        height: '2px',
+                        background: 'linear-gradient(90deg, transparent 0%, #d4af37 50%, transparent 100%)',
+                        boxShadow: '0 0 20px rgba(212, 175, 55, 0.4)',
+                        margin: '0'
+                    }}></div>
+                    
                     {/* Additional Home Sections */}
-                    <section style={{ padding: '4rem 2rem', background: 'white' }}>
-                        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                    <section style={{ padding: '6rem 2rem', background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)' }}>
+                        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
                             <div style={{ 
                                 display: 'grid', 
-                                gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', 
-                                gap: '3rem' 
+                                gridTemplateColumns: 'repeat(3, 1fr)', 
+                                gap: '2rem',
+                                '@media (max-width: 1200px)': {
+                                    gridTemplateColumns: '1fr'
+                                }
                             }}>
                                 {/* Satisfaction Guaranteed */}
-                                <div style={{
-                                    backgroundColor: '#f8fafc',
-                                    padding: '2rem',
-                                    borderRadius: '12px',
-                                    border: '1px solid #e2e8f0',
-                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
+                                <div className="hover-lift animate-slide-in-left" style={{
+                                    background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
+                                    padding: '3rem',
+                                    borderRadius: '20px',
+                                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                                    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+                                    position: 'relative',
+                                    overflow: 'hidden',
+                                    display: 'flex',
+                                    flexDirection: 'column'
                                 }}>
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '-50px',
+                                        right: '-50px',
+                                        width: '150px',
+                                        height: '150px',
+                                        background: 'radial-gradient(circle, rgba(245, 158, 11, 0.2) 0%, transparent 70%)',
+                                        borderRadius: '50%'
+                                    }}></div>
+                                    <div className="animate-pulse" style={{
+                                        width: '60px',
+                                        height: '60px',
+                                        background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
+                                        borderRadius: '12px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        marginBottom: '1.5rem',
+                                        boxShadow: '0 8px 20px rgba(212, 175, 55, 0.3)'
+                                    }}>
+                                        <span style={{ fontSize: '2rem' }}>✓</span>
+                                    </div>
                                     <h3 style={{ 
-                                        color: '#1e3a8a', 
+                                        color: 'white', 
                                         marginBottom: '1.5rem', 
-                                        fontSize: '1.5rem',
-                                        fontWeight: '600'
+                                        fontSize: '1.8rem',
+                                        fontWeight: '700'
                                     }}>
                                         Satisfaction Guaranteed
                                     </h3>
                                     <p style={{ 
-                                        color: '#475569', 
-                                        lineHeight: '1.7',
-                                        marginBottom: '1rem'
+                                        color: '#cbd5e1', 
+                                        lineHeight: '1.8',
+                                        marginBottom: '1rem',
+                                        fontSize: '1.05rem',
+                                        flex: 1
                                     }}>
                                         The world of technology can be fast-paced and scary. That's why our goal is to provide an experience that is tailored to your company's needs. No matter the budget, we pride ourselves on providing professional customer service.
                                     </p>
                                     <p style={{ 
-                                        color: '#1e3a8a', 
+                                        color: '#d4af37', 
                                         fontWeight: '600',
-                                        margin: '0'
+                                        marginBottom: '2rem',
+                                        fontSize: '1.1rem'
                                     }}>
                                         We guarantee you will be satisfied with our work.
                                     </p>
+                                    <div style={{ textAlign: 'center' }}>
+                                        <a href="#contact" style={{
+                                            background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
+                                            color: 'white',
+                                            padding: '1rem 2rem',
+                                            borderRadius: '10px',
+                                            textDecoration: 'none',
+                                            fontWeight: '600',
+                                            display: 'inline-block',
+                                            boxShadow: '0 8px 20px rgba(212, 175, 55, 0.3)',
+                                            transition: 'all 0.3s ease'
+                                        }}>
+                                            Contact Us →
+                                        </a>
+                                    </div>
                                 </div>
                                 
                                 {/* Services and Solutions */}
-                                <div style={{
-                                    backgroundColor: '#f8fafc',
-                                    padding: '2rem',
-                                    borderRadius: '12px',
-                                    border: '1px solid #e2e8f0',
-                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
+                                <div className="hover-lift animate-fade-in-up" style={{
+                                    background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
+                                    padding: '3rem',
+                                    borderRadius: '20px',
+                                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                                    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+                                    position: 'relative',
+                                    overflow: 'hidden',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    animationDelay: '0.3s',
+                                    opacity: 0
                                 }}>
+                                    <div className="animate-pulse" style={{
+                                        position: 'absolute',
+                                        top: '-50px',
+                                        right: '-50px',
+                                        width: '150px',
+                                        height: '150px',
+                                        background: 'radial-gradient(circle, rgba(37, 99, 235, 0.2) 0%, transparent 70%)',
+                                        borderRadius: '50%'
+                                    }}></div>
+                                    <div className="animate-pulse" style={{
+                                        width: '60px',
+                                        height: '60px',
+                                        background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                                        borderRadius: '12px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        marginBottom: '1.5rem',
+                                        boxShadow: '0 8px 20px rgba(37, 99, 235, 0.3)'
+                                    }}>
+                                        <span style={{ fontSize: '2rem' }}>⚡</span>
+                                    </div>
                                     <h3 style={{ 
-                                        color: '#1e3a8a', 
+                                        color: 'white', 
                                         marginBottom: '1.5rem', 
-                                        fontSize: '1.5rem',
-                                        fontWeight: '600'
+                                        fontSize: '1.8rem',
+                                        fontWeight: '700'
                                     }}>
                                         Services and Solutions
                                     </h3>
                                     <p style={{ 
-                                        color: '#475569', 
-                                        lineHeight: '1.7',
-                                        marginBottom: '1.5rem'
+                                        color: '#cbd5e1', 
+                                        lineHeight: '1.8',
+                                        marginBottom: '2rem',
+                                        fontSize: '1.05rem',
+                                        flex: 1
                                     }}>
                                         Do you spend most of your IT budget on maintaining your current system? Many companies find that constant maintenance eats into their budget for new technology. By outsourcing your IT management to us, you can focus on what you do best--running your business.
                                     </p>
                                     <div style={{ textAlign: 'center' }}>
                                         <a href="#capabilities" style={{
-                                            background: '#1e3a8a',
+                                            background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
                                             color: 'white',
-                                            padding: '0.75rem 1.5rem',
-                                            borderRadius: '6px',
+                                            padding: '1rem 2rem',
+                                            borderRadius: '10px',
                                             textDecoration: 'none',
-                                            fontWeight: '500',
-                                            display: 'inline-block'
+                                            fontWeight: '600',
+                                            display: 'inline-block',
+                                            boxShadow: '0 8px 20px rgba(212, 175, 55, 0.3)',
+                                            transition: 'all 0.3s ease'
                                         }}>
-                                            See Services
+                                            See Services →
                                         </a>
                                     </div>
                                 </div>
                                 
                                 {/* Technical Experience */}
-                                <div style={{
-                                    backgroundColor: '#f8fafc',
-                                    padding: '2rem',
-                                    borderRadius: '12px',
-                                    border: '1px solid #e2e8f0',
-                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
+                                <div className="hover-lift animate-slide-in-right" style={{
+                                    background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
+                                    padding: '3rem',
+                                    borderRadius: '20px',
+                                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                                    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+                                    position: 'relative',
+                                    overflow: 'hidden',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    animationDelay: '0.6s',
+                                    opacity: 0
                                 }}>
+                                    <div className="animate-pulse" style={{
+                                        position: 'absolute',
+                                        top: '-50px',
+                                        right: '-50px',
+                                        width: '150px',
+                                        height: '150px',
+                                        background: 'radial-gradient(circle, rgba(37, 99, 235, 0.2) 0%, transparent 70%)',
+                                        borderRadius: '50%'
+                                    }}></div>
+                                    <div className="animate-pulse" style={{
+                                        width: '60px',
+                                        height: '60px',
+                                        background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                                        borderRadius: '12px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        marginBottom: '1.5rem',
+                                        boxShadow: '0 8px 20px rgba(37, 99, 235, 0.3)'
+                                    }}>
+                                        <span style={{ fontSize: '2rem' }}>🎯</span>
+                                    </div>
                                     <h3 style={{ 
-                                        color: '#1e3a8a', 
+                                        color: 'white', 
                                         marginBottom: '1.5rem', 
-                                        fontSize: '1.5rem',
-                                        fontWeight: '600'
+                                        fontSize: '1.8rem',
+                                        fontWeight: '700'
                                     }}>
                                         Technical Experience
                                     </h3>
                                     <p style={{ 
-                                        color: '#475569', 
-                                        lineHeight: '1.7',
-                                        margin: '0'
+                                        color: '#cbd5e1', 
+                                        lineHeight: '1.8',
+                                        marginBottom: '2rem',
+                                        fontSize: '1.05rem',
+                                        flex: 1
                                     }}>
                                         Navon employees highly skilled personnel and maintains certifications at the highest level of expertise. We are well-versed in a variety of operating systems, networks, and databases. We have a history with working with complex projects with just about any technology that a business would encounter. We use this expertise to help customers with small to large projects.
                                     </p>
+                                    <div style={{ textAlign: 'center' }}>
+                                        <a href="#about" style={{
+                                            background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
+                                            color: 'white',
+                                            padding: '1rem 2rem',
+                                            borderRadius: '10px',
+                                            textDecoration: 'none',
+                                            fontWeight: '600',
+                                            display: 'inline-block',
+                                            boxShadow: '0 8px 20px rgba(212, 175, 55, 0.3)',
+                                            transition: 'all 0.3s ease'
+                                        }}>
+                                            Learn More →
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -2076,66 +2601,144 @@ function SimpleApp() {
 
             {/* Footer */}
             <footer style={{
-                padding: '1rem',
-                background: '#1e3a8a',
-                color: 'white'
+                padding: '3rem 2rem 1.5rem 2rem',
+                background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+                color: 'white',
+                position: 'relative',
+                overflow: 'hidden'
             }}>
-                <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                {/* Gold accent line at top */}
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: '3px',
+                    background: 'linear-gradient(90deg, transparent 0%, #d4af37 50%, transparent 100%)',
+                    boxShadow: '0 0 20px rgba(212, 175, 55, 0.5)'
+                }}></div>
+                
+                <div style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
                     <div style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'flex-start',
-                        marginBottom: '1.5rem',
-                        flexWrap: 'wrap',
-                        gap: '2rem'
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(3, 1fr)',
+                        gap: '2rem',
+                        marginBottom: '2rem',
+                        paddingBottom: '2rem',
+                        borderBottom: '1px solid rgba(245, 158, 11, 0.2)'
                     }}>
-                        <div style={{ textAlign: 'left' }}>
-                            <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '1.2rem', color: '#e2e8f0' }}>
+                        <div>
+                            <h4 style={{ 
+                                margin: '0 0 0.75rem 0', 
+                                fontSize: '1.3rem', 
+                                color: '#d4af37',
+                                fontWeight: '700',
+                                textShadow: '0 0 10px rgba(212, 175, 55, 0.4)'
+                            }}>
                                 Navon Technologies
                             </h4>
-                            <div style={{ margin: '0', fontSize: '0.9rem', fontStyle: 'italic', color: '#94a3b8' }}>
+                            <div style={{ 
+                                margin: '0 0 1rem 0', 
+                                fontSize: '0.95rem', 
+                                fontStyle: 'italic', 
+                                color: '#cbd5e1',
+                                lineHeight: '1.5'
+                            }}>
                                 <div>A wiser technology solutions,</div>
                                 <div>we take technology higher!</div>
                             </div>
                         </div>
-                        <div style={{ textAlign: 'center', flex: 1 }}>
-                            <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '1.2rem', color: '#e2e8f0' }}>
-                                Contact us
+                        
+                        <div style={{ textAlign: 'center' }}>
+                            <h4 style={{ 
+                                margin: '0 0 0.75rem 0', 
+                                fontSize: '1.1rem', 
+                                color: '#d4af37',
+                                fontWeight: '600',
+                                textShadow: '0 0 8px rgba(212, 175, 55, 0.3)'
+                            }}>
+                                Contact Us
                             </h4>
-                            <p style={{ margin: '0.5rem 0', fontSize: '0.95rem' }}>
+                            <p style={{ margin: '0.5rem 0', fontSize: '0.9rem', color: '#cbd5e1', lineHeight: '1.5', whiteSpace: 'nowrap' }}>
                                 161 Fort Evans Rd NE Suite 210, Leesburg, VA 20176
                             </p>
-                            <p style={{ margin: '0.5rem 0', fontSize: '0.95rem' }}>
-                                Phone: 571-477-2727 &nbsp;&nbsp; Fax: 571-477-2727
+                            <p style={{ margin: '0.5rem 0', fontSize: '0.9rem', color: '#cbd5e1' }}>
+                                Phone: 571-477-2727 | Fax: 571-477-2727
                             </p>
                         </div>
+                        
                         <div style={{ textAlign: 'right' }}>
-                            <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '1.2rem', color: '#e2e8f0' }}>
+                            <h4 style={{ 
+                                margin: '0 0 0.75rem 0', 
+                                fontSize: '1.1rem', 
+                                color: '#d4af37',
+                                fontWeight: '600',
+                                textShadow: '0 0 8px rgba(212, 175, 55, 0.3)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'flex-end',
+                                gap: '0.75rem'
+                            }}>
+                                <a 
+                                    href="#portal" 
+                                    style={{
+                                        fontSize: '1.8rem',
+                                        color: '#d4af37',
+                                        textDecoration: 'none',
+                                        display: 'inline-block',
+                                        transition: 'all 0.4s ease',
+                                        filter: 'drop-shadow(0 0 8px rgba(212, 175, 55, 0.6))',
+                                        cursor: 'pointer'
+                                    }}
+                                    onMouseOver={(e) => {
+                                        e.target.style.transform = 'rotate(45deg) scale(1.2)';
+                                        e.target.style.filter = 'drop-shadow(0 0 15px rgba(212, 175, 55, 0.9))';
+                                    }}
+                                    onMouseOut={(e) => {
+                                        e.target.style.transform = 'rotate(0deg) scale(1)';
+                                        e.target.style.filter = 'drop-shadow(0 0 8px rgba(212, 175, 55, 0.6))';
+                                    }}
+                                    title="Secure Portal"
+                                >
+                                    ⚓
+                                </a>
                                 Compliance & Trust
                             </h4>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', alignItems: 'flex-end' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'flex-end' }}>
                                 <a href="#accessibility" style={{
-                                    color: '#cbd5e0',
+                                    color: '#cbd5e1',
                                     fontSize: '0.9rem',
                                     textDecoration: 'none',
-                                    transition: 'color 0.3s ease'
-                                }}>
+                                    transition: 'all 0.3s ease'
+                                }}
+                                onMouseOver={(e) => e.target.style.color = '#d4af37'}
+                                onMouseOut={(e) => e.target.style.color = '#cbd5e1'}>
                                     Accessibility Statement
                                 </a>
                                 <a href="#security-compliance" style={{
-                                    color: '#cbd5e0',
+                                    color: '#cbd5e1',
                                     fontSize: '0.9rem',
                                     textDecoration: 'none',
-                                    transition: 'color 0.3s ease'
-                                }}>
+                                    transition: 'all 0.3s ease'
+                                }}
+                                onMouseOver={(e) => e.target.style.color = '#d4af37'}
+                                onMouseOut={(e) => e.target.style.color = '#cbd5e1'}>
                                     Security & Compliance
                                 </a>
                             </div>
                         </div>
                     </div>
-                    <div style={{ textAlign: 'center', borderTop: '1px solid white', paddingTop: '1rem' }}>
-                        <p style={{ margin: 0, fontSize: '0.9rem', opacity: '0.8' }}>
-                            Copyright © 2021 Navon Technologies - All Rights Reserved | Secure by Design | Built with AWS.
+                    
+                    <div style={{ 
+                        textAlign: 'center', 
+                        paddingTop: '1rem'
+                    }}>
+                        <p style={{ 
+                            margin: 0, 
+                            fontSize: '0.85rem', 
+                            color: '#94a3b8'
+                        }}>
+                            Copyright © 2021 Navon Technologies - All Rights Reserved | <span style={{ color: '#d4af37' }}>Secure by Design</span> | Built with AWS
                         </p>
                     </div>
                 </div>
