@@ -2611,7 +2611,7 @@ function SimpleApp() {
                                     { icon: '🛡️', title: 'Long-Term Disability - 100% Company Paid', desc: '60% of monthly earnings up to $12,000/month. Benefits begin on 91st day and continue through disability' },
                                     { icon: '📚', title: 'Training & Development', desc: 'Annual training budget, AWS training portal access, tuition assistance, and online learning resources' },
                                     { icon: '💪', title: 'Health & Wellness', desc: 'Health and wellness allowance for gym memberships or fitness reimbursement' },
-                                    { icon: '🔐', title: 'Clearance Support', desc: 'Assistance obtaining security clearances for premium opportunities' }
+                                    { icon: '🎁', title: 'Anniversary Bonuses', desc: 'Bonuses awarded for personal and professional anniversaries throughout the year' }
                                 ].map((benefit, index) => (
                                     <div key={index} className="hover-lift" style={{
                                         background: 'rgba(255, 255, 255, 0.05)',
