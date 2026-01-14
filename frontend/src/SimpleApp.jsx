@@ -1757,6 +1757,36 @@ function SimpleApp() {
                                         </div>
                                     </div>
                                 </div>
+                                <div style={{
+                                    background: '#f8fafc',
+                                    padding: '1rem',
+                                    borderRadius: '6px',
+                                    border: '1px solid #e2e8f0',
+                                    marginBottom: '1rem'
+                                }}>
+                                    <label style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        cursor: 'pointer',
+                                        fontSize: '0.9rem',
+                                        color: '#475569'
+                                    }}>
+                                        <input
+                                            type="checkbox"
+                                            defaultChecked={true}
+                                            style={{
+                                                width: '18px',
+                                                height: '18px',
+                                                marginRight: '0.75rem',
+                                                cursor: 'pointer',
+                                                accentColor: '#1e3a8a'
+                                            }}
+                                        />
+                                        <span style={{ fontWeight: '500' }}>
+                                            Publish my information to the directory
+                                        </span>
+                                    </label>
+                                </div>
                                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                                     <button style={{
                                         background: '#1e3a8a',
@@ -1908,32 +1938,25 @@ function SimpleApp() {
                                 <div style={{ marginBottom: '1.5rem' }}>
                                     {[
                                         {
-                                            name: 'Project Alpha - Technical Specs',
-                                            type: 'PDF',
-                                            classification: 'Secret',
-                                            modified: '2 hours ago',
-                                            size: '2.4 MB'
-                                        },
-                                        {
-                                            name: 'Security Compliance Report Q1',
-                                            type: 'DOCX',
-                                            classification: 'Confidential',
-                                            modified: '1 day ago',
-                                            size: '856 KB'
-                                        },
-                                        {
-                                            name: 'AWS Architecture Diagrams',
-                                            type: 'ZIP',
-                                            classification: 'Internal',
-                                            modified: '3 days ago',
-                                            size: '15.2 MB'
-                                        },
-                                        {
                                             name: 'Employee Handbook 2026',
                                             type: 'PDF',
                                             classification: 'Unclassified',
                                             modified: '1 week ago',
                                             size: '1.8 MB'
+                                        },
+                                        {
+                                            name: 'Benefits Overview 2026',
+                                            type: 'PDF',
+                                            classification: 'Unclassified',
+                                            modified: '2 weeks ago',
+                                            size: '950 KB'
+                                        },
+                                        {
+                                            name: 'Annual Review Survey',
+                                            type: 'PDF',
+                                            classification: 'Unclassified',
+                                            modified: '3 days ago',
+                                            size: '425 KB'
                                         }
                                     ].map((doc, index) => (
                                         <div key={index} style={{
@@ -1960,22 +1983,6 @@ function SimpleApp() {
                                                 </div>
                                             </div>
                                             <div style={{ textAlign: 'right', marginLeft: '1rem' }}>
-                                                <span style={{
-                                                    background: doc.classification === 'Secret' ? '#fecaca' :
-                                                        doc.classification === 'Confidential' ? '#fed7aa' :
-                                                            doc.classification === 'Internal' ? '#fef3c7' : '#e0f2fe',
-                                                    color: doc.classification === 'Secret' ? '#991b1b' :
-                                                        doc.classification === 'Confidential' ? '#9a3412' :
-                                                            doc.classification === 'Internal' ? '#92400e' : '#0369a1',
-                                                    padding: '0.25rem 0.5rem',
-                                                    borderRadius: '12px',
-                                                    fontSize: '0.7rem',
-                                                    fontWeight: '600',
-                                                    display: 'block',
-                                                    marginBottom: '0.25rem'
-                                                }}>
-                                                    {doc.classification}
-                                                </span>
                                                 <button style={{
                                                     background: 'transparent',
                                                     color: '#1e3a8a',
