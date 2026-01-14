@@ -1120,31 +1120,8 @@ function SimpleApp() {
                         </section>
 
                         {/* Certifications Section */}
-                        <section style={{ 
-                            padding: '5rem 2rem', 
-                            background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.50) 0%, rgba(30, 41, 59, 0.45) 50%, rgba(51, 65, 85, 0.50) 100%), url("https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80") center/cover',
-                            position: 'relative',
-                            overflow: 'hidden'
-                        }}>
-                            {/* Diagonal Gold Lines Background */}
-                            <div style={{
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                right: 0,
-                                bottom: 0,
-                                background: `repeating-linear-gradient(
-                                    45deg,
-                                    transparent,
-                                    transparent 80px,
-                                    rgba(212, 175, 55, 0.15) 80px,
-                                    rgba(212, 175, 55, 0.15) 82px
-                                )`,
-                                pointerEvents: 'none',
-                                zIndex: 0
-                            }}></div>
-                            
-                            <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+                        <section style={{ padding: '5rem 2rem', background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)' }}>
+                            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
                                 <h3 className="animate-fade-in-up" style={{
                                     fontSize: '2.5rem',
                                     marginBottom: '3rem',
@@ -1443,7 +1420,7 @@ function SimpleApp() {
                                 },
                                 {
                                     title: 'Artificial Intelligence & Machine Learning',
-                                    image: 'AI_and_Machine_Learning.jpeg',
+                                    image: 'AI_Machine_Learning.jpeg',
                                     description: 'Advanced AI/ML solutions for data analysis, automation, and intelligent decision-making systems.'
                                 }
                             ].map((capability, index) => {
@@ -1507,44 +1484,20 @@ function SimpleApp() {
                 </section>
 
                         {/* Professional IT Services Section */}
-                        <section style={{ 
-                            padding: '5rem 2rem', 
-                            background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.50) 0%, rgba(30, 41, 59, 0.45) 50%, rgba(51, 65, 85, 0.50) 100%), url("https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80") center/cover',
-                            position: 'relative',
-                            overflow: 'hidden'
-                        }}>
-                            {/* Diagonal Gold Lines Background */}
-                            <div style={{
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                right: 0,
-                                bottom: 0,
-                                background: `repeating-linear-gradient(
-                                    45deg,
-                                    transparent,
-                                    transparent 80px,
-                                    rgba(212, 175, 55, 0.15) 80px,
-                                    rgba(212, 175, 55, 0.15) 82px
-                                )`,
-                                pointerEvents: 'none',
-                                zIndex: 0
-                            }}></div>
-                            
-                            <div style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+                        <section style={{ padding: '5rem 2rem', background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)' }}>
+                            <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
                                 <h2 className="animate-fade-in-up" style={{
                                     fontSize: '2.5rem',
                                     marginBottom: '1.5rem',
                                     textAlign: 'center',
-                                    color: '#d4af37',
-                                    fontWeight: '800',
-                                    textShadow: '0 0 20px rgba(212, 175, 55, 0.4)'
+                                    color: '#1e293b',
+                                    fontWeight: '800'
                                 }}>
                                     Boost Your Project with <span style={{ color: '#d4af37' }}>Navon Technologies IT Services</span>
                                 </h2>
                                 <p className="animate-fade-in-up" style={{
                                     fontSize: '1.1rem',
-                                    color: '#cbd5e1',
+                                    color: '#64748b',
                                     textAlign: 'center',
                                     marginBottom: '4rem',
                                     maxWidth: '800px',
@@ -1563,10 +1516,10 @@ function SimpleApp() {
                                 }}>
                                     {/* Custom Software Development */}
                                     <div className="hover-lift animate-slide-in-left" style={{
-                                        background: '#ffffff',
+                                        background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%)',
                                         padding: '2.5rem',
                                         borderRadius: '20px',
-                                        border: '2px solid #d4af37',
+                                        border: '2px solid rgba(212, 175, 55, 0.3)',
                                         boxShadow: '0 10px 40px rgba(212, 175, 55, 0.15)'
                                     }}>
                                         <div style={{
@@ -1602,10 +1555,10 @@ function SimpleApp() {
 
                                     {/* Hardware Procurement and Installation */}
                                     <div className="hover-lift animate-fade-in-up" style={{
-                                        background: '#ffffff',
+                                        background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%)',
                                         padding: '2.5rem',
                                         borderRadius: '20px',
-                                        border: '2px solid #d4af37',
+                                        border: '2px solid rgba(212, 175, 55, 0.3)',
                                         boxShadow: '0 10px 40px rgba(212, 175, 55, 0.15)',
                                         animationDelay: '0.2s',
                                         opacity: 0
@@ -1643,10 +1596,10 @@ function SimpleApp() {
 
                                 {/* IT Training and Support */}
                                 <div className="hover-lift animate-slide-in-right" style={{
-                                    background: '#ffffff',
+                                    background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%)',
                                     padding: '2.5rem',
                                     borderRadius: '20px',
-                                    border: '2px solid #d4af37',
+                                    border: '2px solid rgba(212, 175, 55, 0.3)',
                                     boxShadow: '0 10px 40px rgba(212, 175, 55, 0.15)',
                                     animationDelay: '0.4s',
                                     opacity: 0
@@ -1684,10 +1637,10 @@ function SimpleApp() {
 
                                 {/* Website Design and Development */}
                                 <div className="hover-lift animate-slide-in-left" style={{
-                                    background: '#ffffff',
+                                    background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%)',
                                     padding: '2.5rem',
                                     borderRadius: '20px',
-                                    border: '2px solid #d4af37',
+                                    border: '2px solid rgba(212, 175, 55, 0.3)',
                                     boxShadow: '0 10px 40px rgba(212, 175, 55, 0.15)',
                                     animationDelay: '0.6s',
                                     opacity: 0
@@ -1725,10 +1678,10 @@ function SimpleApp() {
 
                                 {/* Cloud Migration */}
                                 <div className="hover-lift animate-fade-in-up" style={{
-                                    background: '#ffffff',
+                                    background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%)',
                                     padding: '2.5rem',
                                     borderRadius: '20px',
-                                    border: '2px solid #d4af37',
+                                    border: '2px solid rgba(212, 175, 55, 0.3)',
                                     boxShadow: '0 10px 40px rgba(212, 175, 55, 0.15)',
                                     animationDelay: '0.8s',
                                     opacity: 0
@@ -1766,10 +1719,10 @@ function SimpleApp() {
 
                                 {/* IT Project Management */}
                                 <div className="hover-lift animate-slide-in-right" style={{
-                                    background: '#ffffff',
+                                    background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%)',
                                     padding: '2.5rem',
                                     borderRadius: '20px',
-                                    border: '2px solid #d4af37',
+                                    border: '2px solid rgba(212, 175, 55, 0.3)',
                                     boxShadow: '0 10px 40px rgba(212, 175, 55, 0.15)',
                                     animationDelay: '1s',
                                     opacity: 0
@@ -2046,31 +1999,8 @@ function SimpleApp() {
                 </section>
 
                         {/* AWS Managed IT Services Section */}
-                        <section style={{ 
-                            padding: '5rem 2rem', 
-                            background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.50) 0%, rgba(30, 41, 59, 0.45) 50%, rgba(51, 65, 85, 0.50) 100%), url("https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1920&q=80") center/cover',
-                            position: 'relative',
-                            overflow: 'hidden'
-                        }}>
-                            {/* Diagonal Gold Lines Background */}
-                            <div style={{
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                right: 0,
-                                bottom: 0,
-                                background: `repeating-linear-gradient(
-                                    45deg,
-                                    transparent,
-                                    transparent 80px,
-                                    rgba(212, 175, 55, 0.15) 80px,
-                                    rgba(212, 175, 55, 0.15) 82px
-                                )`,
-                                pointerEvents: 'none',
-                                zIndex: 0
-                            }}></div>
-                            
-                            <div style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+                        <section style={{ padding: '5rem 2rem', background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 100%)' }}>
+                            <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
                                 <h2 className="animate-fade-in-up" style={{
                                     fontSize: '2.5rem',
                                     marginBottom: '3rem',
@@ -2327,7 +2257,7 @@ function SimpleApp() {
                                             margin: '0',
                                             fontSize: '1.05rem'
                                         }}>
-                                            Our IT Consulting Services provide expert guidance and support for your business technology needs. We will assess your current IT infrastructure, recommend improvements, and help you implement solutions that drive business growth.
+                                            Our IT Consulting Services provide expert guidance and advice for your business technology needs. We will assess your current IT infrastructure, identify areas for improvement, and provide recommendations to help your business succeed.
                                         </p>
                                     </div>
                                 </div>
@@ -2589,7 +2519,7 @@ function SimpleApp() {
                                     { icon: '💰', title: '401k Matching & Profit Sharing', desc: '3% safe-harbor match with immediate vesting after 30 days. Traditional pre-tax and Roth options. Annual profit-sharing contributions' },
                                     { icon: '🏥', title: 'Medical Insurance - 100% Company Paid', desc: 'Anthem Gold PPO/HSA and Platinum PPO plans. Coverage for employee, spouse/domestic partner, and children up to age 26' },
                                     { icon: '🦷', title: 'Dental Insurance - 100% Company Paid', desc: 'Essential Choice Classic plan with $1,500 annual maximum. Anthem Dental network' },
-                                    { icon: '👀', title: 'Vision Insurance - 100% Company Paid', desc: 'Blue View Vision Plan with $10 exam copay, $130 frame allowance, and contact lens benefit' },
+                                    { icon: '�', title: 'Vision Insurance - 100% Company Paid', descc: 'Blue View Vision Plan with $10 exam copay, $130 frame allowance, and contact lens benefit' },
                                     { icon: '💼', title: 'Group Life & AD&D - 100% Company Paid', desc: 'Life insurance equal to salary (doubles for accidental death). Amounts over $50K require EOI form' },
                                     { icon: '🏥', title: 'Short-Term Disability - 100% Company Paid', desc: '60% of weekly earnings up to $2,500/week. Benefits begin 1st day after accident or 8th day for illness, up to 13 weeks' },
                                     { icon: '🛡️', title: 'Long-Term Disability - 100% Company Paid', desc: '60% of monthly earnings up to $12,000/month. Benefits begin on 91st day and continue through disability' },
@@ -2739,24 +2669,70 @@ function SimpleApp() {
             {currentPage === 'contact' && (
                 <section style={{
                     padding: '4rem 2rem',
-                    background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.50) 0%, rgba(30, 41, 59, 0.45) 50%, rgba(51, 65, 85, 0.50) 100%), url("https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1920&q=80") center/cover',
+                    background: 'linear-gradient(135deg, #f8fafc 0%, #e0e7ef 50%, #f8fafc 100%)',
                     position: 'relative',
                     overflow: 'hidden'
                 }}>
-                    {/* Diagonal Gold Lines Background */}
+                    {/* Diagonal Gold Lines Background - Multiple Directions */}
                     <div style={{
                         position: 'absolute',
                         top: 0,
                         left: 0,
                         right: 0,
                         bottom: 0,
-                        background: `repeating-linear-gradient(
-                            45deg,
-                            transparent,
-                            transparent 80px,
-                            rgba(212, 175, 55, 0.15) 80px,
-                            rgba(212, 175, 55, 0.15) 82px
-                        )`,
+                        background: `
+                            repeating-linear-gradient(
+                                45deg,
+                                transparent,
+                                transparent 200px,
+                                rgba(212, 175, 55, 0.3) 200px,
+                                rgba(212, 175, 55, 0.3) 206px,
+                                transparent 206px,
+                                transparent 400px
+                            ),
+                            repeating-linear-gradient(
+                                -45deg,
+                                transparent,
+                                transparent 250px,
+                                rgba(212, 175, 55, 0.2) 250px,
+                                rgba(212, 175, 55, 0.2) 256px,
+                                transparent 256px,
+                                transparent 500px
+                            ),
+                            repeating-linear-gradient(
+                                135deg,
+                                transparent,
+                                transparent 300px,
+                                rgba(212, 175, 55, 0.15) 300px,
+                                rgba(212, 175, 55, 0.15) 305px,
+                                transparent 305px,
+                                transparent 600px
+                            )
+                        `,
+                        pointerEvents: 'none',
+                        zIndex: 0
+                    }}></div>
+
+                    {/* Subtle Dark Blue Accent Areas with Float Animation */}
+                    <div className="animate-float-slow" style={{
+                        position: 'absolute',
+                        top: '10%',
+                        left: '5%',
+                        width: '300px',
+                        height: '300px',
+                        background: 'radial-gradient(circle, rgba(15, 23, 42, 0.08) 0%, transparent 70%)',
+                        borderRadius: '50%',
+                        pointerEvents: 'none',
+                        zIndex: 0
+                    }}></div>
+                    <div className="animate-float" style={{
+                        position: 'absolute',
+                        bottom: '15%',
+                        right: '10%',
+                        width: '400px',
+                        height: '400px',
+                        background: 'radial-gradient(circle, rgba(15, 23, 42, 0.06) 0%, transparent 70%)',
+                        borderRadius: '50%',
                         pointerEvents: 'none',
                         zIndex: 0
                     }}></div>
@@ -2767,8 +2743,7 @@ function SimpleApp() {
                             marginBottom: '2rem',
                             textAlign: 'center',
                             fontWeight: '800',
-                            color: '#d4af37',
-                            textShadow: '0 0 20px rgba(212, 175, 55, 0.4)'
+                            color: '#0f172a'
                         }}>
                             Ready to Secure Your Mission?
                         </h2>
@@ -2780,11 +2755,11 @@ function SimpleApp() {
                             <div className="hover-lift animate-scale-in" style={{ 
                                 textAlign: 'center', 
                                 maxWidth: '600px',
-                                background: '#f5f5dc',
+                                background: 'white',
                                 padding: '2.5rem',
-                                borderRadius: '12px',
-                                border: '2px solid #d4af37',
-                                boxShadow: '0 4px 15px rgba(212, 175, 55, 0.15)',
+                                borderRadius: '20px',
+                                border: '3px solid #d4af37',
+                                boxShadow: '0 10px 40px rgba(212, 175, 55, 0.3)',
                                 animationDelay: '0.2s',
                                 opacity: 0
                             }}>
@@ -2817,36 +2792,46 @@ function SimpleApp() {
                                     textDecoration: 'none',
                                     fontWeight: '700',
                                     display: 'inline-block',
+                                    marginRight: '1rem',
                                     fontSize: '1rem',
                                     boxShadow: '0 4px 15px rgba(212, 175, 55, 0.4)',
                                     transition: 'all 0.3s ease'
                                 }}>
                                 Download Capability Statement
                             </a>
+                            <button className="hover-lift" style={{
+                                background: 'white',
+                                color: '#0f172a',
+                                border: '3px solid #d4af37',
+                                padding: '1rem 2rem',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                fontWeight: '700',
+                                fontSize: '1rem',
+                                transition: 'all 0.3s ease'
+                            }}>
+                                Request Security Briefing
+                            </button>
                         </div>
                         
                         {/* Social Media Section */}
-                        <div style={{ 
+                        <div className="hover-lift animate-slide-in-top" style={{ 
                             textAlign: 'center', 
-                            marginTop: '4rem',
-                            background: '#f5f5dc',
-                            padding: '2rem 1.5rem',
-                            borderRadius: '12px',
-                            border: '2px solid #d4af37',
-                            boxShadow: '0 4px 15px rgba(212, 175, 55, 0.15)',
-                            maxWidth: '700px',
-                            margin: '4rem auto 0 auto'
+                            marginTop: '3rem',
+                            background: 'white',
+                            padding: '2rem',
+                            borderRadius: '20px',
+                            border: '3px solid #d4af37',
+                            boxShadow: '0 10px 40px rgba(212, 175, 55, 0.3)',
+                            animationDelay: '0.6s',
+                            opacity: 0
                         }}>
-                            <h3 style={{ marginBottom: '0.75rem', fontSize: '1.5rem', fontWeight: '800', color: '#0f172a' }}>Stay Connected</h3>
-                            <p style={{ marginBottom: '2rem', fontSize: '1rem', color: '#1e293b' }}>
-                                Follow us for the latest updates, insights, and opportunities
-                            </p>
-                            <div style={{ display: 'flex', gap: '2.5rem', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' }}>
-                                <a href="https://linkedin.com/company/navon-technologies" target="_blank" rel="noopener noreferrer" className="hover-lift" style={{
+                            <h3 style={{ marginBottom: '1.5rem', fontSize: '1.5rem', fontWeight: '800', color: '#0f172a' }}>Connect With Us</h3>
+                            <div style={{ display: 'flex', gap: '2rem', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' }}>
+                                <a href="https://facebook.com/navontechnologies" target="_blank" rel="noopener noreferrer" style={{
                                     color: '#0f172a',
                                     textDecoration: 'none',
                                     display: 'flex',
-                                    flexDirection: 'column',
                                     alignItems: 'center',
                                     gap: '0.5rem',
                                     fontSize: '1.1rem',
@@ -2855,23 +2840,19 @@ function SimpleApp() {
                                     transform: 'translateY(0)'
                                 }}
                                 onMouseEnter={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(-10px)';
+                                    e.currentTarget.style.transform = 'translateY(-5px)';
                                     e.currentTarget.style.color = '#d4af37';
                                 }}
                                 onMouseLeave={(e) => {
                                     e.currentTarget.style.transform = 'translateY(0)';
                                     e.currentTarget.style.color = '#0f172a';
                                 }}>
-                                    <svg style={{ width: '4rem', height: '4rem' }} viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                                    </svg>
-                                    <span>LinkedIn</span>
+                                    📘 Facebook
                                 </a>
-                                <a href="https://facebook.com/navontechnologies" target="_blank" rel="noopener noreferrer" className="hover-lift" style={{
+                                <a href="https://instagram.com/navontechnologies" target="_blank" rel="noopener noreferrer" style={{
                                     color: '#0f172a',
                                     textDecoration: 'none',
                                     display: 'flex',
-                                    flexDirection: 'column',
                                     alignItems: 'center',
                                     gap: '0.5rem',
                                     fontSize: '1.1rem',
@@ -2880,23 +2861,19 @@ function SimpleApp() {
                                     transform: 'translateY(0)'
                                 }}
                                 onMouseEnter={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(-10px)';
+                                    e.currentTarget.style.transform = 'translateY(-5px)';
                                     e.currentTarget.style.color = '#d4af37';
                                 }}
                                 onMouseLeave={(e) => {
                                     e.currentTarget.style.transform = 'translateY(0)';
                                     e.currentTarget.style.color = '#0f172a';
                                 }}>
-                                    <svg style={{ width: '4rem', height: '4rem' }} viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                                    </svg>
-                                    <span>Facebook</span>
+                                    📷 Instagram
                                 </a>
-                                <a href="https://instagram.com/navontechnologies" target="_blank" rel="noopener noreferrer" className="hover-lift" style={{
+                                <a href="https://linkedin.com/company/navon-technologies" target="_blank" rel="noopener noreferrer" style={{
                                     color: '#0f172a',
                                     textDecoration: 'none',
                                     display: 'flex',
-                                    flexDirection: 'column',
                                     alignItems: 'center',
                                     gap: '0.5rem',
                                     fontSize: '1.1rem',
@@ -2905,17 +2882,14 @@ function SimpleApp() {
                                     transform: 'translateY(0)'
                                 }}
                                 onMouseEnter={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(-10px)';
+                                    e.currentTarget.style.transform = 'translateY(-5px)';
                                     e.currentTarget.style.color = '#d4af37';
                                 }}
                                 onMouseLeave={(e) => {
                                     e.currentTarget.style.transform = 'translateY(0)';
                                     e.currentTarget.style.color = '#0f172a';
                                 }}>
-                                    <svg style={{ width: '4rem', height: '4rem' }} viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                                    </svg>
-                                    <span>Instagram</span>
+                                    💼 LinkedIn
                                 </a>
                             </div>
                         </div>
