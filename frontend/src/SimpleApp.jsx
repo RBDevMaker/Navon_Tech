@@ -116,6 +116,39 @@ function SimpleApp() {
                     }
                 }
                 
+                @keyframes slideInFromLeft {
+                    from {
+                        opacity: 0;
+                        transform: translateX(-100%);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateX(0);
+                    }
+                }
+                
+                @keyframes slideInFromRight {
+                    from {
+                        opacity: 0;
+                        transform: translateX(100%);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateX(0);
+                    }
+                }
+                
+                @keyframes slideInFromTop {
+                    from {
+                        opacity: 0;
+                        transform: translateY(-100%);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                
                 .animate-fade-in-up {
                     animation: fadeInUp 0.8s ease-out forwards;
                 }
@@ -148,13 +181,25 @@ function SimpleApp() {
                     animation: scaleIn 0.6s ease-out forwards;
                 }
                 
+                .animate-image-slide-left {
+                    animation: slideInFromLeft 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+                }
+                
+                .animate-image-slide-right {
+                    animation: slideInFromRight 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+                }
+                
+                .animate-image-slide-top {
+                    animation: slideInFromTop 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+                }
+                
                 .hover-lift {
                     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                 }
                 
                 .hover-lift:hover {
-                    transform: translateY(-8px);
-                    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+                    transform: translateY(-12px) scale(1.02);
+                    box-shadow: 0 25px 50px rgba(212, 175, 55, 0.3) !important;
                 }
                 
                 .hover-scale {
@@ -162,7 +207,7 @@ function SimpleApp() {
                 }
                 
                 .hover-scale:hover {
-                    transform: scale(1.05);
+                    transform: scale(1.1);
                 }
                 
                 .hover-rotate {
@@ -410,139 +455,48 @@ function SimpleApp() {
 
                     {/* Trusted Partners Section */}
                     <section style={{ 
-                        padding: '3rem 2rem', 
-                        background: 'linear-gradient(135deg, #d4af37 0%, #f4e5a1 50%, #d4af37 100%)',
+                        padding: '5rem 2rem', 
+                        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
                         position: 'relative',
                         overflow: 'hidden'
                     }}>
-                        {/* Gold diamond pattern background */}
-                        <div style={{
+                        <div className="animate-pulse" style={{
                             position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            backgroundImage: `
-                                repeating-linear-gradient(
-                                    45deg,
-                                    transparent,
-                                    transparent 35px,
-                                    rgba(212, 175, 55, 0.08) 35px,
-                                    rgba(212, 175, 55, 0.08) 36px
-                                ),
-                                repeating-linear-gradient(
-                                    -45deg,
-                                    transparent,
-                                    transparent 35px,
-                                    rgba(212, 175, 55, 0.08) 35px,
-                                    rgba(212, 175, 55, 0.08) 36px
-                                )
-                            `,
-                            opacity: 0.8
+                            top: '20%',
+                            right: '10%',
+                            width: '300px',
+                            height: '300px',
+                            background: 'radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%)',
+                            borderRadius: '50%'
                         }}></div>
                         
-                        {/* Small gold diamond accents */}
-                        <div style={{
-                            position: 'absolute',
-                            top: '40px',
-                            left: '60px',
-                            width: '30px',
-                            height: '30px',
-                            border: '2px solid rgba(212, 175, 55, 0.4)',
-                            transform: 'rotate(45deg)',
-                            boxShadow: '0 0 15px rgba(212, 175, 55, 0.2)'
-                        }}></div>
-                        <div style={{
-                            position: 'absolute',
-                            top: '60px',
-                            right: '80px',
-                            width: '25px',
-                            height: '25px',
-                            border: '2px solid rgba(212, 175, 55, 0.35)',
-                            transform: 'rotate(45deg)'
-                        }}></div>
-                        <div style={{
-                            position: 'absolute',
-                            top: '50%',
-                            left: '100px',
-                            width: '20px',
-                            height: '20px',
-                            border: '2px solid rgba(212, 175, 55, 0.4)',
-                            transform: 'rotate(45deg)'
-                        }}></div>
-                        <div style={{
-                            position: 'absolute',
-                            top: '50%',
-                            right: '120px',
-                            width: '28px',
-                            height: '28px',
-                            border: '2px solid rgba(212, 175, 55, 0.38)',
-                            transform: 'rotate(45deg)',
-                            boxShadow: '0 0 12px rgba(212, 175, 55, 0.2)'
-                        }}></div>
-                        <div style={{
-                            position: 'absolute',
-                            bottom: '60px',
-                            left: '90px',
-                            width: '32px',
-                            height: '32px',
-                            border: '2px solid rgba(212, 175, 55, 0.42)',
-                            transform: 'rotate(45deg)'
-                        }}></div>
-                        <div style={{
-                            position: 'absolute',
-                            bottom: '70px',
-                            right: '70px',
-                            width: '26px',
-                            height: '26px',
-                            border: '2px solid rgba(212, 175, 55, 0.36)',
-                            transform: 'rotate(45deg)',
-                            boxShadow: '0 0 10px rgba(212, 175, 55, 0.18)'
-                        }}></div>
-                        
-                        {/* Gold accent lines */}
-                        <div style={{
-                            position: 'absolute',
-                            top: '25%',
-                            left: 0,
-                            right: 0,
-                            height: '1px',
-                            background: 'linear-gradient(90deg, transparent 0%, rgba(212, 175, 55, 0.25) 50%, transparent 100%)',
-                            boxShadow: '0 0 8px rgba(212, 175, 55, 0.15)'
-                        }}></div>
-                        <div style={{
-                            position: 'absolute',
-                            bottom: '25%',
-                            left: 0,
-                            right: 0,
-                            height: '1px',
-                            background: 'linear-gradient(90deg, transparent 0%, rgba(212, 175, 55, 0.25) 50%, transparent 100%)',
-                            boxShadow: '0 0 8px rgba(212, 175, 55, 0.15)'
-                        }}></div>
-                        
-                        <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+                        <div style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
                             <h2 className="animate-fade-in-up" style={{
-                                fontSize: '3rem',
+                                fontSize: '2.5rem',
                                 marginBottom: '1rem',
                                 textAlign: 'center',
-                                color: '#1e293b',
-                                fontWeight: '700'
+                                color: '#d4af37',
+                                fontWeight: '800',
+                                textShadow: '0 0 20px rgba(212, 175, 55, 0.4)'
                             }}>
                                 Trusted Partners
                             </h2>
                             <p className="animate-fade-in-up" style={{
                                 fontSize: '1.2rem',
-                                color: '#64748b',
+                                color: '#cbd5e1',
                                 textAlign: 'center',
                                 marginBottom: '4rem',
                                 maxWidth: '600px',
-                                margin: '0 auto 4rem auto'
+                                margin: '0 auto 4rem auto',
+                                animationDelay: '0.2s',
+                                opacity: 0,
+                                animation: 'fadeInUp 0.8s ease-out 0.2s forwards'
                             }}>
                                 Collaborating with industry leaders to deliver exceptional solutions
                             </p>
                             <div style={{
                                 display: 'grid',
-                                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
                                 gap: '2rem',
                                 alignItems: 'center'
                             }}>
@@ -564,13 +518,13 @@ function SimpleApp() {
                                     { file: 'versa.jpeg', name: 'Versa' }
                                 ].map((partner, index) => (
                                     <div key={index} className="hover-lift animate-scale-in" style={{
-                                        background: 'white',
-                                        padding: '2rem',
-                                        borderRadius: '16px',
+                                        background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
+                                        padding: '2.5rem',
+                                        borderRadius: '20px',
                                         textAlign: 'center',
-                                        border: '1px solid #e2e8f0',
-                                        boxShadow: '0 4px 15px rgba(0,0,0,0.08)',
-                                        minHeight: '140px',
+                                        border: '2px solid #d4af37',
+                                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.2)',
+                                        minHeight: '180px',
                                         display: 'flex',
                                         flexDirection: 'column',
                                         justifyContent: 'center',
@@ -608,8 +562,8 @@ function SimpleApp() {
                                         />
                                         <div style={{
                                             display: 'none',
-                                            color: '#1e293b',
-                                            fontWeight: '600',
+                                            color: '#d4af37',
+                                            fontWeight: '700',
                                             fontSize: '1.1rem'
                                         }}>
                                             {partner.name}
@@ -867,188 +821,309 @@ function SimpleApp() {
 
             {/* ABOUT PAGE */}
             {currentPage === 'about' && (
-                <section style={{ padding: '4rem 2rem', background: '#f8fafc' }}>
-                    <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-                        <h2 style={{
-                            fontSize: '2.5rem',
-                            marginBottom: '3rem',
-                            textAlign: 'center',
-                            color: '#1e3a8a',
-                            fontWeight: '600'
-                        }}>
-                            About NAVON Technologies
-                        </h2>
+                <div>
+                    {/* Hero Section */}
+                    <section style={{
+                        background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(30, 41, 59, 0.88) 50%, rgba(51, 65, 85, 0.92) 100%), url("https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=80") center/cover',
+                        padding: '6rem 2rem 4rem 2rem',
+                        textAlign: 'center',
+                        position: 'relative',
+                        overflow: 'hidden'
+                    }}>
+                        <div className="animate-pulse" style={{
+                            position: 'absolute',
+                            top: '20%',
+                            right: '10%',
+                            width: '300px',
+                            height: '300px',
+                            background: 'radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%)',
+                            borderRadius: '50%'
+                        }}></div>
                         
-                        <div style={{
-                            backgroundColor: '#f8fafc',
-                            padding: '2rem',
-                            borderRadius: '8px',
-                            marginBottom: '2rem',
-                            border: '1px solid #e2e8f0'
-                        }}>
-                            <p style={{ 
-                                color: '#1e3a8a', 
-                                lineHeight: '1.8', 
-                                fontSize: '1.1rem',
-                                margin: '0',
-                                textAlign: 'center',
-                                fontWeight: '500'
+                        <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+                            <h2 className="animate-fade-in-up" style={{
+                                fontSize: '3.5rem',
+                                marginBottom: '2rem',
+                                color: 'white',
+                                fontWeight: '800',
+                                letterSpacing: '-0.02em'
                             }}>
-                                Navon Technologies is a Service-Disabled Veteran-Owned Small Business based in Leesburg, Virginia. We provide Network, System, and Security Engineering for Small, Medium, and Large businesses to include Federal/SLED (State, Local, Education) Government enterprise networks. We also specialize in Cable, Satellite, and Telco Internet Service Provider backbone networks in the US.
-                            </p>
-                        </div>
+                                About <span className="gradient-text">NAVON Technologies</span>
+                            </h2>
+                            
+                            <div className="animate-fade-in-up" style={{
+                                backgroundColor: 'rgba(212, 175, 55, 0.15)',
+                                padding: '2.5rem',
+                                borderRadius: '20px',
+                                marginBottom: '2rem',
+                                border: '2px solid rgba(212, 175, 55, 0.3)',
+                                backdropFilter: 'blur(10px)',
+                                boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+                                animationDelay: '0.2s',
+                                opacity: 0,
+                                animation: 'fadeInUp 0.8s ease-out 0.2s forwards'
+                            }}>
+                                <p style={{ 
+                                    color: 'white', 
+                                    lineHeight: '1.8', 
+                                    fontSize: '1.2rem',
+                                    margin: '0',
+                                    fontWeight: '500',
+                                    textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)'
+                                }}>
+                                    Navon Technologies is a <span style={{ color: '#d4af37', fontWeight: '700' }}>Service-Disabled Veteran-Owned Small Business</span> based in Leesburg, Virginia. We provide Network, System, and Security Engineering for Small, Medium, and Large businesses to include Federal/SLED (State, Local, Education) Government enterprise networks.
+                                </p>
+                            </div>
 
-                        {/* Capability Statement Link */}
-                        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-                            <a href={`${s3BaseUrl}/public/images/NAVON_Technologies_Capability_Statement_2026.pdf`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{
-                                    background: '#1e3a8a',
-                                    color: 'white',
-                                    padding: '1rem 2rem',
-                                    borderRadius: '8px',
-                                    textDecoration: 'none',
-                                    fontWeight: '600',
-                                    display: 'inline-block',
-                                    fontSize: '1.1rem'
-                                }}>
-                                📄 Download Our Capability Statement
-                            </a>
-                        </div>
-                        
-                        <div style={{
-                            maxWidth: '800px',
-                            margin: '0 auto',
-                            textAlign: 'center',
-                            marginBottom: '3rem'
-                        }}>
-                            <div>
-                                <h3 style={{ color: '#1e3a8a', marginBottom: '1.5rem', fontSize: '1.5rem' }}>
-                                    Mission-Critical Technology Solutions
-                                </h3>
-                                <p style={{ color: '#475569', lineHeight: '1.8', marginBottom: '1.5rem', textAlign: 'left' }}>
-                                    NAVON Technologies is a trusted government contractor specializing in secure,
-                                    scalable technology solutions for federal agencies and defense organizations.
-                                    We combine deep technical expertise with security clearance capabilities to
-                                    deliver mission-critical systems.
-                                </p>
-                                <p style={{ color: '#475569', lineHeight: '1.8', marginBottom: '1.5rem', textAlign: 'left' }}>
-                                    Our team of certified engineers and security professionals brings decades of
-                                    experience in government contracting, ensuring compliance with federal standards
-                                    and regulations while delivering innovative solutions.
-                                </p>
-                                <div style={{
-                                    background: 'white',
-                                    padding: '1.5rem',
-                                    borderRadius: '8px',
-                                    border: '1px solid #e2e8f0',
-                                    textAlign: 'left'
-                                }}>
-                                    <h4 style={{ color: '#1e3a8a', marginBottom: '1rem', textAlign: 'center' }}>Key Differentiators</h4>
-                                    <ul style={{ color: '#475569', paddingLeft: '1.5rem' }}>
-                                        <li style={{ marginBottom: '0.5rem' }}>Security clearance certified team</li>
-                                        <li style={{ marginBottom: '0.5rem' }}>FedRAMP and NIST compliance expertise</li>
-                                        <li style={{ marginBottom: '0.5rem' }}>24/7 mission-critical support</li>
-                                        <li style={{ marginBottom: '0.5rem' }}>Proven government contracting track record</li>
-                                    </ul>
-                                </div>
+                            {/* Capability Statement Link */}
+                            <div className="animate-fade-in-up" style={{ 
+                                textAlign: 'center',
+                                animationDelay: '0.4s',
+                                opacity: 0,
+                                animation: 'fadeInUp 0.8s ease-out 0.4s forwards'
+                            }}>
+                                <a href={`${s3BaseUrl}/public/images/NAVON_Technologies_Capability_Statement_2026.pdf`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{
+                                        background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
+                                        color: 'white',
+                                        padding: '1.2rem 2.5rem',
+                                        borderRadius: '12px',
+                                        textDecoration: 'none',
+                                        fontWeight: '700',
+                                        display: 'inline-block',
+                                        fontSize: '1.1rem',
+                                        boxShadow: '0 8px 25px rgba(212, 175, 55, 0.4)',
+                                        transition: 'all 0.3s ease'
+                                    }}>
+                                    📄 Download Our Capability Statement
+                                </a>
                             </div>
                         </div>
+                    </section>
+
+                    {/* Gold Divider */}
+                    <div className="animate-pulse" style={{
+                        height: '3px',
+                        background: 'linear-gradient(90deg, transparent 0%, #d4af37 50%, transparent 100%)',
+                        boxShadow: '0 0 20px rgba(212, 175, 55, 0.5)',
+                        margin: '0'
+                    }}></div>
+
+                    {/* Mission Critical Section */}
+                    <section style={{ padding: '5rem 2rem', background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 100%)' }}>
+                        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                            <h3 className="animate-fade-in-up" style={{ 
+                                color: '#d4af37', 
+                                marginBottom: '2rem', 
+                                fontSize: '2.5rem',
+                                textAlign: 'center',
+                                fontWeight: '800',
+                                textShadow: '0 0 20px rgba(212, 175, 55, 0.4)'
+                            }}>
+                                Mission-Critical Technology Solutions
+                            </h3>
+                            <p className="animate-fade-in-up" style={{ 
+                                color: '#cbd5e1', 
+                                lineHeight: '1.8', 
+                                marginBottom: '1.5rem', 
+                                fontSize: '1.1rem',
+                                textAlign: 'center',
+                                maxWidth: '900px',
+                                margin: '0 auto 1.5rem auto',
+                                animationDelay: '0.2s',
+                                opacity: 0,
+                                animation: 'fadeInUp 0.8s ease-out 0.2s forwards'
+                            }}>
+                                NAVON Technologies is a trusted government contractor specializing in secure,
+                                scalable technology solutions for federal agencies and defense organizations.
+                                We combine deep technical expertise with security clearance capabilities to
+                                deliver mission-critical systems.
+                            </p>
+                            <p className="animate-fade-in-up" style={{ 
+                                color: '#cbd5e1', 
+                                lineHeight: '1.8', 
+                                marginBottom: '3rem',
+                                fontSize: '1.1rem',
+                                textAlign: 'center',
+                                maxWidth: '900px',
+                                margin: '0 auto 3rem auto',
+                                animationDelay: '0.4s',
+                                opacity: 0,
+                                animation: 'fadeInUp 0.8s ease-out 0.4s forwards'
+                            }}>
+                                Our team of certified engineers and security professionals brings decades of
+                                experience in government contracting, ensuring compliance with federal standards
+                                and regulations while delivering innovative solutions.
+                            </p>
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
+                                padding: '2.5rem',
+                                borderRadius: '20px',
+                                border: '2px solid rgba(212, 175, 55, 0.3)',
+                                boxShadow: '0 10px 40px rgba(0, 0, 0, 0.3)',
+                                animationDelay: '0.6s',
+                                opacity: 0
+                            }}>
+                                <h4 style={{ 
+                                    color: '#d4af37', 
+                                    marginBottom: '1.5rem', 
+                                    textAlign: 'center',
+                                    fontSize: '1.8rem',
+                                    fontWeight: '700',
+                                    textShadow: '0 0 15px rgba(212, 175, 55, 0.3)'
+                                }}>Key Differentiators</h4>
+                                <ul style={{ 
+                                    color: '#cbd5e1', 
+                                    paddingLeft: '2rem',
+                                    fontSize: '1.1rem',
+                                    lineHeight: '2'
+                                }}>
+                                    <li style={{ marginBottom: '0.8rem' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>✓</span> Security clearance certified team</li>
+                                    <li style={{ marginBottom: '0.8rem' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>✓</span> FedRAMP and NIST compliance expertise</li>
+                                    <li style={{ marginBottom: '0.8rem' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>✓</span> 24/7 mission-critical support</li>
+                                    <li style={{ marginBottom: '0.8rem' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>✓</span> Proven government contracting track record</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
                         
                         {/* Mission, Vision, Values, Brand */}
-                        <div style={{ marginTop: '4rem' }}>
-                            <div style={{ 
-                                display: 'grid', 
-                                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
-                                gap: '2rem',
-                                marginBottom: '3rem'
-                            }}>
+                        <section style={{ padding: '5rem 2rem', background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)' }}>
+                            <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
                                 <div style={{ 
-                                    backgroundColor: '#dbeafe', 
-                                    padding: '2rem', 
-                                    borderRadius: '8px',
-                                    borderLeft: '4px solid #3b82f6'
+                                    display: 'grid', 
+                                    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', 
+                                    gap: '2rem',
+                                    marginBottom: '4rem'
                                 }}>
-                                    <h3 style={{ color: '#1e40af', marginBottom: '1rem', fontSize: '1.3rem' }}>Our Mission</h3>
-                                    <p style={{ color: '#1e3a8a', lineHeight: '1.6', margin: '0' }}>
-                                        We strive to exceed the highest standards of excellence in all we do; while strategically creating and delivering reliable, secure, and innovative technology solutions.
-                                    </p>
+                                    <div className="hover-lift animate-slide-in-left" style={{ 
+                                        background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
+                                        padding: '2.5rem', 
+                                        borderRadius: '20px',
+                                        border: '3px solid #d4af37',
+                                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.2)'
+                                    }}>
+                                        <h3 style={{ 
+                                            color: '#d4af37', 
+                                            marginBottom: '1.5rem', 
+                                            fontSize: '1.8rem',
+                                            fontWeight: '800',
+                                            textShadow: '0 0 15px rgba(212, 175, 55, 0.4)'
+                                        }}>Our Mission</h3>
+                                        <p style={{ color: '#cbd5e1', lineHeight: '1.8', margin: '0', fontSize: '1.05rem' }}>
+                                            We strive to exceed the highest standards of excellence in all we do; while strategically creating and delivering reliable, secure, and innovative technology solutions.
+                                        </p>
+                                    </div>
+                                    
+                                    <div className="hover-lift animate-fade-in-up" style={{ 
+                                        background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
+                                        padding: '2.5rem', 
+                                        borderRadius: '20px',
+                                        border: '3px solid #d4af37',
+                                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.2)',
+                                        animationDelay: '0.2s',
+                                        opacity: 0
+                                    }}>
+                                        <h3 style={{ 
+                                            color: '#d4af37', 
+                                            marginBottom: '1.5rem', 
+                                            fontSize: '1.8rem',
+                                            fontWeight: '800',
+                                            textShadow: '0 0 15px rgba(212, 175, 55, 0.4)'
+                                        }}>Our Vision</h3>
+                                        <p style={{ color: '#cbd5e1', lineHeight: '1.8', margin: '0', fontSize: '1.05rem' }}>
+                                            To bring the best innovation and highest value to our customers.
+                                        </p>
+                                    </div>
+                                    
+                                    <div className="hover-lift animate-slide-in-right" style={{ 
+                                        background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
+                                        padding: '2.5rem', 
+                                        borderRadius: '20px',
+                                        border: '3px solid #d4af37',
+                                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.2)',
+                                        animationDelay: '0.4s',
+                                        opacity: 0
+                                    }}>
+                                        <h3 style={{ 
+                                            color: '#d4af37', 
+                                            marginBottom: '1.5rem', 
+                                            fontSize: '1.8rem',
+                                            fontWeight: '800',
+                                            textShadow: '0 0 15px rgba(212, 175, 55, 0.4)'
+                                        }}>Our Values</h3>
+                                        <ul style={{ color: '#cbd5e1', margin: '0', paddingLeft: '1.5rem', fontSize: '1.05rem', lineHeight: '2' }}>
+                                            <li style={{ marginBottom: '0.5rem' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> Reliability</li>
+                                            <li style={{ marginBottom: '0.5rem' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> Security</li>
+                                            <li style={{ marginBottom: '0.5rem' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> Innovation</li>
+                                        </ul>
+                                    </div>
                                 </div>
                                 
-                                <div style={{ 
-                                    backgroundColor: '#e0f2fe', 
-                                    padding: '2rem', 
-                                    borderRadius: '8px',
-                                    borderLeft: '4px solid #0ea5e9'
+                                {/* Brand Story */}
+                                <div className="hover-lift animate-scale-in" style={{
+                                    background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%)',
+                                    padding: '3rem',
+                                    borderRadius: '20px',
+                                    border: '2px solid rgba(212, 175, 55, 0.3)',
+                                    boxShadow: '0 10px 40px rgba(212, 175, 55, 0.15)',
+                                    animationDelay: '0.6s',
+                                    opacity: 0
                                 }}>
-                                    <h3 style={{ color: '#0c4a6e', marginBottom: '1rem', fontSize: '1.3rem' }}>Our Vision</h3>
-                                    <p style={{ color: '#075985', lineHeight: '1.6', margin: '0' }}>
-                                        To bring the best innovation and highest value to our customers.
+                                    <h3 style={{ 
+                                        color: '#1e293b', 
+                                        marginBottom: '1.5rem', 
+                                        fontSize: '2rem',
+                                        fontWeight: '800',
+                                        textAlign: 'center'
+                                    }}>
+                                        Our <span style={{ color: '#d4af37' }}>Brand</span>
+                                    </h3>
+                                    <p style={{ color: '#334155', lineHeight: '1.8', marginBottom: '1rem', fontSize: '1.1rem' }}>
+                                        Our logo was inspired by a plane <span style={{ color: '#d4af37', fontWeight: '700' }}>(F-117 Nighthawk, Stealth Aircraft)</span> and our founders' prior service in the <span style={{ color: '#d4af37', fontWeight: '700' }}>US Air Force</span>. Our name <span style={{ color: '#d4af37', fontWeight: '700' }}>Navon</span> means <span style={{ color: '#d4af37', fontWeight: '700' }}>wisdom</span>.
+                                    </p>
+                                    <p style={{ color: '#334155', lineHeight: '1.8', margin: '0', fontSize: '1.1rem' }}>
+                                        Like a plane and a wise owl, we strive to reach the highest point of excellence. Our goal is to soar in every component of business; in the technology aspect, like the plane and in our behaviors, like a wise owl.
                                     </p>
                                 </div>
-                                
-                                <div style={{ 
-                                    backgroundColor: '#f0f9ff', 
-                                    padding: '2rem', 
-                                    borderRadius: '8px',
-                                    borderLeft: '4px solid #0284c7'
-                                }}>
-                                    <h3 style={{ color: '#0c4a6e', marginBottom: '1rem', fontSize: '1.3rem' }}>Our Values</h3>
-                                    <ul style={{ color: '#075985', margin: '0', paddingLeft: '1.5rem' }}>
-                                        <li style={{ marginBottom: '0.5rem' }}>Reliability</li>
-                                        <li style={{ marginBottom: '0.5rem' }}>Security</li>
-                                        <li style={{ marginBottom: '0.5rem' }}>Innovation</li>
-                                    </ul>
-                                </div>
                             </div>
-                            
-                            {/* Brand Story */}
-                            <div style={{
-                                backgroundColor: 'white',
-                                padding: '2rem',
-                                borderRadius: '8px',
-                                border: '1px solid #e2e8f0'
-                            }}>
-                                <h3 style={{ color: '#1e3a8a', marginBottom: '1.5rem', fontSize: '1.3rem' }}>Our Brand</h3>
-                                <p style={{ color: '#475569', lineHeight: '1.8', marginBottom: '1rem' }}>
-                                    Our logo was inspired by a plane (F-117 Nighthawk, Stealth Aircraft) and our founders' prior service in the US Air Force. Our name Navon means wisdom.
-                                </p>
-                                <p style={{ color: '#475569', lineHeight: '1.8', margin: '0' }}>
-                                    Like a plane and a wise owl, we strive to reach the highest point of excellence. Our goal is to soar in every component of business; in the technology aspect, like the plane and in our behaviors, like a wise owl.
-                                </p>
-                            </div>
-                        </div>
+                        </section>
 
                         {/* Certifications Section */}
-                        <div style={{ marginTop: '4rem' }}>
-                            <h3 style={{
-                                fontSize: '2rem',
-                                marginBottom: '2rem',
-                                textAlign: 'center',
-                                color: '#1e3a8a',
-                                fontWeight: '600'
-                            }}>
-                                Certifications
-                            </h3>
-                            <div style={{
-                                display: 'grid',
-                                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                                gap: '2rem',
-                                alignItems: 'center'
-                            }}>
-                                {[
-                                    'public_sector_partner.jpeg',
-                                    'select_tier_partner.jpeg'
-                                ].map((cert, index) => (
-                                    <div key={index} style={{
-                                        background: 'white',
-                                        padding: '2rem',
-                                        borderRadius: '12px',
-                                        textAlign: 'center',
-                                        border: '1px solid #e2e8f0',
-                                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
-                                    }}>
+                        <section style={{ padding: '5rem 2rem', background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)' }}>
+                            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                                <h3 className="animate-fade-in-up" style={{
+                                    fontSize: '2.5rem',
+                                    marginBottom: '3rem',
+                                    textAlign: 'center',
+                                    color: '#d4af37',
+                                    fontWeight: '800',
+                                    textShadow: '0 0 20px rgba(212, 175, 55, 0.4)'
+                                }}>
+                                    Certifications
+                                </h3>
+                                <div style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                                    gap: '2rem',
+                                    alignItems: 'center'
+                                }}>
+                                    {[
+                                        'public_sector_partner.jpeg',
+                                        'select_tier_partner.jpeg'
+                                    ].map((cert, index) => (
+                                        <div key={index} className="hover-lift animate-scale-in" style={{
+                                            background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
+                                            padding: '2.5rem',
+                                            borderRadius: '20px',
+                                            textAlign: 'center',
+                                            border: '2px solid #d4af37',
+                                            boxShadow: '0 10px 40px rgba(212, 175, 55, 0.2)',
+                                            animationDelay: `${index * 0.2}s`,
+                                            opacity: 0
+                                        }}>
                                         <img
                                             src={`${s3BaseUrl}/public/images/partners/${cert}`}
                                             alt={`Certification ${index + 1}`}
@@ -1075,37 +1150,40 @@ function SimpleApp() {
                                     'CCIE Data Center',
                                     'Project Management Professional (PMP)'
                                 ].map((awsCert, index) => (
-                                    <div key={`aws-${index}`} style={{
-                                        background: 'white',
+                                    <div key={`aws-${index}`} className="hover-lift animate-scale-in" style={{
+                                        background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
                                         padding: '2rem',
-                                        borderRadius: '12px',
+                                        borderRadius: '20px',
                                         textAlign: 'center',
-                                        border: '2px dashed #e2e8f0',
-                                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                                        border: '2px solid rgba(212, 175, 55, 0.5)',
+                                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.15)',
                                         minHeight: '140px',
                                         display: 'flex',
                                         flexDirection: 'column',
-                                        justifyContent: 'center'
+                                        justifyContent: 'center',
+                                        animationDelay: `${(index + 2) * 0.1}s`,
+                                        opacity: 0
                                     }}>
                                         <div style={{
                                             width: '60px',
                                             height: '60px',
-                                            background: '#f1f5f9',
-                                            borderRadius: '8px',
+                                            background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
+                                            borderRadius: '12px',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             margin: '0 auto 1rem auto',
-                                            color: '#64748b',
-                                            fontSize: '1.5rem'
+                                            color: 'white',
+                                            fontSize: '1.5rem',
+                                            boxShadow: '0 4px 15px rgba(212, 175, 55, 0.3)'
                                         }}>
                                             ☁️
                                         </div>
                                         <h4 style={{
-                                            color: '#64748b',
+                                            color: '#d4af37',
                                             margin: 0,
-                                            fontSize: '0.9rem',
-                                            fontWeight: '600'
+                                            fontSize: '1rem',
+                                            fontWeight: '700'
                                         }}>
                                             {awsCert}
                                         </h4>
@@ -1113,61 +1191,76 @@ function SimpleApp() {
                                 ))}
                             </div>
                         </div>
+                    </section>
 
                         {/* Contract Vehicles & SBA Section */}
-                        <div style={{ marginTop: '4rem' }}>
-                            <h3 style={{
-                                fontSize: '2rem',
-                                marginBottom: '2rem',
-                                textAlign: 'center',
-                                color: '#1e3a8a',
-                                fontWeight: '600'
-                            }}>
-                                Contract Vehicles & SBA Certification
-                            </h3>
-                            <div style={{
-                                display: 'grid',
-                                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                                gap: '3rem',
-                                alignItems: 'center'
-                            }}>
-                                <div style={{
-                                    background: 'white',
-                                    padding: '2rem',
-                                    borderRadius: '12px',
+                        <section style={{ padding: '5rem 2rem', background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)' }}>
+                            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                                <h3 className="animate-fade-in-up" style={{
+                                    fontSize: '2.5rem',
+                                    marginBottom: '3rem',
                                     textAlign: 'center',
-                                    border: '1px solid #e2e8f0',
-                                    boxShadow: '0 4px 6px rgba(0,0,0,0.05)'
+                                    color: '#1e293b',
+                                    fontWeight: '800'
                                 }}>
-                                    <img
-                                        src={`${s3BaseUrl}/public/images/partners/sba.jpeg`}
-                                        alt="SBA Small Business Certification"
-                                        style={{
-                                            maxWidth: '100%',
-                                            height: '120px',
-                                            objectFit: 'contain',
-                                            marginBottom: '1rem'
-                                        }}
-                                        onError={(e) => { e.target.style.display = 'none'; }}
-                                    />
-                                    <h4 style={{ color: '#1e3a8a', marginBottom: '1rem' }}>
+                                    Contract Vehicles & <span style={{ color: '#d4af37' }}>SBA Certification</span>
+                                </h3>
+                                <div style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+                                    gap: '3rem',
+                                    alignItems: 'center'
+                                }}>
+                                    <div className="hover-lift animate-scale-in" style={{
+                                        background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
+                                        padding: '2.5rem',
+                                        borderRadius: '20px',
+                                        textAlign: 'center',
+                                        border: '2px solid #d4af37',
+                                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.2)'
+                                    }}>
+                                        <img
+                                            src={`${s3BaseUrl}/public/images/partners/sba.jpeg`}
+                                            alt="SBA Small Business Certification"
+                                            style={{
+                                                maxWidth: '100%',
+                                                height: '120px',
+                                                objectFit: 'contain',
+                                                marginBottom: '1rem'
+                                            }}
+                                            onError={(e) => { e.target.style.display = 'none'; }}
+                                        />
+                                        <h4 style={{ 
+                                            color: '#d4af37', 
+                                            marginBottom: '1rem',
+                                            fontSize: '1.3rem',
+                                            fontWeight: '700'
+                                        }}>
                                         SBA Certified Small Business
                                     </h4>
-                                    <p style={{ color: '#475569', lineHeight: '1.6' }}>
+                                    <p style={{ color: '#cbd5e1', lineHeight: '1.6', fontSize: '1.05rem' }}>
                                         Certified Small Business Enterprise with SBA registration,
                                         enabling participation in federal set-aside contracts and
                                         small business procurement opportunities.
                                     </p>
                                 </div>
-                                <div style={{
-                                    background: 'white',
-                                    padding: '2rem',
-                                    borderRadius: '12px',
-                                    border: '1px solid #e2e8f0',
-                                    boxShadow: '0 4px 6px rgba(0,0,0,0.05)'
+                                <div className="hover-lift animate-scale-in" style={{
+                                    background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%)',
+                                    padding: '2.5rem',
+                                    borderRadius: '20px',
+                                    border: '2px solid rgba(212, 175, 55, 0.3)',
+                                    boxShadow: '0 10px 40px rgba(212, 175, 55, 0.15)',
+                                    animationDelay: '0.2s',
+                                    opacity: 0
                                 }}>
-                                    <h4 style={{ color: '#1e3a8a', marginBottom: '1.5rem', textAlign: 'center' }}>
-                                        Available Contract Vehicles
+                                    <h4 style={{ 
+                                        color: '#1e293b', 
+                                        marginBottom: '1.5rem', 
+                                        textAlign: 'center',
+                                        fontSize: '1.5rem',
+                                        fontWeight: '700'
+                                    }}>
+                                        Available <span style={{ color: '#d4af37' }}>Contract Vehicles</span>
                                     </h4>
                                     <div style={{ textAlign: 'left' }}>
                                         {[
@@ -1176,11 +1269,18 @@ function SimpleApp() {
                                             { name: 'CIO-SP3', desc: 'Chief Information Officer-Solutions and Partners 3' },
                                             { name: 'Direct Awards', desc: 'Prime and subcontractor opportunities' }
                                         ].map((vehicle, index) => (
-                                            <div key={index} style={{ marginBottom: '1rem', padding: '0.75rem', background: '#f8fafc', borderRadius: '6px' }}>
-                                                <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.25rem' }}>
+                                            <div key={index} style={{ 
+                                                marginBottom: '1rem', 
+                                                padding: '1rem', 
+                                                background: 'white', 
+                                                borderRadius: '12px',
+                                                border: '1px solid rgba(212, 175, 55, 0.2)',
+                                                boxShadow: '0 2px 8px rgba(212, 175, 55, 0.1)'
+                                            }}>
+                                                <div style={{ fontWeight: '700', color: '#d4af37', marginBottom: '0.25rem', fontSize: '1.05rem' }}>
                                                     {vehicle.name}
                                                 </div>
-                                                <div style={{ fontSize: '0.9rem', color: '#64748b' }}>
+                                                <div style={{ fontSize: '0.95rem', color: '#64748b' }}>
                                                     {vehicle.desc}
                                                 </div>
                                             </div>
@@ -1189,40 +1289,84 @@ function SimpleApp() {
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </section>
+                    </section>
+                </div>
             )}
             {/* CAPABILITIES PAGE */}
             {currentPage === 'capabilities' && (
-                <section style={{ padding: '4rem 2rem', background: 'white' }}>
-                    <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-                        <h2 style={{
-                            fontSize: '2.5rem',
-                            marginBottom: '3rem',
-                            textAlign: 'center',
-                            color: '#1e3a8a',
-                            fontWeight: '600'
-                        }}>
-                            Core Capabilities
-                        </h2>
-                        <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-                            gap: '2rem'
-                        }}>
-                            {[
-                                {
-                                    title: 'Cybersecurity Solutions',
-                                    image: 'CyberSecurity.jpeg',
-                                    description: 'Comprehensive security frameworks, risk assessment, and compliance solutions for federal agencies.'
-                                },
-                                {
-                                    title: 'System Engineering',
-                                    image: 'System_Engineering.jpeg',
-                                    description: 'End-to-end system design, integration, and optimization for mission-critical applications.'
-                                },
-                                {
-                                    title: 'Cloud Migration & DevOps',
+                <div>
+                    {/* Hero Section */}
+                    <section style={{
+                        background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(30, 41, 59, 0.88) 50%, rgba(51, 65, 85, 0.92) 100%), url("https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1920&q=80") center/cover',
+                        padding: '6rem 2rem 4rem 2rem',
+                        textAlign: 'center',
+                        position: 'relative',
+                        overflow: 'hidden'
+                    }}>
+                        <div className="animate-pulse" style={{
+                            position: 'absolute',
+                            top: '20%',
+                            left: '10%',
+                            width: '300px',
+                            height: '300px',
+                            background: 'radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%)',
+                            borderRadius: '50%'
+                        }}></div>
+                        
+                        <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+                            <h2 className="animate-fade-in-up" style={{
+                                fontSize: '3.5rem',
+                                marginBottom: '2rem',
+                                color: 'white',
+                                fontWeight: '800',
+                                letterSpacing: '-0.02em'
+                            }}>
+                                Core <span className="gradient-text">Capabilities</span>
+                            </h2>
+                            <p className="animate-fade-in-up" style={{
+                                fontSize: '1.3rem',
+                                color: '#cbd5e1',
+                                maxWidth: '800px',
+                                margin: '0 auto',
+                                lineHeight: '1.8',
+                                animationDelay: '0.2s',
+                                opacity: 0,
+                                animation: 'fadeInUp 0.8s ease-out 0.2s forwards'
+                            }}>
+                                Delivering mission-critical technology solutions with security, reliability, and innovation at the core
+                            </p>
+                        </div>
+                    </section>
+
+                    {/* Gold Divider */}
+                    <div className="animate-pulse" style={{
+                        height: '3px',
+                        background: 'linear-gradient(90deg, transparent 0%, #d4af37 50%, transparent 100%)',
+                        boxShadow: '0 0 20px rgba(212, 175, 55, 0.5)',
+                        margin: '0'
+                    }}></div>
+
+                    {/* Core Capabilities Grid */}
+                    <section style={{ padding: '5rem 2rem', background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 100%)' }}>
+                        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                                gap: '2rem'
+                            }}>
+                                {[
+                                    {
+                                        title: 'Cybersecurity Solutions',
+                                        image: 'CyberSecurity.jpeg',
+                                        description: 'Comprehensive security frameworks, risk assessment, and compliance solutions for federal agencies.'
+                                    },
+                                    {
+                                        title: 'System Engineering',
+                                        image: 'System_Engineering.jpeg',
+                                        description: 'End-to-end system design, integration, and optimization for mission-critical applications.'
+                                    },
+                                    {
+                                        title: 'Cloud Migration & DevOps',
                                     image: 'Virtualization_Cloud.jpeg',
                                     description: 'Secure cloud transformation and automated deployment pipelines for government workloads.'
                                 },
@@ -1251,322 +1395,517 @@ function SimpleApp() {
                                     image: 'AI_Machine_Learning.jpeg',
                                     description: 'Advanced AI/ML solutions for data analysis, automation, and intelligent decision-making systems.'
                                 }
-                            ].map((capability, index) => (
-                                <div key={index} style={{
-                                    background: '#f8fafc',
-                                    padding: '2rem',
-                                    borderRadius: '12px',
-                                    border: '1px solid #e2e8f0',
-                                    boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
-                                    transition: 'transform 0.2s ease'
+                            ].map((capability, index) => {
+                                // Alternate animation directions: left, left, top, top, right, right pattern
+                                let imageAnimation;
+                                if (index < 2) {
+                                    imageAnimation = 'animate-image-slide-left';
+                                } else if (index < 4) {
+                                    imageAnimation = 'animate-image-slide-top';
+                                } else {
+                                    imageAnimation = 'animate-image-slide-right';
+                                }
+                                
+                                return (
+                                <div key={index} className="hover-lift animate-scale-in" style={{
+                                    background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
+                                    padding: '0',
+                                    borderRadius: '20px',
+                                    border: '2px solid #d4af37',
+                                    boxShadow: '0 10px 40px rgba(212, 175, 55, 0.2)',
+                                    overflow: 'hidden',
+                                    animationDelay: `${index * 0.1}s`,
+                                    opacity: 0
                                 }}>
-                                    <img
-                                        src={`${s3BaseUrl}/public/images/solutions/${capability.image}`}
-                                        alt={capability.title}
-                                        style={{
-                                            width: '100%',
-                                            height: '200px',
-                                            objectFit: 'cover',
-                                            borderRadius: '8px',
-                                            marginBottom: '1rem'
-                                        }}
-                                        onError={(e) => { e.target.style.display = 'none'; }}
-                                    />
-                                    <h3 style={{ color: '#1e3a8a', marginBottom: '1rem', fontSize: '1.3rem' }}>
-                                        {capability.title}
-                                    </h3>
-                                    <p style={{ color: '#475569', lineHeight: '1.6' }}>
-                                        {capability.description}
-                                    </p>
+                                    <div style={{ 
+                                        overflow: 'hidden',
+                                        borderBottom: '2px solid #d4af37'
+                                    }}>
+                                        <img
+                                            src={`${s3BaseUrl}/public/images/solutions/${capability.image}`}
+                                            alt={capability.title}
+                                            className={imageAnimation}
+                                            style={{
+                                                width: '100%',
+                                                height: '220px',
+                                                objectFit: 'cover',
+                                                opacity: 0,
+                                                animationDelay: index === 0 ? '0.2s' : `${index * 0.2 + 0.4}s`
+                                            }}
+                                            onError={(e) => { e.target.style.display = 'none'; }}
+                                        />
+                                    </div>
+                                    <div style={{ padding: '2rem' }}>
+                                        <h3 style={{ 
+                                            color: '#d4af37', 
+                                            marginBottom: '1rem', 
+                                            fontSize: '1.5rem',
+                                            fontWeight: '700',
+                                            textShadow: '0 0 10px rgba(212, 175, 55, 0.3)'
+                                        }}>
+                                            {capability.title}
+                                        </h3>
+                                        <p style={{ color: '#cbd5e1', lineHeight: '1.7', fontSize: '1.05rem', margin: 0 }}>
+                                            {capability.description}
+                                        </p>
+                                    </div>
                                 </div>
-                            ))}
+                            )})}
                         </div>
+                    </div>
+                </section>
 
                         {/* Professional IT Services Section */}
-                        <section style={{ marginTop: '4rem' }}>
-                            <h2 style={{
-                                fontSize: '2.5rem',
-                                marginBottom: '3rem',
-                                textAlign: 'center',
-                                color: '#1e3a8a',
-                                fontWeight: '600'
-                            }}>
-                                Boost Your Project with Navon Technologies IT Services
-                            </h2>
-                            
-                            <div style={{
-                                display: 'grid',
-                                gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-                                gap: '2rem'
-                            }}>
-                                {/* Custom Software Development */}
-                                <div style={{
-                                    background: 'white',
-                                    padding: '2rem',
-                                    borderRadius: '12px',
-                                    border: '1px solid #e2e8f0',
-                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
+                        <section style={{ padding: '5rem 2rem', background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)' }}>
+                            <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+                                <h2 className="animate-fade-in-up" style={{
+                                    fontSize: '2.5rem',
+                                    marginBottom: '1.5rem',
+                                    textAlign: 'center',
+                                    color: '#1e293b',
+                                    fontWeight: '800'
                                 }}>
-                                    <h3 style={{
-                                        color: '#1e3a8a',
-                                        marginBottom: '1rem',
-                                        fontSize: '1.3rem',
-                                        fontWeight: '600'
+                                    Boost Your Project with <span style={{ color: '#d4af37' }}>Navon Technologies IT Services</span>
+                                </h2>
+                                <p className="animate-fade-in-up" style={{
+                                    fontSize: '1.1rem',
+                                    color: '#64748b',
+                                    textAlign: 'center',
+                                    marginBottom: '4rem',
+                                    maxWidth: '800px',
+                                    margin: '0 auto 4rem auto',
+                                    animationDelay: '0.2s',
+                                    opacity: 0,
+                                    animation: 'fadeInUp 0.8s ease-out 0.2s forwards'
+                                }}>
+                                    Comprehensive IT solutions designed to accelerate your mission-critical projects
+                                </p>
+                                
+                                <div style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                                    gap: '2rem'
+                                }}>
+                                    {/* Custom Software Development */}
+                                    <div className="hover-lift animate-slide-in-left" style={{
+                                        background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%)',
+                                        padding: '2.5rem',
+                                        borderRadius: '20px',
+                                        border: '2px solid rgba(212, 175, 55, 0.3)',
+                                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.15)'
                                     }}>
-                                        Custom Software Development
-                                    </h3>
-                                    <p style={{
-                                        color: '#475569',
-                                        lineHeight: '1.7',
-                                        margin: '0'
-                                    }}>
-                                        Our team of developers can help you create custom software tailored to your project needs. From web applications to mobile apps, we can develop software that can help streamline your project processes.
-                                    </p>
-                                </div>
+                                        <div style={{
+                                            width: '60px',
+                                            height: '60px',
+                                            background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
+                                            borderRadius: '12px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            marginBottom: '1.5rem',
+                                            boxShadow: '0 8px 20px rgba(212, 175, 55, 0.3)'
+                                        }}>
+                                            <span style={{ fontSize: '2rem' }}>💻</span>
+                                        </div>
+                                        <h3 style={{
+                                            color: '#1e293b',
+                                            marginBottom: '1rem',
+                                            fontSize: '1.5rem',
+                                            fontWeight: '700'
+                                        }}>
+                                            Custom Software Development
+                                        </h3>
+                                        <p style={{
+                                            color: '#475569',
+                                            lineHeight: '1.7',
+                                            margin: '0',
+                                            fontSize: '1.05rem'
+                                        }}>
+                                            Our team of developers can help you create custom software tailored to your project needs. From web applications to mobile apps, we can develop software that can help streamline your project processes.
+                                        </p>
+                                    </div>
 
-                                {/* Hardware Procurement and Installation */}
-                                <div style={{
-                                    background: 'white',
-                                    padding: '2rem',
-                                    borderRadius: '12px',
-                                    border: '1px solid #e2e8f0',
-                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
-                                }}>
-                                    <h3 style={{
-                                        color: '#1e3a8a',
-                                        marginBottom: '1rem',
-                                        fontSize: '1.3rem',
-                                        fontWeight: '600'
+                                    {/* Hardware Procurement and Installation */}
+                                    <div className="hover-lift animate-fade-in-up" style={{
+                                        background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%)',
+                                        padding: '2.5rem',
+                                        borderRadius: '20px',
+                                        border: '2px solid rgba(212, 175, 55, 0.3)',
+                                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.15)',
+                                        animationDelay: '0.2s',
+                                        opacity: 0
                                     }}>
-                                        Hardware Procurement and Installation
-                                    </h3>
-                                    <p style={{
-                                        color: '#475569',
-                                        lineHeight: '1.7',
-                                        margin: '0'
-                                    }}>
+                                        <div style={{
+                                            width: '60px',
+                                            height: '60px',
+                                            background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
+                                            borderRadius: '12px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            marginBottom: '1.5rem',
+                                            boxShadow: '0 8px 20px rgba(212, 175, 55, 0.3)'
+                                        }}>
+                                            <span style={{ fontSize: '2rem' }}>🖥️</span>
+                                        </div>
+                                        <h3 style={{
+                                            color: '#1e293b',
+                                            marginBottom: '1rem',
+                                            fontSize: '1.5rem',
+                                            fontWeight: '700'
+                                        }}>
+                                            Hardware Procurement and Installation
+                                        </h3>
+                                        <p style={{
+                                            color: '#475569',
+                                            lineHeight: '1.7',
+                                            margin: '0',
+                                            fontSize: '1.05rem'
+                                        }}>
                                         We help small businesses procure and install hardware that is best suited to their business needs. Our team can provide expert advice on hardware selection and installation.
                                     </p>
                                 </div>
 
                                 {/* IT Training and Support */}
-                                <div style={{
-                                    background: 'white',
-                                    padding: '2rem',
-                                    borderRadius: '12px',
-                                    border: '1px solid #e2e8f0',
-                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
+                                <div className="hover-lift animate-slide-in-right" style={{
+                                    background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%)',
+                                    padding: '2.5rem',
+                                    borderRadius: '20px',
+                                    border: '2px solid rgba(212, 175, 55, 0.3)',
+                                    boxShadow: '0 10px 40px rgba(212, 175, 55, 0.15)',
+                                    animationDelay: '0.4s',
+                                    opacity: 0
                                 }}>
+                                    <div style={{
+                                        width: '60px',
+                                        height: '60px',
+                                        background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
+                                        borderRadius: '12px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        marginBottom: '1.5rem',
+                                        boxShadow: '0 8px 20px rgba(212, 175, 55, 0.3)'
+                                    }}>
+                                        <span style={{ fontSize: '2rem' }}>📚</span>
+                                    </div>
                                     <h3 style={{
-                                        color: '#1e3a8a',
+                                        color: '#1e293b',
                                         marginBottom: '1rem',
-                                        fontSize: '1.3rem',
-                                        fontWeight: '600'
+                                        fontSize: '1.5rem',
+                                        fontWeight: '700'
                                     }}>
                                         IT Training and Support
                                     </h3>
                                     <p style={{
                                         color: '#475569',
                                         lineHeight: '1.7',
-                                        margin: '0'
+                                        margin: '0',
+                                        fontSize: '1.05rem'
                                     }}>
                                         We provide IT training and support to ensure that your employees can make the most of the technology available to them. Our training and support services include on-site training, virtual training, and support via phone and email.
                                     </p>
                                 </div>
 
                                 {/* Website Design and Development */}
-                                <div style={{
-                                    background: 'white',
-                                    padding: '2rem',
-                                    borderRadius: '12px',
-                                    border: '1px solid #e2e8f0',
-                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
+                                <div className="hover-lift animate-slide-in-left" style={{
+                                    background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%)',
+                                    padding: '2.5rem',
+                                    borderRadius: '20px',
+                                    border: '2px solid rgba(212, 175, 55, 0.3)',
+                                    boxShadow: '0 10px 40px rgba(212, 175, 55, 0.15)',
+                                    animationDelay: '0.6s',
+                                    opacity: 0
                                 }}>
+                                    <div style={{
+                                        width: '60px',
+                                        height: '60px',
+                                        background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
+                                        borderRadius: '12px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        marginBottom: '1.5rem',
+                                        boxShadow: '0 8px 20px rgba(212, 175, 55, 0.3)'
+                                    }}>
+                                        <span style={{ fontSize: '2rem' }}>🌐</span>
+                                    </div>
                                     <h3 style={{
-                                        color: '#1e3a8a',
+                                        color: '#1e293b',
                                         marginBottom: '1rem',
-                                        fontSize: '1.3rem',
-                                        fontWeight: '600'
+                                        fontSize: '1.5rem',
+                                        fontWeight: '700'
                                     }}>
                                         Website Design and Development
                                     </h3>
                                     <p style={{
                                         color: '#475569',
                                         lineHeight: '1.7',
-                                        margin: '0'
+                                        margin: '0',
+                                        fontSize: '1.05rem'
                                     }}>
                                         We specialize in designing and developing websites that are visually appealing, user-friendly, and optimized for search engines. Our websites are designed to help small businesses establish a strong online presence.
                                     </p>
                                 </div>
 
                                 {/* Cloud Migration */}
-                                <div style={{
-                                    background: 'white',
-                                    padding: '2rem',
-                                    borderRadius: '12px',
-                                    border: '1px solid #e2e8f0',
-                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
+                                <div className="hover-lift animate-fade-in-up" style={{
+                                    background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%)',
+                                    padding: '2.5rem',
+                                    borderRadius: '20px',
+                                    border: '2px solid rgba(212, 175, 55, 0.3)',
+                                    boxShadow: '0 10px 40px rgba(212, 175, 55, 0.15)',
+                                    animationDelay: '0.8s',
+                                    opacity: 0
                                 }}>
+                                    <div style={{
+                                        width: '60px',
+                                        height: '60px',
+                                        background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
+                                        borderRadius: '12px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        marginBottom: '1.5rem',
+                                        boxShadow: '0 8px 20px rgba(212, 175, 55, 0.3)'
+                                    }}>
+                                        <span style={{ fontSize: '2rem' }}>☁️</span>
+                                    </div>
                                     <h3 style={{
-                                        color: '#1e3a8a',
+                                        color: '#1e293b',
                                         marginBottom: '1rem',
-                                        fontSize: '1.3rem',
-                                        fontWeight: '600'
+                                        fontSize: '1.5rem',
+                                        fontWeight: '700'
                                     }}>
                                         Cloud Migration
                                     </h3>
                                     <p style={{
                                         color: '#475569',
                                         lineHeight: '1.7',
-                                        margin: '0'
+                                        margin: '0',
+                                        fontSize: '1.05rem'
                                     }}>
                                         We help small businesses migrate to the cloud to enable greater flexibility and scalability. Our team can help you choose the best cloud solution for your business and ensure a smooth migration process.
                                     </p>
                                 </div>
 
                                 {/* IT Project Management */}
-                                <div style={{
-                                    background: 'white',
-                                    padding: '2rem',
-                                    borderRadius: '12px',
-                                    border: '1px solid #e2e8f0',
-                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
+                                <div className="hover-lift animate-slide-in-right" style={{
+                                    background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%)',
+                                    padding: '2.5rem',
+                                    borderRadius: '20px',
+                                    border: '2px solid rgba(212, 175, 55, 0.3)',
+                                    boxShadow: '0 10px 40px rgba(212, 175, 55, 0.15)',
+                                    animationDelay: '1s',
+                                    opacity: 0
                                 }}>
+                                    <div style={{
+                                        width: '60px',
+                                        height: '60px',
+                                        background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
+                                        borderRadius: '12px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        marginBottom: '1.5rem',
+                                        boxShadow: '0 8px 20px rgba(212, 175, 55, 0.3)'
+                                    }}>
+                                        <span style={{ fontSize: '2rem' }}>📊</span>
+                                    </div>
                                     <h3 style={{
-                                        color: '#1e3a8a',
+                                        color: '#1e293b',
                                         marginBottom: '1rem',
-                                        fontSize: '1.3rem',
-                                        fontWeight: '600'
+                                        fontSize: '1.5rem',
+                                        fontWeight: '700'
                                     }}>
                                         IT Project Management
                                     </h3>
                                     <p style={{
                                         color: '#475569',
                                         lineHeight: '1.7',
-                                        margin: '0'
+                                        margin: '0',
+                                        fontSize: '1.05rem'
                                     }}>
                                         We provide IT project management services to ensure that your IT projects are completed on time, within budget, and to your satisfaction. Our project management services include project planning, resource allocation, and risk management.
                                     </p>
                                 </div>
                             </div>
-                        </section>
-                    </div>
-                </section>
+                        </div>
+                    </section>
+                </div>
             )}
             {/* AWS PAGE */}
             {currentPage === 'aws' && (
-                <section style={{ padding: '4rem 2rem', background: 'white' }}>
-                    <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-                        <h2 style={{
-                            fontSize: '2.5rem',
-                            marginBottom: '2rem',
-                            textAlign: 'center',
-                            color: '#1e3a8a',
-                            fontWeight: '600'
-                        }}>
-                            AWS Expertise
-                        </h2>
+                <div>
+                    {/* Hero Section */}
+                    <section style={{
+                        background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(30, 41, 59, 0.88) 50%, rgba(51, 65, 85, 0.92) 100%), url("https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=80") center/cover',
+                        padding: '6rem 2rem 4rem 2rem',
+                        textAlign: 'center',
+                        position: 'relative',
+                        overflow: 'hidden'
+                    }}>
+                        <div className="animate-pulse" style={{
+                            position: 'absolute',
+                            top: '20%',
+                            right: '10%',
+                            width: '300px',
+                            height: '300px',
+                            background: 'radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%)',
+                            borderRadius: '50%'
+                        }}></div>
                         
-                        {/* AWS Partnership Announcement */}
-                        <div style={{
-                            backgroundColor: '#1e3a8a',
-                            color: 'white',
-                            padding: '2rem',
-                            borderRadius: '12px',
-                            marginBottom: '3rem',
-                            border: '3px solid #3b82f6',
-                            boxShadow: '0 8px 25px rgba(30, 58, 138, 0.3)',
-                            position: 'relative',
-                            overflow: 'hidden'
-                        }}>
-                            <div style={{
-                                position: 'absolute',
-                                top: '0',
-                                left: '0',
-                                right: '0',
-                                height: '4px',
-                                background: 'linear-gradient(90deg, #ef4444, #f97316, #eab308, #22c55e, #3b82f6, #8b5cf6)',
-                                animation: 'pulse 2s infinite'
-                            }}></div>
-                            
-                            <h4 style={{ 
-                                color: 'white', 
-                                marginBottom: '1.5rem', 
-                                fontSize: '1.6rem',
-                                fontWeight: '600',
-                                lineHeight: '1.3'
+                        <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+                            <h2 className="animate-fade-in-up" style={{
+                                fontSize: '3.5rem',
+                                marginBottom: '2rem',
+                                color: 'white',
+                                fontWeight: '800',
+                                letterSpacing: '-0.02em'
                             }}>
-                                Navon Technologies Achieves AWS Select Tier and Public Sector Partnership
-                            </h4>
-                            
-                            <div style={{ fontSize: '1rem', lineHeight: '1.7', color: '#e2e8f0' }}>
-                                <p style={{ marginBottom: '1rem' }}>
-                                    At Navon Technologies, we started as a small team of IT enthusiasts who wanted to help small businesses overcome their technology challenges. Today, we have grown into a leading provider of IT services.
-                                </p>
+                                AWS <span className="gradient-text">Expertise</span>
+                            </h2>
+                            <p className="animate-fade-in-up" style={{
+                                fontSize: '1.3rem',
+                                color: '#cbd5e1',
+                                maxWidth: '800px',
+                                margin: '0 auto',
+                                lineHeight: '1.8',
+                                animationDelay: '0.2s',
+                                opacity: 0,
+                                animation: 'fadeInUp 0.8s ease-out 0.2s forwards'
+                            }}>
+                                Delivering secure, scalable cloud solutions with AWS Select Tier and Public Sector Partnership
+                            </p>
+                        </div>
+                    </section>
+
+                    {/* Gold Divider */}
+                    <div className="animate-pulse" style={{
+                        height: '3px',
+                        background: 'linear-gradient(90deg, transparent 0%, #d4af37 50%, transparent 100%)',
+                        boxShadow: '0 0 20px rgba(212, 175, 55, 0.5)',
+                        margin: '0'
+                    }}></div>
+
+                    {/* AWS Partnership Section */}
+                    <section style={{ padding: '5rem 2rem', background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 100%)' }}>
+                        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                            {/* AWS Partnership Announcement */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
+                                color: 'white',
+                                padding: '3rem',
+                                borderRadius: '20px',
+                                marginBottom: '3rem',
+                                border: '3px solid #d4af37',
+                                boxShadow: '0 10px 40px rgba(212, 175, 55, 0.3)',
+                                position: 'relative',
+                                overflow: 'hidden'
+                            }}>
+                                <div style={{
+                                    position: 'absolute',
+                                    top: '0',
+                                    left: '0',
+                                    right: '0',
+                                    height: '4px',
+                                    background: 'linear-gradient(90deg, #d4af37 0%, #f4e5a1 50%, #d4af37 100%)',
+                                    boxShadow: '0 0 15px rgba(212, 175, 55, 0.6)'
+                                }}></div>
                                 
-                                <p style={{ marginBottom: '1rem' }}>
-                                    We have partnered with Ingram Micro and AWS (Amazon Web Services) to provide our customers with the best cloud solutions in the industry. This partnership gained us access to over 200 services, greatly expanded Navon Technologies' ability to offer a comprehensive range of solutions to our customers.
-                                </p>
-                                
-                                <p style={{ marginBottom: '1rem' }}>
-                                    Having access to a wide array of services from AWS has clearly enhanced Navon Technologies' solutions across several key dimensions: speed, cost-effectiveness, security, reliability, and availability. These improvements are crucial for small businesses looking to optimize their IT infrastructure and operations.
-                                </p>
-                                
-                                <div style={{ 
-                                    backgroundColor: 'rgba(255, 255, 255, 0.1)', 
-                                    padding: '1.5rem', 
-                                    borderRadius: '8px',
-                                    marginTop: '1.5rem'
+                                <h4 style={{ 
+                                    color: '#d4af37', 
+                                    marginBottom: '1.5rem', 
+                                    fontSize: '2rem',
+                                    fontWeight: '800',
+                                    lineHeight: '1.3',
+                                    textShadow: '0 0 15px rgba(212, 175, 55, 0.4)'
                                 }}>
-                                    <h5 style={{ color: '#fbbf24', marginBottom: '1rem', fontSize: '1.1rem' }}>
-                                        Key Partnership Benefits:
-                                    </h5>
-                                    <ul style={{ margin: '0', paddingLeft: '1.5rem', color: '#cbd5e0' }}>
-                                        <li style={{ marginBottom: '0.5rem' }}>
-                                            <strong>Data Validation & Integrity:</strong> Built-in validation mechanisms and automatic error handling during migration
-                                        </li>
-                                        <li style={{ marginBottom: '0.5rem' }}>
-                                            <strong>Cost Optimization:</strong> Right-sized data storage and processing solutions using Amazon S3 and AWS Lambda
-                                        </li>
-                                        <li style={{ marginBottom: '0.5rem' }}>
-                                            <strong>DevSecOps Services:</strong> Integrated security measures throughout the entire development lifecycle
-                                        </li>
-                                        <li style={{ marginBottom: '0' }}>
-                                            <strong>Automated Compliance:</strong> AWS Config and Security Hub for automated compliance checks and security best practices
-                                        </li>
-                                    </ul>
+                                    Navon Technologies Achieves AWS Select Tier and Public Sector Partnership
+                                </h4>
+                                
+                                <div style={{ fontSize: '1.05rem', lineHeight: '1.8', color: '#cbd5e1' }}>
+                                    <p style={{ marginBottom: '1rem' }}>
+                                        At Navon Technologies, we started as a small team of IT enthusiasts who wanted to help small businesses overcome their technology challenges. Today, we have grown into a leading provider of IT services.
+                                    </p>
+                                    
+                                    <p style={{ marginBottom: '1rem' }}>
+                                        We have partnered with Ingram Micro and AWS (Amazon Web Services) to provide our customers with the best cloud solutions in the industry. This partnership gained us access to over 200 services, greatly expanded Navon Technologies' ability to offer a comprehensive range of solutions to our customers.
+                                    </p>
+                                    
+                                    <p style={{ marginBottom: '1rem' }}>
+                                        Having access to a wide array of services from AWS has clearly enhanced Navon Technologies' solutions across several key dimensions: speed, cost-effectiveness, security, reliability, and availability. These improvements are crucial for small businesses looking to optimize their IT infrastructure and operations.
+                                    </p>
+                                    
+                                    <div style={{ 
+                                        background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.08) 100%)',
+                                        padding: '2rem', 
+                                        borderRadius: '15px',
+                                        marginTop: '1.5rem',
+                                        border: '1px solid rgba(212, 175, 55, 0.3)'
+                                    }}>
+                                        <h5 style={{ color: '#d4af37', marginBottom: '1rem', fontSize: '1.3rem', fontWeight: '700' }}>
+                                            Key Partnership Benefits:
+                                        </h5>
+                                        <ul style={{ margin: '0', paddingLeft: '1.5rem', color: '#cbd5e1' }}>
+                                            <li style={{ marginBottom: '0.8rem' }}>
+                                                <strong style={{ color: '#d4af37' }}>Data Validation & Integrity:</strong> Built-in validation mechanisms and automatic error handling during migration
+                                            </li>
+                                            <li style={{ marginBottom: '0.8rem' }}>
+                                                <strong style={{ color: '#d4af37' }}>Cost Optimization:</strong> Right-sized data storage and processing solutions using Amazon S3 and AWS Lambda
+                                            </li>
+                                            <li style={{ marginBottom: '0.8rem' }}>
+                                                <strong style={{ color: '#d4af37' }}>DevSecOps Services:</strong> Integrated security measures throughout the entire development lifecycle
+                                            </li>
+                                            <li style={{ marginBottom: '0' }}>
+                                                <strong style={{ color: '#d4af37' }}>Automated Compliance:</strong> AWS Config and Security Hub for automated compliance checks and security best practices
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        
-                        <h3 style={{
-                            fontSize: '2rem',
-                            marginBottom: '2rem',
-                            marginTop: '3rem',
-                            textAlign: 'center',
-                            color: '#1e3a8a',
-                            fontWeight: '600'
-                        }}>
-                            AWS Services
-                        </h3>
-                        
-                        <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                            gap: '1.5rem'
-                        }}>
-                            {[
-                                { name: 'AWS Lambda', file: 'AWS_Lambda.jpeg' },
-                                { name: 'Amazon S3', file: 'Amazon_S3.jpeg' },
-                                { name: 'API Gateway', file: 'API_Gateway.jpg' },
-                                { name: 'AWS Cognito', file: 'AWS_Cognito_and_Authentication.png' },
-                                { name: 'AWS DevOps', file: 'AWS_DevOps.jpeg' },
-                                { name: 'AWS Security Hub', file: 'AWS_Security_Hub.jpeg' },
-                                { name: 'ECS & EKS', file: 'Amazon_ECS_and_EKS.jpg' },
-                                { name: 'IAM', file: 'IAM.jpg' },
-                                { name: 'React & Amplify', file: 'React_and_Amplify.jpg' },
-                                { name: 'Route 53 & Domains', file: 'Route_53_Domains.jpg' },
-                                { name: 'DynamoDB', file: 'Dynamo_DB.jpeg' },
+                    </section>
+
+                    {/* Gold Divider */}
+                    <div className="animate-pulse" style={{
+                        height: '3px',
+                        background: 'linear-gradient(90deg, transparent 0%, #d4af37 50%, transparent 100%)',
+                        boxShadow: '0 0 20px rgba(212, 175, 55, 0.5)',
+                        margin: '0'
+                    }}></div>
+
+                    {/* AWS Services Grid */}
+                    <section style={{ padding: '5rem 2rem', background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 100%)' }}>
+                        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+                            <h3 className="animate-fade-in-up" style={{
+                                fontSize: '2.5rem',
+                                marginBottom: '3rem',
+                                textAlign: 'center',
+                                color: '#d4af37',
+                                fontWeight: '800',
+                                textShadow: '0 0 20px rgba(212, 175, 55, 0.4)'
+                            }}>
+                                AWS Services
+                            </h3>
+                            
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                                gap: '2rem'
+                            }}>
+                                {[
+                                    { name: 'AWS Lambda', file: 'AWS_Lambda.jpeg' },
+                                    { name: 'Amazon S3', file: 'Amazon_S3.jpeg' },
+                                    { name: 'API Gateway', file: 'API_Gateway.jpg' },
+                                    { name: 'AWS Cognito', file: 'AWS_Cognito_and_Authentication.png' },
+                                    { name: 'AWS DevOps', file: 'AWS_DevOps.jpeg' },
+                                    { name: 'AWS Security Hub', file: 'AWS_Security_Hub.jpeg' },
+                                    { name: 'ECS & EKS', file: 'Amazon_ECS_and_EKS.jpg' },
+                                    { name: 'IAM', file: 'IAM.jpg' },
+                                    { name: 'React & Amplify', file: 'React_and_Amplify.jpg' },
+                                    { name: 'Route 53 & Domains', file: 'Route_53_Domains.jpg' },
+                                    { name: 'DynamoDB', file: 'Dynamo_DB.jpeg' },
                                 { name: 'AWS Shield / WAF', file: 'AWS_Shield_WAF.jpeg' }
                             ].map((service, index) => {
                                 const getImageSrc = (service) => {
@@ -1576,25 +1915,38 @@ function SimpleApp() {
                                 };
                                 
                                 return (
-                                <div key={index} style={{
-                                    background: '#f8fafc',
-                                    padding: '0.5rem',
-                                    borderRadius: '8px',
+                                <div key={index} className="hover-lift animate-scale-in" style={{
+                                    background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
+                                    padding: '2rem',
+                                    borderRadius: '20px',
                                     textAlign: 'center',
-                                    border: '1px solid #e2e8f0'
+                                    border: '2px solid #d4af37',
+                                    boxShadow: '0 10px 40px rgba(212, 175, 55, 0.2)',
+                                    minHeight: '200px',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    animationDelay: `${index * 0.05}s`,
+                                    opacity: 0
                                 }}>
                                     <img
                                         src={getImageSrc(service)}
                                         alt={service.name}
                                         style={{
-                                            width: ['AWS Cognito', 'AWS DevOps', 'AWS Security Hub'].includes(service.name) ? '200px' : (['AWS Lambda', 'React & Amplify'].includes(service.name) ? '180px' : '150px'),
-                                            height: ['AWS Cognito', 'AWS DevOps', 'AWS Security Hub'].includes(service.name) ? '200px' : (['AWS Lambda', 'React & Amplify'].includes(service.name) ? '180px' : '150px'),
+                                            width: ['AWS Cognito', 'AWS DevOps', 'AWS Security Hub'].includes(service.name) ? '150px' : (['AWS Lambda', 'React & Amplify'].includes(service.name) ? '130px' : '110px'),
+                                            height: ['AWS Cognito', 'AWS DevOps', 'AWS Security Hub'].includes(service.name) ? '150px' : (['AWS Lambda', 'React & Amplify'].includes(service.name) ? '130px' : '110px'),
                                             objectFit: 'contain',
-                                            marginBottom: '0.25rem'
+                                            marginBottom: '1rem'
                                         }}
                                         onError={(e) => { e.target.style.display = 'none'; }}
                                     />
-                                    <h4 style={{ color: '#1e3a8a', margin: 0, fontSize: '1rem' }}>
+                                    <h4 style={{ 
+                                        color: '#d4af37', 
+                                        margin: 0, 
+                                        fontSize: '1.1rem',
+                                        fontWeight: '700'
+                                    }}>
                                         {service.name}
                                     </h4>
                                 </div>
@@ -1603,198 +1955,322 @@ function SimpleApp() {
                         </div>
                         
                         {/* And many more text */}
-                        <div style={{ 
+                        <div className="animate-fade-in-up" style={{ 
                             textAlign: 'center', 
-                            marginTop: '2rem',
-                            fontSize: '1.2rem',
-                            color: '#1e3a8a',
-                            fontWeight: '600',
-                            fontStyle: 'italic'
+                            marginTop: '3rem',
+                            fontSize: '1.5rem',
+                            color: '#1e293b',
+                            fontWeight: '700',
+                            fontStyle: 'italic',
+                            animationDelay: '0.8s',
+                            opacity: 0
                         }}>
-                            ...and many more!
-                        </div>
-
-                        {/* IT Services Section */}
-                        <div style={{ marginTop: '4rem' }}>
-                            <h2 style={{
-                                fontSize: '2.5rem',
-                                marginBottom: '3rem',
-                                textAlign: 'center',
-                                color: '#1e3a8a',
-                                fontWeight: '600'
-                            }}>
-                                Professional IT Services for Your Business
-                            </h2>
-                            
-                            <div style={{
-                                display: 'grid',
-                                gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-                                gap: '2rem'
-                            }}>
-                                {/* Managed IT Services */}
-                                <div style={{
-                                    background: 'white',
-                                    padding: '2rem',
-                                    borderRadius: '12px',
-                                    border: '1px solid #e2e8f0',
-                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
-                                }}>
-                                    <h3 style={{
-                                        color: '#1e3a8a',
-                                        marginBottom: '1rem',
-                                        fontSize: '1.3rem',
-                                        fontWeight: '600'
-                                    }}>
-                                        AWS Managed IT Services
-                                    </h3>
-                                    <p style={{
-                                        color: '#475569',
-                                        lineHeight: '1.7',
-                                        margin: '0'
-                                    }}>
-                                        Our AWS Managed IT Services provide comprehensive IT support and management for your business. We will proactively monitor your network and systems, handle all updates and patches, and provide fast and reliable support when you need it.
-                                    </p>
-                                </div>
-
-                                {/* Cloud Services */}
-                                <div style={{
-                                    background: 'white',
-                                    padding: '2rem',
-                                    borderRadius: '12px',
-                                    border: '1px solid #e2e8f0',
-                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
-                                }}>
-                                    <h3 style={{
-                                        color: '#1e3a8a',
-                                        marginBottom: '1rem',
-                                        fontSize: '1.3rem',
-                                        fontWeight: '600'
-                                    }}>
-                                        Cloud Services
-                                    </h3>
-                                    <p style={{
-                                        color: '#475569',
-                                        lineHeight: '1.7',
-                                        margin: '0'
-                                    }}>
-                                        Our Cloud Services provide a reliable and scalable solution for your business needs. We offer cloud migration, secure data storage, and cloud-based software solutions to help your business operate more efficiently and effectively.
-                                    </p>
-                                </div>
-
-                                {/* Cybersecurity Services */}
-                                <div style={{
-                                    background: 'white',
-                                    padding: '2rem',
-                                    borderRadius: '12px',
-                                    border: '1px solid #e2e8f0',
-                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
-                                }}>
-                                    <h3 style={{
-                                        color: '#1e3a8a',
-                                        marginBottom: '1rem',
-                                        fontSize: '1.3rem',
-                                        fontWeight: '600'
-                                    }}>
-                                        Cybersecurity Services
-                                    </h3>
-                                    <p style={{
-                                        color: '#475569',
-                                        lineHeight: '1.7',
-                                        margin: '0'
-                                    }}>
-                                        Our Cybersecurity Services provide comprehensive protection for your business against cyber threats. We offer risk assessments, vulnerability testing, threat monitoring, and training to ensure your business is secure.
-                                    </p>
-                                </div>
-
-                                {/* Network Design and Implementation */}
-                                <div style={{
-                                    background: 'white',
-                                    padding: '2rem',
-                                    borderRadius: '12px',
-                                    border: '1px solid #e2e8f0',
-                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
-                                }}>
-                                    <h3 style={{
-                                        color: '#1e3a8a',
-                                        marginBottom: '1rem',
-                                        fontSize: '1.3rem',
-                                        fontWeight: '600'
-                                    }}>
-                                        Network Design and Implementation
-                                    </h3>
-                                    <p style={{
-                                        color: '#475569',
-                                        lineHeight: '1.7',
-                                        margin: '0'
-                                    }}>
-                                        Our Network Design and Implementation services provide customized network solutions for your business. We will assess your needs, design a network architecture, and implement the solution to ensure your business runs smoothly.
-                                    </p>
-                                </div>
-
-                                {/* Data Backup and Recovery */}
-                                <div style={{
-                                    background: 'white',
-                                    padding: '2rem',
-                                    borderRadius: '12px',
-                                    border: '1px solid #e2e8f0',
-                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
-                                }}>
-                                    <h3 style={{
-                                        color: '#1e3a8a',
-                                        marginBottom: '1rem',
-                                        fontSize: '1.3rem',
-                                        fontWeight: '600'
-                                    }}>
-                                        Data Backup and Recovery
-                                    </h3>
-                                    <p style={{
-                                        color: '#475569',
-                                        lineHeight: '1.7',
-                                        margin: '0'
-                                    }}>
-                                        Our Data Backup and Recovery services provide peace of mind knowing your business data is secure and recoverable. We will set up automatic backups, test recovery processes, and ensure your data is safe in the event of a disaster.
-                                    </p>
-                                </div>
-
-                                {/* IT Consulting Services */}
-                                <div style={{
-                                    background: 'white',
-                                    padding: '2rem',
-                                    borderRadius: '12px',
-                                    border: '1px solid #e2e8f0',
-                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
-                                }}>
-                                    <h3 style={{
-                                        color: '#1e3a8a',
-                                        marginBottom: '1rem',
-                                        fontSize: '1.3rem',
-                                        fontWeight: '600'
-                                    }}>
-                                        IT Consulting Services
-                                    </h3>
-                                    <p style={{
-                                        color: '#475569',
-                                        lineHeight: '1.7',
-                                        margin: '0'
-                                    }}>
-                                        Our IT Consulting Services provide expert advice and guidance to help your business make informed decisions about technology. We will assess your current systems, identify areas for improvement, and provide recommendations to help your business grow.
-                                    </p>
-                                </div>
-                            </div>
+                            <span style={{ color: '#d4af37' }}>...and many more!</span>
                         </div>
                     </div>
                 </section>
-            )}
-            {/* CAREERS PAGE */}
+
+                        {/* AWS Managed IT Services Section */}
+                        <section style={{ padding: '5rem 2rem', background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 100%)' }}>
+                            <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+                                <h2 className="animate-fade-in-up" style={{
+                                    fontSize: '2.5rem',
+                                    marginBottom: '3rem',
+                                    textAlign: 'center',
+                                    color: '#d4af37',
+                                    fontWeight: '800',
+                                    textShadow: '0 0 20px rgba(212, 175, 55, 0.4)'
+                                }}>
+                                    Professional IT Services for Your Business
+                                </h2>
+                                
+                                <div style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                                    gap: '2rem'
+                                }}>
+                                    {/* Managed IT Services */}
+                                    <div className="hover-lift animate-slide-in-left" style={{
+                                        background: 'linear-gradient(135deg, #f4e5a1 0%, #e8d68f 100%)',
+                                        padding: '2.5rem',
+                                        borderRadius: '20px',
+                                        border: '2px solid #d4af37',
+                                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.3)'
+                                    }}>
+                                        <div style={{
+                                            width: '60px',
+                                            height: '60px',
+                                            background: 'rgba(255, 255, 255, 0.5)',
+                                            borderRadius: '12px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            marginBottom: '1.5rem',
+                                            boxShadow: '0 8px 20px rgba(255, 255, 255, 0.3)'
+                                        }}>
+                                            <span style={{ fontSize: '2rem' }}>⚙️</span>
+                                        </div>
+                                        <h3 style={{
+                                            color: '#1e293b',
+                                            marginBottom: '1rem',
+                                            fontSize: '1.5rem',
+                                            fontWeight: '800'
+                                        }}>
+                                            AWS Managed IT Services
+                                        </h3>
+                                        <p style={{
+                                            color: '#1e293b',
+                                            lineHeight: '1.7',
+                                            margin: '0',
+                                            fontSize: '1.05rem'
+                                        }}>
+                                            Our AWS Managed IT Services provide comprehensive IT support and management for your business. We will proactively monitor your network and systems, handle all updates and patches, and provide fast and reliable support when you need it.
+                                        </p>
+                                    </div>
+
+                                    {/* Cloud Services */}
+                                    <div className="hover-lift animate-fade-in-up" style={{
+                                        background: 'linear-gradient(135deg, #f4e5a1 0%, #e8d68f 100%)',
+                                        padding: '2.5rem',
+                                        borderRadius: '20px',
+                                        border: '2px solid #d4af37',
+                                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.3)',
+                                        animationDelay: '0.2s',
+                                        opacity: 0
+                                    }}>
+                                        <div style={{
+                                            width: '60px',
+                                            height: '60px',
+                                            background: 'rgba(255, 255, 255, 0.5)',
+                                            borderRadius: '12px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            marginBottom: '1.5rem',
+                                            boxShadow: '0 8px 20px rgba(255, 255, 255, 0.3)'
+                                        }}>
+                                            <span style={{ fontSize: '2rem' }}>☁️</span>
+                                        </div>
+                                        <h3 style={{
+                                            color: '#1e293b',
+                                            marginBottom: '1rem',
+                                            fontSize: '1.5rem',
+                                            fontWeight: '800'
+                                        }}>
+                                            Cloud Services
+                                        </h3>
+                                        <p style={{
+                                            color: '#1e293b',
+                                            lineHeight: '1.7',
+                                            margin: '0',
+                                            fontSize: '1.05rem'
+                                        }}>
+                                            Our Cloud Services provide a reliable and scalable solution for your business needs. We offer cloud migration, secure data storage, and cloud-based software solutions to help your business operate more efficiently and effectively.
+                                        </p>
+                                    </div>
+
+                                    {/* Cybersecurity Services */}
+                                    <div className="hover-lift animate-slide-in-right" style={{
+                                        background: 'linear-gradient(135deg, #f4e5a1 0%, #e8d68f 100%)',
+                                        padding: '2.5rem',
+                                        borderRadius: '20px',
+                                        border: '2px solid #d4af37',
+                                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.3)',
+                                        animationDelay: '0.4s',
+                                        opacity: 0
+                                    }}>
+                                        <div style={{
+                                            width: '60px',
+                                            height: '60px',
+                                            background: 'rgba(255, 255, 255, 0.5)',
+                                            borderRadius: '12px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            marginBottom: '1.5rem',
+                                            boxShadow: '0 8px 20px rgba(255, 255, 255, 0.3)'
+                                        }}>
+                                            <span style={{ fontSize: '2rem' }}>🔒</span>
+                                        </div>
+                                        <h3 style={{
+                                            color: '#1e293b',
+                                            marginBottom: '1rem',
+                                            fontSize: '1.5rem',
+                                            fontWeight: '800'
+                                        }}>
+                                            Cybersecurity Services
+                                        </h3>
+                                        <p style={{
+                                            color: '#1e293b',
+                                            lineHeight: '1.7',
+                                            margin: '0',
+                                            fontSize: '1.05rem'
+                                        }}>
+                                            Our Cybersecurity Services provide comprehensive protection for your business against cyber threats. We offer risk assessments, vulnerability testing, threat monitoring, and training to ensure your business is secure.
+                                        </p>
+                                    </div>
+
+                                    {/* Network Design and Implementation */}
+                                    <div className="hover-lift animate-slide-in-left" style={{
+                                        background: 'linear-gradient(135deg, #f4e5a1 0%, #e8d68f 100%)',
+                                        padding: '2.5rem',
+                                        borderRadius: '20px',
+                                        border: '2px solid #d4af37',
+                                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.3)',
+                                        animationDelay: '0.6s',
+                                        opacity: 0
+                                    }}>
+                                        <div style={{
+                                            width: '60px',
+                                            height: '60px',
+                                            background: 'rgba(255, 255, 255, 0.5)',
+                                            borderRadius: '12px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            marginBottom: '1.5rem',
+                                            boxShadow: '0 8px 20px rgba(255, 255, 255, 0.3)'
+                                        }}>
+                                            <span style={{ fontSize: '2rem' }}>🌐</span>
+                                        </div>
+                                        <h3 style={{
+                                            color: '#1e293b',
+                                            marginBottom: '1rem',
+                                            fontSize: '1.5rem',
+                                            fontWeight: '800'
+                                        }}>
+                                            Network Design and Implementation
+                                        </h3>
+                                        <p style={{
+                                            color: '#1e293b',
+                                            lineHeight: '1.7',
+                                            margin: '0',
+                                            fontSize: '1.05rem'
+                                        }}>
+                                            Our Network Design and Implementation services provide customized network solutions for your business. We will assess your needs, design a network architecture, and implement the solution to ensure your business runs smoothly.
+                                        </p>
+                                    </div>
+
+                                    {/* Data Backup and Recovery */}
+                                    <div className="hover-lift animate-slide-in-top" style={{
+                                        background: 'linear-gradient(135deg, #f4e5a1 0%, #e8d68f 100%)',
+                                        padding: '2.5rem',
+                                        borderRadius: '20px',
+                                        border: '2px solid #d4af37',
+                                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.3)',
+                                        animationDelay: '0.8s',
+                                        opacity: 0
+                                    }}>
+                                        <div style={{
+                                            width: '60px',
+                                            height: '60px',
+                                            background: 'rgba(255, 255, 255, 0.5)',
+                                            borderRadius: '12px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            marginBottom: '1.5rem',
+                                            boxShadow: '0 8px 20px rgba(255, 255, 255, 0.3)'
+                                        }}>
+                                            <span style={{ fontSize: '2rem' }}>💾</span>
+                                        </div>
+                                        <h3 style={{
+                                            color: '#1e293b',
+                                            marginBottom: '1rem',
+                                            fontSize: '1.5rem',
+                                            fontWeight: '800'
+                                        }}>
+                                            Data Backup and Recovery
+                                        </h3>
+                                        <p style={{
+                                            color: '#1e293b',
+                                            lineHeight: '1.7',
+                                            margin: '0',
+                                            fontSize: '1.05rem'
+                                        }}>
+                                            Our Data Backup and Recovery services provide peace of mind knowing your business data is secure and recoverable. We will set up automatic backups, test recovery processes, and ensure your data is safe in the event of a disaster.
+                                        </p>
+                                    </div>
+
+                                    {/* IT Consulting Services */}
+                                    <div className="hover-lift animate-slide-in-right" style={{
+                                        background: 'linear-gradient(135deg, #f4e5a1 0%, #e8d68f 100%)',
+                                        padding: '2.5rem',
+                                        borderRadius: '20px',
+                                        border: '2px solid #d4af37',
+                                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.3)',
+                                        animationDelay: '1s',
+                                        opacity: 0
+                                    }}>
+                                        <div style={{
+                                            width: '60px',
+                                            height: '60px',
+                                            background: 'rgba(255, 255, 255, 0.5)',
+                                            borderRadius: '12px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            marginBottom: '1.5rem',
+                                            boxShadow: '0 8px 20px rgba(255, 255, 255, 0.3)'
+                                        }}>
+                                            <span style={{ fontSize: '2rem' }}>💡</span>
+                                        </div>
+                                        <h3 style={{
+                                            color: '#1e293b',
+                                            marginBottom: '1rem',
+                                            fontSize: '1.5rem',
+                                            fontWeight: '800'
+                                        }}>
+                                            IT Consulting Services
+                                        </h3>
+                                        <p style={{
+                                            color: '#1e293b',
+                                            lineHeight: '1.7',
+                                            margin: '0',
+                                            fontSize: '1.05rem'
+                                        }}>
+                                            Our IT Consulting Services provide expert guidance and advice for your business technology needs. We will assess your current IT infrastructure, identify areas for improvement, and provide recommendations to help your business succeed.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                )}
+
+                {/* CAREERS PAGE */}
             {currentPage === 'careers' && (
-                <section style={{ padding: '4rem 2rem', background: '#f8fafc' }}>
-                    <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                <section style={{ 
+                    padding: '4rem 2rem', 
+                    background: 'white',
+                    position: 'relative',
+                    overflow: 'hidden'
+                }}>
+                    {/* Diagonal Gold Lines Background */}
+                    <div style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background: `repeating-linear-gradient(
+                            45deg,
+                            transparent,
+                            transparent 80px,
+                            rgba(212, 175, 55, 0.25) 80px,
+                            rgba(212, 175, 55, 0.25) 82px
+                        )`,
+                        pointerEvents: 'none',
+                        zIndex: 0
+                    }}></div>
+
+                    <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
                         <h2 style={{
                             fontSize: '2.5rem',
                             marginBottom: '3rem',
                             textAlign: 'center',
-                            color: '#1e3a8a',
-                            fontWeight: '600'
+                            color: '#0f172a',
+                            fontWeight: '800'
                         }}>
                             Join Our Mission-Critical Team
                         </h2>
@@ -1834,16 +2310,16 @@ function SimpleApp() {
                                     background: 'white',
                                     padding: '2rem',
                                     borderRadius: '12px',
-                                    border: '1px solid #e2e8f0',
-                                    boxShadow: '0 4px 6px rgba(0,0,0,0.05)'
+                                    border: '2px solid #d4af37',
+                                    boxShadow: '0 4px 15px rgba(212, 175, 55, 0.15)'
                                 }}>
-                                    <h3 style={{ color: '#1e3a8a', marginBottom: '1rem', fontSize: '1.3rem' }}>
+                                    <h3 style={{ color: '#0f172a', marginBottom: '1rem', fontSize: '1.3rem', fontWeight: '700' }}>
                                         {job.title}
                                     </h3>
                                     <div style={{ marginBottom: '1rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                                         <span style={{
-                                            background: '#e0f2fe',
-                                            color: '#0369a1',
+                                            background: 'linear-gradient(135deg, #f4e5a1 0%, #e8d68f 100%)',
+                                            color: '#0f172a',
                                             padding: '0.25rem 0.75rem',
                                             borderRadius: '20px',
                                             fontSize: '0.85rem',
@@ -1852,8 +2328,8 @@ function SimpleApp() {
                                             {job.location}
                                         </span>
                                         <span style={{
-                                            background: '#f0fdf4',
-                                            color: '#166534',
+                                            background: 'linear-gradient(135deg, #f4e5a1 0%, #e8d68f 100%)',
+                                            color: '#0f172a',
                                             padding: '0.25rem 0.75rem',
                                             borderRadius: '20px',
                                             fontSize: '0.85rem',
@@ -1862,28 +2338,29 @@ function SimpleApp() {
                                             {job.type}
                                         </span>
                                     </div>
-                                    <p style={{ color: '#475569', lineHeight: '1.6', marginBottom: '1.5rem' }}>
+                                    <p style={{ color: '#1e293b', lineHeight: '1.6', marginBottom: '1.5rem' }}>
                                         {job.description}
                                     </p>
                                     <div style={{ marginBottom: '1.5rem' }}>
-                                        <h4 style={{ color: '#1e3a8a', fontSize: '1rem', marginBottom: '0.5rem' }}>
+                                        <h4 style={{ color: '#0f172a', fontSize: '1rem', marginBottom: '0.5rem', fontWeight: '700' }}>
                                             Key Requirements:
                                         </h4>
-                                        <ul style={{ color: '#475569', paddingLeft: '1.5rem', margin: 0 }}>
+                                        <ul style={{ color: '#1e293b', paddingLeft: '1.5rem', margin: 0 }}>
                                             {job.requirements.map((req, reqIndex) => (
                                                 <li key={reqIndex} style={{ marginBottom: '0.25rem' }}>{req}</li>
                                             ))}
                                         </ul>
                                     </div>
                                     <button style={{
-                                        background: '#1e3a8a',
-                                        color: 'white',
+                                        background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
+                                        color: '#0f172a',
                                         border: 'none',
                                         padding: '0.75rem 1.5rem',
                                         borderRadius: '6px',
                                         cursor: 'pointer',
-                                        fontWeight: '600',
-                                        width: '100%'
+                                        fontWeight: '700',
+                                        width: '100%',
+                                        fontSize: '1rem'
                                     }}>
                                         Apply Now
                                     </button>
@@ -1895,15 +2372,16 @@ function SimpleApp() {
                             background: 'white',
                             padding: '2rem',
                             borderRadius: '12px',
-                            border: '1px solid #e2e8f0',
+                            border: '2px solid #d4af37',
                             textAlign: 'center',
-                            marginBottom: '3rem'
+                            marginBottom: '3rem',
+                            boxShadow: '0 4px 15px rgba(212, 175, 55, 0.15)'
                         }}>
-                            <h4 style={{ color: '#1e3a8a', marginBottom: '1.5rem', fontSize: '1.5rem' }}>
+                            <h4 style={{ color: '#0f172a', marginBottom: '1.5rem', fontSize: '1.5rem', fontWeight: '800' }}>
                                 🔒 Secure Application Process
                             </h4>
                             <p style={{ 
-                                color: '#475569', 
+                                color: '#1e293b', 
                                 fontSize: '1.1rem',
                                 lineHeight: '1.7',
                                 marginBottom: '2rem',
@@ -1920,10 +2398,11 @@ function SimpleApp() {
                             background: 'white',
                             padding: '3rem',
                             borderRadius: '12px',
-                            border: '1px solid #e2e8f0',
-                            textAlign: 'center'
+                            border: '2px solid #d4af37',
+                            textAlign: 'center',
+                            boxShadow: '0 4px 15px rgba(212, 175, 55, 0.15)'
                         }}>
-                            <h3 style={{ color: '#1e3a8a', marginBottom: '1.5rem', fontSize: '1.5rem' }}>
+                            <h3 style={{ color: '#0f172a', marginBottom: '1.5rem', fontSize: '1.5rem', fontWeight: '800' }}>
                                 Why Work at NAVON Technologies?
                             </h3>
                             <div style={{
@@ -1934,34 +2413,35 @@ function SimpleApp() {
                             }}>
                                 <div>
                                     <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🛡️</div>
-                                    <h4 style={{ color: '#1e3a8a', marginBottom: '0.5rem' }}>Security Clearance</h4>
-                                    <p style={{ color: '#475569', fontSize: '0.9rem' }}>Sponsorship available for qualified candidates</p>
+                                    <h4 style={{ color: '#0f172a', marginBottom: '0.5rem', fontWeight: '700' }}>Security Clearance</h4>
+                                    <p style={{ color: '#1e293b', fontSize: '0.9rem' }}>Sponsorship available for qualified candidates</p>
                                 </div>
                                 <div>
                                     <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>💼</div>
-                                    <h4 style={{ color: '#1e3a8a', marginBottom: '0.5rem' }}>Competitive Benefits</h4>
-                                    <p style={{ color: '#475569', fontSize: '0.9rem' }}>Health, dental, 401k, and professional development</p>
+                                    <h4 style={{ color: '#0f172a', marginBottom: '0.5rem', fontWeight: '700' }}>Competitive Benefits</h4>
+                                    <p style={{ color: '#1e293b', fontSize: '0.9rem' }}>Health, dental, 401k, and professional development</p>
                                 </div>
                                 <div>
                                     <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🏠</div>
-                                    <h4 style={{ color: '#1e3a8a', marginBottom: '0.5rem' }}>Remote Flexibility</h4>
-                                    <p style={{ color: '#475569', fontSize: '0.9rem' }}>Work from anywhere with secure access</p>
+                                    <h4 style={{ color: '#0f172a', marginBottom: '0.5rem', fontWeight: '700' }}>Remote Flexibility</h4>
+                                    <p style={{ color: '#1e293b', fontSize: '0.9rem' }}>Work from anywhere with secure access</p>
                                 </div>
                                 <div>
                                     <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🎯</div>
-                                    <h4 style={{ color: '#1e3a8a', marginBottom: '0.5rem' }}>Mission Impact</h4>
-                                    <p style={{ color: '#475569', fontSize: '0.9rem' }}>Support critical government operations</p>
+                                    <h4 style={{ color: '#0f172a', marginBottom: '0.5rem', fontWeight: '700' }}>Mission Impact</h4>
+                                    <p style={{ color: '#1e293b', fontSize: '0.9rem' }}>Support critical government operations</p>
                                 </div>
                             </div>
                             <div style={{ marginTop: '2rem' }}>
                                 <button style={{
-                                    background: '#1e3a8a',
-                                    color: 'white',
+                                    background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
+                                    color: '#0f172a',
                                     border: 'none',
                                     padding: '1rem 2rem',
                                     borderRadius: '8px',
                                     cursor: 'pointer',
-                                    fontWeight: '600'
+                                    fontWeight: '700',
+                                    fontSize: '1rem'
                                 }}>
                                     Submit Resume
                                 </button>
