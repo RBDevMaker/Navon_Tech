@@ -1020,11 +1020,12 @@ function SimpleApp() {
                         {/* Mission, Vision, Values, Brand */}
                         <section style={{ padding: '5rem 2rem', background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)' }}>
                             <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+                                {/* Mission and Vision in a row */}
                                 <div style={{ 
                                     display: 'grid', 
                                     gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', 
                                     gap: '2rem',
-                                    marginBottom: '4rem'
+                                    marginBottom: '2rem'
                                 }}>
                                     <div className="hover-lift animate-slide-in-left" style={{ 
                                         background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
@@ -1065,29 +1066,44 @@ function SimpleApp() {
                                             To bring the best innovation and highest value to our customers.
                                         </p>
                                     </div>
-                                    
-                                    <div className="hover-lift animate-slide-in-right" style={{ 
-                                        background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
-                                        padding: '2.5rem', 
-                                        borderRadius: '20px',
-                                        border: '3px solid #d4af37',
-                                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.2)',
-                                        animationDelay: '0.4s',
-                                        opacity: 0
+                                </div>
+                                
+                                {/* Our Values spans full width */}
+                                <div className="hover-lift animate-slide-in-right" style={{ 
+                                    background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
+                                    padding: '2.5rem', 
+                                    borderRadius: '20px',
+                                    border: '3px solid #d4af37',
+                                    boxShadow: '0 10px 40px rgba(212, 175, 55, 0.2)',
+                                    animationDelay: '0.4s',
+                                    opacity: 0,
+                                    marginBottom: '4rem'
+                                }}>
+                                    <h3 style={{ 
+                                        color: '#d4af37', 
+                                        marginBottom: '1.5rem', 
+                                        fontSize: '1.8rem',
+                                        fontWeight: '800',
+                                        textShadow: '0 0 15px rgba(212, 175, 55, 0.4)',
+                                        textAlign: 'center'
+                                    }}>Our Values</h3>
+                                    <ul style={{ 
+                                        color: '#cbd5e1', 
+                                        margin: '0', 
+                                        paddingLeft: '1.5rem', 
+                                        fontSize: '1.05rem', 
+                                        lineHeight: '2',
+                                        display: 'grid',
+                                        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                                        gap: '1rem',
+                                        listStyle: 'none'
                                     }}>
-                                        <h3 style={{ 
-                                            color: '#d4af37', 
-                                            marginBottom: '1.5rem', 
-                                            fontSize: '1.8rem',
-                                            fontWeight: '800',
-                                            textShadow: '0 0 15px rgba(212, 175, 55, 0.4)'
-                                        }}>Our Values</h3>
-                                        <ul style={{ color: '#cbd5e1', margin: '0', paddingLeft: '1.5rem', fontSize: '1.05rem', lineHeight: '2' }}>
-                                            <li style={{ marginBottom: '0.5rem' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> Reliability</li>
-                                            <li style={{ marginBottom: '0.5rem' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> Security</li>
-                                            <li style={{ marginBottom: '0.5rem' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> Innovation</li>
-                                        </ul>
-                                    </div>
+                                        <li style={{ marginBottom: '0.5rem' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> Reliability - Delivering consistent, dependable solutions</li>
+                                        <li style={{ marginBottom: '0.5rem' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> Security - Protecting mission-critical data and systems</li>
+                                        <li style={{ marginBottom: '0.5rem' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> Innovation - Embracing cutting-edge technology</li>
+                                        <li style={{ marginBottom: '0.5rem' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> Excellence - Exceeding the highest standards</li>
+                                        <li style={{ marginBottom: '0.5rem' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> Integrity - Operating with transparency and trust</li>
+                                    </ul>
                                 </div>
                                 
                                 {/* Brand Story */}
@@ -2777,19 +2793,75 @@ function SimpleApp() {
                             justifyContent: 'center',
                             marginTop: '3rem'
                         }}>
-                            <div className="hover-lift animate-scale-in" style={{ 
+                            <div className="hover-lift" style={{ 
                                 textAlign: 'center', 
                                 maxWidth: '600px',
-                                background: '#f5f5dc',
-                                padding: '2.5rem',
-                                borderRadius: '12px',
-                                border: '2px solid #d4af37',
-                                boxShadow: '0 4px 15px rgba(212, 175, 55, 0.15)',
-                                animationDelay: '0.2s',
-                                opacity: 0
+                                background: 'linear-gradient(135deg, #f5f5dc 0%, #ede0c8 100%)',
+                                padding: '3rem',
+                                borderRadius: '8px',
+                                border: '8px solid transparent',
+                                borderImage: 'linear-gradient(45deg, #d4af37 0%, #f4e5a1 25%, #d4af37 50%, #b8941f 75%, #d4af37 100%) 1',
+                                boxShadow: '0 20px 60px rgba(212, 175, 55, 0.3), inset 0 0 0 2px #d4af37, inset 0 0 0 4px #f5f5dc',
+                                animation: 'rollIn 1s ease-out forwards',
+                                transform: 'translateX(-100%) rotate(-360deg)',
+                                opacity: 0,
+                                position: 'relative'
                             }}>
-                                <h3 style={{ marginBottom: '2rem', fontSize: '2rem', fontWeight: '800', color: '#0f172a' }}>Contact Information</h3>
-                                <p style={{ marginBottom: '1rem', fontSize: '1.3rem', lineHeight: '1.8', color: '#1e293b' }}>
+                                {/* Corner decorations for mitered frame effect */}
+                                <div style={{
+                                    position: 'absolute',
+                                    top: '-4px',
+                                    left: '-4px',
+                                    width: '30px',
+                                    height: '30px',
+                                    background: 'linear-gradient(135deg, #d4af37 0%, #f4e5a1 100%)',
+                                    clipPath: 'polygon(0 0, 100% 0, 0 100%)'
+                                }}></div>
+                                <div style={{
+                                    position: 'absolute',
+                                    top: '-4px',
+                                    right: '-4px',
+                                    width: '30px',
+                                    height: '30px',
+                                    background: 'linear-gradient(225deg, #d4af37 0%, #f4e5a1 100%)',
+                                    clipPath: 'polygon(100% 0, 100% 100%, 0 0)'
+                                }}></div>
+                                <div style={{
+                                    position: 'absolute',
+                                    bottom: '-4px',
+                                    left: '-4px',
+                                    width: '30px',
+                                    height: '30px',
+                                    background: 'linear-gradient(45deg, #d4af37 0%, #f4e5a1 100%)',
+                                    clipPath: 'polygon(0 0, 0 100%, 100% 100%)'
+                                }}></div>
+                                <div style={{
+                                    position: 'absolute',
+                                    bottom: '-4px',
+                                    right: '-4px',
+                                    width: '30px',
+                                    height: '30px',
+                                    background: 'linear-gradient(315deg, #d4af37 0%, #f4e5a1 100%)',
+                                    clipPath: 'polygon(100% 0, 100% 100%, 0 100%)'
+                                }}></div>
+                                
+                                <div style={{
+                                    width: '80px',
+                                    height: '80px',
+                                    background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
+                                    borderRadius: '50%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    margin: '0 auto 1.5rem auto',
+                                    boxShadow: '0 10px 30px rgba(212, 175, 55, 0.4)',
+                                    position: 'relative',
+                                    zIndex: 1
+                                }}>
+                                    <span style={{ fontSize: '2.5rem' }}>📧</span>
+                                </div>
+                                <h3 style={{ marginBottom: '2rem', fontSize: '2rem', fontWeight: '800', color: '#0f172a', position: 'relative', zIndex: 1 }}>Contact Information</h3>
+                                <p style={{ marginBottom: '1rem', fontSize: '1.3rem', lineHeight: '1.8', color: '#1e293b', position: 'relative', zIndex: 1 }}>
                                     Email: info@navontechnologies.com<br />
                                     Questions regarding application: HR@navontech.com<br />
                                     Phone: 571-477-2727<br />
@@ -2798,6 +2870,19 @@ function SimpleApp() {
                                 </p>
                             </div>
                         </div>
+                        
+                        <style>{`
+                            @keyframes rollIn {
+                                0% {
+                                    transform: translateX(-100%) rotate(-360deg);
+                                    opacity: 0;
+                                }
+                                100% {
+                                    transform: translateX(0) rotate(0deg);
+                                    opacity: 1;
+                                }
+                            }
+                        `}</style>
                         
                         <div className="animate-fade-in-up" style={{ 
                             textAlign: 'center', 
@@ -2829,19 +2914,59 @@ function SimpleApp() {
                         <div style={{ 
                             textAlign: 'center', 
                             marginTop: '4rem',
-                            background: '#f5f5dc',
-                            padding: '2rem 1.5rem',
-                            borderRadius: '12px',
-                            border: '2px solid #d4af37',
-                            boxShadow: '0 4px 15px rgba(212, 175, 55, 0.15)',
+                            background: 'linear-gradient(135deg, #f5f5dc 0%, #ede0c8 100%)',
+                            padding: '2.5rem 2rem',
+                            borderRadius: '8px',
+                            border: '8px solid transparent',
+                            borderImage: 'linear-gradient(45deg, #d4af37 0%, #f4e5a1 25%, #d4af37 50%, #b8941f 75%, #d4af37 100%) 1',
+                            boxShadow: '0 20px 60px rgba(212, 175, 55, 0.3), inset 0 0 0 2px #d4af37, inset 0 0 0 4px #f5f5dc',
                             maxWidth: '700px',
-                            margin: '4rem auto 0 auto'
+                            margin: '4rem auto 0 auto',
+                            position: 'relative'
                         }}>
-                            <h3 style={{ marginBottom: '0.75rem', fontSize: '1.5rem', fontWeight: '800', color: '#0f172a' }}>Stay Connected</h3>
-                            <p style={{ marginBottom: '2rem', fontSize: '1rem', color: '#1e293b' }}>
+                            {/* Corner decorations for mitered frame effect */}
+                            <div style={{
+                                position: 'absolute',
+                                top: '-4px',
+                                left: '-4px',
+                                width: '30px',
+                                height: '30px',
+                                background: 'linear-gradient(135deg, #d4af37 0%, #f4e5a1 100%)',
+                                clipPath: 'polygon(0 0, 100% 0, 0 100%)'
+                            }}></div>
+                            <div style={{
+                                position: 'absolute',
+                                top: '-4px',
+                                right: '-4px',
+                                width: '30px',
+                                height: '30px',
+                                background: 'linear-gradient(225deg, #d4af37 0%, #f4e5a1 100%)',
+                                clipPath: 'polygon(100% 0, 100% 100%, 0 0)'
+                            }}></div>
+                            <div style={{
+                                position: 'absolute',
+                                bottom: '-4px',
+                                left: '-4px',
+                                width: '30px',
+                                height: '30px',
+                                background: 'linear-gradient(45deg, #d4af37 0%, #f4e5a1 100%)',
+                                clipPath: 'polygon(0 0, 0 100%, 100% 100%)'
+                            }}></div>
+                            <div style={{
+                                position: 'absolute',
+                                bottom: '-4px',
+                                right: '-4px',
+                                width: '30px',
+                                height: '30px',
+                                background: 'linear-gradient(315deg, #d4af37 0%, #f4e5a1 100%)',
+                                clipPath: 'polygon(100% 0, 100% 100%, 0 100%)'
+                            }}></div>
+                            
+                            <h3 style={{ marginBottom: '0.75rem', fontSize: '1.5rem', fontWeight: '800', color: '#0f172a', position: 'relative', zIndex: 1 }}>Stay Connected</h3>
+                            <p style={{ marginBottom: '2rem', fontSize: '1rem', color: '#1e293b', position: 'relative', zIndex: 1 }}>
                                 Follow us for the latest updates, insights, and opportunities
                             </p>
-                            <div style={{ display: 'flex', gap: '2.5rem', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' }}>
+                            <div style={{ display: 'flex', gap: '2.5rem', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', position: 'relative', zIndex: 1 }}>
                                 <a href="https://linkedin.com/company/navon-technologies" target="_blank" rel="noopener noreferrer" className="hover-lift" style={{
                                     color: '#0f172a',
                                     textDecoration: 'none',
