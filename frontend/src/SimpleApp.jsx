@@ -3605,7 +3605,7 @@ function SimpleApp() {
                             </p>
                         </div>
 
-                        {/* 4 Large Portal Cards */}
+                        {/* 5 Large Portal Cards */}
                         <div style={{
                             display: 'grid',
                             gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
@@ -3669,11 +3669,11 @@ function SimpleApp() {
                                 </div>
                             </div>
 
-                            {/* Card 2: Secure Document Management */}
+                            {/* Card 2: Time Card Management */}
                             <div 
                                 className="hover-lift animate-scale-in" 
                                 onClick={() => {
-                                    setCurrentPage('documentmanagement');
+                                    setCurrentPage('timecardmanagement');
                                     window.scrollTo({ top: 0, behavior: 'smooth' });
                                 }}
                                 style={{
@@ -3694,7 +3694,65 @@ function SimpleApp() {
                                     marginBottom: '1.5rem',
                                     filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))'
                                 }}>
-                                    📁
+                                    ⏰
+                                </div>
+                                <h3 style={{
+                                    color: 'white',
+                                    fontSize: '1.5rem',
+                                    fontWeight: '700',
+                                    marginBottom: '1rem'
+                                }}>
+                                    Time Card Management
+                                </h3>
+                                <p style={{
+                                    color: '#cbd5e1',
+                                    fontSize: '1rem',
+                                    lineHeight: '1.6',
+                                    marginBottom: '2rem'
+                                }}>
+                                    Track time, submit time-off requests, and manage work schedules
+                                </p>
+                                <div style={{
+                                    background: 'rgba(212, 175, 55, 0.2)',
+                                    border: '2px solid #d4af37',
+                                    borderRadius: '8px',
+                                    padding: '0.75rem 1.5rem',
+                                    color: '#f4e5a1',
+                                    fontWeight: '700',
+                                    fontSize: '1rem',
+                                    textAlign: 'center',
+                                    transition: 'all 0.3s ease'
+                                }}>
+                                    Enter
+                                </div>
+                            </div>
+
+                            {/* Card 3: Secure Document Management */}
+                            <div 
+                                className="hover-lift animate-scale-in" 
+                                onClick={() => {
+                                    setCurrentPage('documentmanagement');
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                style={{
+                                    background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
+                                    padding: '3rem 2rem',
+                                    borderRadius: '20px',
+                                    textAlign: 'center',
+                                    cursor: 'pointer',
+                                    border: '3px solid #d4af37',
+                                    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
+                                    transition: 'all 0.4s ease',
+                                    position: 'relative',
+                                    overflow: 'hidden',
+                                    animationDelay: '0.2s'
+                                }}>
+                                <div style={{
+                                    fontSize: '4rem',
+                                    marginBottom: '1.5rem',
+                                    filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))'
+                                }}>
+                                    📄
                                 </div>
                                 <h3 style={{
                                     color: 'white',
@@ -3727,7 +3785,7 @@ function SimpleApp() {
                                 </div>
                             </div>
 
-                            {/* Card 3: Secure Tools & Applications */}
+                            {/* Card 4: Secure Tools & Applications */}
                             <div 
                                 className="hover-lift animate-scale-in" 
                                 onClick={() => {
@@ -3745,14 +3803,14 @@ function SimpleApp() {
                                     transition: 'all 0.4s ease',
                                     position: 'relative',
                                     overflow: 'hidden',
-                                    animationDelay: '0.2s'
+                                    animationDelay: '0.3s'
                                 }}>
                                 <div style={{
                                     fontSize: '4rem',
                                     marginBottom: '1.5rem',
                                     filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))'
                                 }}>
-                                    🛠️
+                                    💻
                                 </div>
                                 <h3 style={{
                                     color: 'white',
@@ -3785,7 +3843,7 @@ function SimpleApp() {
                                 </div>
                             </div>
 
-                            {/* Card 4: Internal Career Hub */}
+                            {/* Card 5: Internal Career Hub */}
                             <div 
                                 className="hover-lift animate-scale-in" 
                                 onClick={() => {
@@ -3803,7 +3861,7 @@ function SimpleApp() {
                                     transition: 'all 0.4s ease',
                                     position: 'relative',
                                     overflow: 'hidden',
-                                    animationDelay: '0.3s'
+                                    animationDelay: '0.4s'
                                 }}>
                                 <div style={{
                                     fontSize: '4rem',
@@ -5422,6 +5480,335 @@ function SimpleApp() {
                 </section>
             )}
 
+            {/* TIME CARD MANAGEMENT PAGE */}
+            {currentPage === 'timecardmanagement' && (
+                <section style={{ 
+                    padding: '4rem 2rem', 
+                    background: '#f1f5f9',
+                    minHeight: '100vh'
+                }}>
+                    <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                            <h2 style={{
+                                fontSize: '3rem',
+                                marginBottom: '1rem',
+                                color: '#1e3a8a',
+                                fontWeight: '800'
+                            }}>
+                                ⏰ Time Card Management
+                            </h2>
+                            <p style={{
+                                fontSize: '1.2rem',
+                                color: '#475569',
+                                maxWidth: '800px',
+                                margin: '0 auto 2rem auto'
+                            }}>
+                                Track time, submit time-off requests, and manage work schedules
+                            </p>
+                            <button 
+                                onClick={() => {
+                                    setCurrentPage('secureportal');
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                style={{
+                                    background: '#d4af37',
+                                    color: '#0f172a',
+                                    border: 'none',
+                                    padding: '1rem 2rem',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: '700',
+                                    fontSize: '1rem'
+                                }}>
+                                ← Back to Portal
+                            </button>
+                        </div>
+
+                        {/* Time Management Grid */}
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                            gap: '2rem',
+                            marginBottom: '3rem'
+                        }}>
+                            {/* Time Tracking System */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        fontSize: '2.5rem',
+                                        marginRight: '1rem'
+                                    }}>
+                                        ⏱️
+                                    </div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        Time Tracking System
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem' }}>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Clock in/out functionality
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Project time allocation
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Weekly timesheet review
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Overtime tracking
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Billable hours reporting
+                                    </p>
+                                </div>
+                                <div style={{
+                                    background: '#f0fdf4',
+                                    padding: '1rem',
+                                    borderRadius: '8px',
+                                    marginBottom: '1rem',
+                                    border: '1px solid #86efac'
+                                }}>
+                                    <div style={{ fontWeight: '600', color: '#15803d', marginBottom: '0.5rem' }}>
+                                        ✅ Status: Active
+                                    </div>
+                                    <div style={{ fontSize: '0.9rem', color: '#166534' }}>
+                                        Currently clocked in - Project: AWS Migration
+                                    </div>
+                                </div>
+                                <button style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    width: '100%'
+                                }}>
+                                    Access Time Tracker
+                                </button>
+                            </div>
+
+                            {/* Time-Off Requests */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.1s'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        fontSize: '2.5rem',
+                                        marginRight: '1rem'
+                                    }}>
+                                        🏖️
+                                    </div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        Time-Off Requests
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem' }}>
+                                    <div style={{
+                                        background: '#f8fafc',
+                                        padding: '1rem',
+                                        borderRadius: '8px',
+                                        marginBottom: '0.75rem',
+                                        border: '1px solid #e2e8f0'
+                                    }}>
+                                        <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.25rem' }}>
+                                            Vacation Request - March 15-19
+                                        </div>
+                                        <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                                            Status: Pending Approval • 5 days
+                                        </div>
+                                    </div>
+                                    <div style={{
+                                        background: '#f8fafc',
+                                        padding: '1rem',
+                                        borderRadius: '8px',
+                                        marginBottom: '0.75rem',
+                                        border: '1px solid #e2e8f0'
+                                    }}>
+                                        <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.25rem' }}>
+                                            Sick Leave - January 8
+                                        </div>
+                                        <div style={{ fontSize: '0.85rem', color: '#15803d' }}>
+                                            Status: Approved • 1 day
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style={{
+                                    background: '#e0f2fe',
+                                    padding: '1rem',
+                                    borderRadius: '8px',
+                                    marginBottom: '1rem',
+                                    border: '1px solid #7dd3fc'
+                                }}>
+                                    <div style={{ fontWeight: '600', color: '#0369a1', marginBottom: '0.5rem' }}>
+                                        📊 Available Balance
+                                    </div>
+                                    <div style={{ fontSize: '0.9rem', color: '#0c4a6e' }}>
+                                        Vacation: 18 days • Sick: 12 days • Personal: 3 days
+                                    </div>
+                                </div>
+                                <button style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    width: '100%'
+                                }}>
+                                    Submit New Request
+                                </button>
+                            </div>
+
+                            {/* Schedule Management */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.2s'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        fontSize: '2.5rem',
+                                        marginRight: '1rem'
+                                    }}>
+                                        📅
+                                    </div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        Schedule Management
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem' }}>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • View work schedule
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Request schedule changes
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Team calendar view
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Meeting scheduling
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Holiday calendar
+                                    </p>
+                                </div>
+                                <div style={{
+                                    background: '#fef3c7',
+                                    padding: '1rem',
+                                    borderRadius: '8px',
+                                    marginBottom: '1rem',
+                                    border: '1px solid #fbbf24'
+                                }}>
+                                    <div style={{ fontWeight: '600', color: '#d97706', marginBottom: '0.5rem' }}>
+                                        📋 This Week's Schedule
+                                    </div>
+                                    <div style={{ fontSize: '0.9rem', color: '#92400e' }}>
+                                        Mon-Fri: 8:00 AM - 5:00 PM • 40 hours scheduled
+                                    </div>
+                                </div>
+                                <button style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    width: '100%'
+                                }}>
+                                    View Full Calendar
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Quick Actions Section */}
+                        <div style={{
+                            background: 'white',
+                            padding: '2rem',
+                            borderRadius: '12px',
+                            border: '2px solid #d4af37',
+                            marginBottom: '2rem'
+                        }}>
+                            <h3 style={{ color: '#1e3a8a', marginBottom: '1.5rem', fontSize: '1.5rem', textAlign: 'center' }}>
+                                ⚡ Quick Actions
+                            </h3>
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                                gap: '1.5rem'
+                            }}>
+                                <button style={{
+                                    background: '#15803d',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '1rem',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    textAlign: 'center'
+                                }}>
+                                    🟢 Clock In
+                                </button>
+                                <button style={{
+                                    background: '#dc2626',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '1rem',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    textAlign: 'center'
+                                }}>
+                                    🔴 Clock Out
+                                </button>
+                                <button style={{
+                                    background: '#d97706',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '1rem',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    textAlign: 'center'
+                                }}>
+                                    ⏸️ Break Time
+                                </button>
+                                <button style={{
+                                    background: '#7c3aed',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '1rem',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    textAlign: 'center'
+                                }}>
+                                    📊 View Reports
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            )}
+
             {/* SECURE DOCUMENT MANAGEMENT PAGE */}
             {currentPage === 'documentmanagement' && (
                 <section style={{ 
@@ -5507,9 +5894,6 @@ function SimpleApp() {
                                     </p>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
                                         • Benefits information
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Time-off requests
                                     </p>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
                                         • Annual review survey
@@ -5783,13 +6167,12 @@ function SimpleApp() {
                                 { icon: '💻', name: 'Secure Code Repository', desc: 'Git version control', status: 'Active' },
                                 { icon: '💬', name: 'Encrypted Communications', desc: 'Secure messaging platform', status: 'Active' },
                                 { icon: '📧', name: 'Email System', desc: 'Corporate email access', status: 'Active' },
-                                { icon: '⏰', name: 'Time Tracking System', desc: 'Log hours and attendance', status: 'Active' },
                                 { icon: '🔍', name: 'Security Compliance Dashboard', desc: 'Monitor compliance status', status: 'Active' },
-                                { icon: '📝', name: 'Documentation Wiki', desc: 'Internal knowledge base', status: 'Active' },
+                                { icon: '�', name: 'Documentation Wiki', desc: 'Internal knowledge base', status: 'Active' },
                                 { icon: '🎯', name: 'Task Automation', desc: 'Workflow automation tools', status: 'Active' },
                                 { icon: '📈', name: 'Analytics Platform', desc: 'Business intelligence tools', status: 'Active' },
-                                { icon: '🔐', name: 'VPN Access', desc: 'Secure network connection', status: 'Active' },
-                                { icon: '🗄️', name: 'Database Tools', desc: 'Query and manage databases', status: 'Active' }
+                                { icon: '�', name: 'VPN Access', desc: 'Secure network connection', status: 'Active' },
+                                { icon: '�️', name: 'Database Tools', desc: 'Query and manage databases', status: 'Active' }
                             ].map((tool, index) => (
                                 <div key={index} className="hover-lift animate-scale-in" style={{
                                     background: 'white',
