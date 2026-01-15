@@ -5,6 +5,7 @@ function SimpleApp() {
     const [currentPage, setCurrentPage] = useState('home');
     const [scrollY, setScrollY] = useState(0);
     const [showSecureModal, setShowSecureModal] = useState(false);
+    const [isHRView, setIsHRView] = useState(false);
 
     // Handle hash changes for navigation
     useEffect(() => {
@@ -3219,7 +3220,6 @@ function SimpleApp() {
                                             <div>
                                                 <div style={{ fontWeight: '600', color: '#1e3a8a' }}>John Doe</div>
                                                 <div style={{ color: '#64748b', fontSize: '0.9rem' }}>Senior Cloud Engineer</div>
-                                                <div style={{ color: '#64748b', fontSize: '0.8rem' }}>Clearance: Secret</div>
                                             </div>
                                         </div>
                                         <div style={{ fontSize: '0.9rem', color: '#475569' }}>
@@ -3976,16 +3976,21 @@ function SimpleApp() {
                                         • Security clearance status
                                     </p>
                                 </div>
-                                <button style={{
-                                    background: '#1e3a8a',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '0.75rem 1.5rem',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600',
-                                    width: '100%'
-                                }}>
+                                <button 
+                                    onClick={() => {
+                                        setCurrentPage('securitysettings');
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }}
+                                    style={{
+                                        background: '#1e3a8a',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '0.75rem 1.5rem',
+                                        borderRadius: '6px',
+                                        cursor: 'pointer',
+                                        fontWeight: '600',
+                                        width: '100%'
+                                    }}>
                                     Manage Security
                                 </button>
                             </div>
@@ -4474,6 +4479,384 @@ function SimpleApp() {
                 </section>
             )}
 
+            {/* SECURITY SETTINGS PAGE */}
+            {currentPage === 'securitysettings' && (
+                <section style={{ 
+                    padding: '4rem 2rem', 
+                    background: '#f1f5f9',
+                    minHeight: '100vh'
+                }}>
+                    <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                            <h2 style={{
+                                fontSize: '3rem',
+                                marginBottom: '1rem',
+                                color: '#1e3a8a',
+                                fontWeight: '800'
+                            }}>
+                                🔐 Security Settings
+                            </h2>
+                            <p style={{
+                                fontSize: '1.2rem',
+                                color: '#475569',
+                                maxWidth: '800px',
+                                margin: '0 auto 2rem auto'
+                            }}>
+                                Manage your account security, passwords, and authentication settings
+                            </p>
+                            <button 
+                                onClick={() => {
+                                    setCurrentPage('employeeprofile');
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                style={{
+                                    background: '#d4af37',
+                                    color: '#0f172a',
+                                    border: 'none',
+                                    padding: '1rem 2rem',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: '700',
+                                    fontSize: '1rem'
+                                }}>
+                                ← Back to Profile & Directory
+                            </button>
+                        </div>
+
+                        {/* Security Settings Grid */}
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                            gap: '2rem',
+                            marginBottom: '3rem'
+                        }}>
+                            {/* Password Management */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        fontSize: '2.5rem',
+                                        marginRight: '1rem'
+                                    }}>
+                                        🔑
+                                    </div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        Password Management
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        background: '#f0fdf4',
+                                        padding: '1rem',
+                                        borderRadius: '8px',
+                                        marginBottom: '1rem',
+                                        border: '1px solid #86efac'
+                                    }}>
+                                        <div style={{ fontWeight: '600', color: '#15803d', marginBottom: '0.5rem' }}>
+                                            ✅ Password Strength: Strong
+                                        </div>
+                                        <div style={{ fontSize: '0.9rem', color: '#166534' }}>
+                                            Last changed: 15 days ago
+                                        </div>
+                                    </div>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                                        • Minimum 12 characters required
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                                        • Must include uppercase, lowercase, numbers
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                                        • Special characters recommended
+                                    </p>
+                                </div>
+                                <button style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    width: '100%'
+                                }}>
+                                    Change Password
+                                </button>
+                            </div>
+
+                            {/* Multi-Factor Authentication */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.1s'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        fontSize: '2.5rem',
+                                        marginRight: '1rem'
+                                    }}>
+                                        📱
+                                    </div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        Multi-Factor Authentication
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        background: '#f0fdf4',
+                                        padding: '1rem',
+                                        borderRadius: '8px',
+                                        marginBottom: '1rem',
+                                        border: '1px solid #86efac'
+                                    }}>
+                                        <div style={{ fontWeight: '600', color: '#15803d', marginBottom: '0.5rem' }}>
+                                            ✅ MFA Enabled
+                                        </div>
+                                        <div style={{ fontSize: '0.9rem', color: '#166534' }}>
+                                            Primary device: iPhone (****1234)
+                                        </div>
+                                    </div>
+                                    <div style={{
+                                        background: '#f8fafc',
+                                        padding: '0.75rem',
+                                        borderRadius: '6px',
+                                        marginBottom: '0.5rem',
+                                        border: '1px solid #e2e8f0'
+                                    }}>
+                                        <div style={{ fontWeight: '600', color: '#1e3a8a', fontSize: '0.9rem' }}>
+                                            📲 Authenticator App
+                                        </div>
+                                        <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                                            Microsoft Authenticator - Active
+                                        </div>
+                                    </div>
+                                    <div style={{
+                                        background: '#f8fafc',
+                                        padding: '0.75rem',
+                                        borderRadius: '6px',
+                                        border: '1px solid #e2e8f0'
+                                    }}>
+                                        <div style={{ fontWeight: '600', color: '#1e3a8a', fontSize: '0.9rem' }}>
+                                            💬 SMS Backup
+                                        </div>
+                                        <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                                            +1 (555) ***-1234 - Active
+                                        </div>
+                                    </div>
+                                </div>
+                                <button style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    width: '100%'
+                                }}>
+                                    Manage MFA Devices
+                                </button>
+                            </div>
+
+                            {/* Login History */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.2s'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        fontSize: '2.5rem',
+                                        marginRight: '1rem'
+                                    }}>
+                                        📊
+                                    </div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        Login History
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    {[
+                                        { time: '2 hours ago', location: 'Leesburg, VA', device: 'Chrome on Windows', status: 'success' },
+                                        { time: '1 day ago', location: 'Leesburg, VA', device: 'Safari on iPhone', status: 'success' },
+                                        { time: '3 days ago', location: 'Washington, DC', device: 'Chrome on Windows', status: 'success' },
+                                        { time: '1 week ago', location: 'Unknown Location', device: 'Firefox on Linux', status: 'failed' }
+                                    ].map((login, index) => (
+                                        <div key={index} style={{
+                                            background: login.status === 'success' ? '#f0fdf4' : '#fef2f2',
+                                            padding: '0.75rem',
+                                            borderRadius: '6px',
+                                            marginBottom: '0.5rem',
+                                            border: `1px solid ${login.status === 'success' ? '#86efac' : '#fca5a5'}`
+                                        }}>
+                                            <div style={{ 
+                                                display: 'flex', 
+                                                justifyContent: 'space-between', 
+                                                alignItems: 'center',
+                                                marginBottom: '0.25rem'
+                                            }}>
+                                                <div style={{ 
+                                                    fontWeight: '600', 
+                                                    color: login.status === 'success' ? '#15803d' : '#dc2626',
+                                                    fontSize: '0.9rem'
+                                                }}>
+                                                    {login.status === 'success' ? '✅' : '❌'} {login.time}
+                                                </div>
+                                            </div>
+                                            <div style={{ 
+                                                fontSize: '0.8rem', 
+                                                color: login.status === 'success' ? '#166534' : '#991b1b'
+                                            }}>
+                                                📍 {login.location} • 💻 {login.device}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                                <button style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    width: '100%'
+                                }}>
+                                    View Full History
+                                </button>
+                            </div>
+
+                            {/* Security Status */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.3s'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        fontSize: '2.5rem',
+                                        marginRight: '1rem'
+                                    }}>
+                                        🛡️
+                                    </div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        Security Status
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        background: '#f0fdf4',
+                                        padding: '1rem',
+                                        borderRadius: '8px',
+                                        marginBottom: '1rem',
+                                        border: '1px solid #86efac'
+                                    }}>
+                                        <div style={{ fontWeight: '600', color: '#15803d', marginBottom: '0.5rem' }}>
+                                            🟢 Security Score: 95/100
+                                        </div>
+                                        <div style={{ fontSize: '0.9rem', color: '#166534' }}>
+                                            Excellent security posture
+                                        </div>
+                                    </div>
+                                    <div style={{ marginBottom: '1rem' }}>
+                                        <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                                            Security Checklist:
+                                        </div>
+                                        <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                                            <div style={{ marginBottom: '0.25rem' }}>✅ Strong password enabled</div>
+                                            <div style={{ marginBottom: '0.25rem' }}>✅ MFA configured</div>
+                                            <div style={{ marginBottom: '0.25rem' }}>✅ Recent login activity normal</div>
+                                            <div style={{ marginBottom: '0.25rem' }}>✅ Account recovery info updated</div>
+                                            <div style={{ marginBottom: '0.25rem' }}>⚠️ Security training due in 30 days</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    width: '100%'
+                                }}>
+                                    Security Assessment
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Emergency Actions */}
+                        <div style={{
+                            background: 'white',
+                            padding: '2rem',
+                            borderRadius: '12px',
+                            border: '2px solid #ef4444',
+                            marginBottom: '2rem'
+                        }}>
+                            <h3 style={{ color: '#dc2626', marginBottom: '1.5rem', fontSize: '1.5rem', textAlign: 'center' }}>
+                                🚨 Emergency Security Actions
+                            </h3>
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                                gap: '1rem'
+                            }}>
+                                <button style={{
+                                    background: '#dc2626',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '1rem',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    fontSize: '0.9rem'
+                                }}>
+                                    🔒 Lock Account
+                                </button>
+                                <button style={{
+                                    background: '#ea580c',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '1rem',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    fontSize: '0.9rem'
+                                }}>
+                                    📱 Revoke All Sessions
+                                </button>
+                                <button style={{
+                                    background: '#7c2d12',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '1rem',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    fontSize: '0.9rem'
+                                }}>
+                                    🚨 Report Security Issue
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            )}
+
             {/* TEAM DIRECTORY PAGE */}
             {currentPage === 'teamdirectory' && (
                 <section style={{ 
@@ -4495,10 +4878,46 @@ function SimpleApp() {
                                 fontSize: '1.2rem',
                                 color: '#475569',
                                 maxWidth: '800px',
-                                margin: '0 auto 2rem auto'
+                                margin: '0 auto 1rem auto'
                             }}>
                                 Search and connect with team members across the organization
                             </p>
+                            <div style={{
+                                background: '#f0f9ff',
+                                border: '2px solid #0ea5e9',
+                                borderRadius: '8px',
+                                padding: '1rem',
+                                margin: '0 auto 1rem auto',
+                                maxWidth: '600px'
+                            }}>
+                                <p style={{
+                                    margin: 0,
+                                    fontSize: '0.9rem',
+                                    color: '#0369a1'
+                                }}>
+                                    ℹ️ <strong>{isHRView ? 'HR View:' : 'Employee View:'}</strong> {isHRView ? 'Full directory access with all employee information.' : 'You can see Name, Title, and Email only. HR team members have access to full directory information.'}
+                                </p>
+                            </div>
+                            
+                            {/* Development HR View Toggle */}
+                            <div style={{ marginBottom: '1rem' }}>
+                                <button 
+                                    onClick={() => setIsHRView(!isHRView)}
+                                    style={{
+                                        background: isHRView ? '#10b981' : '#f59e0b',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '0.75rem 1.5rem',
+                                        borderRadius: '8px',
+                                        cursor: 'pointer',
+                                        fontWeight: '700',
+                                        fontSize: '0.9rem',
+                                        marginBottom: '0.5rem'
+                                    }}>
+                                    🚧 {isHRView ? 'Switch to Employee View' : 'Switch to HR View'} (Development)
+                                </button>
+                            </div>
+                            
                             <button 
                                 onClick={() => {
                                     setCurrentPage('employeeprofile');
@@ -4540,7 +4959,7 @@ function SimpleApp() {
                             gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
                             gap: '2rem'
                         }}>
-                            {/* John Doe Card - Exact copy from original portal */}
+                            {/* John Doe Card - Conditional View Based on HR Access */}
                             <div className="hover-lift animate-scale-in" style={{
                                 background: 'white',
                                 padding: '2rem',
@@ -4554,7 +4973,7 @@ function SimpleApp() {
                                         padding: '1.5rem',
                                         borderRadius: '8px',
                                         border: '1px solid #e2e8f0',
-                                        marginBottom: '1rem'
+                                        marginBottom: isHRView ? '1rem' : '0'
                                     }}>
                                         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
                                             <div style={{
@@ -4575,43 +4994,54 @@ function SimpleApp() {
                                             <div>
                                                 <div style={{ fontWeight: '600', color: '#1e3a8a' }}>John Doe</div>
                                                 <div style={{ color: '#64748b', fontSize: '0.9rem' }}>Senior Cloud Engineer</div>
-                                                <div style={{ color: '#64748b', fontSize: '0.8rem' }}>Clearance: Secret</div>
+                                                {isHRView && (
+                                                    <div style={{ color: '#64748b', fontSize: '0.8rem' }}>Employee ID: EMP-2024-001</div>
+                                                )}
                                             </div>
                                         </div>
                                         <div style={{ fontSize: '0.9rem', color: '#475569' }}>
                                             <div style={{ marginBottom: '0.5rem' }}>📧 john.doe@navontech.com</div>
-                                            <div style={{ marginBottom: '0.5rem' }}>📱 +1 (555) 123-4567</div>
-                                            <div style={{ marginBottom: '0.5rem' }}>🏢 Remote - DC Metro Area</div>
-                                            <div>📅 Start Date: January 15, 2024</div>
+                                            {isHRView && (
+                                                <>
+                                                    <div style={{ marginBottom: '0.5rem' }}>📱 +1 (555) 123-4567</div>
+                                                    <div style={{ marginBottom: '0.5rem' }}>🏢 Remote - DC Metro Area</div>
+                                                    <div style={{ marginBottom: '0.5rem' }}>📅 Start Date: January 15, 2024</div>
+                                                    <div style={{ marginBottom: '0.5rem' }}>💰 Salary: $95,000</div>
+                                                    <div style={{ marginBottom: '0.5rem' }}>👤 Manager: Sarah Johnson</div>
+                                                    <div>🚨 Emergency Contact: Jane Doe - (555) 987-6543</div>
+                                                </>
+                                            )}
                                         </div>
                                     </div>
-                                    <div style={{
-                                        display: 'grid',
-                                        gridTemplateColumns: '1fr 1fr',
-                                        gap: '0.5rem',
-                                        fontSize: '0.85rem'
-                                    }}>
+                                    {isHRView && (
                                         <div style={{
-                                            background: '#fef3c7',
-                                            color: '#92400e',
-                                            padding: '0.5rem',
-                                            borderRadius: '6px',
-                                            textAlign: 'center',
-                                            fontWeight: '600'
+                                            display: 'grid',
+                                            gridTemplateColumns: '1fr 1fr',
+                                            gap: '0.5rem',
+                                            fontSize: '0.85rem'
                                         }}>
-                                            AWS Certified
+                                            <div style={{
+                                                background: '#fef3c7',
+                                                color: '#92400e',
+                                                padding: '0.5rem',
+                                                borderRadius: '6px',
+                                                textAlign: 'center',
+                                                fontWeight: '600'
+                                            }}>
+                                                AWS Certified
+                                            </div>
+                                            <div style={{
+                                                background: '#dcfce7',
+                                                color: '#166534',
+                                                padding: '0.5rem',
+                                                borderRadius: '6px',
+                                                textAlign: 'center',
+                                                fontWeight: '600'
+                                            }}>
+                                                Security+ Cert
+                                            </div>
                                         </div>
-                                        <div style={{
-                                            background: '#dcfce7',
-                                            color: '#166534',
-                                            padding: '0.5rem',
-                                            borderRadius: '6px',
-                                            textAlign: 'center',
-                                            fontWeight: '600'
-                                        }}>
-                                            Security+ Cert
-                                        </div>
-                                    </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
