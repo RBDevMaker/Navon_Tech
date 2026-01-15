@@ -204,6 +204,11 @@ function SimpleApp() {
                     box-shadow: 0 25px 50px rgba(212, 175, 55, 0.3) !important;
                 }
                 
+                .hover-lift:hover .arrow-indicator {
+                    opacity: 1 !important;
+                    transform: translateX(5px) !important;
+                }
+                
                 .hover-scale {
                     transition: all 0.3s ease;
                 }
@@ -3644,10 +3649,24 @@ function SimpleApp() {
                                 <p style={{
                                     color: '#cbd5e1',
                                     fontSize: '1rem',
-                                    lineHeight: '1.6'
+                                    lineHeight: '1.6',
+                                    marginBottom: '2rem'
                                 }}>
                                     Manage your profile, view team directory, and update contact information
                                 </p>
+                                <div style={{
+                                    background: 'rgba(212, 175, 55, 0.2)',
+                                    border: '2px solid #d4af37',
+                                    borderRadius: '8px',
+                                    padding: '0.75rem 1.5rem',
+                                    color: '#f4e5a1',
+                                    fontWeight: '700',
+                                    fontSize: '1rem',
+                                    textAlign: 'center',
+                                    transition: 'all 0.3s ease'
+                                }}>
+                                    Enter
+                                </div>
                             </div>
 
                             {/* Card 2: Secure Document Management */}
@@ -3688,10 +3707,24 @@ function SimpleApp() {
                                 <p style={{
                                     color: '#cbd5e1',
                                     fontSize: '1rem',
-                                    lineHeight: '1.6'
+                                    lineHeight: '1.6',
+                                    marginBottom: '2rem'
                                 }}>
                                     Access encrypted files, project documents, and compliance materials
                                 </p>
+                                <div style={{
+                                    background: 'rgba(212, 175, 55, 0.2)',
+                                    border: '2px solid #d4af37',
+                                    borderRadius: '8px',
+                                    padding: '0.75rem 1.5rem',
+                                    color: '#f4e5a1',
+                                    fontWeight: '700',
+                                    fontSize: '1rem',
+                                    textAlign: 'center',
+                                    transition: 'all 0.3s ease'
+                                }}>
+                                    Enter
+                                </div>
                             </div>
 
                             {/* Card 3: Secure Tools & Applications */}
@@ -3732,10 +3765,24 @@ function SimpleApp() {
                                 <p style={{
                                     color: '#cbd5e1',
                                     fontSize: '1rem',
-                                    lineHeight: '1.6'
+                                    lineHeight: '1.6',
+                                    marginBottom: '2rem'
                                 }}>
                                     AWS Console, project management, code repositories, and communication tools
                                 </p>
+                                <div style={{
+                                    background: 'rgba(212, 175, 55, 0.2)',
+                                    border: '2px solid #d4af37',
+                                    borderRadius: '8px',
+                                    padding: '0.75rem 1.5rem',
+                                    color: '#f4e5a1',
+                                    fontWeight: '700',
+                                    fontSize: '1rem',
+                                    textAlign: 'center',
+                                    transition: 'all 0.3s ease'
+                                }}>
+                                    Enter
+                                </div>
                             </div>
 
                             {/* Card 4: Internal Career Hub */}
@@ -3776,10 +3823,24 @@ function SimpleApp() {
                                 <p style={{
                                     color: '#cbd5e1',
                                     fontSize: '1rem',
-                                    lineHeight: '1.6'
+                                    lineHeight: '1.6',
+                                    marginBottom: '2rem'
                                 }}>
                                     View internal job postings, career advancement opportunities, and referral programs
                                 </p>
+                                <div style={{
+                                    background: 'rgba(212, 175, 55, 0.2)',
+                                    border: '2px solid #d4af37',
+                                    borderRadius: '8px',
+                                    padding: '0.75rem 1.5rem',
+                                    color: '#f4e5a1',
+                                    fontWeight: '700',
+                                    fontSize: '1rem',
+                                    textAlign: 'center',
+                                    transition: 'all 0.3s ease'
+                                }}>
+                                    Enter
+                                </div>
                             </div>
                         </div>
                     </div>
