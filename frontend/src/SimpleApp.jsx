@@ -5629,6 +5629,22 @@ function SimpleApp() {
                             <h3 style={{ color: '#1e3a8a', marginBottom: '1rem', fontSize: '1.5rem' }}>
                                 📤 Upload Documents
                             </h3>
+                            <div style={{
+                                background: '#fef2f2',
+                                border: '2px solid #ef4444',
+                                borderRadius: '8px',
+                                padding: '1rem',
+                                marginBottom: '1rem'
+                            }}>
+                                <p style={{ 
+                                    color: '#dc2626', 
+                                    margin: 0, 
+                                    fontWeight: '700',
+                                    fontSize: '1rem'
+                                }}>
+                                    🚫 Authorized Personnel Only
+                                </p>
+                            </div>
                             <p style={{ color: '#64748b', marginBottom: '1.5rem' }}>
                                 All uploads are encrypted and scanned for security compliance
                             </p>
@@ -5701,13 +5717,13 @@ function SimpleApp() {
                             marginBottom: '3rem'
                         }}>
                             {[
-                                { icon: '☁️', name: 'AWS Console', desc: 'Manage cloud infrastructure', status: 'Active' },
-                                { icon: '📊', name: 'Project Management', desc: 'Track tasks and milestones', status: 'Active' },
-                                { icon: '💻', name: 'Code Repository', desc: 'Git version control', status: 'Active' },
-                                { icon: '💬', name: 'Team Chat', desc: 'Secure messaging platform', status: 'Active' },
+                                { icon: '☁️', name: 'AWS Console Access', desc: 'Manage cloud infrastructure', status: 'Active' },
+                                { icon: '📊', name: 'Project Management Suite', desc: 'Track tasks and milestones', status: 'Active' },
+                                { icon: '💻', name: 'Secure Code Repository', desc: 'Git version control', status: 'Active' },
+                                { icon: '💬', name: 'Encrypted Communications', desc: 'Secure messaging platform', status: 'Active' },
                                 { icon: '📧', name: 'Email System', desc: 'Corporate email access', status: 'Active' },
-                                { icon: '⏰', name: 'Time Tracking', desc: 'Log hours and attendance', status: 'Active' },
-                                { icon: '🔍', name: 'Security Dashboard', desc: 'Monitor compliance status', status: 'Active' },
+                                { icon: '⏰', name: 'Time Tracking System', desc: 'Log hours and attendance', status: 'Active' },
+                                { icon: '🔍', name: 'Security Compliance Dashboard', desc: 'Monitor compliance status', status: 'Active' },
                                 { icon: '📝', name: 'Documentation Wiki', desc: 'Internal knowledge base', status: 'Active' },
                                 { icon: '🎯', name: 'Task Automation', desc: 'Workflow automation tools', status: 'Active' },
                                 { icon: '📈', name: 'Analytics Platform', desc: 'Business intelligence tools', status: 'Active' },
