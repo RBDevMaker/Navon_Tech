@@ -4,6 +4,7 @@ function SimpleApp() {
     const s3BaseUrl = "https://navon-tech-images.s3.us-east-1.amazonaws.com";
     const [currentPage, setCurrentPage] = useState('home');
     const [scrollY, setScrollY] = useState(0);
+    const [showSecureModal, setShowSecureModal] = useState(false);
 
     // Handle hash changes for navigation
     useEffect(() => {
@@ -3572,6 +3573,2039 @@ function SimpleApp() {
                 </section>
             )}
 
+            {/* SECURE PORTAL PAGE - DUPLICATE */}
+            {currentPage === 'secureportal' && (
+                <section style={{ 
+                    padding: '4rem 2rem', 
+                    background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+                    minHeight: '100vh'
+                }}>
+                    <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+                            <h2 style={{
+                                fontSize: '3rem',
+                                marginBottom: '1rem',
+                                color: 'white',
+                                fontWeight: '800'
+                            }}>
+                                🔐 Secure Employee Portal
+                            </h2>
+                            <p style={{
+                                fontSize: '1.2rem',
+                                color: '#cbd5e1',
+                                maxWidth: '800px',
+                                margin: '0 auto'
+                            }}>
+                                Access your secure workspace with multi-factor authentication and role-based permissions
+                            </p>
+                        </div>
+
+                        {/* 4 Large Portal Cards */}
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                            gap: '2rem',
+                            marginBottom: '3rem'
+                        }}>
+                            {/* Card 1: Employee Profile & Directory */}
+                            <div 
+                                className="hover-lift animate-scale-in" 
+                                onClick={() => {
+                                    setCurrentPage('employeeprofile');
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                style={{
+                                    background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
+                                    padding: '3rem 2rem',
+                                    borderRadius: '20px',
+                                    textAlign: 'center',
+                                    cursor: 'pointer',
+                                    border: '3px solid #d4af37',
+                                    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
+                                    transition: 'all 0.4s ease',
+                                    position: 'relative',
+                                    overflow: 'hidden'
+                                }}>
+                                <div style={{
+                                    fontSize: '4rem',
+                                    marginBottom: '1.5rem',
+                                    filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))'
+                                }}>
+                                    👥
+                                </div>
+                                <h3 style={{
+                                    color: 'white',
+                                    fontSize: '1.5rem',
+                                    fontWeight: '700',
+                                    marginBottom: '1rem'
+                                }}>
+                                    Employee Profile & Directory
+                                </h3>
+                                <p style={{
+                                    color: '#cbd5e1',
+                                    fontSize: '1rem',
+                                    lineHeight: '1.6'
+                                }}>
+                                    Manage your profile, view team directory, and update contact information
+                                </p>
+                            </div>
+
+                            {/* Card 2: Secure Document Management */}
+                            <div 
+                                className="hover-lift animate-scale-in" 
+                                onClick={() => {
+                                    setCurrentPage('documentmanagement');
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                style={{
+                                    background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
+                                    padding: '3rem 2rem',
+                                    borderRadius: '20px',
+                                    textAlign: 'center',
+                                    cursor: 'pointer',
+                                    border: '3px solid #d4af37',
+                                    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
+                                    transition: 'all 0.4s ease',
+                                    position: 'relative',
+                                    overflow: 'hidden',
+                                    animationDelay: '0.1s'
+                                }}>
+                                <div style={{
+                                    fontSize: '4rem',
+                                    marginBottom: '1.5rem',
+                                    filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))'
+                                }}>
+                                    📁
+                                </div>
+                                <h3 style={{
+                                    color: 'white',
+                                    fontSize: '1.5rem',
+                                    fontWeight: '700',
+                                    marginBottom: '1rem'
+                                }}>
+                                    Secure Document Management
+                                </h3>
+                                <p style={{
+                                    color: '#cbd5e1',
+                                    fontSize: '1rem',
+                                    lineHeight: '1.6'
+                                }}>
+                                    Access encrypted files, project documents, and compliance materials
+                                </p>
+                            </div>
+
+                            {/* Card 3: Secure Tools & Applications */}
+                            <div 
+                                className="hover-lift animate-scale-in" 
+                                onClick={() => {
+                                    setCurrentPage('securetools');
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                style={{
+                                    background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
+                                    padding: '3rem 2rem',
+                                    borderRadius: '20px',
+                                    textAlign: 'center',
+                                    cursor: 'pointer',
+                                    border: '3px solid #d4af37',
+                                    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
+                                    transition: 'all 0.4s ease',
+                                    position: 'relative',
+                                    overflow: 'hidden',
+                                    animationDelay: '0.2s'
+                                }}>
+                                <div style={{
+                                    fontSize: '4rem',
+                                    marginBottom: '1.5rem',
+                                    filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))'
+                                }}>
+                                    🛠️
+                                </div>
+                                <h3 style={{
+                                    color: 'white',
+                                    fontSize: '1.5rem',
+                                    fontWeight: '700',
+                                    marginBottom: '1rem'
+                                }}>
+                                    Secure Tools & Applications
+                                </h3>
+                                <p style={{
+                                    color: '#cbd5e1',
+                                    fontSize: '1rem',
+                                    lineHeight: '1.6'
+                                }}>
+                                    AWS Console, project management, code repositories, and communication tools
+                                </p>
+                            </div>
+
+                            {/* Card 4: Internal Career Hub */}
+                            <div 
+                                className="hover-lift animate-scale-in" 
+                                onClick={() => {
+                                    setCurrentPage('careerhub');
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                style={{
+                                    background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
+                                    padding: '3rem 2rem',
+                                    borderRadius: '20px',
+                                    textAlign: 'center',
+                                    cursor: 'pointer',
+                                    border: '3px solid #d4af37',
+                                    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
+                                    transition: 'all 0.4s ease',
+                                    position: 'relative',
+                                    overflow: 'hidden',
+                                    animationDelay: '0.3s'
+                                }}>
+                                <div style={{
+                                    fontSize: '4rem',
+                                    marginBottom: '1.5rem',
+                                    filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))'
+                                }}>
+                                    💼
+                                </div>
+                                <h3 style={{
+                                    color: 'white',
+                                    fontSize: '1.5rem',
+                                    fontWeight: '700',
+                                    marginBottom: '1rem'
+                                }}>
+                                    Internal Career Hub
+                                </h3>
+                                <p style={{
+                                    color: '#cbd5e1',
+                                    fontSize: '1rem',
+                                    lineHeight: '1.6'
+                                }}>
+                                    View internal job postings, career advancement opportunities, and referral programs
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {/* EMPLOYEE PROFILE & DIRECTORY PAGE */}
+            {currentPage === 'employeeprofile' && (
+                <section style={{ 
+                    padding: '4rem 2rem', 
+                    background: '#f1f5f9',
+                    minHeight: '100vh'
+                }}>
+                    <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                            <h2 style={{
+                                fontSize: '3rem',
+                                marginBottom: '1rem',
+                                color: '#1e3a8a',
+                                fontWeight: '800'
+                            }}>
+                                👥 Employee Profile & Directory
+                            </h2>
+                            <p style={{
+                                fontSize: '1.2rem',
+                                color: '#475569',
+                                maxWidth: '800px',
+                                margin: '0 auto 2rem auto'
+                            }}>
+                                Manage your profile, view team directory, and update contact information
+                            </p>
+                            <button 
+                                onClick={() => {
+                                    setCurrentPage('secureportal');
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                style={{
+                                    background: '#d4af37',
+                                    color: '#0f172a',
+                                    border: 'none',
+                                    padding: '1rem 2rem',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: '700',
+                                    fontSize: '1rem'
+                                }}>
+                                ← Back to Portal
+                            </button>
+                        </div>
+
+                        {/* Profile Management Grid */}
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                            gap: '2rem',
+                            marginBottom: '3rem'
+                        }}>
+                            {/* My Profile Card */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        fontSize: '2.5rem',
+                                        marginRight: '1rem'
+                                    }}>
+                                        👤
+                                    </div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        My Profile
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem' }}>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Update personal information
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Change profile photo
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Edit contact details
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Update emergency contacts
+                                    </p>
+                                </div>
+                                <button 
+                                    onClick={() => {
+                                        setCurrentPage('myprofile');
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }}
+                                    style={{
+                                        background: '#1e3a8a',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '0.75rem 1.5rem',
+                                        borderRadius: '6px',
+                                        cursor: 'pointer',
+                                        fontWeight: '600',
+                                        width: '100%'
+                                    }}>
+                                    Edit Profile
+                                </button>
+                            </div>
+
+                            {/* Team Directory Card */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.1s'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        fontSize: '2.5rem',
+                                        marginRight: '1rem'
+                                    }}>
+                                        📋
+                                    </div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        Team Directory
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem' }}>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Search employee directory
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • View org chart
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Contact information
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Department listings
+                                    </p>
+                                </div>
+                                <button 
+                                    onClick={() => {
+                                        setCurrentPage('teamdirectory');
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }}
+                                    style={{
+                                        background: '#1e3a8a',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '0.75rem 1.5rem',
+                                        borderRadius: '6px',
+                                        cursor: 'pointer',
+                                        fontWeight: '600',
+                                        width: '100%'
+                                    }}>
+                                    Browse Directory
+                                </button>
+                            </div>
+
+                            {/* Security Settings Card */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.2s'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        fontSize: '2.5rem',
+                                        marginRight: '1rem'
+                                    }}>
+                                        🔐
+                                    </div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        Security Settings
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem' }}>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Change password
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Manage MFA devices
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • View login history
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Security clearance status
+                                    </p>
+                                </div>
+                                <button style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    width: '100%'
+                                }}>
+                                    Manage Security
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {/* MY PROFILE EDIT PAGE */}
+            {currentPage === 'myprofile' && (
+                <section style={{ 
+                    padding: '4rem 2rem', 
+                    background: '#f1f5f9',
+                    minHeight: '100vh'
+                }}>
+                    <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                            <h2 style={{
+                                fontSize: '3rem',
+                                marginBottom: '1rem',
+                                color: '#1e3a8a',
+                                fontWeight: '800'
+                            }}>
+                                👤 My Profile
+                            </h2>
+                            <p style={{
+                                fontSize: '1.2rem',
+                                color: '#475569',
+                                maxWidth: '800px',
+                                margin: '0 auto 2rem auto'
+                            }}>
+                                Update your personal information and profile settings
+                            </p>
+                            <button 
+                                onClick={() => {
+                                    setCurrentPage('employeeprofile');
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                style={{
+                                    background: '#d4af37',
+                                    color: '#0f172a',
+                                    border: 'none',
+                                    padding: '1rem 2rem',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: '700',
+                                    fontSize: '1rem'
+                                }}>
+                                ← Back to Profile & Directory
+                            </button>
+                        </div>
+
+                        {/* Profile Form */}
+                        <div style={{
+                            background: 'white',
+                            padding: '3rem',
+                            borderRadius: '12px',
+                            border: '2px solid #d4af37',
+                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                        }}>
+                            {/* Profile Picture Section */}
+                            <div style={{
+                                textAlign: 'center',
+                                marginBottom: '3rem',
+                                paddingBottom: '2rem',
+                                borderBottom: '2px solid #e2e8f0'
+                            }}>
+                                <h3 style={{
+                                    color: '#1e3a8a',
+                                    fontSize: '1.5rem',
+                                    marginBottom: '2rem'
+                                }}>
+                                    Profile Picture
+                                </h3>
+                                <div style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    gap: '1.5rem'
+                                }}>
+                                    {/* Current Profile Picture */}
+                                    <div style={{
+                                        width: '150px',
+                                        height: '150px',
+                                        background: '#1e3a8a',
+                                        borderRadius: '50%',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        color: 'white',
+                                        fontWeight: 'bold',
+                                        fontSize: '3rem',
+                                        border: '4px solid #d4af37',
+                                        boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
+                                    }}>
+                                        👤
+                                    </div>
+                                    
+                                    {/* Upload Button */}
+                                    <div>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            id="profilePicUpload"
+                                            style={{ display: 'none' }}
+                                            onChange={(e) => {
+                                                if (e.target.files && e.target.files[0]) {
+                                                    alert('Profile picture upload functionality would be integrated here');
+                                                }
+                                            }}
+                                        />
+                                        <label
+                                            htmlFor="profilePicUpload"
+                                            style={{
+                                                background: '#d4af37',
+                                                color: '#0f172a',
+                                                padding: '0.75rem 2rem',
+                                                borderRadius: '8px',
+                                                cursor: 'pointer',
+                                                fontWeight: '700',
+                                                display: 'inline-block',
+                                                transition: 'all 0.3s ease'
+                                            }}
+                                            onMouseOver={(e) => {
+                                                e.target.style.transform = 'translateY(-2px)';
+                                                e.target.style.boxShadow = '0 4px 12px rgba(212, 175, 55, 0.4)';
+                                            }}
+                                            onMouseOut={(e) => {
+                                                e.target.style.transform = 'translateY(0)';
+                                                e.target.style.boxShadow = 'none';
+                                            }}>
+                                            📷 Upload New Photo
+                                        </label>
+                                    </div>
+                                    <p style={{
+                                        color: '#64748b',
+                                        fontSize: '0.9rem',
+                                        margin: 0
+                                    }}>
+                                        Recommended: Square image, at least 400x400px
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Personal Information Form */}
+                            <form onSubmit={(e) => {
+                                e.preventDefault();
+                                alert('Profile update functionality would be integrated here');
+                            }}>
+                                <h3 style={{
+                                    color: '#1e3a8a',
+                                    fontSize: '1.5rem',
+                                    marginBottom: '2rem'
+                                }}>
+                                    Personal Information
+                                </h3>
+
+                                <div style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                                    gap: '1.5rem',
+                                    marginBottom: '2rem'
+                                }}>
+                                    {/* First Name */}
+                                    <div>
+                                        <label style={{
+                                            display: 'block',
+                                            marginBottom: '0.5rem',
+                                            color: '#334155',
+                                            fontWeight: '600',
+                                            fontSize: '0.9rem'
+                                        }}>
+                                            First Name
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder="Enter first name"
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                border: '2px solid #e2e8f0',
+                                                borderRadius: '8px',
+                                                fontSize: '1rem',
+                                                outline: 'none'
+                                            }}
+                                            onFocus={(e) => e.target.style.borderColor = '#1e3a8a'}
+                                            onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                                        />
+                                    </div>
+
+                                    {/* Last Name */}
+                                    <div>
+                                        <label style={{
+                                            display: 'block',
+                                            marginBottom: '0.5rem',
+                                            color: '#334155',
+                                            fontWeight: '600',
+                                            fontSize: '0.9rem'
+                                        }}>
+                                            Last Name
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder="Enter last name"
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                border: '2px solid #e2e8f0',
+                                                borderRadius: '8px',
+                                                fontSize: '1rem',
+                                                outline: 'none'
+                                            }}
+                                            onFocus={(e) => e.target.style.borderColor = '#1e3a8a'}
+                                            onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                                        />
+                                    </div>
+
+                                    {/* Job Title */}
+                                    <div>
+                                        <label style={{
+                                            display: 'block',
+                                            marginBottom: '0.5rem',
+                                            color: '#334155',
+                                            fontWeight: '600',
+                                            fontSize: '0.9rem'
+                                        }}>
+                                            Job Title
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder="Enter job title"
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                border: '2px solid #e2e8f0',
+                                                borderRadius: '8px',
+                                                fontSize: '1rem',
+                                                outline: 'none'
+                                            }}
+                                            onFocus={(e) => e.target.style.borderColor = '#1e3a8a'}
+                                            onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                                        />
+                                    </div>
+
+                                    {/* Department */}
+                                    <div>
+                                        <label style={{
+                                            display: 'block',
+                                            marginBottom: '0.5rem',
+                                            color: '#334155',
+                                            fontWeight: '600',
+                                            fontSize: '0.9rem'
+                                        }}>
+                                            Department
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder="Enter department"
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                border: '2px solid #e2e8f0',
+                                                borderRadius: '8px',
+                                                fontSize: '1rem',
+                                                outline: 'none'
+                                            }}
+                                            onFocus={(e) => e.target.style.borderColor = '#1e3a8a'}
+                                            onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                                        />
+                                    </div>
+
+                                    {/* Email */}
+                                    <div>
+                                        <label style={{
+                                            display: 'block',
+                                            marginBottom: '0.5rem',
+                                            color: '#334155',
+                                            fontWeight: '600',
+                                            fontSize: '0.9rem'
+                                        }}>
+                                            Email Address
+                                        </label>
+                                        <input
+                                            type="email"
+                                            placeholder="Enter email"
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                border: '2px solid #e2e8f0',
+                                                borderRadius: '8px',
+                                                fontSize: '1rem',
+                                                outline: 'none'
+                                            }}
+                                            onFocus={(e) => e.target.style.borderColor = '#1e3a8a'}
+                                            onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                                        />
+                                    </div>
+
+                                    {/* Phone */}
+                                    <div>
+                                        <label style={{
+                                            display: 'block',
+                                            marginBottom: '0.5rem',
+                                            color: '#334155',
+                                            fontWeight: '600',
+                                            fontSize: '0.9rem'
+                                        }}>
+                                            Phone Number
+                                        </label>
+                                        <input
+                                            type="tel"
+                                            placeholder="Enter phone number"
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                border: '2px solid #e2e8f0',
+                                                borderRadius: '8px',
+                                                fontSize: '1rem',
+                                                outline: 'none'
+                                            }}
+                                            onFocus={(e) => e.target.style.borderColor = '#1e3a8a'}
+                                            onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                                        />
+                                    </div>
+
+                                    {/* Location */}
+                                    <div>
+                                        <label style={{
+                                            display: 'block',
+                                            marginBottom: '0.5rem',
+                                            color: '#334155',
+                                            fontWeight: '600',
+                                            fontSize: '0.9rem'
+                                        }}>
+                                            Work Location
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder="Enter location"
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                border: '2px solid #e2e8f0',
+                                                borderRadius: '8px',
+                                                fontSize: '1rem',
+                                                outline: 'none'
+                                            }}
+                                            onFocus={(e) => e.target.style.borderColor = '#1e3a8a'}
+                                            onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                                        />
+                                    </div>
+
+                                    {/* Emergency Contact */}
+                                    <div>
+                                        <label style={{
+                                            display: 'block',
+                                            marginBottom: '0.5rem',
+                                            color: '#334155',
+                                            fontWeight: '600',
+                                            fontSize: '0.9rem'
+                                        }}>
+                                            Emergency Contact
+                                        </label>
+                                        <input
+                                            type="tel"
+                                            placeholder="Enter emergency contact"
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                border: '2px solid #e2e8f0',
+                                                borderRadius: '8px',
+                                                fontSize: '1rem',
+                                                outline: 'none'
+                                            }}
+                                            onFocus={(e) => e.target.style.borderColor = '#1e3a8a'}
+                                            onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Privacy Settings */}
+                                <div style={{
+                                    marginTop: '2rem',
+                                    padding: '1.5rem',
+                                    background: '#f8fafc',
+                                    borderRadius: '8px',
+                                    border: '2px solid #e2e8f0'
+                                }}>
+                                    <h4 style={{
+                                        color: '#1e3a8a',
+                                        fontSize: '1.2rem',
+                                        marginBottom: '1rem'
+                                    }}>
+                                        🔒 Privacy Settings
+                                    </h4>
+                                    <label style={{
+                                        display: 'flex',
+                                        alignItems: 'flex-start',
+                                        cursor: 'pointer',
+                                        fontSize: '1rem',
+                                        color: '#334155'
+                                    }}>
+                                        <input
+                                            type="checkbox"
+                                            defaultChecked={false}
+                                            style={{
+                                                width: '20px',
+                                                height: '20px',
+                                                marginRight: '1rem',
+                                                marginTop: '0.25rem',
+                                                cursor: 'pointer',
+                                                accentColor: '#1e3a8a'
+                                            }}
+                                        />
+                                        <div>
+                                            <div style={{ fontWeight: '600', marginBottom: '0.5rem' }}>
+                                                Add to Public Directory
+                                            </div>
+                                            <div style={{ fontSize: '0.9rem', color: '#64748b', lineHeight: '1.5' }}>
+                                                When enabled, other employees can see your <strong>Name</strong> and <strong>Email</strong> in the team directory. 
+                                                All other information remains private. Leave unchecked to keep your profile completely private.
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+
+                                {/* Action Buttons */}
+                                <div style={{
+                                    display: 'flex',
+                                    gap: '1rem',
+                                    justifyContent: 'center',
+                                    marginTop: '2rem'
+                                }}>
+                                    <button
+                                        type="submit"
+                                        style={{
+                                            background: '#1e3a8a',
+                                            color: 'white',
+                                            border: 'none',
+                                            padding: '1rem 3rem',
+                                            borderRadius: '8px',
+                                            cursor: 'pointer',
+                                            fontWeight: '700',
+                                            fontSize: '1rem',
+                                            transition: 'all 0.3s ease'
+                                        }}
+                                        onMouseOver={(e) => {
+                                            e.target.style.transform = 'translateY(-2px)';
+                                            e.target.style.boxShadow = '0 4px 12px rgba(30, 58, 138, 0.3)';
+                                        }}
+                                        onMouseOut={(e) => {
+                                            e.target.style.transform = 'translateY(0)';
+                                            e.target.style.boxShadow = 'none';
+                                        }}>
+                                        💾 Save Changes
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setCurrentPage('employeeprofile');
+                                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                                        }}
+                                        style={{
+                                            background: 'transparent',
+                                            color: '#64748b',
+                                            border: '2px solid #e2e8f0',
+                                            padding: '1rem 3rem',
+                                            borderRadius: '8px',
+                                            cursor: 'pointer',
+                                            fontWeight: '700',
+                                            fontSize: '1rem',
+                                            transition: 'all 0.3s ease'
+                                        }}
+                                        onMouseOver={(e) => {
+                                            e.target.style.borderColor = '#64748b';
+                                        }}
+                                        onMouseOut={(e) => {
+                                            e.target.style.borderColor = '#e2e8f0';
+                                        }}>
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {/* TEAM DIRECTORY PAGE */}
+            {currentPage === 'teamdirectory' && (
+                <section style={{ 
+                    padding: '4rem 2rem', 
+                    background: '#f1f5f9',
+                    minHeight: '100vh'
+                }}>
+                    <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                            <h2 style={{
+                                fontSize: '3rem',
+                                marginBottom: '1rem',
+                                color: '#1e3a8a',
+                                fontWeight: '800'
+                            }}>
+                                📋 Team Directory
+                            </h2>
+                            <p style={{
+                                fontSize: '1.2rem',
+                                color: '#475569',
+                                maxWidth: '800px',
+                                margin: '0 auto 2rem auto'
+                            }}>
+                                Search and connect with team members across the organization
+                            </p>
+                            <button 
+                                onClick={() => {
+                                    setCurrentPage('employeeprofile');
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                style={{
+                                    background: '#d4af37',
+                                    color: '#0f172a',
+                                    border: 'none',
+                                    padding: '1rem 2rem',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: '700',
+                                    fontSize: '1rem'
+                                }}>
+                                ← Back to Profile & Directory
+                            </button>
+                        </div>
+
+                        {/* Search Bar */}
+                        <div style={{ marginBottom: '2rem' }}>
+                            <input
+                                type="text"
+                                placeholder="🔍 Search by name, department, or role..."
+                                style={{
+                                    width: '100%',
+                                    padding: '1rem',
+                                    border: '2px solid #d4af37',
+                                    borderRadius: '12px',
+                                    fontSize: '1rem',
+                                    outline: 'none'
+                                }}
+                            />
+                        </div>
+
+                        {/* Employee Cards Grid */}
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+                            gap: '2rem'
+                        }}>
+                            {/* John Doe Card - Exact copy from original portal */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                            }}>
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        background: '#f8fafc',
+                                        padding: '1.5rem',
+                                        borderRadius: '8px',
+                                        border: '1px solid #e2e8f0',
+                                        marginBottom: '1rem'
+                                    }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+                                            <div style={{
+                                                width: '60px',
+                                                height: '60px',
+                                                background: '#1e3a8a',
+                                                borderRadius: '50%',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                color: 'white',
+                                                fontWeight: 'bold',
+                                                fontSize: '1.5rem',
+                                                marginRight: '1rem'
+                                            }}>
+                                                JD
+                                            </div>
+                                            <div>
+                                                <div style={{ fontWeight: '600', color: '#1e3a8a' }}>John Doe</div>
+                                                <div style={{ color: '#64748b', fontSize: '0.9rem' }}>Senior Cloud Engineer</div>
+                                                <div style={{ color: '#64748b', fontSize: '0.8rem' }}>Clearance: Secret</div>
+                                            </div>
+                                        </div>
+                                        <div style={{ fontSize: '0.9rem', color: '#475569' }}>
+                                            <div style={{ marginBottom: '0.5rem' }}>📧 john.doe@navontech.com</div>
+                                            <div style={{ marginBottom: '0.5rem' }}>📱 +1 (555) 123-4567</div>
+                                            <div style={{ marginBottom: '0.5rem' }}>🏢 Remote - DC Metro Area</div>
+                                            <div>📅 Start Date: January 15, 2024</div>
+                                        </div>
+                                    </div>
+                                    <div style={{
+                                        display: 'grid',
+                                        gridTemplateColumns: '1fr 1fr',
+                                        gap: '0.5rem',
+                                        fontSize: '0.85rem'
+                                    }}>
+                                        <div style={{
+                                            background: '#fef3c7',
+                                            color: '#92400e',
+                                            padding: '0.5rem',
+                                            borderRadius: '6px',
+                                            textAlign: 'center',
+                                            fontWeight: '600'
+                                        }}>
+                                            AWS Certified
+                                        </div>
+                                        <div style={{
+                                            background: '#dcfce7',
+                                            color: '#166534',
+                                            padding: '0.5rem',
+                                            borderRadius: '6px',
+                                            textAlign: 'center',
+                                            fontWeight: '600'
+                                        }}>
+                                            Security+ Cert
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {/* SECURE DOCUMENT MANAGEMENT PAGE */}
+            {currentPage === 'documentmanagement' && (
+                <section style={{ 
+                    padding: '4rem 2rem', 
+                    background: '#f1f5f9',
+                    minHeight: '100vh'
+                }}>
+                    <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                            <h2 style={{
+                                fontSize: '3rem',
+                                marginBottom: '1rem',
+                                color: '#1e3a8a',
+                                fontWeight: '800'
+                            }}>
+                                📁 Secure Document Management
+                            </h2>
+                            <p style={{
+                                fontSize: '1.2rem',
+                                color: '#475569',
+                                maxWidth: '800px',
+                                margin: '0 auto 2rem auto'
+                            }}>
+                                Access encrypted files, project documents, and compliance materials
+                            </p>
+                            <button 
+                                onClick={() => {
+                                    setCurrentPage('secureportal');
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                style={{
+                                    background: '#d4af37',
+                                    color: '#0f172a',
+                                    border: 'none',
+                                    padding: '1rem 2rem',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: '700',
+                                    fontSize: '1rem'
+                                }}>
+                                ← Back to Portal
+                            </button>
+                        </div>
+
+                        {/* Document Categories Grid */}
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                            gap: '2rem',
+                            marginBottom: '3rem'
+                        }}>
+                            {/* Project Documents */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        fontSize: '2.5rem',
+                                        marginRight: '1rem'
+                                    }}>
+                                        📄
+                                    </div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        Project Documents
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem' }}>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Active project files
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Technical specifications
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Design documents
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Meeting notes & minutes
+                                    </p>
+                                </div>
+                                <button style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    width: '100%'
+                                }}>
+                                    Browse Projects
+                                </button>
+                            </div>
+
+                            {/* Compliance & Security */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.1s'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        fontSize: '2.5rem',
+                                        marginRight: '1rem'
+                                    }}>
+                                        🛡️
+                                    </div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        Compliance & Security
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem' }}>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Security policies
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Compliance certificates
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Audit reports
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Training materials
+                                    </p>
+                                </div>
+                                <button style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    width: '100%'
+                                }}>
+                                    View Compliance
+                                </button>
+                            </div>
+
+                            {/* HR Documents */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.2s'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        fontSize: '2.5rem',
+                                        marginRight: '1rem'
+                                    }}>
+                                        📋
+                                    </div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        HR Documents
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem' }}>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Employee handbook
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Benefits information
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Pay stubs & tax forms
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Time-off requests
+                                    </p>
+                                </div>
+                                <button style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    width: '100%'
+                                }}>
+                                    Access HR Files
+                                </button>
+                            </div>
+
+                            {/* Shared Resources */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.3s'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        fontSize: '2.5rem',
+                                        marginRight: '1rem'
+                                    }}>
+                                        🗂️
+                                    </div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        Shared Resources
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem' }}>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Templates & forms
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Company presentations
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Marketing materials
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Knowledge base articles
+                                    </p>
+                                </div>
+                                <button style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    width: '100%'
+                                }}>
+                                    Browse Resources
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Upload Section */}
+                        <div style={{
+                            background: 'white',
+                            padding: '2rem',
+                            borderRadius: '12px',
+                            border: '2px solid #d4af37',
+                            textAlign: 'center'
+                        }}>
+                            <h3 style={{ color: '#1e3a8a', marginBottom: '1rem', fontSize: '1.5rem' }}>
+                                📤 Upload Documents
+                            </h3>
+                            <p style={{ color: '#64748b', marginBottom: '1.5rem' }}>
+                                All uploads are encrypted and scanned for security compliance
+                            </p>
+                            <button style={{
+                                background: '#d4af37',
+                                color: '#0f172a',
+                                border: 'none',
+                                padding: '1rem 2rem',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                fontWeight: '700',
+                                fontSize: '1rem'
+                            }}>
+                                Select Files to Upload
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {/* SECURE TOOLS & APPLICATIONS PAGE */}
+            {currentPage === 'securetools' && (
+                <section style={{ 
+                    padding: '4rem 2rem', 
+                    background: '#f1f5f9',
+                    minHeight: '100vh'
+                }}>
+                    <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                            <h2 style={{
+                                fontSize: '3rem',
+                                marginBottom: '1rem',
+                                color: '#1e3a8a',
+                                fontWeight: '800'
+                            }}>
+                                🛠️ Secure Tools & Applications
+                            </h2>
+                            <p style={{
+                                fontSize: '1.2rem',
+                                color: '#475569',
+                                maxWidth: '800px',
+                                margin: '0 auto 2rem auto'
+                            }}>
+                                AWS Console, project management, code repositories, and communication tools
+                            </p>
+                            <button 
+                                onClick={() => {
+                                    setCurrentPage('secureportal');
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                style={{
+                                    background: '#d4af37',
+                                    color: '#0f172a',
+                                    border: 'none',
+                                    padding: '1rem 2rem',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: '700',
+                                    fontSize: '1rem'
+                                }}>
+                                ← Back to Portal
+                            </button>
+                        </div>
+
+                        {/* Tools Grid */}
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                            gap: '2rem',
+                            marginBottom: '3rem'
+                        }}>
+                            {[
+                                { icon: '☁️', name: 'AWS Console', desc: 'Manage cloud infrastructure', status: 'Active' },
+                                { icon: '📊', name: 'Project Management', desc: 'Track tasks and milestones', status: 'Active' },
+                                { icon: '💻', name: 'Code Repository', desc: 'Git version control', status: 'Active' },
+                                { icon: '💬', name: 'Team Chat', desc: 'Secure messaging platform', status: 'Active' },
+                                { icon: '📧', name: 'Email System', desc: 'Corporate email access', status: 'Active' },
+                                { icon: '⏰', name: 'Time Tracking', desc: 'Log hours and attendance', status: 'Active' },
+                                { icon: '🔍', name: 'Security Dashboard', desc: 'Monitor compliance status', status: 'Active' },
+                                { icon: '📝', name: 'Documentation Wiki', desc: 'Internal knowledge base', status: 'Active' },
+                                { icon: '🎯', name: 'Task Automation', desc: 'Workflow automation tools', status: 'Active' },
+                                { icon: '📈', name: 'Analytics Platform', desc: 'Business intelligence tools', status: 'Active' },
+                                { icon: '🔐', name: 'VPN Access', desc: 'Secure network connection', status: 'Active' },
+                                { icon: '🗄️', name: 'Database Tools', desc: 'Query and manage databases', status: 'Active' }
+                            ].map((tool, index) => (
+                                <div key={index} className="hover-lift animate-scale-in" style={{
+                                    background: 'white',
+                                    padding: '1.5rem',
+                                    borderRadius: '12px',
+                                    border: '2px solid #e2e8f0',
+                                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                    animationDelay: `${index * 0.05}s`,
+                                    transition: 'all 0.3s ease'
+                                }}>
+                                    <div style={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'flex-start',
+                                        marginBottom: '1rem'
+                                    }}>
+                                        <div style={{
+                                            fontSize: '2.5rem'
+                                        }}>
+                                            {tool.icon}
+                                        </div>
+                                        <span style={{
+                                            background: '#10b981',
+                                            color: 'white',
+                                            padding: '0.25rem 0.75rem',
+                                            borderRadius: '12px',
+                                            fontSize: '0.75rem',
+                                            fontWeight: '600'
+                                        }}>
+                                            {tool.status}
+                                        </span>
+                                    </div>
+                                    <h3 style={{
+                                        color: '#1e3a8a',
+                                        fontSize: '1.2rem',
+                                        fontWeight: '700',
+                                        marginBottom: '0.5rem'
+                                    }}>
+                                        {tool.name}
+                                    </h3>
+                                    <p style={{
+                                        color: '#64748b',
+                                        fontSize: '0.9rem',
+                                        marginBottom: '1rem'
+                                    }}>
+                                        {tool.desc}
+                                    </p>
+                                    <button style={{
+                                        background: '#1e3a8a',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '0.5rem 1rem',
+                                        borderRadius: '6px',
+                                        cursor: 'pointer',
+                                        fontWeight: '600',
+                                        width: '100%',
+                                        fontSize: '0.9rem'
+                                    }}>
+                                        Launch Tool
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {/* INTERNAL CAREER HUB PAGE */}
+            {currentPage === 'careerhub' && (
+                <section style={{ 
+                    padding: '4rem 2rem', 
+                    background: '#f1f5f9',
+                    minHeight: '100vh'
+                }}>
+                    <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                            <h2 style={{
+                                fontSize: '3rem',
+                                marginBottom: '1rem',
+                                color: '#1e3a8a',
+                                fontWeight: '800'
+                            }}>
+                                💼 Internal Career Hub
+                            </h2>
+                            <p style={{
+                                fontSize: '1.2rem',
+                                color: '#475569',
+                                maxWidth: '800px',
+                                margin: '0 auto 2rem auto'
+                            }}>
+                                View internal job postings, career advancement opportunities, and referral programs
+                            </p>
+                            <button 
+                                onClick={() => {
+                                    setCurrentPage('secureportal');
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                style={{
+                                    background: '#d4af37',
+                                    color: '#0f172a',
+                                    border: 'none',
+                                    padding: '1rem 2rem',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: '700',
+                                    fontSize: '1rem'
+                                }}>
+                                ← Back to Portal
+                            </button>
+                        </div>
+
+                        {/* Career Options Grid */}
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                            gap: '2rem',
+                            marginBottom: '3rem'
+                        }}>
+                            {/* Internal Job Postings */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        fontSize: '2.5rem',
+                                        marginRight: '1rem'
+                                    }}>
+                                        📢
+                                    </div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        Internal Job Postings
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem' }}>
+                                    <div style={{
+                                        background: '#f8fafc',
+                                        padding: '1rem',
+                                        borderRadius: '8px',
+                                        marginBottom: '0.75rem',
+                                        border: '1px solid #e2e8f0'
+                                    }}>
+                                        <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.25rem' }}>
+                                            Senior Cloud Architect
+                                        </div>
+                                        <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                                            Engineering • Remote • Posted 2 days ago
+                                        </div>
+                                    </div>
+                                    <div style={{
+                                        background: '#f8fafc',
+                                        padding: '1rem',
+                                        borderRadius: '8px',
+                                        marginBottom: '0.75rem',
+                                        border: '1px solid #e2e8f0'
+                                    }}>
+                                        <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.25rem' }}>
+                                            Project Manager
+                                        </div>
+                                        <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                                            Operations • Leesburg, VA • Posted 5 days ago
+                                        </div>
+                                    </div>
+                                    <div style={{
+                                        background: '#f8fafc',
+                                        padding: '1rem',
+                                        borderRadius: '8px',
+                                        border: '1px solid #e2e8f0'
+                                    }}>
+                                        <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.25rem' }}>
+                                            Security Analyst
+                                        </div>
+                                        <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                                            Security • Hybrid • Posted 1 week ago
+                                        </div>
+                                    </div>
+                                </div>
+                                <button style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    width: '100%'
+                                }}>
+                                    View All Openings
+                                </button>
+                            </div>
+
+                            {/* Career Development */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.1s'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        fontSize: '2.5rem',
+                                        marginRight: '1rem'
+                                    }}>
+                                        📚
+                                    </div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        Career Development
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem' }}>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Training programs
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Certification support
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Mentorship opportunities
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Leadership programs
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Skills assessments
+                                    </p>
+                                </div>
+                                <button style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    width: '100%'
+                                }}>
+                                    Explore Programs
+                                </button>
+                            </div>
+
+                            {/* Employee Referrals */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.2s'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        fontSize: '2.5rem',
+                                        marginRight: '1rem'
+                                    }}>
+                                        🤝
+                                    </div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        Employee Referrals
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem' }}>
+                                    <div style={{
+                                        background: '#f0fdf4',
+                                        padding: '1rem',
+                                        borderRadius: '8px',
+                                        marginBottom: '1rem',
+                                        border: '1px solid #86efac'
+                                    }}>
+                                        <div style={{ fontWeight: '600', color: '#15803d', marginBottom: '0.5rem' }}>
+                                            💰 Referral Bonus Program
+                                        </div>
+                                        <div style={{ fontSize: '0.9rem', color: '#166534' }}>
+                                            Earn up to $5,000 for successful referrals
+                                        </div>
+                                    </div>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Submit candidate referrals
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Track referral status
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • View bonus eligibility
+                                    </p>
+                                </div>
+                                <button style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    width: '100%'
+                                }}>
+                                    Refer a Candidate
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Performance & Growth Section */}
+                        <div style={{
+                            background: 'white',
+                            padding: '2rem',
+                            borderRadius: '12px',
+                            border: '2px solid #d4af37',
+                            marginBottom: '2rem'
+                        }}>
+                            <h3 style={{ color: '#1e3a8a', marginBottom: '1.5rem', fontSize: '1.5rem', textAlign: 'center' }}>
+                                📊 Performance & Growth Tracking
+                            </h3>
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                                gap: '1.5rem'
+                            }}>
+                                <div style={{ textAlign: 'center' }}>
+                                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🎯</div>
+                                    <div style={{ fontWeight: '600', color: '#1e3a8a' }}>Goal Setting</div>
+                                    <div style={{ fontSize: '0.9rem', color: '#64748b' }}>Set & track objectives</div>
+                                </div>
+                                <div style={{ textAlign: 'center' }}>
+                                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📈</div>
+                                    <div style={{ fontWeight: '600', color: '#1e3a8a' }}>Performance Reviews</div>
+                                    <div style={{ fontSize: '0.9rem', color: '#64748b' }}>Annual evaluations</div>
+                                </div>
+                                <div style={{ textAlign: 'center' }}>
+                                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🏆</div>
+                                    <div style={{ fontWeight: '600', color: '#1e3a8a' }}>Achievements</div>
+                                    <div style={{ fontSize: '0.9rem', color: '#64748b' }}>Recognition & awards</div>
+                                </div>
+                                <div style={{ textAlign: 'center' }}>
+                                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📝</div>
+                                    <div style={{ fontWeight: '600', color: '#1e3a8a' }}>Feedback</div>
+                                    <div style={{ fontSize: '0.9rem', color: '#64748b' }}>360° reviews</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {/* COGNITO LOGIN PAGE */}
+            {currentPage === 'login' && (
+                <section style={{ 
+                    padding: '4rem 2rem', 
+                    background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+                    minHeight: '100vh',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
+                    <div className="animate-scale-in" style={{ 
+                        maxWidth: '450px', 
+                        width: '100%',
+                        background: 'white',
+                        borderRadius: '12px',
+                        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
+                        overflow: 'hidden'
+                    }}>
+                        {/* Header */}
+                        <div style={{
+                            background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
+                            padding: '2rem',
+                            textAlign: 'center'
+                        }}>
+                            <div style={{
+                                fontSize: '3rem',
+                                marginBottom: '0.5rem'
+                            }}>
+                                🔐
+                            </div>
+                            <h2 style={{
+                                color: 'white',
+                                fontSize: '1.8rem',
+                                fontWeight: '700',
+                                margin: '0 0 0.5rem 0'
+                            }}>
+                                Employee Portal
+                            </h2>
+                            <p style={{
+                                color: '#cbd5e1',
+                                fontSize: '0.95rem',
+                                margin: 0
+                            }}>
+                                Secure Sign In
+                            </p>
+                        </div>
+
+                        {/* Login Form */}
+                        <div style={{ padding: '2.5rem' }}>
+                            <form onSubmit={(e) => {
+                                e.preventDefault();
+                                // Placeholder - would integrate with AWS Cognito
+                                alert('AWS Cognito authentication would be integrated here');
+                            }}>
+                                {/* Username Field */}
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <label style={{
+                                        display: 'block',
+                                        marginBottom: '0.5rem',
+                                        color: '#334155',
+                                        fontWeight: '600',
+                                        fontSize: '0.9rem'
+                                    }}>
+                                        Username or Email
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="Enter your username"
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e2e8f0',
+                                            borderRadius: '8px',
+                                            fontSize: '1rem',
+                                            transition: 'all 0.3s ease',
+                                            outline: 'none'
+                                        }}
+                                        onFocus={(e) => e.target.style.borderColor = '#1e3a8a'}
+                                        onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                                    />
+                                </div>
+
+                                {/* Password Field */}
+                                <div style={{ marginBottom: '1rem' }}>
+                                    <label style={{
+                                        display: 'block',
+                                        marginBottom: '0.5rem',
+                                        color: '#334155',
+                                        fontWeight: '600',
+                                        fontSize: '0.9rem'
+                                    }}>
+                                        Password
+                                    </label>
+                                    <input
+                                        type="password"
+                                        placeholder="Enter your password"
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e2e8f0',
+                                            borderRadius: '8px',
+                                            fontSize: '1rem',
+                                            transition: 'all 0.3s ease',
+                                            outline: 'none'
+                                        }}
+                                        onFocus={(e) => e.target.style.borderColor = '#1e3a8a'}
+                                        onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                                    />
+                                </div>
+
+                                {/* Forgot Password Link */}
+                                <div style={{ 
+                                    textAlign: 'right', 
+                                    marginBottom: '1.5rem' 
+                                }}>
+                                    <a href="#" style={{
+                                        color: '#1e3a8a',
+                                        fontSize: '0.9rem',
+                                        textDecoration: 'none',
+                                        fontWeight: '600'
+                                    }}
+                                    onMouseOver={(e) => e.target.style.textDecoration = 'underline'}
+                                    onMouseOut={(e) => e.target.style.textDecoration = 'none'}>
+                                        Forgot password?
+                                    </a>
+                                </div>
+
+                                {/* Sign In Button */}
+                                <button
+                                    type="submit"
+                                    style={{
+                                        width: '100%',
+                                        background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '1rem',
+                                        borderRadius: '8px',
+                                        fontSize: '1rem',
+                                        fontWeight: '700',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s ease',
+                                        marginBottom: '1rem'
+                                    }}
+                                    onMouseOver={(e) => {
+                                        e.target.style.transform = 'translateY(-2px)';
+                                        e.target.style.boxShadow = '0 10px 20px rgba(30, 58, 138, 0.3)';
+                                    }}
+                                    onMouseOut={(e) => {
+                                        e.target.style.transform = 'translateY(0)';
+                                        e.target.style.boxShadow = 'none';
+                                    }}>
+                                    Sign In
+                                </button>
+
+                                {/* Temporary Bypass Button - Remove when Cognito is ready */}
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setCurrentPage('secureportal');
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }}
+                                    style={{
+                                        width: '100%',
+                                        background: '#d4af37',
+                                        color: '#0f172a',
+                                        border: 'none',
+                                        padding: '1rem',
+                                        borderRadius: '8px',
+                                        fontSize: '0.9rem',
+                                        fontWeight: '700',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s ease',
+                                        marginBottom: '1rem'
+                                    }}
+                                    onMouseOver={(e) => {
+                                        e.target.style.transform = 'translateY(-2px)';
+                                        e.target.style.boxShadow = '0 10px 20px rgba(212, 175, 55, 0.3)';
+                                    }}
+                                    onMouseOut={(e) => {
+                                        e.target.style.transform = 'translateY(0)';
+                                        e.target.style.boxShadow = 'none';
+                                    }}>
+                                    🚧 Bypass Login (Development Only)
+                                </button>
+
+                                {/* MFA Notice */}
+                                <div style={{
+                                    background: '#f1f5f9',
+                                    padding: '1rem',
+                                    borderRadius: '8px',
+                                    marginBottom: '1rem',
+                                    border: '1px solid #e2e8f0'
+                                }}>
+                                    <p style={{
+                                        margin: 0,
+                                        fontSize: '0.85rem',
+                                        color: '#64748b',
+                                        textAlign: 'center'
+                                    }}>
+                                        🔒 Multi-factor authentication required
+                                    </p>
+                                </div>
+
+                                {/* Divider */}
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    margin: '1.5rem 0',
+                                    gap: '1rem'
+                                }}>
+                                    <div style={{
+                                        flex: 1,
+                                        height: '1px',
+                                        background: '#e2e8f0'
+                                    }}></div>
+                                    <span style={{
+                                        color: '#94a3b8',
+                                        fontSize: '0.85rem'
+                                    }}>
+                                        OR
+                                    </span>
+                                    <div style={{
+                                        flex: 1,
+                                        height: '1px',
+                                        background: '#e2e8f0'
+                                    }}></div>
+                                </div>
+
+                                {/* Request Access Button */}
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        window.location.href = 'mailto:rachelle.briscoe@navontech.com?subject=I%20need%20Employee%20Portal%20Access%20Credentials%20and%20Permissions';
+                                    }}
+                                    style={{
+                                        width: '100%',
+                                        background: 'transparent',
+                                        color: '#1e3a8a',
+                                        border: '2px solid #1e3a8a',
+                                        padding: '1rem',
+                                        borderRadius: '8px',
+                                        fontSize: '1rem',
+                                        fontWeight: '700',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s ease'
+                                    }}
+                                    onMouseOver={(e) => {
+                                        e.target.style.background = '#1e3a8a';
+                                        e.target.style.color = 'white';
+                                    }}
+                                    onMouseOut={(e) => {
+                                        e.target.style.background = 'transparent';
+                                        e.target.style.color = '#1e3a8a';
+                                    }}>
+                                    Request Access
+                                </button>
+                            </form>
+
+                            {/* Back to Home */}
+                            <div style={{ 
+                                textAlign: 'center', 
+                                marginTop: '1.5rem',
+                                paddingTop: '1.5rem',
+                                borderTop: '1px solid #e2e8f0'
+                            }}>
+                                <button
+                                    onClick={() => {
+                                        setCurrentPage('home');
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }}
+                                    style={{
+                                        background: 'transparent',
+                                        border: 'none',
+                                        color: '#64748b',
+                                        fontSize: '0.9rem',
+                                        cursor: 'pointer',
+                                        textDecoration: 'underline'
+                                    }}>
+                                    ← Back to Home
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Footer */}
+                        <div style={{
+                            background: '#f8fafc',
+                            padding: '1rem',
+                            textAlign: 'center',
+                            borderTop: '1px solid #e2e8f0'
+                        }}>
+                            <p style={{
+                                margin: 0,
+                                fontSize: '0.8rem',
+                                color: '#94a3b8'
+                            }}>
+                                🛡️ Powered by AWS Cognito | Secure by Design
+                            </p>
+                        </div>
+                    </div>
+                </section>
+            )}
+
             {/* Footer */}
             <footer style={{
                 padding: '3rem 2rem 1.5rem 2rem',
@@ -3653,7 +5687,10 @@ function SimpleApp() {
                                 gap: '0.75rem'
                             }}>
                                 <a 
-                                    href="#portal" 
+                                    href="#portal"
+                                    onClick={() => {
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }}
                                     style={{
                                         fontSize: '1.8rem',
                                         color: '#d4af37',
@@ -3688,14 +5725,28 @@ function SimpleApp() {
                                 onMouseOut={(e) => e.target.style.color = '#cbd5e1'}>
                                     Accessibility Statement
                                 </a>
-                                <a href="#security-compliance" style={{
+                                <a href="#secureportal"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    setShowSecureModal(true);
+                                }}
+                                style={{
                                     color: '#cbd5e1',
                                     fontSize: '0.9rem',
                                     textDecoration: 'none',
-                                    transition: 'all 0.3s ease'
+                                    transition: 'all 0.3s ease',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem',
+                                    cursor: 'pointer'
                                 }}
-                                onMouseOver={(e) => e.target.style.color = '#d4af37'}
-                                onMouseOut={(e) => e.target.style.color = '#cbd5e1'}>
+                                onMouseOver={(e) => {
+                                    e.currentTarget.style.color = '#d4af37';
+                                }}
+                                onMouseOut={(e) => {
+                                    e.currentTarget.style.color = '#cbd5e1';
+                                }}>
+                                    <span style={{ fontSize: '1.2rem' }}>🛡️</span>
                                     Security & Compliance
                                 </a>
                             </div>
@@ -3716,6 +5767,151 @@ function SimpleApp() {
                     </div>
                 </div>
             </footer>
+            
+            {/* Secure Access Modal */}
+            {showSecureModal && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(0, 0, 0, 0.75)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 9999,
+                    padding: '2rem',
+                    animation: 'fadeIn 0.3s ease-out'
+                }}
+                onClick={() => setShowSecureModal(false)}>
+                    <div style={{
+                        background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
+                        color: 'white',
+                        padding: '3rem',
+                        borderRadius: '20px',
+                        textAlign: 'center',
+                        maxWidth: '600px',
+                        width: '100%',
+                        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
+                        position: 'relative',
+                        animation: 'scaleIn 0.3s ease-out',
+                        border: '3px solid #d4af37'
+                    }}
+                    onClick={(e) => e.stopPropagation()}>
+                        {/* Close button */}
+                        <button
+                            onClick={() => setShowSecureModal(false)}
+                            style={{
+                                position: 'absolute',
+                                top: '1rem',
+                                right: '1rem',
+                                background: 'rgba(255, 255, 255, 0.2)',
+                                border: 'none',
+                                color: 'white',
+                                fontSize: '1.5rem',
+                                width: '40px',
+                                height: '40px',
+                                borderRadius: '50%',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                transition: 'all 0.3s ease'
+                            }}
+                            onMouseOver={(e) => {
+                                e.target.style.background = 'rgba(255, 255, 255, 0.3)';
+                                e.target.style.transform = 'rotate(90deg)';
+                            }}
+                            onMouseOut={(e) => {
+                                e.target.style.background = 'rgba(255, 255, 255, 0.2)';
+                                e.target.style.transform = 'rotate(0deg)';
+                            }}>
+                            ×
+                        </button>
+                        
+                        <h3 style={{ marginBottom: '1.5rem', fontSize: '2rem', fontWeight: '800' }}>
+                            🔐 Secure Access Required
+                        </h3>
+                        <p style={{ marginBottom: '2rem', opacity: '0.95', fontSize: '1.1rem', lineHeight: '1.7' }}>
+                            Access to the employee portal requires multi-factor authentication and valid security clearance.
+                            All activities are logged and monitored for compliance.
+                        </p>
+                        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                            <button 
+                                onClick={() => {
+                                    setShowSecureModal(false);
+                                    setCurrentPage('login');
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                style={{
+                                    background: 'white',
+                                    color: '#1e3a8a',
+                                    border: 'none',
+                                    padding: '1rem 2rem',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: '700',
+                                    fontSize: '1rem',
+                                    transition: 'all 0.3s ease'
+                                }}
+                                onMouseOver={(e) => {
+                                    e.target.style.transform = 'translateY(-2px)';
+                                    e.target.style.boxShadow = '0 10px 20px rgba(255, 255, 255, 0.3)';
+                                }}
+                                onMouseOut={(e) => {
+                                    e.target.style.transform = 'translateY(0)';
+                                    e.target.style.boxShadow = 'none';
+                                }}>
+                                Employee Login
+                            </button>
+                            <button 
+                                onClick={() => {
+                                    setShowSecureModal(false);
+                                    window.location.href = 'mailto:rachelle.briscoe@navontech.com?subject=I%20need%20Employee%20Portal%20Access%20Credentials%20and%20Permissions';
+                                }}
+                                style={{
+                                    background: 'transparent',
+                                    color: 'white',
+                                    border: '2px solid white',
+                                    padding: '1rem 2rem',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: '700',
+                                    fontSize: '1rem',
+                                    transition: 'all 0.3s ease'
+                                }}
+                                onMouseOver={(e) => {
+                                    e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                                    e.target.style.transform = 'translateY(-2px)';
+                                }}
+                                onMouseOut={(e) => {
+                                    e.target.style.background = 'transparent';
+                                    e.target.style.transform = 'translateY(0)';
+                                }}>
+                                Request Access
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            
+            <style>{`
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                @keyframes scaleIn {
+                    from {
+                        opacity: 0;
+                        transform: scale(0.9);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: scale(1);
+                    }
+                }
+            `}</style>
         </div>
     );
 }
