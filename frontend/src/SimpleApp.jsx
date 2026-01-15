@@ -3901,9 +3901,19 @@ function SimpleApp() {
                                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
                                     <div style={{
                                         fontSize: '2.5rem',
-                                        marginRight: '1rem'
+                                        marginRight: '1rem',
+                                        background: '#1e3a8a',
+                                        color: 'white',
+                                        width: '60px',
+                                        height: '60px',
+                                        borderRadius: '50%',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontWeight: 'bold',
+                                        fontSize: '1.2rem'
                                     }}>
-                                        📋
+                                        HR
                                     </div>
                                     <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
                                         Team Directory
@@ -4857,6 +4867,308 @@ function SimpleApp() {
                 </section>
             )}
 
+            {/* HR DOCUMENTS PAGE */}
+            {currentPage === 'hrdocuments' && (
+                <section style={{ 
+                    padding: '4rem 2rem', 
+                    background: '#f1f5f9',
+                    minHeight: '100vh'
+                }}>
+                    <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                            <h2 style={{
+                                fontSize: '3rem',
+                                marginBottom: '1rem',
+                                color: '#1e3a8a',
+                                fontWeight: '800'
+                            }}>
+                                📋 HR Documents
+                            </h2>
+                            <p style={{
+                                fontSize: '1.2rem',
+                                color: '#475569',
+                                maxWidth: '800px',
+                                margin: '0 auto 2rem auto'
+                            }}>
+                                Access employee handbook, benefits information, and important HR forms
+                            </p>
+                            <button 
+                                onClick={() => {
+                                    setCurrentPage('documentmanagement');
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                style={{
+                                    background: '#d4af37',
+                                    color: '#0f172a',
+                                    border: 'none',
+                                    padding: '1rem 2rem',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: '700',
+                                    fontSize: '1rem'
+                                }}>
+                                ← Back to Document Management
+                            </button>
+                        </div>
+
+                        {/* HR Documents Grid */}
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                            gap: '2rem'
+                        }}>
+                            {/* Employee Handbook 2026 */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        background: '#1e3a8a',
+                                        color: 'white',
+                                        width: '60px',
+                                        height: '60px',
+                                        borderRadius: '12px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontWeight: 'bold',
+                                        fontSize: '0.8rem',
+                                        marginRight: '1rem'
+                                    }}>
+                                        BOOK
+                                    </div>
+                                    <div>
+                                        <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.3rem', fontWeight: '700' }}>
+                                            Employee Handbook 2026
+                                        </h3>
+                                        <div style={{ 
+                                            display: 'flex', 
+                                            alignItems: 'center', 
+                                            gap: '1rem',
+                                            marginTop: '0.5rem'
+                                        }}>
+                                            <span style={{
+                                                background: '#ef4444',
+                                                color: 'white',
+                                                padding: '0.25rem 0.75rem',
+                                                borderRadius: '12px',
+                                                fontSize: '0.75rem',
+                                                fontWeight: '600'
+                                            }}>
+                                                PDF
+                                            </span>
+                                            <span style={{ color: '#64748b', fontSize: '0.9rem' }}>
+                                                1.8 MB
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <p style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: '1.6' }}>
+                                        Complete guide to company policies, procedures, code of conduct, 
+                                        and workplace guidelines. Updated for 2026 with new remote work policies 
+                                        and security protocols.
+                                    </p>
+                                </div>
+                                <div style={{
+                                    background: '#f8fafc',
+                                    padding: '1rem',
+                                    borderRadius: '8px',
+                                    marginBottom: '1.5rem',
+                                    border: '1px solid #e2e8f0'
+                                }}>
+                                    <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                                        <div style={{ marginBottom: '0.25rem' }}>📅 Last Updated: January 1, 2026</div>
+                                        <div style={{ marginBottom: '0.25rem' }}>👤 Version: 3.2</div>
+                                        <div>🔒 Classification: Internal Use</div>
+                                    </div>
+                                </div>
+                                <button style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    width: '100%',
+                                    fontSize: '1rem'
+                                }}>
+                                    📄 View Document
+                                </button>
+                            </div>
+
+                            {/* Benefits Overview 2026 */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.1s'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        fontSize: '3rem',
+                                        marginRight: '1rem'
+                                    }}>
+                                        🏥
+                                    </div>
+                                    <div>
+                                        <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.3rem', fontWeight: '700' }}>
+                                            Benefits Overview 2026
+                                        </h3>
+                                        <div style={{ 
+                                            display: 'flex', 
+                                            alignItems: 'center', 
+                                            gap: '1rem',
+                                            marginTop: '0.5rem'
+                                        }}>
+                                            <span style={{
+                                                background: '#ef4444',
+                                                color: 'white',
+                                                padding: '0.25rem 0.75rem',
+                                                borderRadius: '12px',
+                                                fontSize: '0.75rem',
+                                                fontWeight: '600'
+                                            }}>
+                                                PDF
+                                            </span>
+                                            <span style={{ color: '#64748b', fontSize: '0.9rem' }}>
+                                                2.1 MB
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <p style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: '1.6' }}>
+                                        Comprehensive overview of health insurance, retirement plans, 
+                                        paid time off, professional development opportunities, and all 
+                                        employee benefits for 2026.
+                                    </p>
+                                </div>
+                                <div style={{
+                                    background: '#f8fafc',
+                                    padding: '1rem',
+                                    borderRadius: '8px',
+                                    marginBottom: '1.5rem',
+                                    border: '1px solid #e2e8f0'
+                                }}>
+                                    <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                                        <div style={{ marginBottom: '0.25rem' }}>📅 Last Updated: December 15, 2025</div>
+                                        <div style={{ marginBottom: '0.25rem' }}>👤 Version: 2026.1</div>
+                                        <div>🔒 Classification: Internal Use</div>
+                                    </div>
+                                </div>
+                                <button style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    width: '100%',
+                                    fontSize: '1rem'
+                                }}>
+                                    📄 View Document
+                                </button>
+                            </div>
+
+                            {/* Annual Review Survey */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.2s'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        background: '#1e3a8a',
+                                        color: 'white',
+                                        width: '60px',
+                                        height: '60px',
+                                        borderRadius: '12px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontWeight: 'bold',
+                                        fontSize: '0.8rem',
+                                        marginRight: '1rem'
+                                    }}>
+                                        FORM
+                                    </div>
+                                    <div>
+                                        <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.3rem', fontWeight: '700' }}>
+                                            Annual Review Survey
+                                        </h3>
+                                        <div style={{ 
+                                            display: 'flex', 
+                                            alignItems: 'center', 
+                                            gap: '1rem',
+                                            marginTop: '0.5rem'
+                                        }}>
+                                            <span style={{
+                                                background: '#ef4444',
+                                                color: 'white',
+                                                padding: '0.25rem 0.75rem',
+                                                borderRadius: '12px',
+                                                fontSize: '0.75rem',
+                                                fontWeight: '600'
+                                            }}>
+                                                PDF
+                                            </span>
+                                            <span style={{ color: '#64748b', fontSize: '0.9rem' }}>
+                                                0.9 MB
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <p style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: '1.6' }}>
+                                        Annual performance review form and self-assessment survey. 
+                                        Complete and submit before your scheduled review meeting 
+                                        with your manager.
+                                    </p>
+                                </div>
+                                <div style={{
+                                    background: '#fef3c7',
+                                    padding: '1rem',
+                                    borderRadius: '8px',
+                                    marginBottom: '1.5rem',
+                                    border: '1px solid #f59e0b'
+                                }}>
+                                    <div style={{ fontSize: '0.85rem', color: '#92400e' }}>
+                                        <div style={{ marginBottom: '0.25rem' }}>⚠️ Due Date: March 15, 2026</div>
+                                        <div style={{ marginBottom: '0.25rem' }}>📅 Review Period: 2025</div>
+                                        <div>🔒 Classification: Confidential</div>
+                                    </div>
+                                </div>
+                                <button style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    width: '100%',
+                                    fontSize: '1rem'
+                                }}>
+                                    📄 View Document
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            )}
+
             {/* TEAM DIRECTORY PAGE */}
             {currentPage === 'teamdirectory' && (
                 <section style={{ 
@@ -5100,7 +5412,7 @@ function SimpleApp() {
                             gap: '2rem',
                             marginBottom: '3rem'
                         }}>
-                            {/* Project Documents */}
+                            {/* HR Documents */}
                             <div className="hover-lift animate-scale-in" style={{
                                 background: 'white',
                                 padding: '2rem',
@@ -5110,40 +5422,54 @@ function SimpleApp() {
                             }}>
                                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
                                     <div style={{
-                                        fontSize: '2.5rem',
+                                        background: '#1e3a8a',
+                                        color: 'white',
+                                        width: '60px',
+                                        height: '60px',
+                                        borderRadius: '50%',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontWeight: 'bold',
+                                        fontSize: '1.2rem',
                                         marginRight: '1rem'
                                     }}>
-                                        📄
+                                        HR
                                     </div>
                                     <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
-                                        Project Documents
+                                        HR Documents
                                     </h3>
                                 </div>
                                 <div style={{ marginBottom: '1rem' }}>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Active project files
+                                        • Employee handbook
                                     </p>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Technical specifications
+                                        • Benefits information
                                     </p>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Design documents
+                                        • Time-off requests
                                     </p>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Meeting notes & minutes
+                                        • Annual review survey
                                     </p>
                                 </div>
-                                <button style={{
-                                    background: '#1e3a8a',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '0.75rem 1.5rem',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600',
-                                    width: '100%'
-                                }}>
-                                    Browse Projects
+                                <button 
+                                    onClick={() => {
+                                        setCurrentPage('hrdocuments');
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }}
+                                    style={{
+                                        background: '#1e3a8a',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '0.75rem 1.5rem',
+                                        borderRadius: '6px',
+                                        cursor: 'pointer',
+                                        fontWeight: '600',
+                                        width: '100%'
+                                    }}>
+                                    Access HR Files
                                 </button>
                             </div>
 
@@ -5195,7 +5521,7 @@ function SimpleApp() {
                                 </button>
                             </div>
 
-                            {/* HR Documents */}
+                            {/* Project Documents */}
                             <div className="hover-lift animate-scale-in" style={{
                                 background: 'white',
                                 padding: '2rem',
@@ -5209,24 +5535,24 @@ function SimpleApp() {
                                         fontSize: '2.5rem',
                                         marginRight: '1rem'
                                     }}>
-                                        📋
+                                        📄
                                     </div>
                                     <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
-                                        HR Documents
+                                        Project Documents
                                     </h3>
                                 </div>
                                 <div style={{ marginBottom: '1rem' }}>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Employee handbook
+                                        • Active project files
                                     </p>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Benefits information
+                                        • Technical specifications
                                     </p>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Pay stubs & tax forms
+                                        • Design documents
                                     </p>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Time-off requests
+                                        • Meeting notes & minutes
                                     </p>
                                 </div>
                                 <button style={{
@@ -5239,7 +5565,7 @@ function SimpleApp() {
                                     fontWeight: '600',
                                     width: '100%'
                                 }}>
-                                    Access HR Files
+                                    Browse Projects
                                 </button>
                             </div>
 
