@@ -5939,7 +5939,7 @@ function SimpleApp() {
                                             Senior Cloud Architect
                                         </div>
                                         <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
-                                            Engineering • Remote • Posted 2 days ago
+                                            Engineering • Herndon, VA • Posted 2 days ago
                                         </div>
                                     </div>
                                     <div style={{
@@ -5953,7 +5953,7 @@ function SimpleApp() {
                                             Project Manager
                                         </div>
                                         <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
-                                            Operations • Leesburg, VA • Posted 5 days ago
+                                            Operations • Greenbelt, MD • Posted 5 days ago
                                         </div>
                                     </div>
                                     <div style={{
@@ -5966,11 +5966,16 @@ function SimpleApp() {
                                             Security Analyst
                                         </div>
                                         <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
-                                            Security • Hybrid • Posted 1 week ago
+                                            Security • Reston, VA • Posted 1 week ago
                                         </div>
                                     </div>
                                 </div>
-                                <button style={{
+                                <button 
+                                    onClick={() => {
+                                        setCurrentPage('jobpostings');
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }}
+                                    style={{
                                     background: '#1e3a8a',
                                     color: 'white',
                                     border: 'none',
@@ -6132,6 +6137,507 @@ function SimpleApp() {
                                     <div style={{ fontSize: '0.9rem', color: '#64748b' }}>360° reviews</div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {/* DETAILED JOB POSTINGS PAGE */}
+            {currentPage === 'jobpostings' && (
+                <section style={{ 
+                    padding: '4rem 2rem', 
+                    background: '#f1f5f9',
+                    minHeight: '100vh'
+                }}>
+                    <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                            <h2 style={{
+                                fontSize: '3rem',
+                                marginBottom: '1rem',
+                                color: '#1e3a8a',
+                                fontWeight: '800'
+                            }}>
+                                📢 Current Job Openings
+                            </h2>
+                            <p style={{
+                                fontSize: '1.2rem',
+                                color: '#475569',
+                                maxWidth: '800px',
+                                margin: '0 auto 2rem auto'
+                            }}>
+                                Explore detailed information about available positions at Navon Technologies
+                            </p>
+                            <button 
+                                onClick={() => {
+                                    setCurrentPage('careerhub');
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                style={{
+                                    background: '#d4af37',
+                                    color: '#0f172a',
+                                    border: 'none',
+                                    padding: '1rem 2rem',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: '700',
+                                    fontSize: '1rem'
+                                }}>
+                                ← Back to Career Hub
+                            </button>
+                        </div>
+
+                        {/* Job Listings */}
+                        <div style={{
+                            display: 'grid',
+                            gap: '2rem',
+                            marginBottom: '3rem'
+                        }}>
+                            {/* Senior Cloud Architect */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2.5rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                            }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
+                                    <div>
+                                        <h3 style={{ color: '#1e3a8a', margin: '0 0 0.5rem 0', fontSize: '1.8rem', fontWeight: '700' }}>
+                                            Senior Cloud Architect
+                                        </h3>
+                                        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+                                            <span style={{ background: '#e0f2fe', color: '#0369a1', padding: '0.25rem 0.75rem', borderRadius: '20px', fontSize: '0.85rem', fontWeight: '600' }}>
+                                                Engineering
+                                            </span>
+                                            <span style={{ background: '#f0fdf4', color: '#15803d', padding: '0.25rem 0.75rem', borderRadius: '20px', fontSize: '0.85rem', fontWeight: '600' }}>
+                                                📍 Herndon, VA
+                                            </span>
+                                            <span style={{ background: '#fef3c7', color: '#d97706', padding: '0.25rem 0.75rem', borderRadius: '20px', fontSize: '0.85rem', fontWeight: '600' }}>
+                                                Full-time
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div style={{ textAlign: 'right' }}>
+                                        <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#64748b', marginBottom: '0.25rem' }}>
+                                            To Be Determined
+                                        </div>
+                                        <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                                            Salary Range
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <p style={{ color: '#475569', lineHeight: '1.6', marginBottom: '1rem' }}>
+                                        Lead the design and implementation of scalable cloud infrastructure solutions. Work with cutting-edge AWS services to architect enterprise-level systems for government and commercial clients.
+                                    </p>
+                                    
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
+                                        <div>
+                                            <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>
+                                                🔒 Clearance Required
+                                            </div>
+                                            <div style={{ fontSize: '0.9rem', color: '#64748b' }}>
+                                                Secret Security Clearance
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>
+                                                📅 Posted
+                                            </div>
+                                            <div style={{ fontSize: '0.9rem', color: '#64748b' }}>
+                                                January 13, 2026
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>
+                                                ⏰ Application Deadline
+                                            </div>
+                                            <div style={{ fontSize: '0.9rem', color: '#dc2626' }}>
+                                                February 15, 2026
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 2rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    fontSize: '1rem'
+                                }}>
+                                    Apply Now
+                                </button>
+                            </div>
+
+                            {/* Project Manager */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2.5rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.1s'
+                            }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
+                                    <div>
+                                        <h3 style={{ color: '#1e3a8a', margin: '0 0 0.5rem 0', fontSize: '1.8rem', fontWeight: '700' }}>
+                                            Project Manager
+                                        </h3>
+                                        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+                                            <span style={{ background: '#fef3c7', color: '#d97706', padding: '0.25rem 0.75rem', borderRadius: '20px', fontSize: '0.85rem', fontWeight: '600' }}>
+                                                Operations
+                                            </span>
+                                            <span style={{ background: '#f0fdf4', color: '#15803d', padding: '0.25rem 0.75rem', borderRadius: '20px', fontSize: '0.85rem', fontWeight: '600' }}>
+                                                📍 Greenbelt, MD
+                                            </span>
+                                            <span style={{ background: '#fef3c7', color: '#d97706', padding: '0.25rem 0.75rem', borderRadius: '20px', fontSize: '0.85rem', fontWeight: '600' }}>
+                                                Full-time
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div style={{ textAlign: 'right' }}>
+                                        <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#64748b', marginBottom: '0.25rem' }}>
+                                            To Be Determined
+                                        </div>
+                                        <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                                            Salary Range
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <p style={{ color: '#475569', lineHeight: '1.6', marginBottom: '1rem' }}>
+                                        Coordinate complex technology projects from initiation to completion. Manage cross-functional teams and ensure deliverables meet client requirements and government compliance standards.
+                                    </p>
+                                    
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
+                                        <div>
+                                            <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>
+                                                🔒 Clearance Required
+                                            </div>
+                                            <div style={{ fontSize: '0.9rem', color: '#64748b' }}>
+                                                Public Trust
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>
+                                                📅 Posted
+                                            </div>
+                                            <div style={{ fontSize: '0.9rem', color: '#64748b' }}>
+                                                January 10, 2026
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>
+                                                ⏰ Application Deadline
+                                            </div>
+                                            <div style={{ fontSize: '0.9rem', color: '#dc2626' }}>
+                                                February 10, 2026
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 2rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    fontSize: '1rem'
+                                }}>
+                                    Apply Now
+                                </button>
+                            </div>
+
+                            {/* Security Analyst */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2.5rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.2s'
+                            }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
+                                    <div>
+                                        <h3 style={{ color: '#1e3a8a', margin: '0 0 0.5rem 0', fontSize: '1.8rem', fontWeight: '700' }}>
+                                            Security Analyst
+                                        </h3>
+                                        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+                                            <span style={{ background: '#fee2e2', color: '#dc2626', padding: '0.25rem 0.75rem', borderRadius: '20px', fontSize: '0.85rem', fontWeight: '600' }}>
+                                                Security
+                                            </span>
+                                            <span style={{ background: '#f0fdf4', color: '#15803d', padding: '0.25rem 0.75rem', borderRadius: '20px', fontSize: '0.85rem', fontWeight: '600' }}>
+                                                📍 Reston, VA
+                                            </span>
+                                            <span style={{ background: '#fef3c7', color: '#d97706', padding: '0.25rem 0.75rem', borderRadius: '20px', fontSize: '0.85rem', fontWeight: '600' }}>
+                                                Full-time
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div style={{ textAlign: 'right' }}>
+                                        <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#64748b', marginBottom: '0.25rem' }}>
+                                            To Be Determined
+                                        </div>
+                                        <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                                            Salary Range
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <p style={{ color: '#475569', lineHeight: '1.6', marginBottom: '1rem' }}>
+                                        Monitor and analyze security threats, implement security protocols, and ensure compliance with federal security standards. Work with advanced security tools and incident response procedures.
+                                    </p>
+                                    
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
+                                        <div>
+                                            <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>
+                                                🔒 Clearance Required
+                                            </div>
+                                            <div style={{ fontSize: '0.9rem', color: '#64748b' }}>
+                                                Secret Security Clearance
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>
+                                                📅 Posted
+                                            </div>
+                                            <div style={{ fontSize: '0.9rem', color: '#64748b' }}>
+                                                January 8, 2026
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>
+                                                ⏰ Application Deadline
+                                            </div>
+                                            <div style={{ fontSize: '0.9rem', color: '#dc2626' }}>
+                                                February 8, 2026
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 2rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    fontSize: '1rem'
+                                }}>
+                                    Apply Now
+                                </button>
+                            </div>
+
+                            {/* DevOps Engineer */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2.5rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.3s'
+                            }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
+                                    <div>
+                                        <h3 style={{ color: '#1e3a8a', margin: '0 0 0.5rem 0', fontSize: '1.8rem', fontWeight: '700' }}>
+                                            DevOps Engineer
+                                        </h3>
+                                        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+                                            <span style={{ background: '#e0f2fe', color: '#0369a1', padding: '0.25rem 0.75rem', borderRadius: '20px', fontSize: '0.85rem', fontWeight: '600' }}>
+                                                Engineering
+                                            </span>
+                                            <span style={{ background: '#f0fdf4', color: '#15803d', padding: '0.25rem 0.75rem', borderRadius: '20px', fontSize: '0.85rem', fontWeight: '600' }}>
+                                                📍 Greenbelt, MD
+                                            </span>
+                                            <span style={{ background: '#fef3c7', color: '#d97706', padding: '0.25rem 0.75rem', borderRadius: '20px', fontSize: '0.85rem', fontWeight: '600' }}>
+                                                Full-time
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div style={{ textAlign: 'right' }}>
+                                        <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#64748b', marginBottom: '0.25rem' }}>
+                                            To Be Determined
+                                        </div>
+                                        <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                                            Salary Range
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <p style={{ color: '#475569', lineHeight: '1.6', marginBottom: '1rem' }}>
+                                        Build and maintain CI/CD pipelines, automate infrastructure deployment, and optimize cloud operations. Work with containerization, orchestration, and infrastructure as code.
+                                    </p>
+                                    
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
+                                        <div>
+                                            <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>
+                                                🔒 Clearance Required
+                                            </div>
+                                            <div style={{ fontSize: '0.9rem', color: '#64748b' }}>
+                                                Public Trust
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>
+                                                📅 Posted
+                                            </div>
+                                            <div style={{ fontSize: '0.9rem', color: '#64748b' }}>
+                                                January 12, 2026
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>
+                                                ⏰ Application Deadline
+                                            </div>
+                                            <div style={{ fontSize: '0.9rem', color: '#dc2626' }}>
+                                                February 20, 2026
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 2rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    fontSize: '1rem'
+                                }}>
+                                    Apply Now
+                                </button>
+                            </div>
+
+                            {/* Network Engineer */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2.5rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.4s'
+                            }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
+                                    <div>
+                                        <h3 style={{ color: '#1e3a8a', margin: '0 0 0.5rem 0', fontSize: '1.8rem', fontWeight: '700' }}>
+                                            Network Engineer
+                                        </h3>
+                                        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+                                            <span style={{ background: '#e0f2fe', color: '#0369a1', padding: '0.25rem 0.75rem', borderRadius: '20px', fontSize: '0.85rem', fontWeight: '600' }}>
+                                                Infrastructure
+                                            </span>
+                                            <span style={{ background: '#f0fdf4', color: '#15803d', padding: '0.25rem 0.75rem', borderRadius: '20px', fontSize: '0.85rem', fontWeight: '600' }}>
+                                                📍 Reston, VA
+                                            </span>
+                                            <span style={{ background: '#fef3c7', color: '#d97706', padding: '0.25rem 0.75rem', borderRadius: '20px', fontSize: '0.85rem', fontWeight: '600' }}>
+                                                Full-time
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div style={{ textAlign: 'right' }}>
+                                        <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#64748b', marginBottom: '0.25rem' }}>
+                                            To Be Determined
+                                        </div>
+                                        <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                                            Salary Range
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <p style={{ color: '#475569', lineHeight: '1.6', marginBottom: '1rem' }}>
+                                        Design, implement, and maintain enterprise network infrastructure. Configure routers, switches, firewalls, and ensure optimal network performance for government and commercial clients.
+                                    </p>
+                                    
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
+                                        <div>
+                                            <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>
+                                                🔒 Clearance Required
+                                            </div>
+                                            <div style={{ fontSize: '0.9rem', color: '#64748b' }}>
+                                                Secret Security Clearance
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>
+                                                📅 Posted
+                                            </div>
+                                            <div style={{ fontSize: '0.9rem', color: '#64748b' }}>
+                                                January 11, 2026
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>
+                                                ⏰ Application Deadline
+                                            </div>
+                                            <div style={{ fontSize: '0.9rem', color: '#dc2626' }}>
+                                                February 18, 2026
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 2rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    fontSize: '1rem'
+                                }}>
+                                    Apply Now
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Application Instructions */}
+                        <div style={{
+                            background: 'white',
+                            padding: '2rem',
+                            borderRadius: '12px',
+                            border: '2px solid #d4af37',
+                            textAlign: 'center'
+                        }}>
+                            <h3 style={{ color: '#1e3a8a', marginBottom: '1rem', fontSize: '1.5rem' }}>
+                                📋 How to Apply
+                            </h3>
+                            <p style={{ color: '#475569', marginBottom: '1.5rem', lineHeight: '1.6' }}>
+                                Ready to join our team? Send your resume and cover letter to our HR department. 
+                                All positions require U.S. citizenship and the ability to obtain or maintain security clearance.
+                            </p>
+                            <button 
+                                onClick={() => {
+                                    window.location.href = 'mailto:careers@navontech.com?subject=Job%20Application%20-%20Position%20Title';
+                                }}
+                                style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '1rem 2rem',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: '700',
+                                    fontSize: '1.1rem'
+                                }}>
+                                📧 Email Your Application
+                            </button>
                         </div>
                     </div>
                 </section>
