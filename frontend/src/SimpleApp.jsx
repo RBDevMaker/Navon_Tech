@@ -6,6 +6,7 @@ function SimpleApp() {
     const [scrollY, setScrollY] = useState(0);
     const [showSecureModal, setShowSecureModal] = useState(false);
     const [isHRView, setIsHRView] = useState(false);
+    const [showTimeOffModal, setShowTimeOffModal] = useState(false);
 
     // Handle hash changes for navigation
     useEffect(() => {
@@ -5656,10 +5657,13 @@ function SimpleApp() {
                                         📊 Available Balance
                                     </div>
                                     <div style={{ fontSize: '0.9rem', color: '#0c4a6e' }}>
-                                        Vacation: 18 days • Sick: 12 days • Personal: 3 days
+                                        Vacation: 18 days • Sick: 12 days • Personal: 3 days<br />
+                                        Bereavement: 5 days • Leave without Pay: Available
                                     </div>
                                 </div>
-                                <button style={{
+                                <button 
+                                    onClick={() => setShowTimeOffModal(true)}
+                                    style={{
                                     background: '#1e3a8a',
                                     color: 'white',
                                     border: 'none',
@@ -7614,6 +7618,281 @@ function SimpleApp() {
                                 Request Access
                             </button>
                         </div>
+                    </div>
+                </div>
+            )}
+            
+            {/* Time-Off Request Modal */}
+            {showTimeOffModal && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(0, 0, 0, 0.8)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 10000,
+                    animation: 'fadeIn 0.3s ease'
+                }}>
+                    <div style={{
+                        background: 'white',
+                        borderRadius: '12px',
+                        padding: '2rem',
+                        maxWidth: '500px',
+                        width: '90%',
+                        maxHeight: '90vh',
+                        overflowY: 'auto',
+                        animation: 'scaleIn 0.3s ease',
+                        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)'
+                    }}>
+                        {/* Close Button */}
+                        <button 
+                            onClick={() => setShowTimeOffModal(false)}
+                            style={{
+                                position: 'absolute',
+                                top: '1rem',
+                                right: '1rem',
+                                background: 'rgba(239, 68, 68, 0.1)',
+                                border: 'none',
+                                borderRadius: '50%',
+                                width: '40px',
+                                height: '40px',
+                                cursor: 'pointer',
+                                fontSize: '1.5rem',
+                                color: '#dc2626',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                transition: 'all 0.3s ease'
+                            }}
+                            onMouseOver={(e) => {
+                                e.target.style.background = 'rgba(239, 68, 68, 0.2)';
+                                e.target.style.transform = 'rotate(90deg)';
+                            }}
+                            onMouseOut={(e) => {
+                                e.target.style.background = 'rgba(239, 68, 68, 0.1)';
+                                e.target.style.transform = 'rotate(0deg)';
+                            }}>
+                            ×
+                        </button>
+                        
+                        <h3 style={{ marginBottom: '1.5rem', fontSize: '1.8rem', fontWeight: '700', color: '#1e3a8a' }}>
+                            🏖️ Time-Off Request
+                        </h3>
+                        
+                        <form onSubmit={(e) => {
+                            e.preventDefault();
+                            // Handle form submission here
+                            alert('Time-off request submitted successfully!');
+                            setShowTimeOffModal(false);
+                        }}>
+                            {/* Leave Type Dropdown */}
+                            <div style={{ marginBottom: '1.5rem' }}>
+                                <label style={{
+                                    display: 'block',
+                                    marginBottom: '0.5rem',
+                                    color: '#374151',
+                                    fontWeight: '600',
+                                    fontSize: '0.9rem'
+                                }}>
+                                    Leave Type *
+                                </label>
+                                <select
+                                    required
+                                    style={{
+                                        width: '100%',
+                                        padding: '0.75rem',
+                                        border: '2px solid #e5e7eb',
+                                        borderRadius: '8px',
+                                        fontSize: '1rem',
+                                        transition: 'all 0.3s ease',
+                                        outline: 'none',
+                                        background: 'white'
+                                    }}
+                                    onFocus={(e) => e.target.style.borderColor = '#1e3a8a'}
+                                    onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                                >
+                                    <option value="">Select leave type...</option>
+                                    <option value="vacation">Vacation</option>
+                                    <option value="personal">Personal</option>
+                                    <option value="sick">Sick</option>
+                                    <option value="bereavement">Bereavement</option>
+                                    <option value="leave-without-pay">Leave without Pay</option>
+                                </select>
+                            </div>
+
+                            {/* Start Date */}
+                            <div style={{ marginBottom: '1.5rem' }}>
+                                <label style={{
+                                    display: 'block',
+                                    marginBottom: '0.5rem',
+                                    color: '#374151',
+                                    fontWeight: '600',
+                                    fontSize: '0.9rem'
+                                }}>
+                                    Start Date *
+                                </label>
+                                <input
+                                    type="date"
+                                    required
+                                    style={{
+                                        width: '100%',
+                                        padding: '0.75rem',
+                                        border: '2px solid #e5e7eb',
+                                        borderRadius: '8px',
+                                        fontSize: '1rem',
+                                        transition: 'all 0.3s ease',
+                                        outline: 'none'
+                                    }}
+                                    onFocus={(e) => e.target.style.borderColor = '#1e3a8a'}
+                                    onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                                />
+                            </div>
+
+                            {/* End Date */}
+                            <div style={{ marginBottom: '1.5rem' }}>
+                                <label style={{
+                                    display: 'block',
+                                    marginBottom: '0.5rem',
+                                    color: '#374151',
+                                    fontWeight: '600',
+                                    fontSize: '0.9rem'
+                                }}>
+                                    End Date *
+                                </label>
+                                <input
+                                    type="date"
+                                    required
+                                    style={{
+                                        width: '100%',
+                                        padding: '0.75rem',
+                                        border: '2px solid #e5e7eb',
+                                        borderRadius: '8px',
+                                        fontSize: '1rem',
+                                        transition: 'all 0.3s ease',
+                                        outline: 'none'
+                                    }}
+                                    onFocus={(e) => e.target.style.borderColor = '#1e3a8a'}
+                                    onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                                />
+                            </div>
+
+                            {/* Hours */}
+                            <div style={{ marginBottom: '1.5rem' }}>
+                                <label style={{
+                                    display: 'block',
+                                    marginBottom: '0.5rem',
+                                    color: '#374151',
+                                    fontWeight: '600',
+                                    fontSize: '0.9rem'
+                                }}>
+                                    Total Hours *
+                                </label>
+                                <input
+                                    type="number"
+                                    min="0.5"
+                                    step="0.5"
+                                    max="40"
+                                    required
+                                    placeholder="e.g., 8 or 40"
+                                    style={{
+                                        width: '100%',
+                                        padding: '0.75rem',
+                                        border: '2px solid #e5e7eb',
+                                        borderRadius: '8px',
+                                        fontSize: '1rem',
+                                        transition: 'all 0.3s ease',
+                                        outline: 'none'
+                                    }}
+                                    onFocus={(e) => e.target.style.borderColor = '#1e3a8a'}
+                                    onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                                />
+                            </div>
+
+                            {/* Comments */}
+                            <div style={{ marginBottom: '2rem' }}>
+                                <label style={{
+                                    display: 'block',
+                                    marginBottom: '0.5rem',
+                                    color: '#374151',
+                                    fontWeight: '600',
+                                    fontSize: '0.9rem'
+                                }}>
+                                    Comments (Optional)
+                                </label>
+                                <textarea
+                                    rows="3"
+                                    placeholder="Additional details or reason for request..."
+                                    style={{
+                                        width: '100%',
+                                        padding: '0.75rem',
+                                        border: '2px solid #e5e7eb',
+                                        borderRadius: '8px',
+                                        fontSize: '1rem',
+                                        transition: 'all 0.3s ease',
+                                        outline: 'none',
+                                        resize: 'vertical',
+                                        fontFamily: 'inherit'
+                                    }}
+                                    onFocus={(e) => e.target.style.borderColor = '#1e3a8a'}
+                                    onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                                />
+                            </div>
+
+                            {/* Submit Buttons */}
+                            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+                                <button 
+                                    type="button"
+                                    onClick={() => setShowTimeOffModal(false)}
+                                    style={{
+                                        background: 'transparent',
+                                        color: '#6b7280',
+                                        border: '2px solid #e5e7eb',
+                                        padding: '0.75rem 1.5rem',
+                                        borderRadius: '8px',
+                                        cursor: 'pointer',
+                                        fontWeight: '600',
+                                        fontSize: '1rem',
+                                        transition: 'all 0.3s ease'
+                                    }}
+                                    onMouseOver={(e) => {
+                                        e.target.style.background = '#f9fafb';
+                                        e.target.style.borderColor = '#d1d5db';
+                                    }}
+                                    onMouseOut={(e) => {
+                                        e.target.style.background = 'transparent';
+                                        e.target.style.borderColor = '#e5e7eb';
+                                    }}>
+                                    Cancel
+                                </button>
+                                <button 
+                                    type="submit"
+                                    style={{
+                                        background: '#1e3a8a',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '0.75rem 1.5rem',
+                                        borderRadius: '8px',
+                                        cursor: 'pointer',
+                                        fontWeight: '600',
+                                        fontSize: '1rem',
+                                        transition: 'all 0.3s ease'
+                                    }}
+                                    onMouseOver={(e) => {
+                                        e.target.style.background = '#1e40af';
+                                        e.target.style.transform = 'translateY(-1px)';
+                                    }}
+                                    onMouseOut={(e) => {
+                                        e.target.style.background = '#1e3a8a';
+                                        e.target.style.transform = 'translateY(0)';
+                                    }}>
+                                    Submit Request
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             )}
