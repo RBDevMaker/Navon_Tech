@@ -47,22 +47,34 @@ function SimpleApp() {
         }
 
         const fileArray = Array.from(files);
-        const processedFiles = fileArray.map(file => ({
-            id: Date.now() + Math.random(),
-            name: file.name,
-            size: file.size,
-            type: file.type,
-            uploadDate: new Date().toISOString(),
-            uploadedBy: userRole.toUpperCase(),
-            file: file
-        }));
+        const processedFiles = fileArray.map(file => {
+            console.log('Processing file:', file.name, 'Type:', file.type); // Debug log
+            return {
+                id: Date.now() + Math.random(),
+                name: file.name,
+                size: file.size,
+                type: file.type,
+                uploadDate: new Date().toISOString(),
+                uploadedBy: userRole.toUpperCase(),
+                file: file
+            };
+        });
 
-        setUploadedFiles(prev => ({
-            ...prev,
-            [category]: [...prev[category], ...processedFiles]
-        }));
+        setUploadedFiles(prev => {
+            const newState = {
+                ...prev,
+                [category]: [...prev[category], ...processedFiles]
+            };
+            console.log('Updated files state:', newState); // Debug log
+            return newState;
+        });
 
         alert(`✅ Successfully uploaded ${fileArray.length} file(s) to Employee Handbook!`);
+        
+        // Force a small delay to ensure state update
+        setTimeout(() => {
+            console.log('Current uploaded files:', uploadedFiles);
+        }, 100);
     };
 
     // Handle file deletion
@@ -92,29 +104,203 @@ function SimpleApp() {
 
     // Get file type badge
     const getFileTypeBadge = (fileName) => {
+        if (!fileName) return { color: '#6b7280', label: 'FILE' };
+        
         const extension = fileName.split('.').pop().toLowerCase();
+        console.log('File:', fileName, 'Extension:', extension); // Debug log
+        
         const typeMap = {
             pdf: { color: '#ef4444', label: 'PDF' },
             doc: { color: '#2563eb', label: 'DOC' },
             docx: { color: '#2563eb', label: 'DOCX' },
-            txt: { color: '#6b7280', label: 'TXT' }
+            txt: { color: '#6b7280', label: 'TXT' },
+            xls: { color: '#059669', label: 'XLS' },
+            xlsx: { color: '#059669', label: 'XLSX' },
+            ppt: { color: '#dc2626', label: 'PPT' },
+            pptx: { color: '#dc2626', label: 'PPTX' },
+            jpg: { color: '#7c3aed', label: 'JPG' },
+            jpeg: { color: '#7c3aed', label: 'JPEG' },
+            png: { color: '#7c3aed', label: 'PNG' },
+            gif: { color: '#7c3aed', label: 'GIF' }
         };
-        return typeMap[extension] || { color: '#6b7280', label: extension?.toUpperCase() || 'FILE' };
+        
+        const result = typeMap[extension] || { color: '#6b7280', label: extension?.toUpperCase() || 'FILE' };
+        console.log('Badge result:', result); // Debug log
+        return result;
     };
     
     // Handle document viewing
-    const handleViewDocument = (docName) => {
-        // Create a simple document viewer window
-        const docWindow = window.open('', '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
+    const handleViewDocument = (docName, file = null) => {
+        if (file && file.file) {
+            // Handle uploaded files with real content
+            const fileObj = file.file;
+            const fileType = fileObj.type;
+            const fileName = fileObj.name;
+            const extension = fileName.split('.').pop().toLowerCase();
+            
+            // Create download URL for all files
+            const blob = new Blob([fileObj], { type: fileType });
+            const downloadUrl = URL.createObjectURL(blob);
+            
+            if (fileType.includes('text/') || extension === 'txt') {
+                // Handle text files - read and display content
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const content = e.target.result;
+                    showDocumentWindow(fileName, content, 'text', downloadUrl);
+                };
+                reader.readAsText(fileObj);
+            } else if (fileType.includes('application/pdf') || extension === 'pdf') {
+                // Handle PDF files - create blob URL for viewing
+                showDocumentWindow(fileName, downloadUrl, 'pdf', downloadUrl);
+            } else if (extension === 'docx' || extension === 'doc' || 
+                       fileType.includes('application/vnd.openxmlformats-officedocument.wordprocessingml.document') || 
+                       fileType.includes('application/msword')) {
+                // Handle Word documents - show download option since we can't render them directly
+                showDocumentWindow(fileName, null, 'word', downloadUrl);
+            } else {
+                // Handle other file types - show download option
+                showDocumentWindow(fileName, null, 'other', downloadUrl);
+            }
+            
+            // Clean up URL after 30 seconds
+            setTimeout(() => URL.revokeObjectURL(downloadUrl), 30000);
+        } else {
+            // Handle default documents (demo content)
+            showDocumentWindow(docName, null, 'demo', null);
+        }
+    };
+
+    // Show document in new window
+    const showDocumentWindow = (fileName, content, type, downloadUrl) => {
+        const docWindow = window.open('', '_blank', 'width=900,height=700,scrollbars=yes,resizable=yes');
+        
+        let bodyContent = '';
+        
+        if (type === 'text' && content) {
+            bodyContent = `
+                <div class="content">
+                    <h2>📄 ${fileName}</h2>
+                    <div class="file-info">
+                        <span class="badge text">TEXT FILE</span>
+                        <span>Real file content displayed below</span>
+                    </div>
+                    <div class="text-content">
+                        <pre>${content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
+                    </div>
+                    <div class="actions">
+                        <a href="${downloadUrl}" download="${fileName}" class="download-btn">📥 Download Original File</a>
+                    </div>
+                </div>
+            `;
+        } else if (type === 'pdf' && content) {
+            bodyContent = `
+                <div class="content">
+                    <h2>📄 ${fileName}</h2>
+                    <div class="file-info">
+                        <span class="badge pdf">PDF FILE</span>
+                        <span>PDF viewer embedded below</span>
+                    </div>
+                    <div class="pdf-viewer">
+                        <iframe src="${content}" width="100%" height="500px" style="border: 1px solid #e2e8f0; border-radius: 8px;"></iframe>
+                    </div>
+                    <div class="actions">
+                        <a href="${downloadUrl}" download="${fileName}" class="download-btn">📥 Download PDF</a>
+                        <button onclick="window.print()" class="download-btn print-btn">🖨️ Print</button>
+                    </div>
+                </div>
+            `;
+        } else if (type === 'word') {
+            bodyContent = `
+                <div class="content">
+                    <h2>📄 ${fileName}</h2>
+                    <div class="file-info">
+                        <span class="badge word">WORD DOCUMENT</span>
+                        <span>Microsoft Word document detected</span>
+                    </div>
+                    <div class="word-info">
+                        <div class="info-box">
+                            <h3>📝 Word Document (.docx/.doc)</h3>
+                            <p><strong>File:</strong> ${fileName}</p>
+                            <p><strong>Type:</strong> Microsoft Word Document</p>
+                            <p><strong>Status:</strong> Ready for download</p>
+                            <hr style="margin: 15px 0;">
+                            <p>Word documents cannot be displayed directly in the browser due to format complexity. To view the full content:</p>
+                            <ul>
+                                <li><strong>Download</strong> the file using the button below</li>
+                                <li><strong>Open</strong> with Microsoft Word, Google Docs, or LibreOffice</li>
+                                <li><strong>Alternative:</strong> Convert to PDF for web viewing</li>
+                            </ul>
+                            <div class="tip">
+                                <strong>� Tip:</strong> For better web compatibility, consider saving Word documents as PDF format when uploading.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="actions">
+                        <a href="${downloadUrl}" download="${fileName}" class="download-btn primary">📥 Download Word Document</a>
+                    </div>
+                </div>
+            `;
+        } else if (type === 'other') {
+            const extension = fileName.split('.').pop().toUpperCase();
+            bodyContent = `
+                <div class="content">
+                    <h2>📄 ${fileName}</h2>
+                    <div class="file-info">
+                        <span class="badge other">${extension} FILE</span>
+                        <span>Download to view content</span>
+                    </div>
+                    <div class="other-info">
+                        <div class="info-box">
+                            <h3>📎 ${extension} File</h3>
+                            <p><strong>File:</strong> ${fileName}</p>
+                            <p><strong>Type:</strong> ${extension} format</p>
+                            <p><strong>Status:</strong> Ready for download</p>
+                            <hr style="margin: 15px 0;">
+                            <p>This file type requires downloading to view the content in the appropriate application.</p>
+                        </div>
+                    </div>
+                    <div class="actions">
+                        <a href="${downloadUrl}" download="${fileName}" class="download-btn primary">📥 Download ${extension} File</a>
+                    </div>
+                </div>
+            `;
+        } else {
+            // Demo content for default documents
+            bodyContent = `
+                <div class="content">
+                    <h2>📄 ${fileName}</h2>
+                    <div class="file-info">
+                        <span class="badge demo">DEMO DOCUMENT</span>
+                        <span>Sample content - connect to your document system</span>
+                    </div>
+                    <div class="demo-content">
+                        <h3>Sample Content</h3>
+                        <p>This is a demonstration of the document viewing system. In a real implementation, this would display the actual document content.</p>
+                        <h4>Integration Notes:</h4>
+                        <ul>
+                            <li>Connect to your document management system</li>
+                            <li>Add PDF viewer for PDF files</li>
+                            <li>Implement text extraction for Word documents</li>
+                            <li>Add version control and approval workflows</li>
+                        </ul>
+                    </div>
+                    <div class="actions">
+                        <button onclick="alert('Demo document - no download available')" class="download-btn demo-btn">📄 Demo Document</button>
+                    </div>
+                </div>
+            `;
+        }
+
         docWindow.document.write(`
             <!DOCTYPE html>
             <html>
             <head>
-                <title>${docName} - Navon Technologies</title>
+                <title>${fileName} - Navon Technologies</title>
                 <style>
                     body { 
-                        font-family: Arial, sans-serif; 
-                        margin: 40px; 
+                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+                        margin: 0; 
                         background: #f8fafc;
                         color: #1e293b;
                     }
@@ -122,67 +308,147 @@ function SimpleApp() {
                         background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
                         color: white; 
                         padding: 20px; 
-                        border-radius: 8px;
-                        margin-bottom: 20px;
                         text-align: center;
+                        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
                     }
+                    .header h1 { margin: 0; font-size: 1.5rem; }
+                    .header p { margin: 5px 0 0 0; opacity: 0.9; }
                     .content { 
+                        max-width: 800px;
+                        margin: 20px auto;
                         background: white; 
                         padding: 30px; 
-                        border-radius: 8px;
+                        border-radius: 12px;
                         box-shadow: 0 4px 6px rgba(0,0,0,0.1);
                         line-height: 1.6;
                     }
+                    .file-info {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        margin-bottom: 20px;
+                        padding-bottom: 15px;
+                        border-bottom: 2px solid #f1f5f9;
+                    }
+                    .badge {
+                        padding: 6px 12px;
+                        border-radius: 20px;
+                        font-size: 0.75rem;
+                        font-weight: 600;
+                        color: white;
+                        background: #6b7280;
+                    }
+                    .badge.pdf { background: #ef4444; }
+                    .badge.word { background: #2563eb; }
+                    .badge.text { background: #6b7280; }
+                    .badge.other { background: #059669; }
+                    .badge.demo { background: #d97706; }
+                    .text-content {
+                        background: #f8fafc;
+                        border: 1px solid #e2e8f0;
+                        border-radius: 8px;
+                        padding: 20px;
+                        margin: 20px 0;
+                        max-height: 400px;
+                        overflow-y: auto;
+                    }
+                    .text-content pre {
+                        margin: 0;
+                        white-space: pre-wrap;
+                        word-wrap: break-word;
+                        font-family: 'Courier New', monospace;
+                        font-size: 0.9rem;
+                        line-height: 1.5;
+                    }
+                    .info-box {
+                        background: #f0f9ff;
+                        border: 1px solid #bae6fd;
+                        border-radius: 8px;
+                        padding: 20px;
+                        margin: 20px 0;
+                    }
+                    .info-box h3 { margin-top: 0; color: #0369a1; }
+                    .info-box ul { margin-bottom: 0; }
+                    .tip {
+                        background: #fef3c7;
+                        border: 1px solid #f59e0b;
+                        border-radius: 6px;
+                        padding: 10px;
+                        margin-top: 15px;
+                        font-size: 0.9rem;
+                    }
+                    .actions {
+                        text-align: center;
+                        margin-top: 30px;
+                        padding-top: 20px;
+                        border-top: 1px solid #e2e8f0;
+                    }
+                    .download-btn {
+                        display: inline-block;
+                        background: #1e3a8a;
+                        color: white;
+                        text-decoration: none;
+                        padding: 12px 24px;
+                        border-radius: 8px;
+                        font-weight: 600;
+                        margin: 0 10px 10px 10px;
+                        transition: all 0.3s ease;
+                        border: none;
+                        cursor: pointer;
+                        font-size: 1rem;
+                    }
+                    .download-btn:hover {
+                        background: #1e40af;
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+                    }
+                    .download-btn.primary {
+                        background: #d4af37;
+                        color: #0f172a;
+                    }
+                    .download-btn.primary:hover {
+                        background: #b8941f;
+                    }
+                    .download-btn.print-btn {
+                        background: #059669;
+                    }
+                    .download-btn.print-btn:hover {
+                        background: #047857;
+                    }
+                    .download-btn.demo-btn {
+                        background: #6b7280;
+                    }
                     .footer {
                         text-align: center;
-                        margin-top: 20px;
+                        margin: 20px;
                         color: #64748b;
                         font-size: 0.9rem;
                     }
-                </style>
-            </head>
-            <body>
-                <div class="header">
-                    <h1>📄 ${docName}</h1>
-                    <p>Navon Technologies Document Viewer</p>
-                </div>
-                <div class="content">
-                    <h2>Document Preview</h2>
-                    <p><strong>Document:</strong> ${docName}</p>
-                    <p><strong>Status:</strong> Available for viewing</p>
-                    <p><strong>Access Level:</strong> Internal Use</p>
-                    
-                    <hr style="margin: 20px 0; border: 1px solid #e2e8f0;">
-                    
-                    <h3>Sample Content</h3>
-                    <p>This is a demonstration of the document viewing system. In a real implementation, this would:</p>
-                    <ul>
-                        <li>Display the actual PDF content using a PDF viewer</li>
-                        <li>Connect to your document management system</li>
-                        <li>Show the real document stored in your file system</li>
-                        <li>Provide download options and version history</li>
-                    </ul>
-                    
-                    <h3>Integration Notes</h3>
-                    <p>To connect this to your actual documents:</p>
-                    <ol>
-                        <li>Replace this demo content with a PDF viewer component</li>
-                        <li>Connect to your document storage (AWS S3, SharePoint, etc.)</li>
-                        <li>Add authentication and access logging</li>
-                        <li>Implement version control and approval workflows</li>
-                    </ol>
-                </div>
-                <div class="footer">
-                    <p>Navon Technologies - Document Management System</p>
-                    <button onclick="window.close()" style="
-                        background: #1e3a8a; 
+                    .close-btn {
+                        background: #ef4444; 
                         color: white; 
                         border: none; 
                         padding: 10px 20px; 
                         border-radius: 6px; 
                         cursor: pointer;
                         margin-top: 10px;
-                    ">Close Document</button>
+                        font-weight: 600;
+                    }
+                    .close-btn:hover { 
+                        background: #dc2626; 
+                        transform: translateY(-1px);
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h1>📄 Document Viewer</h1>
+                    <p>Navon Technologies Document Management System</p>
+                </div>
+                ${bodyContent}
+                <div class="footer">
+                    <p>Navon Technologies - Secure Document Access</p>
+                    <button onclick="window.close()" class="close-btn">✕ Close Document</button>
                 </div>
             </body>
             </html>
@@ -469,32 +735,6 @@ function SimpleApp() {
                     <a href="#contact" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500', transition: 'all 0.3s ease', display: 'inline-block' }}
                        onMouseOver={(e) => { e.target.style.color = '#d4af37'; e.target.style.transform = 'translateY(-3px) scale(1.1)'; }}
                        onMouseOut={(e) => { e.target.style.color = 'white'; e.target.style.transform = 'translateY(0) scale(1)'; }}>Contact</a>
-                    <button 
-                        onClick={() => {
-                            setCurrentPage('hrdocuments');
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                        }}
-                        style={{ 
-                            background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)', 
-                            color: '#0f172a', 
-                            border: 'none', 
-                            padding: '0.5rem 1rem', 
-                            borderRadius: '6px', 
-                            cursor: 'pointer', 
-                            fontWeight: '600',
-                            fontSize: '0.9rem',
-                            transition: 'all 0.3s ease'
-                        }}
-                        onMouseOver={(e) => {
-                            e.target.style.transform = 'translateY(-3px) scale(1.05)';
-                            e.target.style.boxShadow = '0 8px 20px rgba(212, 175, 55, 0.4)';
-                        }}
-                        onMouseOut={(e) => {
-                            e.target.style.transform = 'translateY(0) scale(1)';
-                            e.target.style.boxShadow = 'none';
-                        }}>
-                        📋 HR Docs
-                    </button>
                 </nav>
             </header>
 
@@ -5517,12 +5757,16 @@ function SimpleApp() {
                                                                     color: '#6b7280'
                                                                 }}>
                                                                     {formatFileSize(file.size)} • {new Date(file.uploadDate).toLocaleDateString()} • by {file.uploadedBy}
+                                                                    <br/>
+                                                                    <span style={{ fontSize: '0.7rem', color: '#9ca3af' }}>
+                                                                        Type: {file.type || 'unknown'} | Ext: {file.name.split('.').pop().toLowerCase()}
+                                                                    </span>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                                                             <button
-                                                                onClick={() => handleViewDocument(file.name)}
+                                                                onClick={() => handleViewDocument(file.name, file)}
                                                                 style={{
                                                                     background: '#1e3a8a',
                                                                     border: 'none',
@@ -5533,7 +5777,7 @@ function SimpleApp() {
                                                                     fontSize: '0.8rem',
                                                                     fontWeight: '600'
                                                                 }}
-                                                                title="View document"
+                                                                title="View document content"
                                                             >
                                                                 👁️
                                                             </button>
@@ -5575,6 +5819,25 @@ function SimpleApp() {
                                                     </div>
                                                 );
                                             })}
+                                        </div>
+                                        
+                                        {/* File Type Support Info */}
+                                        <div style={{
+                                            background: 'rgba(34, 197, 94, 0.1)',
+                                            border: '1px solid rgba(34, 197, 94, 0.3)',
+                                            borderRadius: '6px',
+                                            padding: '0.75rem',
+                                            marginTop: '0.75rem'
+                                        }}>
+                                            <div style={{ fontSize: '0.8rem', color: '#166534', fontWeight: '600', marginBottom: '0.25rem' }}>
+                                                📄 File Viewing Support:
+                                            </div>
+                                            <div style={{ fontSize: '0.75rem', color: '#15803d' }}>
+                                                • <strong>TXT files:</strong> Full content displayed in viewer<br/>
+                                                • <strong>PDF files:</strong> Embedded PDF viewer<br/>
+                                                • <strong>Word docs (.docx/.doc):</strong> Download to view (browser limitation)<br/>
+                                                • <strong>Other files:</strong> Download option provided
+                                            </div>
                                         </div>
                                         
                                         {/* Permission Test Instructions */}
