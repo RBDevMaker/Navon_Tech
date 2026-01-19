@@ -8,6 +8,11 @@ function SimpleApp() {
     const [isHRView, setIsHRView] = useState(false);
     const [showTimeOffModal, setShowTimeOffModal] = useState(false);
     const [userRole, setUserRole] = useState('employee'); // 'employee', 'hr', 'admin'
+    const [uploadedFiles, setUploadedFiles] = useState({
+        employeeHandbook: [],
+        benefits: [],
+        forms: []
+    });
 
     // Handle hash changes for navigation
     useEffect(() => {
@@ -34,6 +39,69 @@ function SimpleApp() {
     const canDeleteHandbook = () => userRole === 'hr' || userRole === 'admin';
     const canUploadHandbook = () => userRole === 'hr' || userRole === 'admin';
     
+    // Handle file upload
+    const handleFileUpload = (category, files) => {
+        if (!canUploadHandbook()) {
+            alert('❌ Access Denied: Only HR and Admin users can upload files to the Employee Handbook.');
+            return;
+        }
+
+        const fileArray = Array.from(files);
+        const processedFiles = fileArray.map(file => ({
+            id: Date.now() + Math.random(),
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            uploadDate: new Date().toISOString(),
+            uploadedBy: userRole.toUpperCase(),
+            file: file
+        }));
+
+        setUploadedFiles(prev => ({
+            ...prev,
+            [category]: [...prev[category], ...processedFiles]
+        }));
+
+        alert(`✅ Successfully uploaded ${fileArray.length} file(s) to Employee Handbook!`);
+    };
+
+    // Handle file deletion
+    const handleFileDelete = (category, fileId, fileName) => {
+        if (!canDeleteHandbook()) {
+            alert(`❌ Access Denied: Only HR and Admin users can delete files from the Employee Handbook.\n\nCurrent Role: ${userRole.toUpperCase()}\nRequired Role: HR or ADMIN`);
+            return;
+        }
+
+        if (confirm(`🗑️ Are you sure you want to delete "${fileName}"?\n\nThis action cannot be undone.`)) {
+            setUploadedFiles(prev => ({
+                ...prev,
+                [category]: prev[category].filter(f => f.id !== fileId)
+            }));
+            alert(`✅ File "${fileName}" has been deleted successfully.`);
+        }
+    };
+
+    // Format file size
+    const formatFileSize = (bytes) => {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    };
+
+    // Get file type badge
+    const getFileTypeBadge = (fileName) => {
+        const extension = fileName.split('.').pop().toLowerCase();
+        const typeMap = {
+            pdf: { color: '#ef4444', label: 'PDF' },
+            doc: { color: '#2563eb', label: 'DOC' },
+            docx: { color: '#2563eb', label: 'DOCX' },
+            txt: { color: '#6b7280', label: 'TXT' }
+        };
+        return typeMap[extension] || { color: '#6b7280', label: extension?.toUpperCase() || 'FILE' };
+    };
+    
     // Handle document viewing
     const handleViewDocument = (docName) => {
         alert(`Opening ${docName}...\n\nIn a real application, this would:\n• Open the document in a new tab\n• Connect to your document management system\n• Show the actual PDF/document content`);
@@ -42,7 +110,12 @@ function SimpleApp() {
     // Role switcher for demo
     const switchRole = (role) => {
         setUserRole(role);
-        alert(`Switched to ${role.toUpperCase()} role. Notice how upload/delete permissions change!`);
+        const roleDescriptions = {
+            employee: 'Employee - Can only VIEW documents, cannot upload or delete',
+            hr: 'HR Manager - Can upload, view, and delete all documents',
+            admin: 'Admin - Full access to all document management features'
+        };
+        alert(`🔄 Role switched to: ${role.toUpperCase()}\n\n${roleDescriptions[role]}\n\n💡 Now try uploading files and testing delete permissions!`);
     };
 
     return (
@@ -5077,6 +5150,25 @@ function SimpleApp() {
                                     </button>
                                 </div>
                             </div>
+                            
+                            {/* Permission Testing Instructions */}
+                            <div style={{
+                                background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+                                border: '2px solid #f59e0b',
+                                borderRadius: '12px',
+                                padding: '1rem',
+                                marginBottom: '1rem'
+                            }}>
+                                <div style={{ fontSize: '1rem', fontWeight: '700', color: '#92400e', marginBottom: '0.5rem' }}>
+                                    🧪 Test Permission System:
+                                </div>
+                                <div style={{ fontSize: '0.9rem', color: '#78350f', lineHeight: '1.5' }}>
+                                    <strong>1.</strong> Switch to <strong>HR/Admin</strong> role and upload some files to Employee Handbook<br/>
+                                    <strong>2.</strong> Switch to <strong>Employee</strong> role and try to delete files (click 🔒 button)<br/>
+                                    <strong>3.</strong> Switch back to <strong>HR/Admin</strong> to see working delete buttons (🗑️)
+                                </div>
+                            </div>
+                            
                             <p style={{
                                 fontSize: '1.2rem',
                                 color: '#475569',
@@ -5197,7 +5289,7 @@ function SimpleApp() {
                                         📄 View Document
                                     </button>
                                     {canUploadHandbook() ? (
-                                        <button style={{
+                                        <label style={{
                                             background: '#d4af37',
                                             color: '#0f172a',
                                             border: 'none',
@@ -5205,10 +5297,29 @@ function SimpleApp() {
                                             borderRadius: '6px',
                                             cursor: 'pointer',
                                             fontWeight: '600',
-                                            fontSize: '1rem'
+                                            fontSize: '1rem',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            transition: 'all 0.3s ease'
+                                        }}
+                                        onMouseOver={(e) => {
+                                            e.target.style.background = '#b8941f';
+                                            e.target.style.transform = 'translateY(-2px)';
+                                        }}
+                                        onMouseOut={(e) => {
+                                            e.target.style.background = '#d4af37';
+                                            e.target.style.transform = 'translateY(0)';
                                         }}>
                                             📤 Upload
-                                        </button>
+                                            <input
+                                                type="file"
+                                                multiple
+                                                accept=".pdf,.doc,.docx,.txt"
+                                                style={{ display: 'none' }}
+                                                onChange={(e) => handleFileUpload('employeeHandbook', e.target.files)}
+                                            />
+                                        </label>
                                     ) : (
                                         <div style={{
                                             background: '#f3f4f6',
@@ -5225,6 +5336,144 @@ function SimpleApp() {
                                         </div>
                                     )}
                                 </div>
+                                
+                                {/* Display uploaded files */}
+                                {uploadedFiles.employeeHandbook.length > 0 && (
+                                    <div style={{
+                                        background: '#f0f9ff',
+                                        padding: '1rem',
+                                        borderRadius: '8px',
+                                        border: '1px solid #bae6fd',
+                                        marginTop: '1rem'
+                                    }}>
+                                        <h4 style={{ 
+                                            color: '#0369a1', 
+                                            margin: '0 0 0.75rem 0', 
+                                            fontSize: '0.9rem',
+                                            fontWeight: '600'
+                                        }}>
+                                            📁 Uploaded Files ({uploadedFiles.employeeHandbook.length})
+                                        </h4>
+                                        <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                                            {uploadedFiles.employeeHandbook.map((file) => {
+                                                const badge = getFileTypeBadge(file.name);
+                                                return (
+                                                    <div key={file.id} style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'space-between',
+                                                        padding: '0.75rem',
+                                                        background: 'white',
+                                                        borderRadius: '6px',
+                                                        marginBottom: '0.5rem',
+                                                        border: '1px solid #e2e8f0',
+                                                        boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                                                    }}>
+                                                        <div style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                                                            <span style={{
+                                                                background: badge.color,
+                                                                color: 'white',
+                                                                padding: '0.25rem 0.5rem',
+                                                                borderRadius: '4px',
+                                                                fontSize: '0.7rem',
+                                                                fontWeight: '600',
+                                                                marginRight: '0.75rem'
+                                                            }}>
+                                                                {badge.label}
+                                                            </span>
+                                                            <div style={{ flex: 1 }}>
+                                                                <div style={{ 
+                                                                    fontSize: '0.9rem', 
+                                                                    fontWeight: '500',
+                                                                    color: '#374151',
+                                                                    marginBottom: '0.25rem'
+                                                                }}>
+                                                                    {file.name.length > 30 ? file.name.substring(0, 30) + '...' : file.name}
+                                                                </div>
+                                                                <div style={{ 
+                                                                    fontSize: '0.75rem', 
+                                                                    color: '#6b7280'
+                                                                }}>
+                                                                    {formatFileSize(file.size)} • {new Date(file.uploadDate).toLocaleDateString()} • by {file.uploadedBy}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                                            <button
+                                                                onClick={() => handleViewDocument(file.name)}
+                                                                style={{
+                                                                    background: '#1e3a8a',
+                                                                    border: 'none',
+                                                                    color: 'white',
+                                                                    cursor: 'pointer',
+                                                                    padding: '0.5rem',
+                                                                    borderRadius: '4px',
+                                                                    fontSize: '0.8rem',
+                                                                    fontWeight: '600'
+                                                                }}
+                                                                title="View document"
+                                                            >
+                                                                👁️
+                                                            </button>
+                                                            {canDeleteHandbook() ? (
+                                                                <button
+                                                                    onClick={() => handleFileDelete('employeeHandbook', file.id, file.name)}
+                                                                    style={{
+                                                                        background: '#ef4444',
+                                                                        border: 'none',
+                                                                        color: 'white',
+                                                                        cursor: 'pointer',
+                                                                        padding: '0.5rem',
+                                                                        borderRadius: '4px',
+                                                                        fontSize: '0.8rem',
+                                                                        fontWeight: '600'
+                                                                    }}
+                                                                    title="Delete file (HR/Admin only)"
+                                                                >
+                                                                    🗑️
+                                                                </button>
+                                                            ) : (
+                                                                <div 
+                                                                    onClick={() => handleFileDelete('employeeHandbook', file.id, file.name)}
+                                                                    style={{
+                                                                        background: '#f3f4f6',
+                                                                        border: '2px solid #e5e7eb',
+                                                                        color: '#9ca3af',
+                                                                        cursor: 'not-allowed',
+                                                                        padding: '0.5rem',
+                                                                        borderRadius: '4px',
+                                                                        fontSize: '0.8rem'
+                                                                    }}
+                                                                    title="Click to test permission denial"
+                                                                >
+                                                                    🔒
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                        
+                                        {/* Permission Test Instructions */}
+                                        <div style={{
+                                            background: 'rgba(59, 130, 246, 0.1)',
+                                            border: '1px solid rgba(59, 130, 246, 0.3)',
+                                            borderRadius: '6px',
+                                            padding: '0.75rem',
+                                            marginTop: '0.75rem'
+                                        }}>
+                                            <div style={{ fontSize: '0.8rem', color: '#1e40af', fontWeight: '600', marginBottom: '0.25rem' }}>
+                                                🧪 Test Permissions:
+                                            </div>
+                                            <div style={{ fontSize: '0.75rem', color: '#3730a3' }}>
+                                                • Switch to <strong>Employee</strong> role and try to delete files (🔒 button)
+                                                <br />
+                                                • Switch to <strong>HR/Admin</strong> role to see delete button (🗑️)
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
                             {/* Benefits Overview 2026 */}
