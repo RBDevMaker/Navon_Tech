@@ -104,7 +104,90 @@ function SimpleApp() {
     
     // Handle document viewing
     const handleViewDocument = (docName) => {
-        alert(`Opening ${docName}...\n\nIn a real application, this would:\n• Open the document in a new tab\n• Connect to your document management system\n• Show the actual PDF/document content`);
+        // Create a simple document viewer window
+        const docWindow = window.open('', '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
+        docWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>${docName} - Navon Technologies</title>
+                <style>
+                    body { 
+                        font-family: Arial, sans-serif; 
+                        margin: 40px; 
+                        background: #f8fafc;
+                        color: #1e293b;
+                    }
+                    .header { 
+                        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+                        color: white; 
+                        padding: 20px; 
+                        border-radius: 8px;
+                        margin-bottom: 20px;
+                        text-align: center;
+                    }
+                    .content { 
+                        background: white; 
+                        padding: 30px; 
+                        border-radius: 8px;
+                        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                        line-height: 1.6;
+                    }
+                    .footer {
+                        text-align: center;
+                        margin-top: 20px;
+                        color: #64748b;
+                        font-size: 0.9rem;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h1>📄 ${docName}</h1>
+                    <p>Navon Technologies Document Viewer</p>
+                </div>
+                <div class="content">
+                    <h2>Document Preview</h2>
+                    <p><strong>Document:</strong> ${docName}</p>
+                    <p><strong>Status:</strong> Available for viewing</p>
+                    <p><strong>Access Level:</strong> Internal Use</p>
+                    
+                    <hr style="margin: 20px 0; border: 1px solid #e2e8f0;">
+                    
+                    <h3>Sample Content</h3>
+                    <p>This is a demonstration of the document viewing system. In a real implementation, this would:</p>
+                    <ul>
+                        <li>Display the actual PDF content using a PDF viewer</li>
+                        <li>Connect to your document management system</li>
+                        <li>Show the real document stored in your file system</li>
+                        <li>Provide download options and version history</li>
+                    </ul>
+                    
+                    <h3>Integration Notes</h3>
+                    <p>To connect this to your actual documents:</p>
+                    <ol>
+                        <li>Replace this demo content with a PDF viewer component</li>
+                        <li>Connect to your document storage (AWS S3, SharePoint, etc.)</li>
+                        <li>Add authentication and access logging</li>
+                        <li>Implement version control and approval workflows</li>
+                    </ol>
+                </div>
+                <div class="footer">
+                    <p>Navon Technologies - Document Management System</p>
+                    <button onclick="window.close()" style="
+                        background: #1e3a8a; 
+                        color: white; 
+                        border: none; 
+                        padding: 10px 20px; 
+                        border-radius: 6px; 
+                        cursor: pointer;
+                        margin-top: 10px;
+                    ">Close Document</button>
+                </div>
+            </body>
+            </html>
+        `);
+        docWindow.document.close();
     };
 
     // Role switcher for demo
@@ -386,6 +469,32 @@ function SimpleApp() {
                     <a href="#contact" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500', transition: 'all 0.3s ease', display: 'inline-block' }}
                        onMouseOver={(e) => { e.target.style.color = '#d4af37'; e.target.style.transform = 'translateY(-3px) scale(1.1)'; }}
                        onMouseOut={(e) => { e.target.style.color = 'white'; e.target.style.transform = 'translateY(0) scale(1)'; }}>Contact</a>
+                    <button 
+                        onClick={() => {
+                            setCurrentPage('hrdocuments');
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                        style={{ 
+                            background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)', 
+                            color: '#0f172a', 
+                            border: 'none', 
+                            padding: '0.5rem 1rem', 
+                            borderRadius: '6px', 
+                            cursor: 'pointer', 
+                            fontWeight: '600',
+                            fontSize: '0.9rem',
+                            transition: 'all 0.3s ease'
+                        }}
+                        onMouseOver={(e) => {
+                            e.target.style.transform = 'translateY(-3px) scale(1.05)';
+                            e.target.style.boxShadow = '0 8px 20px rgba(212, 175, 55, 0.4)';
+                        }}
+                        onMouseOut={(e) => {
+                            e.target.style.transform = 'translateY(0) scale(1)';
+                            e.target.style.boxShadow = 'none';
+                        }}>
+                        📋 HR Docs
+                    </button>
                 </nav>
             </header>
 
@@ -5084,6 +5193,18 @@ function SimpleApp() {
                     minHeight: '100vh'
                 }}>
                     <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                        {/* Navigation Breadcrumb */}
+                        <div style={{
+                            background: 'linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%)',
+                            padding: '1rem',
+                            borderRadius: '8px',
+                            marginBottom: '2rem',
+                            fontSize: '0.9rem',
+                            color: '#475569'
+                        }}>
+                            🏠 Home → 🔐 Secure Employee Portal → 📁 Document Management → <strong style={{ color: '#1e3a8a' }}>📋 HR Documents</strong>
+                        </div>
+                        
                         <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
                             <h2 style={{
                                 fontSize: '3rem',
@@ -5163,9 +5284,10 @@ function SimpleApp() {
                                     🧪 Test Permission System:
                                 </div>
                                 <div style={{ fontSize: '0.9rem', color: '#78350f', lineHeight: '1.5' }}>
-                                    <strong>1.</strong> Switch to <strong>HR/Admin</strong> role and upload some files to Employee Handbook<br/>
-                                    <strong>2.</strong> Switch to <strong>Employee</strong> role and try to delete files (click 🔒 button)<br/>
-                                    <strong>3.</strong> Switch back to <strong>HR/Admin</strong> to see working delete buttons (🗑️)
+                                    <strong>1.</strong> Use the role switcher above to switch between Employee/HR/Admin<br/>
+                                    <strong>2.</strong> Switch to <strong>HR/Admin</strong> role and upload files to Employee Handbook<br/>
+                                    <strong>3.</strong> Switch to <strong>Employee</strong> role and try to delete files (click 🔒 button)<br/>
+                                    <strong>4.</strong> Click "� View Document" to see the document viewer
                                 </div>
                             </div>
                             
