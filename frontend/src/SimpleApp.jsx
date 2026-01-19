@@ -7683,11 +7683,59 @@ function SimpleApp() {
                             🏖️ Time-Off Request
                         </h3>
                         
-                        <form onSubmit={(e) => {
+                        <form onSubmit={async (e) => {
                             e.preventDefault();
-                            // Handle form submission here
-                            alert('Time-off request submitted successfully!');
-                            setShowTimeOffModal(false);
+                            
+                            // Get form data
+                            const formData = new FormData(e.target);
+                            const requestData = {
+                                leaveType: formData.get('leaveType'),
+                                startDate: formData.get('startDate'),
+                                endDate: formData.get('endDate'),
+                                hours: formData.get('hours'),
+                                comments: formData.get('comments') || 'None',
+                                submittedAt: new Date().toISOString()
+                            };
+                            
+                            try {
+                                // Send to AWS Lambda function via API Gateway
+                                const response = await fetch('https://h5dfq5i2fe.execute-api.us-east-1.amazonaws.com/prod/api/submit-time-off-request', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify(requestData)
+                                });
+                                
+                                if (response.ok) {
+                                    alert('Time-off request submitted successfully! HR has been notified via email.');
+                                    setShowTimeOffModal(false);
+                                } else {
+                                    throw new Error('Failed to submit request');
+                                }
+                            } catch (error) {
+                                console.error('Error submitting time-off request:', error);
+                                
+                                // Fallback to mailto if API fails
+                                const subject = `Time-Off Request - ${requestData.leaveType}`;
+                                const body = `
+Time-Off Request Details:
+
+Employee: (Name will be identified from email sender)
+Leave Type: ${requestData.leaveType}
+Start Date: ${requestData.startDate}
+End Date: ${requestData.endDate}
+Total Hours: ${requestData.hours}
+Comments: ${requestData.comments}
+
+Submitted on: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}
+
+Please review and approve this request.
+                                `.trim();
+                                
+                                window.location.href = `mailto:rachelle.briscoe@navontech.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                                alert('API unavailable. Opening email client as fallback.');
+                            }
                         }}>
                             {/* Leave Type Dropdown */}
                             <div style={{ marginBottom: '1.5rem' }}>
@@ -7701,6 +7749,7 @@ function SimpleApp() {
                                     Leave Type *
                                 </label>
                                 <select
+                                    name="leaveType"
                                     required
                                     style={{
                                         width: '100%',
@@ -7736,6 +7785,7 @@ function SimpleApp() {
                                     Start Date *
                                 </label>
                                 <input
+                                    name="startDate"
                                     type="date"
                                     required
                                     style={{
@@ -7764,6 +7814,7 @@ function SimpleApp() {
                                     End Date *
                                 </label>
                                 <input
+                                    name="endDate"
                                     type="date"
                                     required
                                     style={{
@@ -7792,6 +7843,7 @@ function SimpleApp() {
                                     Total Hours *
                                 </label>
                                 <input
+                                    name="hours"
                                     type="number"
                                     min="0.5"
                                     step="0.5"
@@ -7824,6 +7876,7 @@ function SimpleApp() {
                                     Comments (Optional)
                                 </label>
                                 <textarea
+                                    name="comments"
                                     rows="3"
                                     placeholder="Additional details or reason for request..."
                                     style={{
