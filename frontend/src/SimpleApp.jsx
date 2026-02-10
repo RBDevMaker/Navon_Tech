@@ -905,6 +905,141 @@ function SimpleApp() {
                         margin: '0'
                     }}></div>
 
+                    {/* Trusted Partners Section */}
+                    <section style={{ 
+                        padding: '5rem 2rem', 
+                        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+                        position: 'relative',
+                        overflow: 'hidden'
+                    }}>
+                        <div className="animate-pulse" style={{
+                            position: 'absolute',
+                            top: '20%',
+                            right: '10%',
+                            width: '300px',
+                            height: '300px',
+                            background: 'radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%)',
+                            borderRadius: '50%'
+                        }}></div>
+                        
+                        <div style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+                            <h2 className="animate-fade-in-up" style={{
+                                fontSize: '2.5rem',
+                                marginBottom: '1rem',
+                                textAlign: 'center',
+                                color: '#d4af37',
+                                fontWeight: '800',
+                                textShadow: '0 0 20px rgba(212, 175, 55, 0.4)'
+                            }}>
+                                Trusted Partners
+                            </h2>
+                            <p className="animate-fade-in-up" style={{
+                                fontSize: '1.2rem',
+                                color: '#cbd5e1',
+                                textAlign: 'center',
+                                marginBottom: '4rem',
+                                maxWidth: '600px',
+                                margin: '0 auto 4rem auto',
+                                animationDelay: '0.2s',
+                                opacity: 0,
+                                animation: 'fadeInUp 0.8s ease-out 0.2s forwards',
+                                whiteSpace: 'nowrap'
+                            }}>
+                                Collaborating with industry leaders to deliver exceptional solutions
+                            </p>
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                                gap: '2rem',
+                                alignItems: 'center'
+                            }}>
+                                {[
+                                    { file: 'AWS.jpeg', name: 'AWS' },
+                                    { file: 'microsoft.jpeg', name: 'Microsoft' },
+                                    { file: 'google.jpeg', name: 'Google' },
+                                    { file: 'cisco.jpeg', name: 'Cisco' },
+                                    { file: 'ratheon.jpeg', name: 'Raytheon' },
+                                    { file: 'gdit.jpeg', name: 'GDIT' },
+                                    { file: 'jacobs.jpeg', name: 'Jacobs' },
+                                    { file: 'ingram_micro.jpeg', name: 'Ingram Micro' },
+                                    { file: 'vmware.jpeg', name: 'VMware' },
+                                    { file: 'archfield.jpeg', name: 'Archfield' },
+                                    { file: 'saic.jpeg', name: 'SAIC' },
+                                    { file: 'amentum.jpeg', name: 'Amentum' },
+                                    { file: 'nightwing.jpeg', name: 'Nightwing' },
+                                    { file: 'bae_systems.jpeg', name: 'BAE Systems' },
+                                    { file: 'versa.jpeg', name: 'Versa' }
+                                ].map((partner, index) => (
+                                    <div key={index} className="hover-lift animate-scale-in" style={{
+                                        background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
+                                        padding: '2.5rem',
+                                        borderRadius: '20px',
+                                        textAlign: 'center',
+                                        border: '2px solid #d4af37',
+                                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.2)',
+                                        minHeight: '180px',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        cursor: 'pointer',
+                                        position: 'relative',
+                                        overflow: 'hidden',
+                                        animationDelay: `${index * 0.1}s`,
+                                        opacity: 0
+                                    }}>
+                                        <div style={{
+                                            position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            right: 0,
+                                            height: '3px',
+                                            background: 'linear-gradient(90deg, #2563eb 0%, #d4af37 100%)',
+                                            transform: 'scaleX(0)',
+                                            transition: 'transform 0.3s ease'
+                                        }} className="partner-accent"></div>
+                                        <img
+                                            src={`${s3BaseUrl}/public/images/partners/${partner.file}`}
+                                            alt={partner.name}
+                                            className="hover-scale"
+                                            style={{
+                                                maxWidth: '100%',
+                                                height: '110px',
+                                                objectFit: 'contain',
+                                                transition: 'all 0.3s ease'
+                                            }}
+                                            onError={(e) => { 
+                                                e.target.style.display = 'none';
+                                                e.target.nextSibling.style.display = 'block';
+                                            }}
+                                        />
+                                        <div style={{
+                                            display: 'none',
+                                            color: '#d4af37',
+                                            fontWeight: '700',
+                                            fontSize: '1.1rem'
+                                        }}>
+                                            {partner.name}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <style>{`
+                            .hover-lift:hover .partner-accent {
+                                transform: scaleX(1);
+                            }
+                        `}</style>
+                    </section>
+                    
+                    {/* Gold Divider */}
+                    <div style={{
+                        height: '2px',
+                        background: 'linear-gradient(90deg, transparent 0%, #d4af37 50%, transparent 100%)',
+                        boxShadow: '0 0 20px rgba(212, 175, 55, 0.4)',
+                        margin: '0'
+                    }}></div>
+                    
                     {/* Additional Home Sections */}
                     <section style={{ padding: '6rem 2rem', background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)' }}>
                         <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
@@ -1135,141 +1270,6 @@ function SimpleApp() {
                         </div>
                     </section>
 
-                    {/* Trusted Partners Section */}
-                    <section style={{ 
-                        padding: '5rem 2rem', 
-                        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-                        position: 'relative',
-                        overflow: 'hidden'
-                    }}>
-                        <div className="animate-pulse" style={{
-                            position: 'absolute',
-                            top: '20%',
-                            right: '10%',
-                            width: '300px',
-                            height: '300px',
-                            background: 'radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%)',
-                            borderRadius: '50%'
-                        }}></div>
-                        
-                        <div style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
-                            <h2 className="animate-fade-in-up" style={{
-                                fontSize: '2.5rem',
-                                marginBottom: '1rem',
-                                textAlign: 'center',
-                                color: '#d4af37',
-                                fontWeight: '800',
-                                textShadow: '0 0 20px rgba(212, 175, 55, 0.4)'
-                            }}>
-                                Trusted Partners
-                            </h2>
-                            <p className="animate-fade-in-up" style={{
-                                fontSize: '1.2rem',
-                                color: '#cbd5e1',
-                                textAlign: 'center',
-                                marginBottom: '4rem',
-                                maxWidth: '600px',
-                                margin: '0 auto 4rem auto',
-                                animationDelay: '0.2s',
-                                opacity: 0,
-                                animation: 'fadeInUp 0.8s ease-out 0.2s forwards',
-                                whiteSpace: 'nowrap'
-                            }}>
-                                Collaborating with industry leaders to deliver exceptional solutions
-                            </p>
-                            <div style={{
-                                display: 'grid',
-                                gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-                                gap: '2rem',
-                                alignItems: 'center'
-                            }}>
-                                {[
-                                    { file: 'AWS.jpeg', name: 'AWS' },
-                                    { file: 'microsoft.jpeg', name: 'Microsoft' },
-                                    { file: 'google.jpeg', name: 'Google' },
-                                    { file: 'cisco.jpeg', name: 'Cisco' },
-                                    { file: 'ratheon.jpeg', name: 'Raytheon' },
-                                    { file: 'gdit.jpeg', name: 'GDIT' },
-                                    { file: 'jacobs.jpeg', name: 'Jacobs' },
-                                    { file: 'ingram_micro.jpeg', name: 'Ingram Micro' },
-                                    { file: 'vmware.jpeg', name: 'VMware' },
-                                    { file: 'archfield.jpeg', name: 'Archfield' },
-                                    { file: 'saic.jpeg', name: 'SAIC' },
-                                    { file: 'amentum.jpeg', name: 'Amentum' },
-                                    { file: 'nightwing.jpeg', name: 'Nightwing' },
-                                    { file: 'bae_systems.jpeg', name: 'BAE Systems' },
-                                    { file: 'versa.jpeg', name: 'Versa' }
-                                ].map((partner, index) => (
-                                    <div key={index} className="hover-lift animate-scale-in" style={{
-                                        background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
-                                        padding: '2.5rem',
-                                        borderRadius: '20px',
-                                        textAlign: 'center',
-                                        border: '2px solid #d4af37',
-                                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.2)',
-                                        minHeight: '180px',
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        cursor: 'pointer',
-                                        position: 'relative',
-                                        overflow: 'hidden',
-                                        animationDelay: `${index * 0.1}s`,
-                                        opacity: 0
-                                    }}>
-                                        <div style={{
-                                            position: 'absolute',
-                                            top: 0,
-                                            left: 0,
-                                            right: 0,
-                                            height: '3px',
-                                            background: 'linear-gradient(90deg, #2563eb 0%, #d4af37 100%)',
-                                            transform: 'scaleX(0)',
-                                            transition: 'transform 0.3s ease'
-                                        }} className="partner-accent"></div>
-                                        <img
-                                            src={`${s3BaseUrl}/public/images/partners/${partner.file}`}
-                                            alt={partner.name}
-                                            className="hover-scale"
-                                            style={{
-                                                maxWidth: '100%',
-                                                height: '110px',
-                                                objectFit: 'contain',
-                                                transition: 'all 0.3s ease'
-                                            }}
-                                            onError={(e) => { 
-                                                e.target.style.display = 'none';
-                                                e.target.nextSibling.style.display = 'block';
-                                            }}
-                                        />
-                                        <div style={{
-                                            display: 'none',
-                                            color: '#d4af37',
-                                            fontWeight: '700',
-                                            fontSize: '1.1rem'
-                                        }}>
-                                            {partner.name}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                        <style>{`
-                            .hover-lift:hover .partner-accent {
-                                transform: scaleX(1);
-                            }
-                        `}</style>
-                    </section>
-                    
-                    {/* Gold Divider */}
-                    <div style={{
-                        height: '2px',
-                        background: 'linear-gradient(90deg, transparent 0%, #d4af37 50%, transparent 100%)',
-                        boxShadow: '0 0 20px rgba(212, 175, 55, 0.4)',
-                        margin: '0'
-                    }}></div>
-                    
                     {/* Computer Screen Strip - Right Above Footer */}
                     <div style={{
                         width: '100%',
