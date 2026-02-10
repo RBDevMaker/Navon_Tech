@@ -1138,10 +1138,23 @@ function SimpleApp() {
                     {/* Trusted Partners Section */}
                     <section style={{ 
                         padding: '5rem 2rem', 
-                        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+                        backgroundImage: 'url("https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1920&q=80")',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundAttachment: 'fixed',
                         position: 'relative',
                         overflow: 'hidden'
                     }}>
+                        {/* Dark overlay for better contrast */}
+                        <div style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.50) 0%, rgba(30, 41, 59, 0.55) 100%)',
+                            zIndex: 0
+                        }}></div>
                         <div className="animate-pulse" style={{
                             position: 'absolute',
                             top: '20%',
@@ -1149,7 +1162,8 @@ function SimpleApp() {
                             width: '300px',
                             height: '300px',
                             background: 'radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%)',
-                            borderRadius: '50%'
+                            borderRadius: '50%',
+                            zIndex: 0
                         }}></div>
                         
                         <div style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
@@ -1186,7 +1200,7 @@ function SimpleApp() {
                                 {[
                                     { file: 'AWS.jpeg', name: 'AWS' },
                                     { file: 'microsoft.jpeg', name: 'Microsoft' },
-                                    { file: 'google.jpeg', name: 'Google' },
+                                    { file: 'Google_logo.svg', name: 'Google' },
                                     { file: 'cisco.jpeg', name: 'Cisco' },
                                     { file: 'ratheon.jpeg', name: 'Raytheon' },
                                     { file: 'gdit.jpeg', name: 'GDIT' },
@@ -1194,11 +1208,11 @@ function SimpleApp() {
                                     { file: 'ingram_micro.jpeg', name: 'Ingram Micro' },
                                     { file: 'vmware.jpeg', name: 'VMware' },
                                     { file: 'archfield.jpeg', name: 'Archfield' },
-                                    { file: 'saic.jpeg', name: 'SAIC' },
-                                    { file: 'amentum.jpeg', name: 'Amentum' },
-                                    { file: 'nightwing.jpeg', name: 'Nightwing' },
-                                    { file: 'bae_systems.jpeg', name: 'BAE Systems' },
-                                    { file: 'versa.jpeg', name: 'Versa' }
+                                    { file: 'SAIC_Logo.svg', name: 'SAIC' },
+                                    { file: 'Amentum.svg', name: 'Amentum' },
+                                    { file: 'nightwing.jpg', name: 'Nightwing' },
+                                    { file: 'BAE SYSTEMS.JPG', name: 'BAE Systems' },
+                                    { file: 'versa-networks-logo.svg', name: 'Versa' }
                                 ].map((partner, index) => (
                                     <div key={index} className="hover-lift animate-scale-in" style={{
                                         background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
@@ -1233,7 +1247,7 @@ function SimpleApp() {
                                             alt={partner.name}
                                             className="hover-scale"
                                             style={{
-                                                maxWidth: '100%',
+                                                maxWidth: partner.name === 'Nightwing' ? '120%' : partner.name === 'Amentum' ? '150%' : '100%',
                                                 height: '110px',
                                                 objectFit: 'contain',
                                                 transition: 'all 0.3s ease'
