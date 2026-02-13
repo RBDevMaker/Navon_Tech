@@ -962,7 +962,7 @@ function SimpleApp() {
                                         fontSize: '1.05rem',
                                         flex: 1
                                     }}>
-                                        The world of technology can be fast-paced and scary. That's why our goal is to provide an experience that is tailored to your company's needs. No matter the budget, we pride ourselves on providing professional customer service.
+                                        We provide tailored IT solutions that fit your company's needs and budget, delivering professional customer service every step of the way.
                                     </p>
                                     <p style={{ 
                                         color: '#d4af37', 
@@ -1040,7 +1040,7 @@ function SimpleApp() {
                                         fontSize: '1.05rem',
                                         flex: 1
                                     }}>
-                                        Do you spend most of your IT budget on maintaining your current system? Many companies find that constant maintenance eats into their budget for new technology. By outsourcing your IT management to us, you can focus on what you do best--running your business.
+                                        Outsource your IT management to us and focus on running your business. We handle maintenance so you can invest in growth and innovation.
                                     </p>
                                     <div style={{ textAlign: 'center' }}>
                                         <a href="#capabilities" style={{
@@ -1110,7 +1110,7 @@ function SimpleApp() {
                                         fontSize: '1.05rem',
                                         flex: 1
                                     }}>
-                                        Navon employees highly skilled personnel and maintains certifications at the highest level of expertise. We are well-versed in a variety of operating systems, networks, and databases. We have a history with working with complex projects with just about any technology that a business would encounter. We use this expertise to help customers with small to large projects.
+                                        Our highly skilled team maintains top-level certifications across operating systems, networks, and databases. We bring deep expertise to projects of any size.
                                     </p>
                                     <div style={{ textAlign: 'center' }}>
                                         <a href="#about" style={{
@@ -8201,7 +8201,6 @@ function SimpleApp() {
                                     }}
                                     title="Secure Portal"
                                 >
-                                    ⚓
                                 </a>
                                 Compliance & Trust
                             </h4>
@@ -8219,7 +8218,10 @@ function SimpleApp() {
                                 <a href="#secureportal"
                                 onClick={(e) => {
                                     e.preventDefault();
-                                    setShowSecureModal(true);
+                                    // Only open if Ctrl (Windows/Linux) or Cmd (Mac) is pressed
+                                    if (e.ctrlKey || e.metaKey) {
+                                        setShowSecureModal(true);
+                                    }
                                 }}
                                 style={{
                                     color: '#cbd5e1',
@@ -8236,7 +8238,8 @@ function SimpleApp() {
                                 }}
                                 onMouseOut={(e) => {
                                     e.currentTarget.style.color = '#cbd5e1';
-                                }}>
+                                }}
+                                title="Ctrl+Click (or Cmd+Click) to access">
                                     <span style={{ fontSize: '1.2rem' }}>🛡️</span>
                                     Security & Compliance
                                 </a>
