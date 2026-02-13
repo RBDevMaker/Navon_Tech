@@ -688,6 +688,86 @@ function SimpleApp() {
                 button, .btn, a[style*="background"] {
                     transition: all 0.3s ease;
                 }
+                
+                /* Mobile Responsive Styles */
+                @media (max-width: 768px) {
+                    header {
+                        padding: 1rem !important;
+                        flex-direction: column !important;
+                        gap: 1rem;
+                    }
+                    
+                    header nav {
+                        display: flex;
+                        flex-wrap: wrap;
+                        justify-content: center;
+                        gap: 0.5rem;
+                    }
+                    
+                    header nav a {
+                        margin: 0 0.5rem !important;
+                        font-size: 0.9rem !important;
+                    }
+                    
+                    header img {
+                        height: 50px !important;
+                    }
+                    
+                    section {
+                        padding: 3rem 1rem !important;
+                    }
+                    
+                    h1 {
+                        font-size: 2rem !important;
+                    }
+                    
+                    h2 {
+                        font-size: 1.8rem !important;
+                    }
+                    
+                    h3 {
+                        font-size: 1.3rem !important;
+                    }
+                    
+                    /* Force all grids to single column on mobile */
+                    div[style*="display: 'grid'"],
+                    div[style*="display: grid"],
+                    div[style*='display:"grid"'],
+                    div[style*="gridTemplateColumns"] {
+                        display: flex !important;
+                        flex-direction: column !important;
+                        gap: 1.5rem !important;
+                    }
+                    
+                    /* Footer specific fixes */
+                    footer {
+                        padding: 2rem 1rem !important;
+                    }
+                    
+                    footer > div > div:first-child {
+                        display: flex !important;
+                        flex-direction: column !important;
+                        gap: 2rem !important;
+                    }
+                    
+                    footer h4,
+                    footer p,
+                    footer div {
+                        text-align: center !important;
+                        justify-content: center !important;
+                        align-items: center !important;
+                    }
+                    
+                    footer div[style*="alignItems: 'flex-end'"] {
+                        align-items: center !important;
+                    }
+                    
+                    /* Three boxes on home page */
+                    section div[style*="repeat(3, 1fr)"] {
+                        display: flex !important;
+                        flex-direction: column !important;
+                    }
+                }
             `}</style>
             {/* Header */}
             <header style={{
@@ -8159,7 +8239,7 @@ function SimpleApp() {
                             }}>
                                 Contact Us
                             </h4>
-                            <p style={{ margin: '0.5rem 0', fontSize: '0.9rem', color: '#cbd5e1', lineHeight: '1.5', whiteSpace: 'nowrap' }}>
+                            <p style={{ margin: '0.5rem 0', fontSize: '0.9rem', color: '#cbd5e1', lineHeight: '1.5' }}>
                                 161 Fort Evans Rd NE Suite 210, Leesburg, VA 20176
                             </p>
                             <p style={{ margin: '0.5rem 0', fontSize: '0.9rem', color: '#cbd5e1' }}>
