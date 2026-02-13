@@ -707,14 +707,16 @@ function SimpleApp() {
                 boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3), 0 3px 15px rgba(212, 175, 55, 0.3)'
             }}>
                 <div style={{ display: 'flex', alignItems: 'center' }} className="animate-slide-in-left">
-                    <img
-                        src={`${s3BaseUrl}/public/images/logo_double_framed.jpeg`}
-                        alt="Logo"
-                        style={{ height: '70px', transition: 'transform 0.3s ease' }}
-                        onError={(e) => { e.target.style.display = 'none'; }}
-                        onMouseOver={(e) => e.target.style.transform = 'scale(1.1)'}
-                        onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
-                    />
+                    <a href="#home" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+                        <img
+                            src={`${s3BaseUrl}/public/images/logo_double_framed.jpeg`}
+                            alt="Logo"
+                            style={{ height: '70px', transition: 'transform 0.3s ease' }}
+                            onError={(e) => { e.target.style.display = 'none'; }}
+                            onMouseOver={(e) => e.target.style.transform = 'scale(1.1)'}
+                            onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
+                        />
+                    </a>
                 </div>
                 <nav className="animate-slide-in-right">
                     <a href="#home" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500', transition: 'all 0.3s ease', position: 'relative', display: 'inline-block' }} 
@@ -1916,7 +1918,7 @@ function SimpleApp() {
                                 },
                                 {
                                     title: 'Artificial Intelligence & Machine Learning',
-                                    image: 'AI_and_Machine_Learning.jpeg',
+                                    image: 'AI.png',
                                     description: 'Advanced AI/ML solutions for data analysis, automation, and intelligent decision-making systems.'
                                 }
                             ].map((capability, index) => {
@@ -1946,7 +1948,7 @@ function SimpleApp() {
                                         borderBottom: '2px solid #d4af37'
                                     }}>
                                         <img
-                                            src={`${s3BaseUrl}/public/images/solutions/${capability.image}`}
+                                            src={capability.image === 'AI.png' ? `${s3BaseUrl}/images/solutions/${capability.image}` : `${s3BaseUrl}/public/images/solutions/${capability.image}`}
                                             alt={capability.title}
                                             className={imageAnimation}
                                             style={{
