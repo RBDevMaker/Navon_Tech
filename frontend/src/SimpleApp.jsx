@@ -911,10 +911,7 @@ function SimpleApp() {
                             <div style={{ 
                                 display: 'grid', 
                                 gridTemplateColumns: 'repeat(3, 1fr)', 
-                                gap: '2rem',
-                                '@media (max-width: 1200px)': {
-                                    gridTemplateColumns: '1fr'
-                                }
+                                gap: '2rem'
                             }}>
                                 {/* Satisfaction Guaranteed */}
                                 <div className="hover-lift animate-slide-in-left" style={{
@@ -2726,7 +2723,7 @@ function SimpleApp() {
                                     </div>
 
                                     {/* Data Backup and Recovery */}
-                                    <div className="hover-lift animate-slide-in-top" style={{
+                                    <div className="hover-lift animate-fade-in-up" style={{
                                         background: 'linear-gradient(135deg, #f4e5a1 0%, #e8d68f 100%)',
                                         padding: '2.5rem',
                                         borderRadius: '20px',
@@ -2860,15 +2857,23 @@ function SimpleApp() {
                                     title: 'AWS Solution Architect',
                                     category: 'AWS Solution Architect',
                                     type: 'Full-time and Part-time',
-                                    location: 'DMV',
+                                    location: '',
                                     description: 'Design and implement scalable AWS cloud solutions for government clients. Lead architectural decisions and provide technical guidance.',
                                     requirements: ['AWS Solutions Architect Certification', 'Government contracting experience', '5+ years cloud architecture']
+                                },
+                                {
+                                    title: 'Cloud Software Developer',
+                                    category: 'Cloud Software Developer',
+                                    type: 'Full-time',
+                                    location: '',
+                                    description: 'Develop and deploy cloud-native applications using modern frameworks and AWS services for federal clients.',
+                                    requirements: ['3+ years software development', 'AWS experience', 'Modern web frameworks (React, Node.js, Python)']
                                 },
                                 {
                                     title: 'Network Engineer',
                                     category: 'Network Engineer',
                                     type: 'Full-time',
-                                    location: 'Reston',
+                                    location: '',
                                     description: 'Design, implement, and maintain secure network infrastructure for federal agencies and defense contractors.',
                                     requirements: ['CCNA/CCNP Certification', 'Network security experience', 'Government networking protocols']
                                 },
@@ -2876,7 +2881,7 @@ function SimpleApp() {
                                     title: 'Systems Integrator/Comms Expert',
                                     category: 'Systems Integrator/Comms Expert',
                                     type: 'Full-time',
-                                    location: 'Herndon',
+                                    location: '',
                                     description: 'Integrate complex communication systems and ensure seamless interoperability across government platforms.',
                                     requirements: ['Systems integration experience', 'Communications protocols', 'Federal systems knowledge']
                                 }
@@ -2892,16 +2897,18 @@ function SimpleApp() {
                                         {job.title}
                                     </h3>
                                     <div style={{ marginBottom: '1rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                                        <span style={{
-                                            background: 'linear-gradient(135deg, #f4e5a1 0%, #e8d68f 100%)',
-                                            color: '#0f172a',
-                                            padding: '0.25rem 0.75rem',
-                                            borderRadius: '20px',
-                                            fontSize: '0.85rem',
-                                            fontWeight: '600'
-                                        }}>
-                                            {job.location}
-                                        </span>
+                                        {job.location && (
+                                            <span style={{
+                                                background: 'linear-gradient(135deg, #f4e5a1 0%, #e8d68f 100%)',
+                                                color: '#0f172a',
+                                                padding: '0.25rem 0.75rem',
+                                                borderRadius: '20px',
+                                                fontSize: '0.85rem',
+                                                fontWeight: '600'
+                                            }}>
+                                                {job.location}
+                                            </span>
+                                        )}
                                         <span style={{
                                             background: 'linear-gradient(135deg, #f4e5a1 0%, #e8d68f 100%)',
                                             color: '#0f172a',
@@ -3071,7 +3078,7 @@ function SimpleApp() {
                                     { icon: '🛡️', title: 'Long-Term Disability - 100% Company Paid', desc: '60% of monthly earnings up to $12,000/month. Benefits begin on 91st day and continue through disability' },
                                     { icon: '📚', title: 'Training & Development', desc: 'Annual training budget, AWS training portal access, tuition assistance, and online learning resources' },
                                     { icon: '💪', title: 'Health & Wellness', desc: 'Health and wellness allowance for gym memberships or fitness reimbursement' },
-                                    { icon: '🎁', title: 'Anniversary Bonuses', desc: 'Bonuses awarded for personal and professional anniversaries throughout the year' }
+                                    { icon: '🎁', title: 'Bonuses', desc: 'Bonuses awarded for personal and professional milestones throughout the year' }
                                 ].map((benefit, index) => (
                                     <div key={index} className="hover-lift" style={{
                                         background: 'rgba(255, 255, 255, 0.05)',
@@ -3323,7 +3330,6 @@ function SimpleApp() {
                                 <h3 style={{ marginBottom: '2rem', fontSize: '2rem', fontWeight: '800', color: '#0f172a', position: 'relative', zIndex: 1 }}>Contact Information</h3>
                                 <p style={{ marginBottom: '1rem', fontSize: '1.3rem', lineHeight: '1.8', color: '#1e293b', position: 'relative', zIndex: 1 }}>
                                     Email: info@navontechnologies.com<br />
-                                    Questions regarding application: HR@navontech.com<br />
                                     Phone: 571-477-2727<br />
                                     Fax: 571-477-2727<br />
                                     Response Time: 24 hours
@@ -3803,6 +3809,12 @@ function SimpleApp() {
                                             location: 'Remote/DC Metro',
                                             description: 'Lead cybersecurity initiatives for federal cloud infrastructure. AWS certifications preferred.',
                                             requirements: ['Security+ Certification', '5+ years AWS experience', 'Federal contracting experience']
+                                        },
+                                        {
+                                            title: 'Cloud Software Developer',
+                                            location: 'Remote/DC Metro',
+                                            description: 'Develop and deploy cloud-native applications using modern frameworks and AWS services.',
+                                            requirements: ['3+ years software development', 'AWS experience', 'Modern web frameworks (React, Node.js, Python)']
                                         },
                                         {
                                             title: 'DevOps Systems Engineer',
