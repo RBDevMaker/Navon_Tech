@@ -1195,7 +1195,18 @@ function SimpleApp() {
                                         Our highly skilled team maintains top-level certifications across operating systems, networks, and databases. We bring deep expertise to projects of any size.
                                     </p>
                                     <div style={{ textAlign: 'center' }}>
-                                        <a href="#about" style={{
+                                        <a href="#about" onClick={(e) => {
+                                            e.preventDefault();
+                                            window.location.hash = 'about';
+                                            setTimeout(() => {
+                                                const element = document.getElementById('certifications');
+                                                if (element) {
+                                                    const offset = 100; // Offset for sticky header
+                                                    const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                                                    window.scrollTo({ top: elementPosition - offset, behavior: 'smooth' });
+                                                }
+                                            }, 100);
+                                        }} style={{
                                             background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
                                             color: 'white',
                                             padding: '1rem 2rem',
@@ -1204,7 +1215,8 @@ function SimpleApp() {
                                             fontWeight: '600',
                                             display: 'inline-block',
                                             boxShadow: '0 8px 20px rgba(212, 175, 55, 0.3)',
-                                            transition: 'all 0.3s ease'
+                                            transition: 'all 0.3s ease',
+                                            cursor: 'pointer'
                                         }}>
                                             Learn More →
                                         </a>
@@ -1675,7 +1687,7 @@ function SimpleApp() {
                         </section>
 
                         {/* Certifications Section */}
-                        <section style={{ 
+                        <section id="certifications" style={{ 
                             padding: '5rem 2rem', 
                             background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.50) 0%, rgba(30, 41, 59, 0.45) 50%, rgba(51, 65, 85, 0.50) 100%), url("https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80") center/cover',
                             position: 'relative',
@@ -2918,7 +2930,7 @@ function SimpleApp() {
                     }}></div>
 
                     <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
-                        <h2 style={{
+                        <h2 className="animate-fade-in-up" style={{
                             fontSize: '2.5rem',
                             marginBottom: '3rem',
                             textAlign: 'center',
@@ -2968,12 +2980,14 @@ function SimpleApp() {
                                     requirements: ['Systems integration experience', 'Communications protocols', 'Federal systems knowledge']
                                 }
                             ].map((job, index) => (
-                                <div key={index} style={{
+                                <div key={index} className="hover-lift animate-slide-in-left" style={{
                                     background: 'white',
                                     padding: '2rem',
                                     borderRadius: '12px',
                                     border: '2px solid #d4af37',
-                                    boxShadow: '0 4px 15px rgba(212, 175, 55, 0.15)'
+                                    boxShadow: '0 4px 15px rgba(212, 175, 55, 0.15)',
+                                    animationDelay: `${index * 0.2}s`,
+                                    opacity: 0
                                 }}>
                                     <h3 style={{ color: '#0f172a', marginBottom: '1rem', fontSize: '1.3rem', fontWeight: '700' }}>
                                         {job.title}
