@@ -1197,15 +1197,23 @@ function SimpleApp() {
                                     <div style={{ textAlign: 'center' }}>
                                         <a href="#about" onClick={(e) => {
                                             e.preventDefault();
+                                            setCurrentPage('about');
                                             window.location.hash = 'about';
-                                            setTimeout(() => {
+                                            
+                                            // Wait for page to render, then scroll
+                                            const scrollToCertifications = () => {
                                                 const element = document.getElementById('certifications');
                                                 if (element) {
-                                                    const offset = 100; // Offset for sticky header
+                                                    const offset = 100;
                                                     const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
                                                     window.scrollTo({ top: elementPosition - offset, behavior: 'smooth' });
+                                                } else {
+                                                    // If element not found, try again
+                                                    setTimeout(scrollToCertifications, 100);
                                                 }
-                                            }, 100);
+                                            };
+                                            
+                                            setTimeout(scrollToCertifications, 100);
                                         }} style={{
                                             background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
                                             color: 'white',
