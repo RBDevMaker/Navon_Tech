@@ -826,11 +826,11 @@ function SimpleApp() {
                     {/* Hero Section */}
                     <section style={{
                         background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.35) 0%, rgba(30, 41, 59, 0.30) 50%, rgba(51, 65, 85, 0.35) 100%), url("https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=1920&q=80") center 15%/cover',
-                        padding: '8rem 2rem',
+                        padding: '4rem 2rem 3rem 2rem',
                         textAlign: 'center',
                         position: 'relative',
                         overflow: 'hidden',
-                        minHeight: '90vh',
+                        minHeight: '70vh',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center'
@@ -875,8 +875,8 @@ function SimpleApp() {
                         
                         <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
                             <h1 className="animate-fade-in-up" style={{
-                                fontSize: '4.5rem',
-                                margin: '0 0 3rem 0',
+                                fontSize: '3.5rem',
+                                margin: '0 0 2rem 0',
                                 color: 'white',
                                 fontWeight: '800',
                                 letterSpacing: '-0.02em',
@@ -887,7 +887,7 @@ function SimpleApp() {
                                 transform: 'translateY(0) scale(1)'
                             }}
                             onMouseEnter={(e) => {
-                                e.currentTarget.style.transform = 'translateY(-30px) scale(1.15)';
+                                e.currentTarget.style.transform = 'translateY(-20px) scale(1.1)';
                                 e.currentTarget.style.textShadow = '0 15px 60px rgba(212, 175, 55, 0.8)';
                             }}
                             onMouseLeave={(e) => {
@@ -1372,8 +1372,8 @@ function SimpleApp() {
                 <div>
                     {/* Hero Section */}
                     <section style={{
-                        background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(30, 41, 59, 0.88) 50%, rgba(51, 65, 85, 0.92) 100%), url("https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=80") center/cover',
-                        padding: '6rem 2rem 4rem 2rem',
+                        background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(30, 41, 59, 0.88) 50%, rgba(51, 65, 85, 0.92) 100%), url("https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1920&q=80") center/cover',
+                        padding: '4rem 2rem 3rem 2rem',
                         textAlign: 'center',
                         position: 'relative',
                         overflow: 'hidden'
@@ -1400,13 +1400,8 @@ function SimpleApp() {
                             </h2>
                             
                             <div className="animate-fade-in-up" style={{
-                                backgroundColor: 'rgba(212, 175, 55, 0.15)',
-                                padding: '2.5rem',
-                                borderRadius: '20px',
-                                marginBottom: '2rem',
-                                border: '2px solid rgba(212, 175, 55, 0.3)',
-                                backdropFilter: 'blur(10px)',
-                                boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+                                padding: '1rem',
+                                marginBottom: '1rem',
                                 animationDelay: '0.2s',
                                 opacity: 0,
                                 animation: 'fadeInUp 0.8s ease-out 0.2s forwards'
@@ -1422,32 +1417,6 @@ function SimpleApp() {
                                     Navon Technologies is a <span style={{ color: '#d4af37', fontWeight: '700' }}>Service-Disabled Veteran-Owned Small Business</span> based in Leesburg, Virginia. We provide Network, System, and Security Engineering for Small, Medium, and Large businesses to include Federal/SLED (State, Local, Education) Government enterprise networks.
                                 </p>
                             </div>
-
-                            {/* Capability Statement Link */}
-                            <div className="animate-fade-in-up" style={{ 
-                                textAlign: 'center',
-                                animationDelay: '0.4s',
-                                opacity: 0,
-                                animation: 'fadeInUp 0.8s ease-out 0.4s forwards'
-                            }}>
-                                <a href={`${s3BaseUrl}/public/images/NAVON_Technologies_Capability_Statement_2026.pdf`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    style={{
-                                        background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
-                                        color: 'white',
-                                        padding: '1.2rem 2.5rem',
-                                        borderRadius: '12px',
-                                        textDecoration: 'none',
-                                        fontWeight: '700',
-                                        display: 'inline-block',
-                                        fontSize: '1.1rem',
-                                        boxShadow: '0 8px 25px rgba(212, 175, 55, 0.4)',
-                                        transition: 'all 0.3s ease'
-                                    }}>
-                                    📄 Download Our Capability Statement
-                                </a>
-                            </div>
                         </div>
                     </section>
 
@@ -1458,6 +1427,37 @@ function SimpleApp() {
                         boxShadow: '0 0 20px rgba(212, 175, 55, 0.5)',
                         margin: '0'
                     }}></div>
+
+                    {/* Capability Statement Link */}
+                    <div style={{ 
+                        background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 100%)',
+                        padding: '3rem 2rem',
+                        textAlign: 'center'
+                    }}>
+                        <div className="animate-fade-in-up" style={{ 
+                            animationDelay: '0.2s',
+                            opacity: 0,
+                            animation: 'fadeInUp 0.8s ease-out 0.2s forwards'
+                        }}>
+                            <a href={`${s3BaseUrl}/public/images/NAVON_Technologies_Capability_Statement_2026.pdf`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                    background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
+                                    color: 'white',
+                                    padding: '1.2rem 2.5rem',
+                                    borderRadius: '12px',
+                                    textDecoration: 'none',
+                                    fontWeight: '700',
+                                    display: 'inline-block',
+                                    fontSize: '1.1rem',
+                                    boxShadow: '0 8px 25px rgba(212, 175, 55, 0.4)',
+                                    transition: 'all 0.3s ease'
+                                }}>
+                                📄 Download Our Capability Statement
+                            </a>
+                        </div>
+                    </div>
 
                     {/* Mission Critical Section */}
                     <section style={{ padding: '5rem 2rem', background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 100%)' }}>
@@ -1833,22 +1833,23 @@ function SimpleApp() {
                                     </p>
                                 </div>
                                 <div className="hover-lift animate-scale-in" style={{
-                                    background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%)',
+                                    background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
                                     padding: '2.5rem',
                                     borderRadius: '20px',
-                                    border: '2px solid rgba(212, 175, 55, 0.3)',
-                                    boxShadow: '0 10px 40px rgba(212, 175, 55, 0.15)',
+                                    border: '3px solid #d4af37',
+                                    boxShadow: '0 10px 40px rgba(212, 175, 55, 0.2)',
                                     animationDelay: '0.2s',
                                     opacity: 0
                                 }}>
                                     <h4 style={{ 
-                                        color: '#1e293b', 
+                                        color: '#d4af37', 
                                         marginBottom: '1.5rem', 
                                         textAlign: 'center',
                                         fontSize: '1.5rem',
-                                        fontWeight: '700'
+                                        fontWeight: '700',
+                                        textShadow: '0 0 15px rgba(212, 175, 55, 0.4)'
                                     }}>
-                                        Available <span style={{ color: '#d4af37' }}>Contract Vehicles</span>
+                                        Available Contract Vehicles
                                     </h4>
                                     <div style={{ textAlign: 'left' }}>
                                         {[
@@ -1860,15 +1861,15 @@ function SimpleApp() {
                                             <div key={index} style={{ 
                                                 marginBottom: '1rem', 
                                                 padding: '1rem', 
-                                                background: 'white', 
+                                                background: 'rgba(255, 255, 255, 0.05)', 
                                                 borderRadius: '12px',
-                                                border: '1px solid rgba(212, 175, 55, 0.2)',
+                                                border: '1px solid rgba(212, 175, 55, 0.3)',
                                                 boxShadow: '0 2px 8px rgba(212, 175, 55, 0.1)'
                                             }}>
                                                 <div style={{ fontWeight: '700', color: '#d4af37', marginBottom: '0.25rem', fontSize: '1.05rem' }}>
                                                     {vehicle.name}
                                                 </div>
-                                                <div style={{ fontSize: '0.95rem', color: '#64748b' }}>
+                                                <div style={{ fontSize: '0.95rem', color: '#cbd5e1' }}>
                                                     {vehicle.desc}
                                                 </div>
                                             </div>
