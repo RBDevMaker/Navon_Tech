@@ -1016,19 +1016,6 @@ function SimpleApp() {
                                         background: 'radial-gradient(circle, rgba(245, 158, 11, 0.2) 0%, transparent 70%)',
                                         borderRadius: '50%'
                                     }}></div>
-                                    <div className="animate-pulse" style={{
-                                        width: '60px',
-                                        height: '60px',
-                                        background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
-                                        borderRadius: '12px',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        marginBottom: '1.5rem',
-                                        boxShadow: '0 8px 20px rgba(212, 175, 55, 0.3)'
-                                    }}>
-                                        <span style={{ fontSize: '2rem' }}>✓</span>
-                                    </div>
                                     <h3 style={{ 
                                         color: 'white', 
                                         marginBottom: '1.5rem', 
@@ -1094,19 +1081,6 @@ function SimpleApp() {
                                         background: 'radial-gradient(circle, rgba(37, 99, 235, 0.2) 0%, transparent 70%)',
                                         borderRadius: '50%'
                                     }}></div>
-                                    <div className="animate-pulse" style={{
-                                        width: '60px',
-                                        height: '60px',
-                                        background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
-                                        borderRadius: '12px',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        marginBottom: '1.5rem',
-                                        boxShadow: '0 8px 20px rgba(37, 99, 235, 0.3)'
-                                    }}>
-                                        <span style={{ fontSize: '2rem' }}>⚡</span>
-                                    </div>
                                     <h3 style={{ 
                                         color: 'white', 
                                         marginBottom: '1.5rem', 
@@ -1164,19 +1138,6 @@ function SimpleApp() {
                                         background: 'radial-gradient(circle, rgba(37, 99, 235, 0.2) 0%, transparent 70%)',
                                         borderRadius: '50%'
                                     }}></div>
-                                    <div className="animate-pulse" style={{
-                                        width: '60px',
-                                        height: '60px',
-                                        background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
-                                        borderRadius: '12px',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        marginBottom: '1.5rem',
-                                        boxShadow: '0 8px 20px rgba(37, 99, 235, 0.3)'
-                                    }}>
-                                        <span style={{ fontSize: '2rem' }}>🎯</span>
-                                    </div>
                                     <h3 style={{ 
                                         color: 'white', 
                                         marginBottom: '1.5rem', 
@@ -1667,27 +1628,28 @@ function SimpleApp() {
                                 
                                 {/* Brand Story */}
                                 <div className="hover-lift animate-scale-in" style={{
-                                    background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%)',
+                                    background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
                                     padding: '3rem',
                                     borderRadius: '20px',
-                                    border: '2px solid rgba(212, 175, 55, 0.3)',
-                                    boxShadow: '0 10px 40px rgba(212, 175, 55, 0.15)',
+                                    border: '3px solid #d4af37',
+                                    boxShadow: '0 10px 40px rgba(212, 175, 55, 0.2)',
                                     animationDelay: '0.6s',
                                     opacity: 0
                                 }}>
                                     <h3 style={{ 
-                                        color: '#1e293b', 
+                                        color: '#d4af37', 
                                         marginBottom: '1.5rem', 
-                                        fontSize: '2rem',
+                                        fontSize: '1.8rem',
                                         fontWeight: '800',
+                                        textShadow: '0 0 15px rgba(212, 175, 55, 0.4)',
                                         textAlign: 'center'
                                     }}>
-                                        Our <span style={{ color: '#d4af37' }}>Brand</span>
+                                        Our Brand
                                     </h3>
-                                    <p style={{ color: '#334155', lineHeight: '1.8', marginBottom: '1rem', fontSize: '1.1rem' }}>
+                                    <p style={{ color: '#cbd5e1', lineHeight: '1.8', marginBottom: '1rem', fontSize: '1.05rem' }}>
                                         Our logo was inspired by a plane <span style={{ color: '#d4af37', fontWeight: '700' }}>(F-117 Nighthawk, Stealth Aircraft)</span> and our founders' prior service in the <span style={{ color: '#d4af37', fontWeight: '700' }}>US Air Force</span>. Our name <span style={{ color: '#d4af37', fontWeight: '700' }}>Navon</span> means <span style={{ color: '#d4af37', fontWeight: '700' }}>wisdom</span>.
                                     </p>
-                                    <p style={{ color: '#334155', lineHeight: '1.8', margin: '0', fontSize: '1.1rem' }}>
+                                    <p style={{ color: '#cbd5e1', lineHeight: '1.8', margin: '0', fontSize: '1.05rem' }}>
                                         Like a plane and a wise owl, we strive to reach the highest point of excellence. Our goal is to soar in every component of business; in the technology aspect, like the plane and in our behaviors, like a wise owl.
                                     </p>
                                 </div>
