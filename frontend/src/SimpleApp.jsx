@@ -1228,7 +1228,7 @@ function SimpleApp() {
                         
                         <div style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
                             <h2 className="animate-fade-in-up" style={{
-                                fontSize: '3.5rem',
+                                fontSize: '4.5rem',
                                 marginBottom: '1rem',
                                 textAlign: 'center',
                                 color: '#d4af37',
@@ -3500,7 +3500,7 @@ function SimpleApp() {
                                 Follow us for the latest updates, insights, and opportunities
                             </p>
                             <div style={{ display: 'flex', gap: '2.5rem', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', position: 'relative', zIndex: 1 }}>
-                                <a href="https://linkedin.com/company/navon-technologies" target="_blank" rel="noopener noreferrer" className="hover-lift" style={{
+                                <a href="https://www.linkedin.com/in/navon-technologies-162173260" target="_blank" rel="noopener noreferrer" className="hover-lift" style={{
                                     color: '#0f172a',
                                     textDecoration: 'none',
                                     display: 'flex',
