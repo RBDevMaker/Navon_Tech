@@ -826,11 +826,11 @@ function SimpleApp() {
                     {/* Hero Section */}
                     <section style={{
                         background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.35) 0%, rgba(30, 41, 59, 0.30) 50%, rgba(51, 65, 85, 0.35) 100%), url("https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=1920&q=80") center 15%/cover',
-                        padding: '4rem 2rem 3rem 2rem',
+                        padding: '3rem 2rem 2rem 2rem',
                         textAlign: 'center',
                         position: 'relative',
                         overflow: 'hidden',
-                        minHeight: '70vh',
+                        minHeight: '50vh',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center'
@@ -905,7 +905,7 @@ function SimpleApp() {
                                 backgroundClip: 'text',
                                 fontStyle: 'italic',
                                 textAlign: 'center',
-                                margin: '4rem auto 0 auto',
+                                margin: '2rem auto 0 auto',
                                 fontWeight: '800',
                                 textShadow: '0 2px 10px rgba(212, 175, 55, 0.3)',
                                 animationDelay: '0.2s',
@@ -917,9 +917,9 @@ function SimpleApp() {
                             
                             <div className="animate-fade-in-up" style={{
                                 maxWidth: '900px',
-                                margin: '4rem auto 3rem auto',
+                                margin: '2rem auto 2rem auto',
                                 background: 'rgba(15, 23, 42, 0.6)',
-                                padding: '2rem',
+                                padding: '1.5rem',
                                 borderRadius: '12px',
                                 border: '1px solid rgba(212, 175, 55, 0.3)',
                                 animationDelay: '0.4s',
@@ -930,52 +930,65 @@ function SimpleApp() {
                                     fontSize: '1.15rem',
                                     color: '#f1f5f9',
                                     lineHeight: '1.8',
-                                    marginBottom: '1.5rem',
+                                    margin: '0',
                                     textShadow: '0 2px 10px rgba(0, 0, 0, 0.5)'
                                 }}>
                                     Navon Technologies is a Service-Disabled Veteran-Owned Small Business and AWS Partner serving both public and private sectors. We provide technical services for development, automation, testing, implementation, and maintenance support for our customers' mission and business for critical applications whether they are on-prem or in the cloud.
                                 </p>
-                                
-                                <p style={{
-                                    fontSize: '1.15rem',
-                                    color: '#e2e8f0',
-                                    lineHeight: '1.8',
-                                    margin: '0',
-                                    textShadow: '0 2px 10px rgba(0, 0, 0, 0.5)'
-                                }}>
-                                    At Navon Technologies, we started as a small team of IT enthusiasts who wanted to help businesses overcome their technology challenges. We have partnered with AWS (Amazon Web Services) to provide our customers with the best cloud solutions in the industry. This partnership gained us access to over 200 AWS services. We specialize in Migration, Networking, Security, Web Site and App Development.
-                                </p>
                             </div>
-                            
-                            <div className="animate-fade-in-up" style={{ 
-                                display: 'flex', 
-                                gap: '1.5rem', 
-                                justifyContent: 'center', 
-                                flexWrap: 'wrap',
-                                animationDelay: '0.6s',
-                                opacity: 0,
-                                animation: 'fadeInUp 0.8s ease-out 0.6s forwards'
+                        </div>
+                    </section>
+
+                    {/* Gold Divider */}
+                    <div style={{
+                        height: '2px',
+                        background: 'linear-gradient(90deg, transparent 0%, #d4af37 50%, transparent 100%)',
+                        boxShadow: '0 0 20px rgba(212, 175, 55, 0.4)',
+                        margin: '0'
+                    }}></div>
+
+                    {/* Capability Statement Section */}
+                    <section style={{ 
+                        padding: '4rem 2rem', 
+                        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+                        textAlign: 'center'
+                    }}>
+                        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+                            <h2 style={{
+                                fontSize: '2.5rem',
+                                color: '#d4af37',
+                                marginBottom: '1.5rem',
+                                fontWeight: '700'
                             }}>
-                                <a href={`${s3BaseUrl}/public/images/NAVON_Technologies_Capability_Statement_2026.pdf`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    style={{
-                                        background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
-                                        color: 'white',
-                                        border: 'none',
-                                        padding: '1.2rem 2.5rem',
-                                        fontSize: '1.1rem',
-                                        borderRadius: '12px',
-                                        cursor: 'pointer',
-                                        fontWeight: '600',
-                                        textDecoration: 'none',
-                                        display: 'inline-block',
-                                        boxShadow: '0 10px 30px rgba(245, 158, 11, 0.3)',
-                                        transition: 'all 0.3s ease'
-                                    }}>
-                                    📄 Download Capability Statement
-                                </a>
-                            </div>
+                                Learn More About Our Capabilities
+                            </h2>
+                            <p style={{
+                                fontSize: '1.2rem',
+                                color: '#cbd5e1',
+                                marginBottom: '2.5rem',
+                                lineHeight: '1.8'
+                            }}>
+                                Download our comprehensive capability statement to discover how we can help transform your business with cutting-edge technology solutions.
+                            </p>
+                            <a href={`${s3BaseUrl}/public/images/NAVON_Technologies_Capability_Statement_2026.pdf`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                    background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '1.2rem 2.5rem',
+                                    fontSize: '1.1rem',
+                                    borderRadius: '12px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    textDecoration: 'none',
+                                    display: 'inline-block',
+                                    boxShadow: '0 10px 30px rgba(245, 158, 11, 0.3)',
+                                    transition: 'all 0.3s ease'
+                                }}>
+                                📄 Download Capability Statement
+                            </a>
                         </div>
                     </section>
 
