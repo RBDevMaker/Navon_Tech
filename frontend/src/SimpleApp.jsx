@@ -3212,7 +3212,7 @@ function SimpleApp() {
                                     { icon: '💼', title: 'Group Life & AD&D - 100% Company Paid', desc: 'Life insurance equal to salary (doubles for accidental death). Amounts over $50K require EOI form' },
                                     { icon: '🏥', title: 'Short-Term Disability - 100% Company Paid', desc: '60% of weekly earnings up to $2,500/week. Benefits begin 1st day after accident or 8th day for illness, up to 13 weeks' },
                                     { icon: '🛡️', title: 'Long-Term Disability - 100% Company Paid', desc: '60% of monthly earnings up to $12,000/month. Benefits begin on 91st day and continue through disability' },
-                                    { icon: '📚', title: 'Training & Development', desc: 'Annual training budget, AWS training portal access, tuition assistance, and online learning resources' },
+                                    { icon: '📚', title: 'Training & Development', desc: 'Annual training budget, tuition assistance, and online learning resources' },
                                     { icon: '💪', title: 'Health & Wellness', desc: 'Health and wellness allowance for gym memberships or fitness reimbursement' },
                                     { icon: '🎁', title: 'Bonuses', desc: 'Bonuses awarded for personal and professional milestones throughout the year' }
                                 ].map((benefit, index) => (
@@ -3272,55 +3272,24 @@ function SimpleApp() {
                                     maxWidth: '900px',
                                     margin: '0 auto'
                                 }}>
-                                    <ul style={{ listStyle: 'none', padding: 0 }}>
+                                    <ul style={{ listStyle: 'none', padding: 0, marginBottom: '2rem' }}>
                                         <li style={{ marginBottom: '0.8rem', paddingLeft: '1.5rem', position: 'relative' }}>
                                             <span style={{ position: 'absolute', left: 0, color: '#d4af37' }}>•</span>
-                                            <strong style={{ color: '#d4af37' }}>Annual Training:</strong> Professional development opportunities
+                                            <strong style={{ color: '#d4af37' }}>FSA (Flexible Spending Account):</strong> Pre-tax savings for healthcare and dependent care expenses
                                         </li>
                                         <li style={{ marginBottom: '0.8rem', paddingLeft: '1.5rem', position: 'relative' }}>
                                             <span style={{ position: 'absolute', left: 0, color: '#d4af37' }}>•</span>
-                                            <strong style={{ color: '#d4af37' }}>Tuition Assistance:</strong> Financial support for continuing education
+                                            <strong style={{ color: '#d4af37' }}>HSA (Health Savings Account):</strong> Tax-advantaged savings for qualified medical expenses
                                         </li>
                                         <li style={{ marginBottom: '0.8rem', paddingLeft: '1.5rem', position: 'relative' }}>
                                             <span style={{ position: 'absolute', left: 0, color: '#d4af37' }}>•</span>
-                                            <strong style={{ color: '#d4af37' }}>AWS Training Portal:</strong> Full access to AWS learning resources
+                                            <strong style={{ color: '#d4af37' }}>Term Life Insurance:</strong> Additional life insurance coverage options available
                                         </li>
                                         <li style={{ marginBottom: '0.8rem', paddingLeft: '1.5rem', position: 'relative' }}>
                                             <span style={{ position: 'absolute', left: 0, color: '#d4af37' }}>•</span>
-                                            <strong style={{ color: '#d4af37' }}>Online Training:</strong> Access to various online learning platforms
-                                        </li>
-                                        <li style={{ marginBottom: '0.8rem', paddingLeft: '1.5rem', position: 'relative' }}>
-                                            <span style={{ position: 'absolute', left: 0, color: '#d4af37' }}>•</span>
-                                            <strong style={{ color: '#d4af37' }}>Gym Membership:</strong> Reimbursement or membership support
+                                            <strong style={{ color: '#d4af37' }}>Employee Paid Health Insurance Premiums:</strong> Flexible options for additional coverage
                                         </li>
                                     </ul>
-                                    
-                                    <div style={{ 
-                                        marginTop: '2rem', 
-                                        padding: '1.5rem',
-                                        background: 'rgba(15, 23, 42, 0.5)',
-                                        borderRadius: '8px',
-                                        border: '1px solid rgba(212, 175, 55, 0.3)'
-                                    }}>
-                                        <h5 style={{ 
-                                            color: '#d4af37', 
-                                            fontSize: '1.2rem', 
-                                            marginBottom: '1rem',
-                                            fontWeight: '700'
-                                        }}>
-                                            💰 New Hire Referral Bonuses
-                                        </h5>
-                                        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                                            <li style={{ marginBottom: '0.8rem', paddingLeft: '1.5rem', position: 'relative' }}>
-                                                <span style={{ position: 'absolute', left: 0, color: '#d4af37' }}>1.</span>
-                                                <strong style={{ color: '#f4e5a1' }}>$1,000</strong> for AWS Certified referral (paid after 60 days of hire)
-                                            </li>
-                                            <li style={{ marginBottom: 0, paddingLeft: '1.5rem', position: 'relative' }}>
-                                                <span style={{ position: 'absolute', left: 0, color: '#d4af37' }}>2.</span>
-                                                <strong style={{ color: '#f4e5a1' }}>$10,000</strong> for TS/SCI clearance with full-scope polygraph (half at 3 months, half at 6 months post-hire)
-                                            </li>
-                                        </ul>
-                                    </div>
                                 </div>
                             </div>
 
