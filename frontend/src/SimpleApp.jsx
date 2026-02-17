@@ -3022,6 +3022,163 @@ function SimpleApp() {
                             ))}
                         </div>
                         
+                        {/* Application Form Card */}
+                        <div style={{
+                            background: 'white',
+                            padding: '3rem',
+                            borderRadius: '12px',
+                            border: '2px solid #d4af37',
+                            marginTop: '4rem',
+                            boxShadow: '0 4px 15px rgba(212, 175, 55, 0.15)'
+                        }}>
+                            <h3 style={{ 
+                                color: '#0f172a', 
+                                marginBottom: '1rem', 
+                                fontSize: '1.8rem', 
+                                fontWeight: '800'
+                            }}>
+                                Application Form
+                            </h3>
+                            <p style={{ 
+                                color: '#1e293b', 
+                                marginBottom: '2rem',
+                                fontSize: '1rem'
+                            }}>
+                                Please fill out the details below.
+                            </p>
+                            
+                            <form style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                                <div>
+                                    <label style={{ 
+                                        display: 'block', 
+                                        color: '#0f172a', 
+                                        fontWeight: '600', 
+                                        marginBottom: '0.5rem',
+                                        fontSize: '1rem'
+                                    }}>
+                                        Name<span style={{ color: '#ef4444' }}>*</span>
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        maxLength="50"
+                                        placeholder="Enter your full name"
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e2e8f0',
+                                            borderRadius: '8px',
+                                            fontSize: '1rem',
+                                            fontFamily: 'inherit'
+                                        }}
+                                    />
+                                    <small style={{ color: '#64748b', fontSize: '0.875rem' }}>
+                                        0 / 50 Maximum of 50 characters
+                                    </small>
+                                </div>
+                                
+                                <div>
+                                    <label style={{ 
+                                        display: 'block', 
+                                        color: '#0f172a', 
+                                        fontWeight: '600', 
+                                        marginBottom: '0.5rem',
+                                        fontSize: '1rem'
+                                    }}>
+                                        Email<span style={{ color: '#ef4444' }}>*</span>
+                                    </label>
+                                    <input 
+                                        type="email" 
+                                        placeholder="your.email@example.com"
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e2e8f0',
+                                            borderRadius: '8px',
+                                            fontSize: '1rem',
+                                            fontFamily: 'inherit'
+                                        }}
+                                    />
+                                </div>
+                                
+                                <div>
+                                    <label style={{ 
+                                        display: 'block', 
+                                        color: '#0f172a', 
+                                        fontWeight: '600', 
+                                        marginBottom: '0.5rem',
+                                        fontSize: '1rem'
+                                    }}>
+                                        Position Title / Skillset<span style={{ color: '#ef4444' }}>*</span>
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        placeholder="Example: Software Developer, Project Manager, Systems Engineer, etc."
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e2e8f0',
+                                            borderRadius: '8px',
+                                            fontSize: '1rem',
+                                            fontFamily: 'inherit'
+                                        }}
+                                    />
+                                </div>
+                                
+                                <div>
+                                    <label style={{ 
+                                        display: 'block', 
+                                        color: '#0f172a', 
+                                        fontWeight: '600', 
+                                        marginBottom: '0.5rem',
+                                        fontSize: '1rem'
+                                    }}>
+                                        Resume<span style={{ color: '#ef4444' }}>*</span>
+                                    </label>
+                                    <div style={{
+                                        border: '2px dashed #d4af37',
+                                        borderRadius: '8px',
+                                        padding: '2rem',
+                                        textAlign: 'center',
+                                        background: '#f8fafc',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s ease'
+                                    }}>
+                                        <input 
+                                            type="file" 
+                                            accept=".pdf,.doc,.docx"
+                                            style={{ display: 'none' }}
+                                            id="resume-upload"
+                                        />
+                                        <label htmlFor="resume-upload" style={{ cursor: 'pointer' }}>
+                                            <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📄</div>
+                                            <p style={{ color: '#1e293b', marginBottom: '0.25rem', fontWeight: '600' }}>
+                                                Choose a file to upload or drag and drop here
+                                            </p>
+                                            <small style={{ color: '#64748b' }}>PDF, DOC, or DOCX (max 5MB)</small>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <button 
+                                    type="submit"
+                                    style={{
+                                        background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '1rem 2rem',
+                                        borderRadius: '8px',
+                                        cursor: 'pointer',
+                                        fontWeight: '700',
+                                        fontSize: '1.1rem',
+                                        boxShadow: '0 4px 15px rgba(212, 175, 55, 0.3)',
+                                        transition: 'all 0.3s ease'
+                                    }}
+                                >
+                                    Submit Application
+                                </button>
+                            </form>
+                        </div>
+                        
                         {/* Our Benefits Section - Inspired by Vanjure */}
                         <div style={{
                             background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
