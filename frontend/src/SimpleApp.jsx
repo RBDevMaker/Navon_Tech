@@ -2954,14 +2954,6 @@ function SimpleApp() {
                                     location: '',
                                     description: 'Design, implement, and maintain secure network infrastructure for federal agencies and defense contractors.',
                                     requirements: ['CCNA/CCNP Certification', 'Network security experience', 'Government networking protocols']
-                                },
-                                {
-                                    title: 'Systems Integrator/Comms Expert',
-                                    category: 'Systems Integrator/Comms Expert',
-                                    type: 'Full-time',
-                                    location: '',
-                                    description: 'Integrate complex communication systems and ensure seamless interoperability across government platforms.',
-                                    requirements: ['Systems integration experience', 'Communications protocols', 'Federal systems knowledge']
                                 }
                             ].map((job, index) => (
                                 <div key={index} className="hover-lift animate-slide-in-left" style={{
@@ -3030,32 +3022,6 @@ function SimpleApp() {
                             ))}
                         </div>
                         
-                        <div style={{
-                            background: 'white',
-                            padding: '2rem',
-                            borderRadius: '12px',
-                            border: '2px solid #d4af37',
-                            textAlign: 'center',
-                            marginBottom: '3rem',
-                            boxShadow: '0 4px 15px rgba(212, 175, 55, 0.15)'
-                        }}>
-                            <h4 style={{ color: '#0f172a', marginBottom: '1.5rem', fontSize: '1.5rem', fontWeight: '800' }}>
-                                🔒 Secure Application Process
-                            </h4>
-                            <p style={{ 
-                                color: '#1e293b', 
-                                fontSize: '1.1rem',
-                                lineHeight: '1.7',
-                                marginBottom: '2rem',
-                                maxWidth: '700px',
-                                margin: '0 auto 2rem auto'
-                            }}>
-                                Due to the sensitive nature of our government contracts, detailed position information 
-                                and applications for senior-level roles are processed through our secure employee portal. 
-                                This ensures compliance with federal security requirements and protects sensitive project details. 
-                                Security clearance verification and background checks are required for all positions.
-                            </p>
-                        </div>
                         <div style={{
                             background: 'white',
                             padding: '3rem',
