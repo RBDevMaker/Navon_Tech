@@ -3022,60 +3022,6 @@ function SimpleApp() {
                             ))}
                         </div>
                         
-                        <div style={{
-                            background: 'white',
-                            padding: '3rem',
-                            borderRadius: '12px',
-                            border: '2px solid #d4af37',
-                            textAlign: 'center',
-                            boxShadow: '0 4px 15px rgba(212, 175, 55, 0.15)'
-                        }}>
-                            <h3 style={{ color: '#0f172a', marginBottom: '1.5rem', fontSize: '1.5rem', fontWeight: '800' }}>
-                                Why Work at NAVON Technologies?
-                            </h3>
-                            <div style={{
-                                display: 'grid',
-                                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                                gap: '2rem',
-                                marginTop: '2rem'
-                            }}>
-                                <div>
-                                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📖</div>
-                                    <h4 style={{ color: '#0f172a', marginBottom: '0.5rem', fontWeight: '700' }}>Paid Training</h4>
-                                    <p style={{ color: '#1e293b', fontSize: '0.9rem' }}>Professional certifications and continuous learning</p>
-                                </div>
-                                <div>
-                                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>💼</div>
-                                    <h4 style={{ color: '#0f172a', marginBottom: '0.5rem', fontWeight: '700' }}>Competitive Benefits</h4>
-                                    <p style={{ color: '#1e293b', fontSize: '0.9rem' }}>Health, dental, 401k, and professional development</p>
-                                </div>
-                                <div>
-                                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🏠</div>
-                                    <h4 style={{ color: '#0f172a', marginBottom: '0.5rem', fontWeight: '700' }}>Remote Flexibility</h4>
-                                    <p style={{ color: '#1e293b', fontSize: '0.9rem' }}>Work from anywhere with secure access</p>
-                                </div>
-                                <div>
-                                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🎯</div>
-                                    <h4 style={{ color: '#0f172a', marginBottom: '0.5rem', fontWeight: '700' }}>Mission Impact</h4>
-                                    <p style={{ color: '#1e293b', fontSize: '0.9rem' }}>Support critical government operations</p>
-                                </div>
-                            </div>
-                            <div style={{ marginTop: '2rem' }}>
-                                <button style={{
-                                    background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
-                                    color: '#0f172a',
-                                    border: 'none',
-                                    padding: '1rem 2rem',
-                                    borderRadius: '8px',
-                                    cursor: 'pointer',
-                                    fontWeight: '700',
-                                    fontSize: '1rem'
-                                }}>
-                                    Submit Resume
-                                </button>
-                            </div>
-                        </div>
-
                         {/* Our Benefits Section - Inspired by Vanjure */}
                         <div style={{
                             background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
