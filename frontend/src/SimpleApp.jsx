@@ -3005,19 +3005,6 @@ function SimpleApp() {
                                             ))}
                                         </ul>
                                     </div>
-                                    <button style={{
-                                        background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
-                                        color: '#0f172a',
-                                        border: 'none',
-                                        padding: '0.75rem 1.5rem',
-                                        borderRadius: '6px',
-                                        cursor: 'pointer',
-                                        fontWeight: '700',
-                                        width: '100%',
-                                        fontSize: '1rem'
-                                    }}>
-                                        Apply Now
-                                    </button>
                                 </div>
                             ))}
                         </div>
