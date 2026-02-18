@@ -34,25 +34,13 @@ Resources:
       StageName: !Ref Environment
       Cors:
         AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
-        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
-        AllowOrigin: !Ref CorsOrigin
-        MaxAge: "'600'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: "'*'"
       Auth:
         DefaultAuthorizer: CognitoAuthorizer
         Authorizers:
           CognitoAuthorizer:
             UserPoolArn: !GetAtt UserPool.Arn
-      GatewayResponses:
-        DEFAULT_4XX:
-          ResponseParameters:
-            Headers:
-              Access-Control-Allow-Origin: !Sub "'${CorsOrigin}'"
-              Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-        DEFAULT_5XX:
-          ResponseParameters:
-            Headers:
-              Access-Control-Allow-Origin: !Sub "'${CorsOrigin}'"
-              Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
 
   # Lambda Functions
   PublicContentFunction:

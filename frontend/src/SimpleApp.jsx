@@ -3037,7 +3037,7 @@ function SimpleApp() {
                                     }
 
                                     // Send to API
-                                    const apiEndpoint = 'YOUR_API_GATEWAY_URL/api/apply'; // Replace with actual API Gateway URL
+                                    const apiEndpoint = 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api/apply';
                                     const response = await fetch(apiEndpoint, {
                                         method: 'POST',
                                         headers: {
