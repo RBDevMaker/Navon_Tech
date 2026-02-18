@@ -2422,9 +2422,10 @@ function SimpleApp() {
                                     fontSize: '2rem',
                                     fontWeight: '800',
                                     lineHeight: '1.3',
-                                    textShadow: '0 0 15px rgba(212, 175, 55, 0.4)'
+                                    textShadow: '0 0 15px rgba(212, 175, 55, 0.4)',
+                                    whiteSpace: 'nowrap'
                                 }}>
-                                    Navon Technologies Achieves AWS Select Tier and Public Sector Partnership
+                                    Navon Technologies is a AWS Select Tier and Public Sector Partnership
                                 </h4>
                                 
                                 <div style={{ fontSize: '1.05rem', lineHeight: '1.8', color: '#cbd5e1' }}>
