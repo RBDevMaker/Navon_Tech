@@ -115,6 +115,32 @@ Resources:
             Auth:
               Authorizer: NONE
 
+  JobApplicationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/job-application/
+      Handler: index.handler
+      Description: Handles job application form submissions and sends emails
+      Policies:
+        - S3CrudPolicy:
+            BucketName: navon-tech-images
+        - Statement:
+            - Effect: Allow
+              Action:
+                - ses:SendEmail
+                - ses:SendRawEmail
+              Resource: "*"
+        - CloudWatchLogsFullAccess
+      Events:
+        SubmitApplication:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/apply
+            Method: POST
+            Auth:
+              Authorizer: NONE
+
   # DynamoDB Table with Security
   CompanyDataTable:
     Type: AWS::DynamoDB::Table

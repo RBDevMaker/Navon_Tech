@@ -1,0 +1,10 @@
+{
+  "name": "job-application-function",
+  "version": "1.0.0",
+  "description": "Lambda function to handle job applications",
+  "main": "index.js",
+  "dependencies": {
+    "@aws-sdk/client-ses": "^3.0.0",
+    "@aws-sdk/client-s3": "^3.0.0"
+  }
+}

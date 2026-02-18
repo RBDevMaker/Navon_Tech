@@ -916,7 +916,7 @@ function SimpleApp() {
                             </h2>
                             
                             <div className="animate-fade-in-up" style={{
-                                maxWidth: '900px',
+                                maxWidth: '1200px',
                                 margin: '2rem auto 2rem auto',
                                 background: 'rgba(15, 23, 42, 0.6)',
                                 padding: '1.5rem',
@@ -3011,7 +3011,88 @@ function SimpleApp() {
                                 Please fill out the details below.
                             </p>
                             
-                            <form style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                            <form onSubmit={async (e) => {
+                                e.preventDefault();
+                                const formData = new FormData(e.target);
+                                const name = formData.get('name');
+                                const email = formData.get('email');
+                                const position = formData.get('position');
+                                const resume = formData.get('resume');
+                                
+                                // Validate email format
+                                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                                if (!emailRegex.test(email)) {
+                                    alert('Please enter a valid email address');
+                                    return;
+                                }
+                                
+                                // Validate all required fields
+                                if (!name || !email || !position) {
+                                    alert('Please fill out all required fields');
+                                    return;
+                                }
+
+                                // Show loading state
+                                const submitButton = e.target.querySelector('button[type="submit"]');
+                                const originalText = submitButton.textContent;
+                                submitButton.textContent = 'Submitting...';
+                                submitButton.disabled = true;
+
+                                try {
+                                    // Convert resume to base64 if provided
+                                    let resumeData = null;
+                                    let resumeFileName = null;
+                                    let resumeContentType = null;
+
+                                    if (resume && resume.size > 0) {
+                                        resumeFileName = resume.name;
+                                        resumeContentType = resume.type;
+                                        
+                                        // Read file as base64
+                                        const reader = new FileReader();
+                                        resumeData = await new Promise((resolve, reject) => {
+                                            reader.onload = () => {
+                                                const base64 = reader.result.split(',')[1];
+                                                resolve(base64);
+                                            };
+                                            reader.onerror = reject;
+                                            reader.readAsDataURL(resume);
+                                        });
+                                    }
+
+                                    // Send to API
+                                    const apiEndpoint = 'YOUR_API_GATEWAY_URL/api/apply'; // Replace with actual API Gateway URL
+                                    const response = await fetch(apiEndpoint, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        },
+                                        body: JSON.stringify({
+                                            name,
+                                            email,
+                                            position,
+                                            resumeData,
+                                            resumeFileName,
+                                            resumeContentType
+                                        })
+                                    });
+
+                                    const result = await response.json();
+
+                                    if (response.ok) {
+                                        alert('✅ Application submitted successfully! We will review your application and get back to you soon.');
+                                        e.target.reset();
+                                    } else {
+                                        throw new Error(result.message || 'Failed to submit application');
+                                    }
+                                } catch (error) {
+                                    console.error('Error submitting application:', error);
+                                    alert('❌ Failed to submit application. Please try again or email your application directly to HR@navontech.com');
+                                } finally {
+                                    submitButton.textContent = originalText;
+                                    submitButton.disabled = false;
+                                }
+                            }}>
                                 <div>
                                     <label style={{ 
                                         display: 'block', 
@@ -3023,7 +3104,9 @@ function SimpleApp() {
                                         Name<span style={{ color: '#ef4444' }}>*</span>
                                     </label>
                                     <input 
-                                        type="text" 
+                                        type="text"
+                                        name="name"
+                                        required
                                         maxLength="50"
                                         placeholder="Enter your full name"
                                         style={{
@@ -3036,7 +3119,7 @@ function SimpleApp() {
                                         }}
                                     />
                                     <small style={{ color: '#64748b', fontSize: '0.875rem' }}>
-                                        0 / 50 Maximum of 50 characters
+                                        Maximum of 50 characters
                                     </small>
                                 </div>
                                 
@@ -3051,7 +3134,10 @@ function SimpleApp() {
                                         Email<span style={{ color: '#ef4444' }}>*</span>
                                     </label>
                                     <input 
-                                        type="email" 
+                                        type="email"
+                                        name="email"
+                                        required
+                                        pattern="[^\s@]+@[^\s@]+\.[^\s@]+"
                                         placeholder="your.email@example.com"
                                         style={{
                                             width: '100%',
@@ -3075,7 +3161,9 @@ function SimpleApp() {
                                         Position Title / Skillset<span style={{ color: '#ef4444' }}>*</span>
                                     </label>
                                     <input 
-                                        type="text" 
+                                        type="text"
+                                        name="position"
+                                        required
                                         placeholder="Example: Software Developer, Project Manager, Systems Engineer, etc."
                                         style={{
                                             width: '100%',
@@ -3108,7 +3196,9 @@ function SimpleApp() {
                                         transition: 'all 0.3s ease'
                                     }}>
                                         <input 
-                                            type="file" 
+                                            type="file"
+                                            name="resume"
+                                            required
                                             accept=".pdf,.doc,.docx"
                                             style={{ display: 'none' }}
                                             id="resume-upload"
