@@ -3213,23 +3213,25 @@ function SimpleApp() {
                                     </div>
                                 </div>
                                 
-                                <button 
-                                    type="submit"
-                                    style={{
-                                        background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
-                                        color: 'white',
-                                        border: 'none',
-                                        padding: '1rem 2rem',
-                                        borderRadius: '8px',
-                                        cursor: 'pointer',
-                                        fontWeight: '700',
-                                        fontSize: '1.1rem',
-                                        boxShadow: '0 4px 15px rgba(212, 175, 55, 0.3)',
-                                        transition: 'all 0.3s ease'
-                                    }}
-                                >
-                                    Submit Application
-                                </button>
+                                <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+                                    <button 
+                                        type="submit"
+                                        style={{
+                                            background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
+                                            color: 'white',
+                                            border: 'none',
+                                            padding: '1rem 2rem',
+                                            borderRadius: '8px',
+                                            cursor: 'pointer',
+                                            fontWeight: '700',
+                                            fontSize: '1.1rem',
+                                            boxShadow: '0 4px 15px rgba(212, 175, 55, 0.3)',
+                                            transition: 'all 0.3s ease'
+                                        }}
+                                    >
+                                        Submit Application
+                                    </button>
+                                </div>
                             </form>
                         </div>
                         
