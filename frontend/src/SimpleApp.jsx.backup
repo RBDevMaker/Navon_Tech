@@ -1296,8 +1296,8 @@ function SimpleApp() {
                                     alignItems: 'center'
                                 }}>
                                     {[
-                                        'public_sector_partner.jpeg',
-                                        'select_tier_partner.jpeg'
+                                        'Certifications/public_sector_partner.jpeg',
+                                        'Certifications/select_tier_partner.jpeg'
                                     ].map((cert, index) => (
                                         <div key={index} className="hover-lift animate-scale-in" style={{
                                             background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
@@ -1310,7 +1310,7 @@ function SimpleApp() {
                                             opacity: 0
                                         }}>
                                         <img
-                                            src={`${s3BaseUrl}/public/images/partners/${cert}`}
+                                            src={`${s3BaseUrl}/public/images/Certifications/${cert}`}
                                             alt={`Certification ${index + 1}`}
                                             style={{
                                                 maxWidth: '100%',

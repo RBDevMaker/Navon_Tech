@@ -1684,87 +1684,49 @@ function SimpleApp() {
                                 </h3>
                                 <div style={{
                                     display: 'grid',
-                                    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                                    gridTemplateColumns: 'repeat(4, 1fr)',
                                     gap: '2rem',
                                     alignItems: 'center'
                                 }}>
                                     {[
+                                        'CCIE RS.png',
+                                        'CCIE Data Center.png',
+                                        'CCIE Service Provider.png',
+                                        'PMP.png',
+                                        'PMI ACP.png',
+                                        'SCRUM.png',
                                         'public_sector_partner.jpeg',
-                                        'select_tier_partner.jpeg'
+                                        'select_tier_partner.jpeg',
+                                        'AWS Business Accredited.jpeg',
+                                        'AWS Sales Accredited.jpeg',
+                                        'AWS Cloud Practitioner.jpeg',
+                                        'AWS Solution Architect.jpeg',
+                                        'AWS Certified Developer.jpeg'
                                     ].map((cert, index) => (
                                         <div key={index} className="hover-lift animate-scale-in" style={{
                                             background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
-                                            padding: '2.5rem',
+                                            padding: '1.5rem',
                                             borderRadius: '20px',
                                             textAlign: 'center',
                                             border: '2px solid #d4af37',
                                             boxShadow: '0 10px 40px rgba(212, 175, 55, 0.2)',
                                             animationDelay: `${index * 0.2}s`,
-                                            opacity: 0
+                                            opacity: 0,
+                                            aspectRatio: '1',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center'
                                         }}>
                                         <img
-                                            src={`${s3BaseUrl}/public/images/partners/${cert}`}
+                                            src={`${s3BaseUrl}/public/images/Certifications/${cert}`}
                                             alt={`Certification ${index + 1}`}
                                             style={{
-                                                maxWidth: '100%',
-                                                height: '100px',
+                                                maxWidth: '80%',
+                                                maxHeight: '80%',
                                                 objectFit: 'contain'
                                             }}
                                             onError={(e) => { e.target.style.display = 'none'; }}
                                         />
-                                    </div>
-                                ))}
-
-                                {/* AWS Certification Placeholders */}
-                                {[
-                                    'AWS Certified Cloud Practitioner',
-                                    'AWS Certified Developer',
-                                    'AWS Solutions Architect',
-                                    'AWS Cloud Business Accreditation',
-                                    'Scrum Alliance (CSM) Certified',
-                                    'Agile Certified Practitioner',
-                                    'CCIE Routing and Switching',
-                                    'CCIE Service Provider',
-                                    'CCIE Data Center',
-                                    'Project Management Professional (PMP)'
-                                ].map((awsCert, index) => (
-                                    <div key={`aws-${index}`} className="hover-lift animate-scale-in" style={{
-                                        background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
-                                        padding: '2rem',
-                                        borderRadius: '20px',
-                                        textAlign: 'center',
-                                        border: '2px solid rgba(212, 175, 55, 0.5)',
-                                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.15)',
-                                        minHeight: '140px',
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        justifyContent: 'center',
-                                        animationDelay: `${(index + 2) * 0.1}s`,
-                                        opacity: 0
-                                    }}>
-                                        <div style={{
-                                            width: '60px',
-                                            height: '60px',
-                                            background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
-                                            borderRadius: '12px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            margin: '0 auto 1rem auto',
-                                            color: 'white',
-                                            fontSize: '1.5rem',
-                                            boxShadow: '0 4px 15px rgba(212, 175, 55, 0.3)'
-                                        }}>
-                                            ☁️
-                                        </div>
-                                        <h4 style={{
-                                            color: '#d4af37',
-                                            margin: 0,
-                                            fontSize: '1rem',
-                                            fontWeight: '700'
-                                        }}>
-                                            {awsCert}
-                                        </h4>
                                     </div>
                                 ))}
                             </div>
@@ -1787,15 +1749,17 @@ function SimpleApp() {
                                     display: 'grid',
                                     gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
                                     gap: '3rem',
-                                    alignItems: 'center'
+                                    alignItems: 'stretch'
                                 }}>
                                     <div className="hover-lift animate-scale-in" style={{
                                         background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
                                         padding: '2.5rem',
                                         borderRadius: '20px',
                                         textAlign: 'center',
-                                        border: '2px solid #d4af37',
-                                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.2)'
+                                        border: '3px solid #d4af37',
+                                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.2)',
+                                        animationDelay: '0.2s',
+                                        opacity: 0
                                     }}>
                                         <img
                                             src={`${s3BaseUrl}/public/images/partners/sba.jpeg`}
@@ -1821,6 +1785,17 @@ function SimpleApp() {
                                         enabling participation in federal set-aside contracts and
                                         small business procurement opportunities.
                                     </p>
+                                    <img
+                                        src={`${s3BaseUrl}/public/images/Certifications/SDVOSB.png`}
+                                        alt="SDVOSB Certification"
+                                        style={{
+                                            maxWidth: '100%',
+                                            height: '120px',
+                                            objectFit: 'contain',
+                                            marginTop: '3rem'
+                                        }}
+                                        onError={(e) => { e.target.style.display = 'none'; }}
+                                    />
                                 </div>
                                 <div className="hover-lift animate-scale-in" style={{
                                     background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',

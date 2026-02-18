@@ -1153,7 +1153,7 @@ function SimpleApp() {
                                             opacity: 0
                                         }}>
                                         <img
-                                            src={`${s3BaseUrl}/public/images/partners/${cert}`}
+                                            src={`${s3BaseUrl}/public/images/Certifications/${cert}`}
                                             alt={`Certification ${index + 1}`}
                                             style={{
                                                 maxWidth: '100%',
