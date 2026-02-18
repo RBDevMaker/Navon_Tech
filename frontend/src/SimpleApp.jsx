@@ -3178,8 +3178,21 @@ function SimpleApp() {
                                             accept=".pdf,.doc,.docx"
                                             style={{ display: 'none' }}
                                             id="resume-upload"
+                                            onChange={(e) => {
+                                                const file = e.target.files[0];
+                                                const label = document.getElementById('file-label');
+                                                if (file) {
+                                                    label.innerHTML = `
+                                                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">✅</div>
+                                                        <p style="color: #16a34a; margin-bottom: 0.25rem; font-weight: 600;">
+                                                            ${file.name}
+                                                        </p>
+                                                        <small style="color: #64748b;">${(file.size / 1024 / 1024).toFixed(2)} MB</small>
+                                                    `;
+                                                }
+                                            }}
                                         />
-                                        <label htmlFor="resume-upload" style={{ cursor: 'pointer' }}>
+                                        <label htmlFor="resume-upload" id="file-label" style={{ cursor: 'pointer' }}>
                                             <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📄</div>
                                             <p style={{ color: '#1e293b', marginBottom: '0.25rem', fontWeight: '600' }}>
                                                 Choose a file to upload or drag and drop here
