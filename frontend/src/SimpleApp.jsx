@@ -2419,13 +2419,13 @@ function SimpleApp() {
                                 <h4 style={{ 
                                     color: '#d4af37', 
                                     marginBottom: '1.5rem', 
-                                    fontSize: '2rem',
+                                    fontSize: '1.8rem',
                                     fontWeight: '800',
                                     lineHeight: '1.3',
                                     textShadow: '0 0 15px rgba(212, 175, 55, 0.4)',
-                                    whiteSpace: 'nowrap'
+                                    textAlign: 'center'
                                 }}>
-                                    Navon Technologies is a AWS Select Tier and Public Sector Partnership
+                                    Navon Technologies is a AWS Select Tier and Public Sector Partner
                                 </h4>
                                 
                                 <div style={{ fontSize: '1.05rem', lineHeight: '1.8', color: '#cbd5e1' }}>
