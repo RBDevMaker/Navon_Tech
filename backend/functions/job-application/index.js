@@ -78,9 +78,9 @@ exports.handler = async (event) => {
 
         // Send email via SES
         const emailParams = {
-            Source: 'HR@navontech.com', // Must be verified in SES
+            Source: 'hr@navontech.com', // Must be verified in SES
             Destination: {
-                ToAddresses: ['HR@navontech.com']
+                ToAddresses: ['hr@navontech.com']
             },
             Message: {
                 Subject: {
