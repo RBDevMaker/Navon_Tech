@@ -941,62 +941,9 @@ function SimpleApp() {
 
                     {/* Gold Divider */}
                     <div style={{
-                        height: '2px',
-                        background: 'linear-gradient(90deg, transparent 0%, #d4af37 50%, transparent 100%)',
-                        boxShadow: '0 0 20px rgba(212, 175, 55, 0.4)',
-                        margin: '0'
-                    }}></div>
-
-                    {/* Capability Statement Section */}
-                    <section style={{ 
-                        padding: '4rem 2rem', 
-                        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-                        textAlign: 'center'
-                    }}>
-                        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-                            <h2 style={{
-                                fontSize: '2.5rem',
-                                color: '#d4af37',
-                                marginBottom: '1.5rem',
-                                fontWeight: '700'
-                            }}>
-                                Learn More About Our Capabilities
-                            </h2>
-                            <p style={{
-                                fontSize: '1.2rem',
-                                color: '#cbd5e1',
-                                marginBottom: '2.5rem',
-                                lineHeight: '1.8'
-                            }}>
-                                Download our comprehensive capability statement to discover how we can help transform your business with cutting-edge technology solutions.
-                            </p>
-                            <a href={`${s3BaseUrl}/public/images/NAVON_Technologies_Capability_Statement_2026.pdf`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{
-                                    background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '1.2rem 2.5rem',
-                                    fontSize: '1.1rem',
-                                    borderRadius: '12px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600',
-                                    textDecoration: 'none',
-                                    display: 'inline-block',
-                                    boxShadow: '0 10px 30px rgba(245, 158, 11, 0.3)',
-                                    transition: 'all 0.3s ease'
-                                }}>
-                                📄 Download Capability Statement
-                            </a>
-                        </div>
-                    </section>
-
-                    {/* Gold Divider */}
-                    <div style={{
-                        height: '2px',
-                        background: 'linear-gradient(90deg, transparent 0%, #d4af37 50%, transparent 100%)',
-                        boxShadow: '0 0 20px rgba(212, 175, 55, 0.4)',
+                        height: '5px',
+                        background: 'linear-gradient(90deg, transparent 0%, #d4af37 10%, #d4af37 90%, transparent 100%)',
+                        boxShadow: '0 0 40px rgba(212, 175, 55, 0.8), 0 0 20px rgba(212, 175, 55, 0.6)',
                         margin: '0'
                     }}></div>
 
@@ -1208,6 +1155,14 @@ function SimpleApp() {
                         </div>
                     </section>
 
+                    {/* Gold Divider */}
+                    <div style={{
+                        height: '5px',
+                        background: 'linear-gradient(90deg, transparent 0%, #d4af37 10%, #d4af37 90%, transparent 100%)',
+                        boxShadow: '0 0 40px rgba(212, 175, 55, 0.8), 0 0 20px rgba(212, 175, 55, 0.6)',
+                        margin: '0'
+                    }}></div>
+
                     {/* Trusted Partners Section */}
                     <section style={{ 
                         padding: '5rem 2rem', 
@@ -1241,7 +1196,7 @@ function SimpleApp() {
                         
                         <div style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
                             <h2 className="animate-fade-in-up" style={{
-                                fontSize: '4.5rem',
+                                fontSize: '3rem',
                                 marginBottom: '1rem',
                                 textAlign: 'center',
                                 color: '#d4af37',
@@ -1441,36 +1396,58 @@ function SimpleApp() {
                         margin: '0'
                     }}></div>
 
-                    {/* Capability Statement Link */}
-                    <div style={{ 
-                        background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 100%)',
-                        padding: '3rem 2rem',
+                    {/* Capability Statement Section */}
+                    <section style={{ 
+                        padding: '4rem 2rem', 
+                        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
                         textAlign: 'center'
                     }}>
-                        <div className="animate-fade-in-up" style={{ 
-                            animationDelay: '0.2s',
-                            opacity: 0,
-                            animation: 'fadeInUp 0.8s ease-out 0.2s forwards'
-                        }}>
+                        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+                            <h2 style={{
+                                fontSize: '2.5rem',
+                                color: '#d4af37',
+                                marginBottom: '1.5rem',
+                                fontWeight: '700'
+                            }}>
+                                Learn More About Our Capabilities
+                            </h2>
+                            <p style={{
+                                fontSize: '1.2rem',
+                                color: '#cbd5e1',
+                                marginBottom: '2.5rem',
+                                lineHeight: '1.8'
+                            }}>
+                                Download our comprehensive capability statement to discover how we can help transform your business with cutting-edge technology solutions.
+                            </p>
                             <a href={`${s3BaseUrl}/public/images/NAVON_Technologies_Capability_Statement_2026.pdf`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 style={{
                                     background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
                                     color: 'white',
+                                    border: 'none',
                                     padding: '1.2rem 2.5rem',
-                                    borderRadius: '12px',
-                                    textDecoration: 'none',
-                                    fontWeight: '700',
-                                    display: 'inline-block',
                                     fontSize: '1.1rem',
-                                    boxShadow: '0 8px 25px rgba(212, 175, 55, 0.4)',
+                                    borderRadius: '12px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    textDecoration: 'none',
+                                    display: 'inline-block',
+                                    boxShadow: '0 10px 30px rgba(245, 158, 11, 0.3)',
                                     transition: 'all 0.3s ease'
                                 }}>
-                                📄 Download Our Capability Statement
+                                📄 Download Capability Statement
                             </a>
                         </div>
-                    </div>
+                    </section>
+
+                    {/* Gold Divider */}
+                    <div className="animate-pulse" style={{
+                        height: '3px',
+                        background: 'linear-gradient(90deg, transparent 0%, #d4af37 50%, transparent 100%)',
+                        boxShadow: '0 0 20px rgba(212, 175, 55, 0.5)',
+                        margin: '0'
+                    }}></div>
 
                     {/* Mission Critical Section */}
                     <section style={{ padding: '5rem 2rem', background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 100%)' }}>
