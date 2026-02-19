@@ -153,7 +153,7 @@ This application was submitted through the Navon Technologies career portal.
                                             <p><strong>Resume:</strong> ${resumeUrl ? 'Attached' : 'Not provided'}</p>
                                         </div>
 
-                                        <p>Our HR team will review your application and contact you if your qualifications match our current needs. This process typically takes 1-2 weeks.</p>
+                                        <p>Our HR team will review your application and contact you if your qualifications match our current needs. This process typically takes 24-48 hours.</p>
                                         
                                         <p>If you have any questions, please feel free to reply to this email.</p>
                                         
@@ -185,7 +185,7 @@ Application Summary:
 - Email: ${email}
 - Resume: ${resumeUrl ? 'Attached' : 'Not provided'}
 
-Our HR team will review your application and contact you if your qualifications match our current needs. This process typically takes 1-2 weeks.
+Our HR team will review your application and contact you if your qualifications match our current needs. This process typically takes 24-48 hours.
 
 If you have any questions, please feel free to reply to this email.
 
