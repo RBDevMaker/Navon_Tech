@@ -1526,7 +1526,206 @@ function SimpleApp() {
                             </div>
                         </div>
                     </section>
-                        
+
+                        {/* Contract Vehicles & SBA Section */}
+                        <section style={{ padding: '5rem 2rem', background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)' }}>
+                            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                                <h3 className="animate-fade-in-up" style={{
+                                    fontSize: '2.5rem',
+                                    marginBottom: '3rem',
+                                    textAlign: 'center',
+                                    color: '#1e293b',
+                                    fontWeight: '800'
+                                }}>
+                                    Contract Vehicles & <span style={{ color: '#d4af37' }}>SBA Certification</span>
+                                </h3>
+                                <div style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+                                    gap: '3rem',
+                                    alignItems: 'stretch'
+                                }}>
+                                    <div className="hover-lift animate-scale-in" style={{
+                                        background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
+                                        padding: '2.5rem',
+                                        borderRadius: '20px',
+                                        textAlign: 'center',
+                                        border: '3px solid #d4af37',
+                                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.2)',
+                                        animationDelay: '0.2s',
+                                        opacity: 0
+                                    }}>
+                                        <img
+                                            src={`${s3BaseUrl}/public/images/partners/sba.jpeg`}
+                                            alt="SBA Small Business Certification"
+                                            style={{
+                                                maxWidth: '100%',
+                                                height: '120px',
+                                                objectFit: 'contain',
+                                                marginBottom: '1rem'
+                                            }}
+                                            onError={(e) => { e.target.style.display = 'none'; }}
+                                        />
+                                        <h4 style={{ 
+                                            color: '#d4af37', 
+                                            marginBottom: '1rem',
+                                            fontSize: '1.3rem',
+                                            fontWeight: '700'
+                                        }}>
+                                        SBA Certified Small Business
+                                    </h4>
+                                    <p style={{ color: '#cbd5e1', lineHeight: '1.6', fontSize: '1.05rem' }}>
+                                        Certified Small Business Enterprise with SBA registration,
+                                        enabling participation in federal set-aside contracts and
+                                        small business procurement opportunities.
+                                    </p>
+                                    <img
+                                        src={`${s3BaseUrl}/public/images/Certifications/SDVOSB.png`}
+                                        alt="SDVOSB Certification"
+                                        style={{
+                                            maxWidth: '100%',
+                                            height: '120px',
+                                            objectFit: 'contain',
+                                            marginTop: '3rem'
+                                        }}
+                                        onError={(e) => { e.target.style.display = 'none'; }}
+                                    />
+                                </div>
+                                <div className="hover-lift animate-scale-in" style={{
+                                    background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
+                                    padding: '2.5rem',
+                                    borderRadius: '20px',
+                                    border: '3px solid #d4af37',
+                                    boxShadow: '0 10px 40px rgba(212, 175, 55, 0.2)',
+                                    animationDelay: '0.2s',
+                                    opacity: 0
+                                }}>
+                                    <h4 style={{ 
+                                        color: '#d4af37', 
+                                        marginBottom: '1.5rem', 
+                                        textAlign: 'center',
+                                        fontSize: '1.5rem',
+                                        fontWeight: '700',
+                                        textShadow: '0 0 15px rgba(212, 175, 55, 0.4)'
+                                    }}>
+                                        Available Contract Vehicles
+                                    </h4>
+                                    <div style={{ textAlign: 'left' }}>
+                                        {[
+                                            { name: 'GSA Schedule 70', desc: 'IT Products, Services & Solutions' },
+                                            { name: 'SEWP VI', desc: 'Solutions for Enterprise-Wide Procurement' },
+                                            { name: 'CIO-SP3', desc: 'Chief Information Officer-Solutions and Partners 3' },
+                                            { name: 'Direct Awards', desc: 'Prime and subcontractor opportunities' }
+                                        ].map((vehicle, index) => (
+                                            <div key={index} style={{ 
+                                                marginBottom: '1rem', 
+                                                padding: '1rem', 
+                                                background: 'rgba(255, 255, 255, 0.05)', 
+                                                borderRadius: '12px',
+                                                border: '1px solid rgba(212, 175, 55, 0.3)',
+                                                boxShadow: '0 2px 8px rgba(212, 175, 55, 0.1)'
+                                            }}>
+                                                <div style={{ fontWeight: '700', color: '#d4af37', marginBottom: '0.25rem', fontSize: '1.05rem' }}>
+                                                    {vehicle.name}
+                                                </div>
+                                                <div style={{ fontSize: '0.95rem', color: '#cbd5e1' }}>
+                                                    {vehicle.desc}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                        {/* Certifications Section */}
+                        <section id="certifications" style={{ 
+                            padding: '5rem 2rem', 
+                            background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.50) 0%, rgba(30, 41, 59, 0.45) 50%, rgba(51, 65, 85, 0.50) 100%), url("https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80") center/cover',
+                            position: 'relative',
+                            overflow: 'hidden'
+                        }}>
+                            {/* Diagonal Gold Lines Background */}
+                            <div style={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
+                                background: `repeating-linear-gradient(
+                                    45deg,
+                                    transparent,
+                                    transparent 80px,
+                                    rgba(212, 175, 55, 0.15) 80px,
+                                    rgba(212, 175, 55, 0.15) 82px
+                                )`,
+                                pointerEvents: 'none',
+                                zIndex: 0
+                            }}></div>
+                            
+                            <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+                                <h3 className="animate-fade-in-up" style={{
+                                    fontSize: '2.5rem',
+                                    marginBottom: '3rem',
+                                    textAlign: 'center',
+                                    color: '#d4af37',
+                                    fontWeight: '800',
+                                    textShadow: '0 0 20px rgba(212, 175, 55, 0.4)'
+                                }}>
+                                    Certifications
+                                </h3>
+                                <div style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(4, 1fr)',
+                                    gap: '2rem',
+                                    alignItems: 'center'
+                                }}>
+                                    {[
+                                        'CCIE RS.png',
+                                        'CCIE Data Center.png',
+                                        'CCIE Service Provider.png',
+                                        'PMP.png',
+                                        'PMI ACP.png',
+                                        'SCRUM.png',
+                                        'public_sector_partner.jpeg',
+                                        'select_tier_partner.jpeg',
+                                        'AWS Business Accredited.jpeg',
+                                        'AWS Sales Accredited.jpeg',
+                                        'AWS Cloud Practitioner.jpeg',
+                                        'AWS Solution Architect.jpeg',
+                                        'AWS Certified Developer.jpeg'
+                                    ].map((cert, index) => (
+                                        <div key={index} className="hover-lift animate-scale-in" style={{
+                                            background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
+                                            padding: '1.5rem',
+                                            borderRadius: '20px',
+                                            textAlign: 'center',
+                                            border: '2px solid #d4af37',
+                                            boxShadow: '0 10px 40px rgba(212, 175, 55, 0.2)',
+                                            animationDelay: `${index * 0.2}s`,
+                                            opacity: 0,
+                                            aspectRatio: '1',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center'
+                                        }}>
+                                        <img
+                                            src={`${s3BaseUrl}/public/images/Certifications/${cert}`}
+                                            alt={`Certification ${index + 1}`}
+                                            style={{
+                                                maxWidth: '80%',
+                                                maxHeight: '80%',
+                                                objectFit: 'contain'
+                                            }}
+                                            onError={(e) => { e.target.style.display = 'none'; }}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+
                         {/* Mission, Vision, Values, Brand */}
                         <section style={{ padding: '5rem 2rem', background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)' }}>
                             <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
@@ -1649,204 +1848,6 @@ function SimpleApp() {
                             </div>
                         </section>
 
-                        {/* Certifications Section */}
-                        <section id="certifications" style={{ 
-                            padding: '5rem 2rem', 
-                            background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.50) 0%, rgba(30, 41, 59, 0.45) 50%, rgba(51, 65, 85, 0.50) 100%), url("https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80") center/cover',
-                            position: 'relative',
-                            overflow: 'hidden'
-                        }}>
-                            {/* Diagonal Gold Lines Background */}
-                            <div style={{
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                right: 0,
-                                bottom: 0,
-                                background: `repeating-linear-gradient(
-                                    45deg,
-                                    transparent,
-                                    transparent 80px,
-                                    rgba(212, 175, 55, 0.15) 80px,
-                                    rgba(212, 175, 55, 0.15) 82px
-                                )`,
-                                pointerEvents: 'none',
-                                zIndex: 0
-                            }}></div>
-                            
-                            <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
-                                <h3 className="animate-fade-in-up" style={{
-                                    fontSize: '2.5rem',
-                                    marginBottom: '3rem',
-                                    textAlign: 'center',
-                                    color: '#d4af37',
-                                    fontWeight: '800',
-                                    textShadow: '0 0 20px rgba(212, 175, 55, 0.4)'
-                                }}>
-                                    Certifications
-                                </h3>
-                                <div style={{
-                                    display: 'grid',
-                                    gridTemplateColumns: 'repeat(4, 1fr)',
-                                    gap: '2rem',
-                                    alignItems: 'center'
-                                }}>
-                                    {[
-                                        'CCIE RS.png',
-                                        'CCIE Data Center.png',
-                                        'CCIE Service Provider.png',
-                                        'PMP.png',
-                                        'PMI ACP.png',
-                                        'SCRUM.png',
-                                        'public_sector_partner.jpeg',
-                                        'select_tier_partner.jpeg',
-                                        'AWS Business Accredited.jpeg',
-                                        'AWS Sales Accredited.jpeg',
-                                        'AWS Cloud Practitioner.jpeg',
-                                        'AWS Solution Architect.jpeg',
-                                        'AWS Certified Developer.jpeg'
-                                    ].map((cert, index) => (
-                                        <div key={index} className="hover-lift animate-scale-in" style={{
-                                            background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
-                                            padding: '1.5rem',
-                                            borderRadius: '20px',
-                                            textAlign: 'center',
-                                            border: '2px solid #d4af37',
-                                            boxShadow: '0 10px 40px rgba(212, 175, 55, 0.2)',
-                                            animationDelay: `${index * 0.2}s`,
-                                            opacity: 0,
-                                            aspectRatio: '1',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center'
-                                        }}>
-                                        <img
-                                            src={`${s3BaseUrl}/public/images/Certifications/${cert}`}
-                                            alt={`Certification ${index + 1}`}
-                                            style={{
-                                                maxWidth: '80%',
-                                                maxHeight: '80%',
-                                                objectFit: 'contain'
-                                            }}
-                                            onError={(e) => { e.target.style.display = 'none'; }}
-                                        />
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </section>
-
-                        {/* Contract Vehicles & SBA Section */}
-                        <section style={{ padding: '5rem 2rem', background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)' }}>
-                            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-                                <h3 className="animate-fade-in-up" style={{
-                                    fontSize: '2.5rem',
-                                    marginBottom: '3rem',
-                                    textAlign: 'center',
-                                    color: '#1e293b',
-                                    fontWeight: '800'
-                                }}>
-                                    Contract Vehicles & <span style={{ color: '#d4af37' }}>SBA Certification</span>
-                                </h3>
-                                <div style={{
-                                    display: 'grid',
-                                    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-                                    gap: '3rem',
-                                    alignItems: 'stretch'
-                                }}>
-                                    <div className="hover-lift animate-scale-in" style={{
-                                        background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
-                                        padding: '2.5rem',
-                                        borderRadius: '20px',
-                                        textAlign: 'center',
-                                        border: '3px solid #d4af37',
-                                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.2)',
-                                        animationDelay: '0.2s',
-                                        opacity: 0
-                                    }}>
-                                        <img
-                                            src={`${s3BaseUrl}/public/images/partners/sba.jpeg`}
-                                            alt="SBA Small Business Certification"
-                                            style={{
-                                                maxWidth: '100%',
-                                                height: '120px',
-                                                objectFit: 'contain',
-                                                marginBottom: '1rem'
-                                            }}
-                                            onError={(e) => { e.target.style.display = 'none'; }}
-                                        />
-                                        <h4 style={{ 
-                                            color: '#d4af37', 
-                                            marginBottom: '1rem',
-                                            fontSize: '1.3rem',
-                                            fontWeight: '700'
-                                        }}>
-                                        SBA Certified Small Business
-                                    </h4>
-                                    <p style={{ color: '#cbd5e1', lineHeight: '1.6', fontSize: '1.05rem' }}>
-                                        Certified Small Business Enterprise with SBA registration,
-                                        enabling participation in federal set-aside contracts and
-                                        small business procurement opportunities.
-                                    </p>
-                                    <img
-                                        src={`${s3BaseUrl}/public/images/Certifications/SDVOSB.png`}
-                                        alt="SDVOSB Certification"
-                                        style={{
-                                            maxWidth: '100%',
-                                            height: '120px',
-                                            objectFit: 'contain',
-                                            marginTop: '3rem'
-                                        }}
-                                        onError={(e) => { e.target.style.display = 'none'; }}
-                                    />
-                                </div>
-                                <div className="hover-lift animate-scale-in" style={{
-                                    background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
-                                    padding: '2.5rem',
-                                    borderRadius: '20px',
-                                    border: '3px solid #d4af37',
-                                    boxShadow: '0 10px 40px rgba(212, 175, 55, 0.2)',
-                                    animationDelay: '0.2s',
-                                    opacity: 0
-                                }}>
-                                    <h4 style={{ 
-                                        color: '#d4af37', 
-                                        marginBottom: '1.5rem', 
-                                        textAlign: 'center',
-                                        fontSize: '1.5rem',
-                                        fontWeight: '700',
-                                        textShadow: '0 0 15px rgba(212, 175, 55, 0.4)'
-                                    }}>
-                                        Available Contract Vehicles
-                                    </h4>
-                                    <div style={{ textAlign: 'left' }}>
-                                        {[
-                                            { name: 'GSA Schedule 70', desc: 'IT Products, Services & Solutions' },
-                                            { name: 'SEWP VI', desc: 'Solutions for Enterprise-Wide Procurement' },
-                                            { name: 'CIO-SP3', desc: 'Chief Information Officer-Solutions and Partners 3' },
-                                            { name: 'Direct Awards', desc: 'Prime and subcontractor opportunities' }
-                                        ].map((vehicle, index) => (
-                                            <div key={index} style={{ 
-                                                marginBottom: '1rem', 
-                                                padding: '1rem', 
-                                                background: 'rgba(255, 255, 255, 0.05)', 
-                                                borderRadius: '12px',
-                                                border: '1px solid rgba(212, 175, 55, 0.3)',
-                                                boxShadow: '0 2px 8px rgba(212, 175, 55, 0.1)'
-                                            }}>
-                                                <div style={{ fontWeight: '700', color: '#d4af37', marginBottom: '0.25rem', fontSize: '1.05rem' }}>
-                                                    {vehicle.name}
-                                                </div>
-                                                <div style={{ fontSize: '0.95rem', color: '#cbd5e1' }}>
-                                                    {vehicle.desc}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
                 </div>
             )}
             {/* CAPABILITIES PAGE */}
