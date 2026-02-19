@@ -109,7 +109,7 @@ Resources:
       CodeUri: functions/job-application/
       Handler: index.handler
       Description: Handles job application form submissions and sends emails
-      MemorySize: 512
+      MemorySize: 1024
       Timeout: 30
       Policies:
         - S3CrudPolicy:
