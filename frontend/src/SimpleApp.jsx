@@ -3530,14 +3530,18 @@ function SimpleApp() {
                         zIndex: 0
                     }}></div>
 
-                    <div style={{ maxWidth: '1000px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+                    <div style={{ maxWidth: '1000px', margin: '0 auto', position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                         <h2 className="animate-fade-in-up" style={{
                             fontSize: '2.5rem',
                             marginBottom: '2rem',
                             textAlign: 'center',
                             fontWeight: '800',
-                            color: '#d4af37',
-                            textShadow: '0 0 20px rgba(212, 175, 55, 0.4)'
+                            color: '#0f172a',
+                            textShadow: '0 2px 4px rgba(255, 255, 255, 0.3)',
+                            background: 'linear-gradient(135deg, #d4af37 0%, #f4e5a1 50%, #d4af37 100%)',
+                            padding: '1rem 2rem',
+                            borderRadius: '8px',
+                            boxShadow: '0 0 30px rgba(212, 175, 55, 0.6)'
                         }}>
                             Ready to Secure Your Mission?
                         </h2>
@@ -3598,6 +3602,17 @@ function SimpleApp() {
                                     clipPath: 'polygon(100% 0, 100% 100%, 0 100%)'
                                 }}></div>
                                 
+                                <h3 style={{ marginBottom: '2rem', fontSize: '2rem', fontWeight: '800', color: '#0f172a', position: 'relative', zIndex: 1 }}>Contact Information</h3>
+                                <p style={{ marginBottom: '1.5rem', fontSize: '1.3rem', lineHeight: '1.8', color: '#1e293b', position: 'relative', zIndex: 1 }}>
+                                    <strong>Address:</strong><br />
+                                    161 Fort Evans Rd NE STE 210<br />
+                                    Leesburg, VA 20176<br /><br />
+                                    <strong>Email:</strong> info@navontechnologies.com<br />
+                                    <strong>Phone:</strong> 571-477-2727<br />
+                                    <strong>Fax:</strong> 571-477-2727<br />
+                                    <strong>Response Time:</strong> 24 hours
+                                </p>
+                                
                                 <div style={{
                                     width: '80px',
                                     height: '80px',
@@ -3606,20 +3621,13 @@ function SimpleApp() {
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    margin: '0 auto 1.5rem auto',
+                                    margin: '0 auto',
                                     boxShadow: '0 10px 30px rgba(212, 175, 55, 0.4)',
                                     position: 'relative',
                                     zIndex: 1
                                 }}>
                                     <span style={{ fontSize: '2.5rem' }}>📧</span>
                                 </div>
-                                <h3 style={{ marginBottom: '2rem', fontSize: '2rem', fontWeight: '800', color: '#0f172a', position: 'relative', zIndex: 1 }}>Contact Information</h3>
-                                <p style={{ marginBottom: '1rem', fontSize: '1.3rem', lineHeight: '1.8', color: '#1e293b', position: 'relative', zIndex: 1 }}>
-                                    Email: info@navontechnologies.com<br />
-                                    Phone: 571-477-2727<br />
-                                    Fax: 571-477-2727<br />
-                                    Response Time: 24 hours
-                                </p>
                             </div>
                         </div>
                         
