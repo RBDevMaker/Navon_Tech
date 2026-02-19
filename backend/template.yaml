@@ -109,6 +109,8 @@ Resources:
       CodeUri: functions/job-application/
       Handler: index.handler
       Description: Handles job application form submissions and sends emails
+      MemorySize: 512
+      Timeout: 30
       Policies:
         - S3CrudPolicy:
             BucketName: navon-tech-images
@@ -126,6 +128,14 @@ Resources:
             RestApiId: !Ref CompanyApi
             Path: /api/apply
             Method: POST
+            Auth:
+              Authorizer: NONE
+        SubmitApplicationOptions:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/apply
+            Method: OPTIONS
             Auth:
               Authorizer: NONE
 

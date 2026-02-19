@@ -125,8 +125,6 @@ This application was submitted through the Navon Technologies career portal.
             ReplyToAddresses: [email]
         };
 
-        await sesClient.send(new SendEmailCommand(hrEmailParams));
-
         // Send confirmation email to applicant
         const applicantEmailParams = {
             Source: 'hr@navontech.com',
@@ -204,7 +202,11 @@ www.navontech.com
             ReplyToAddresses: ['hr@navontech.com']
         };
 
-        await sesClient.send(new SendEmailCommand(applicantEmailParams));
+        // Send both emails in parallel for faster response
+        await Promise.all([
+            sesClient.send(new SendEmailCommand(hrEmailParams)),
+            sesClient.send(new SendEmailCommand(applicantEmailParams))
+        ]);
 
         return {
             statusCode: 200,

@@ -1637,7 +1637,10 @@ function SimpleApp() {
                                         Our Brand
                                     </h3>
                                     <p style={{ color: '#cbd5e1', lineHeight: '1.8', marginBottom: '1rem', fontSize: '1.05rem' }}>
-                                        Our logo was inspired by a plane <span style={{ color: '#d4af37', fontWeight: '700' }}>(F-117 Nighthawk, Stealth Aircraft)</span> and our founders' prior service in the <span style={{ color: '#d4af37', fontWeight: '700' }}>US Air Force</span>. Our name <span style={{ color: '#d4af37', fontWeight: '700' }}>Navon</span> means <span style={{ color: '#d4af37', fontWeight: '700' }}>wisdom</span>.
+                                        Our logo was inspired by a plane <span style={{ color: '#d4af37', fontWeight: '700' }}>(F-117 Nighthawk, Stealth Aircraft)</span> and our founders' prior service in the <span style={{ color: '#d4af37', fontWeight: '700' }}>US Air Force</span>.
+                                    </p>
+                                    <p style={{ color: '#cbd5e1', lineHeight: '1.8', marginBottom: '1rem', fontSize: '1.05rem' }}>
+                                        Our name <span style={{ color: '#d4af37', fontWeight: '700' }}>Navon</span> <span style={{ color: '#94a3b8', fontSize: '0.95rem' }}>NAH-vahn [ˈnɑːˌvɔn]</span> means <span style={{ color: '#d4af37', fontWeight: '700' }}>wisdom</span>.
                                     </p>
                                     <p style={{ color: '#cbd5e1', lineHeight: '1.8', margin: '0', fontSize: '1.05rem' }}>
                                         Like a plane and a wise owl, we strive to reach the highest point of excellence. Our goal is to soar in every component of business; in the technology aspect, like the plane and in our behaviors, like a wise owl.
@@ -3058,12 +3061,25 @@ function SimpleApp() {
                                     if (response.ok) {
                                         alert('✅ Application submitted successfully! We will review your application and get back to you soon.');
                                         e.target.reset();
+                                        // Reset file upload display
+                                        const fileLabel = document.getElementById('file-label');
+                                        if (fileLabel) {
+                                            fileLabel.innerHTML = `
+                                                <div style="font-size: 2rem; margin-bottom: 0.5rem;">📄</div>
+                                                <p style="color: #1e293b; margin-bottom: 0.25rem; font-weight: 600;">
+                                                    Choose a file to upload or drag and drop here
+                                                </p>
+                                                <small style="color: #64748b;">PDF, DOC, or DOCX (max 5MB)</small>
+                                            `;
+                                        }
                                     } else {
-                                        throw new Error(result.message || 'Failed to submit application');
+                                        console.error('API Error:', result);
+                                        throw new Error(result.message || result.error || 'Failed to submit application');
                                     }
                                 } catch (error) {
                                     console.error('Error submitting application:', error);
-                                    alert('❌ Failed to submit application. Please try again or email your application directly to HR@navontech.com');
+                                    console.error('Error details:', error.message);
+                                    alert(`❌ Failed to submit application. Error: ${error.message}\n\nPlease try again or email your application directly to hr@navontech.com`);
                                 } finally {
                                     submitButton.textContent = originalText;
                                     submitButton.disabled = false;
