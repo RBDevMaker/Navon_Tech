@@ -3607,7 +3607,7 @@ function SimpleApp() {
                                     <strong>Address:</strong><br />
                                     161 Fort Evans Rd NE STE 210<br />
                                     Leesburg, VA 20176<br /><br />
-                                    <strong>Email:</strong> info@navontechnologies.com<br />
+                                    <strong>Email:</strong> info@navontech.com<br />
                                     <strong>Phone:</strong> 571-477-2727<br />
                                     <strong>Fax:</strong> 571-477-2727<br />
                                     <strong>Response Time:</strong> 24 hours
@@ -8391,6 +8391,133 @@ function SimpleApp() {
                 </section>
             )}
 
+            {/* ACCESSIBILITY STATEMENT PAGE */}
+            {currentPage === 'accessibility' && (
+                <section style={{ 
+                    padding: '4rem 2rem', 
+                    background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+                    minHeight: '100vh'
+                }}>
+                    <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+                        <h1 style={{ 
+                            fontSize: '2.5rem', 
+                            marginBottom: '2rem', 
+                            color: '#0f172a',
+                            borderBottom: '3px solid #d4af37',
+                            paddingBottom: '1rem'
+                        }}>
+                            Accessibility Statement
+                        </h1>
+                        
+                        <div style={{ 
+                            background: 'white', 
+                            padding: '2rem', 
+                            borderRadius: '8px',
+                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                            lineHeight: '1.8',
+                            color: '#1e293b'
+                        }}>
+                            <h2 style={{ color: '#d4af37', marginTop: '1.5rem' }}>Our Commitment</h2>
+                            <p>Navon Technologies is committed to ensuring digital accessibility for people with disabilities. We are continually improving the user experience for everyone and applying the relevant accessibility standards.</p>
+                            
+                            <h2 style={{ color: '#d4af37', marginTop: '1.5rem' }}>Conformance Status</h2>
+                            <p>We strive to conform to the Web Content Accessibility Guidelines (WCAG) 2.1 Level AA standards. These guidelines explain how to make web content more accessible for people with disabilities and user-friendly for everyone.</p>
+                            
+                            <h2 style={{ color: '#d4af37', marginTop: '1.5rem' }}>Measures to Support Accessibility</h2>
+                            <p>Navon Technologies takes the following measures to ensure accessibility:</p>
+                            <ul style={{ marginLeft: '2rem' }}>
+                                <li>Include accessibility as part of our mission statement</li>
+                                <li>Integrate accessibility into our procurement practices</li>
+                                <li>Provide continual accessibility training for our staff</li>
+                                <li>Assign clear accessibility goals and responsibilities</li>
+                            </ul>
+                            
+                            <h2 style={{ color: '#d4af37', marginTop: '1.5rem' }}>Feedback</h2>
+                            <p>We welcome your feedback on the accessibility of our website. Please contact us if you encounter accessibility barriers:</p>
+                            <ul style={{ marginLeft: '2rem' }}>
+                                <li>Email: info@navontech.com</li>
+                                <li>Phone: 571-477-2727</li>
+                            </ul>
+                            
+                            <p style={{ marginTop: '2rem', fontSize: '0.9rem', color: '#64748b' }}>
+                                Last updated: February 2025
+                            </p>
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {/* SECURITY & COMPLIANCE PAGE */}
+            {currentPage === 'security' && (
+                <section style={{ 
+                    padding: '4rem 2rem', 
+                    background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+                    minHeight: '100vh'
+                }}>
+                    <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+                        <h1 style={{ 
+                            fontSize: '2.5rem', 
+                            marginBottom: '2rem', 
+                            color: '#0f172a',
+                            borderBottom: '3px solid #d4af37',
+                            paddingBottom: '1rem'
+                        }}>
+                            🛡️ Security & Compliance
+                        </h1>
+                        
+                        <div style={{ 
+                            background: 'white', 
+                            padding: '2rem', 
+                            borderRadius: '8px',
+                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                            lineHeight: '1.8',
+                            color: '#1e293b'
+                        }}>
+                            <h2 style={{ color: '#d4af37', marginTop: '1.5rem' }}>Our Security Commitment</h2>
+                            <p>At Navon Technologies, security is not just a feature—it's the foundation of everything we do. We are committed to protecting your data and maintaining the highest standards of security and compliance.</p>
+                            
+                            <h2 style={{ color: '#d4af37', marginTop: '1.5rem' }}>Security Measures</h2>
+                            <ul style={{ marginLeft: '2rem' }}>
+                                <li><strong>Data Encryption:</strong> All data is encrypted in transit and at rest using industry-standard encryption protocols</li>
+                                <li><strong>Access Controls:</strong> Multi-factor authentication and role-based access controls protect sensitive information</li>
+                                <li><strong>Regular Audits:</strong> We conduct regular security audits and vulnerability assessments</li>
+                                <li><strong>Secure Infrastructure:</strong> Our systems are hosted on AWS with enterprise-grade security</li>
+                                <li><strong>Incident Response:</strong> 24/7 monitoring and rapid incident response procedures</li>
+                            </ul>
+                            
+                            <h2 style={{ color: '#d4af37', marginTop: '1.5rem' }}>Compliance Standards</h2>
+                            <p>We maintain compliance with relevant industry standards and regulations:</p>
+                            <ul style={{ marginLeft: '2rem' }}>
+                                <li>SOC 2 Type II compliance practices</li>
+                                <li>NIST Cybersecurity Framework alignment</li>
+                                <li>GDPR and data privacy regulations</li>
+                                <li>Federal security requirements for government contractors</li>
+                            </ul>
+                            
+                            <h2 style={{ color: '#d4af37', marginTop: '1.5rem' }}>Data Privacy</h2>
+                            <p>Your privacy is paramount. We:</p>
+                            <ul style={{ marginLeft: '2rem' }}>
+                                <li>Never sell or share your personal information</li>
+                                <li>Collect only necessary data for service delivery</li>
+                                <li>Provide transparent data handling practices</li>
+                                <li>Honor all data deletion and access requests</li>
+                            </ul>
+                            
+                            <h2 style={{ color: '#d4af37', marginTop: '1.5rem' }}>Report a Security Concern</h2>
+                            <p>If you discover a security vulnerability or have concerns about our security practices, please contact us immediately:</p>
+                            <ul style={{ marginLeft: '2rem' }}>
+                                <li>Email: info@navontech.com</li>
+                                <li>Phone: 571-477-2727</li>
+                            </ul>
+                            
+                            <p style={{ marginTop: '2rem', fontSize: '0.9rem', color: '#64748b' }}>
+                                Last updated: February 2025
+                            </p>
+                        </div>
+                    </div>
+                </section>
+            )}
+
             {/* Footer */}
             <footer style={{
                 padding: '3rem 2rem 1.5rem 2rem',
@@ -8473,8 +8600,12 @@ function SimpleApp() {
                             }}>
                                 <a 
                                     href="#portal"
-                                    onClick={() => {
-                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        // Only open if Ctrl (Windows/Linux) or Cmd (Mac) is pressed
+                                        if (e.ctrlKey || e.metaKey) {
+                                            setShowSecureModal(true);
+                                        }
                                     }}
                                     style={{
                                         fontSize: '1.8rem',
@@ -8493,48 +8624,45 @@ function SimpleApp() {
                                         e.target.style.transform = 'rotate(0deg) scale(1)';
                                         e.target.style.filter = 'drop-shadow(0 0 8px rgba(212, 175, 55, 0.6))';
                                     }}
-                                    title="Secure Portal"
+                                    title="Secure Portal - Ctrl+Click (or Cmd+Click) to access"
                                 >
+                                    🛡️
                                 </a>
                                 Compliance & Trust
                             </h4>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'flex-end' }}>
-                                <a href="#accessibility" style={{
-                                    color: '#cbd5e1',
-                                    fontSize: '0.9rem',
-                                    textDecoration: 'none',
-                                    transition: 'all 0.3s ease'
-                                }}
-                                onMouseOver={(e) => e.target.style.color = '#d4af37'}
-                                onMouseOut={(e) => e.target.style.color = '#cbd5e1'}>
-                                    Accessibility Statement
-                                </a>
-                                <a href="#secureportal"
+                                <a href="#accessibility" 
                                 onClick={(e) => {
                                     e.preventDefault();
-                                    // Only open if Ctrl (Windows/Linux) or Cmd (Mac) is pressed
-                                    if (e.ctrlKey || e.metaKey) {
-                                        setShowSecureModal(true);
-                                    }
+                                    setCurrentPage('accessibility');
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
                                 }}
                                 style={{
                                     color: '#cbd5e1',
                                     fontSize: '0.9rem',
                                     textDecoration: 'none',
                                     transition: 'all 0.3s ease',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.5rem',
                                     cursor: 'pointer'
                                 }}
-                                onMouseOver={(e) => {
-                                    e.currentTarget.style.color = '#d4af37';
+                                onMouseOver={(e) => e.target.style.color = '#d4af37'}
+                                onMouseOut={(e) => e.target.style.color = '#cbd5e1'}>
+                                    Accessibility Statement
+                                </a>
+                                <a href="#security"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    setCurrentPage('security');
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
                                 }}
-                                onMouseOut={(e) => {
-                                    e.currentTarget.style.color = '#cbd5e1';
+                                style={{
+                                    color: '#cbd5e1',
+                                    fontSize: '0.9rem',
+                                    textDecoration: 'none',
+                                    transition: 'all 0.3s ease',
+                                    cursor: 'pointer'
                                 }}
-                                title="Ctrl+Click (or Cmd+Click) to access">
-                                    <span style={{ fontSize: '1.2rem' }}>🛡️</span>
+                                onMouseOver={(e) => e.target.style.color = '#d4af37'}
+                                onMouseOut={(e) => e.target.style.color = '#cbd5e1'}>
                                     Security & Compliance
                                 </a>
                             </div>
@@ -8546,11 +8674,19 @@ function SimpleApp() {
                         paddingTop: '1rem'
                     }}>
                         <p style={{ 
-                            margin: 0, 
+                            margin: '0 0 0.5rem 0', 
                             fontSize: '0.85rem', 
                             color: '#94a3b8'
                         }}>
-                            Copyright © 2021 Navon Technologies - All Rights Reserved | <span style={{ color: '#d4af37' }}>Secure by Design</span> | Built with AWS
+                            Copyright © 2025 Navon Technologies - All Rights Reserved | <span style={{ color: '#d4af37' }}>Secure by Design</span> | Built with AWS
+                        </p>
+                        <p style={{ 
+                            margin: 0, 
+                            fontSize: '0.8rem', 
+                            color: '#64748b',
+                            fontStyle: 'italic'
+                        }}>
+                            Designed by Navon Designs
                         </p>
                     </div>
                 </div>
