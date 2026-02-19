@@ -2070,24 +2070,32 @@ function SimpleApp() {
                                 }}>
                                     {/* Custom Software Development */}
                                     <div className="hover-lift animate-slide-in-left" style={{
-                                        background: '#ffffff',
+                                        background: 'white',
                                         padding: '2.5rem',
                                         borderRadius: '20px',
-                                        border: '2px solid #d4af37',
-                                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.15)'
+                                        boxShadow: '0 10px 40px rgba(0, 0, 0, 0.08), 0 0 30px rgba(212, 175, 55, 0.2)',
+                                        border: '1px solid rgba(0, 0, 0, 0.05)',
+                                        borderTop: '8px solid transparent',
+                                        borderRight: '8px solid transparent',
+                                        backgroundImage: 'linear-gradient(white, white), linear-gradient(135deg, #f4e5a1 0%, #d4af37 25%, #f9e79f 50%, #d4af37 75%, #b8941f 100%)',
+                                        backgroundOrigin: 'border-box',
+                                        backgroundClip: 'padding-box, border-box',
+                                        transition: 'all 0.3s ease'
                                     }}>
                                         <div style={{
-                                            width: '60px',
-                                            height: '60px',
-                                            background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
-                                            borderRadius: '12px',
+                                            width: '70px',
+                                            height: '70px',
+                                            background: 'linear-gradient(135deg, rgba(244, 229, 161, 0.3) 0%, rgba(212, 175, 55, 0.4) 50%, rgba(249, 231, 159, 0.3) 100%)',
+                                            borderRadius: '16px',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             marginBottom: '1.5rem',
-                                            boxShadow: '0 8px 20px rgba(212, 175, 55, 0.3)'
+                                            boxShadow: '0 8px 20px rgba(212, 175, 55, 0.15)',
+                                            backdropFilter: 'blur(10px)',
+                                            border: '1px solid rgba(212, 175, 55, 0.2)'
                                         }}>
-                                            <span style={{ fontSize: '2rem' }}>💻</span>
+                                            <span style={{ fontSize: '2.5rem' }}>💻</span>
                                         </div>
                                         <h3 style={{
                                             color: '#1e293b',
@@ -2098,7 +2106,7 @@ function SimpleApp() {
                                             Custom Software Development
                                         </h3>
                                         <p style={{
-                                            color: '#475569',
+                                            color: '#64748b',
                                             lineHeight: '1.7',
                                             margin: '0',
                                             fontSize: '1.05rem'
@@ -2109,26 +2117,34 @@ function SimpleApp() {
 
                                     {/* Hardware Procurement and Installation */}
                                     <div className="hover-lift animate-fade-in-up" style={{
-                                        background: '#ffffff',
+                                        background: 'white',
                                         padding: '2.5rem',
                                         borderRadius: '20px',
-                                        border: '2px solid #d4af37',
-                                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.15)',
+                                        boxShadow: '0 10px 40px rgba(0, 0, 0, 0.08), 0 0 30px rgba(212, 175, 55, 0.2)',
                                         animationDelay: '0.2s',
-                                        opacity: 0
+                                        opacity: 0,
+                                        border: '1px solid rgba(0, 0, 0, 0.05)',
+                                        borderTop: '8px solid transparent',
+                                        borderRight: '8px solid transparent',
+                                        backgroundImage: 'linear-gradient(white, white), linear-gradient(135deg, #f4e5a1 0%, #d4af37 25%, #f9e79f 50%, #d4af37 75%, #b8941f 100%)',
+                                        backgroundOrigin: 'border-box',
+                                        backgroundClip: 'padding-box, border-box',
+                                        transition: 'all 0.3s ease'
                                     }}>
                                         <div style={{
-                                            width: '60px',
-                                            height: '60px',
-                                            background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
-                                            borderRadius: '12px',
+                                            width: '70px',
+                                            height: '70px',
+                                            background: 'linear-gradient(135deg, rgba(244, 229, 161, 0.3) 0%, rgba(212, 175, 55, 0.4) 50%, rgba(249, 231, 159, 0.3) 100%)',
+                                            borderRadius: '16px',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             marginBottom: '1.5rem',
-                                            boxShadow: '0 8px 20px rgba(212, 175, 55, 0.3)'
+                                            boxShadow: '0 8px 20px rgba(212, 175, 55, 0.15)',
+                                            backdropFilter: 'blur(10px)',
+                                            border: '1px solid rgba(212, 175, 55, 0.2)'
                                         }}>
-                                            <span style={{ fontSize: '2rem' }}>🖥️</span>
+                                            <span style={{ fontSize: '2.5rem' }}>🖥️</span>
                                         </div>
                                         <h3 style={{
                                             color: '#1e293b',
@@ -2139,7 +2155,7 @@ function SimpleApp() {
                                             Hardware Procurement and Installation
                                         </h3>
                                         <p style={{
-                                            color: '#475569',
+                                            color: '#64748b',
                                             lineHeight: '1.7',
                                             margin: '0',
                                             fontSize: '1.05rem'
@@ -2150,26 +2166,34 @@ function SimpleApp() {
 
                                 {/* IT Training and Support */}
                                 <div className="hover-lift animate-slide-in-right" style={{
-                                    background: '#ffffff',
+                                    background: 'white',
                                     padding: '2.5rem',
                                     borderRadius: '20px',
-                                    border: '2px solid #d4af37',
-                                    boxShadow: '0 10px 40px rgba(212, 175, 55, 0.15)',
+                                    boxShadow: '0 10px 40px rgba(0, 0, 0, 0.08), 0 0 30px rgba(212, 175, 55, 0.2)',
                                     animationDelay: '0.4s',
-                                    opacity: 0
+                                    opacity: 0,
+                                    border: '1px solid rgba(0, 0, 0, 0.05)',
+                                    borderTop: '8px solid transparent',
+                                    borderRight: '8px solid transparent',
+                                    backgroundImage: 'linear-gradient(white, white), linear-gradient(135deg, #f4e5a1 0%, #d4af37 25%, #f9e79f 50%, #d4af37 75%, #b8941f 100%)',
+                                    backgroundOrigin: 'border-box',
+                                    backgroundClip: 'padding-box, border-box',
+                                    transition: 'all 0.3s ease'
                                 }}>
                                     <div style={{
-                                        width: '60px',
-                                        height: '60px',
-                                        background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
-                                        borderRadius: '12px',
+                                        width: '70px',
+                                        height: '70px',
+                                        background: 'linear-gradient(135deg, rgba(244, 229, 161, 0.3) 0%, rgba(212, 175, 55, 0.4) 50%, rgba(249, 231, 159, 0.3) 100%)',
+                                        borderRadius: '16px',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
                                         marginBottom: '1.5rem',
-                                        boxShadow: '0 8px 20px rgba(212, 175, 55, 0.3)'
+                                        boxShadow: '0 8px 20px rgba(212, 175, 55, 0.15)',
+                                        backdropFilter: 'blur(10px)',
+                                        border: '1px solid rgba(212, 175, 55, 0.2)'
                                     }}>
-                                        <span style={{ fontSize: '2rem' }}>📚</span>
+                                        <span style={{ fontSize: '2.5rem' }}>📚</span>
                                     </div>
                                     <h3 style={{
                                         color: '#1e293b',
@@ -2180,7 +2204,7 @@ function SimpleApp() {
                                         IT Training and Support
                                     </h3>
                                     <p style={{
-                                        color: '#475569',
+                                        color: '#64748b',
                                         lineHeight: '1.7',
                                         margin: '0',
                                         fontSize: '1.05rem'
@@ -2191,26 +2215,34 @@ function SimpleApp() {
 
                                 {/* Website Design and Development */}
                                 <div className="hover-lift animate-slide-in-left" style={{
-                                    background: '#ffffff',
+                                    background: 'white',
                                     padding: '2.5rem',
                                     borderRadius: '20px',
-                                    border: '2px solid #d4af37',
-                                    boxShadow: '0 10px 40px rgba(212, 175, 55, 0.15)',
+                                    boxShadow: '0 10px 40px rgba(0, 0, 0, 0.08), 0 0 30px rgba(212, 175, 55, 0.2)',
                                     animationDelay: '0.6s',
-                                    opacity: 0
+                                    opacity: 0,
+                                    border: '1px solid rgba(0, 0, 0, 0.05)',
+                                    borderTop: '8px solid transparent',
+                                    borderRight: '8px solid transparent',
+                                    backgroundImage: 'linear-gradient(white, white), linear-gradient(135deg, #f4e5a1 0%, #d4af37 25%, #f9e79f 50%, #d4af37 75%, #b8941f 100%)',
+                                    backgroundOrigin: 'border-box',
+                                    backgroundClip: 'padding-box, border-box',
+                                    transition: 'all 0.3s ease'
                                 }}>
                                     <div style={{
-                                        width: '60px',
-                                        height: '60px',
-                                        background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
-                                        borderRadius: '12px',
+                                        width: '70px',
+                                        height: '70px',
+                                        background: 'linear-gradient(135deg, rgba(244, 229, 161, 0.3) 0%, rgba(212, 175, 55, 0.4) 50%, rgba(249, 231, 159, 0.3) 100%)',
+                                        borderRadius: '16px',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
                                         marginBottom: '1.5rem',
-                                        boxShadow: '0 8px 20px rgba(212, 175, 55, 0.3)'
+                                        boxShadow: '0 8px 20px rgba(212, 175, 55, 0.15)',
+                                        backdropFilter: 'blur(10px)',
+                                        border: '1px solid rgba(212, 175, 55, 0.2)'
                                     }}>
-                                        <span style={{ fontSize: '2rem' }}>🌐</span>
+                                        <span style={{ fontSize: '2.5rem' }}>🌐</span>
                                     </div>
                                     <h3 style={{
                                         color: '#1e293b',
@@ -2221,7 +2253,7 @@ function SimpleApp() {
                                         Website Design and Development
                                     </h3>
                                     <p style={{
-                                        color: '#475569',
+                                        color: '#64748b',
                                         lineHeight: '1.7',
                                         margin: '0',
                                         fontSize: '1.05rem'
@@ -2232,26 +2264,34 @@ function SimpleApp() {
 
                                 {/* Cloud Migration */}
                                 <div className="hover-lift animate-fade-in-up" style={{
-                                    background: '#ffffff',
+                                    background: 'white',
                                     padding: '2.5rem',
                                     borderRadius: '20px',
-                                    border: '2px solid #d4af37',
-                                    boxShadow: '0 10px 40px rgba(212, 175, 55, 0.15)',
+                                    boxShadow: '0 10px 40px rgba(0, 0, 0, 0.08), 0 0 30px rgba(212, 175, 55, 0.2)',
                                     animationDelay: '0.8s',
-                                    opacity: 0
+                                    opacity: 0,
+                                    border: '1px solid rgba(0, 0, 0, 0.05)',
+                                    borderTop: '8px solid transparent',
+                                    borderRight: '8px solid transparent',
+                                    backgroundImage: 'linear-gradient(white, white), linear-gradient(135deg, #f4e5a1 0%, #d4af37 25%, #f9e79f 50%, #d4af37 75%, #b8941f 100%)',
+                                    backgroundOrigin: 'border-box',
+                                    backgroundClip: 'padding-box, border-box',
+                                    transition: 'all 0.3s ease'
                                 }}>
                                     <div style={{
-                                        width: '60px',
-                                        height: '60px',
-                                        background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
-                                        borderRadius: '12px',
+                                        width: '70px',
+                                        height: '70px',
+                                        background: 'linear-gradient(135deg, rgba(244, 229, 161, 0.3) 0%, rgba(212, 175, 55, 0.4) 50%, rgba(249, 231, 159, 0.3) 100%)',
+                                        borderRadius: '16px',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
                                         marginBottom: '1.5rem',
-                                        boxShadow: '0 8px 20px rgba(212, 175, 55, 0.3)'
+                                        boxShadow: '0 8px 20px rgba(212, 175, 55, 0.15)',
+                                        backdropFilter: 'blur(10px)',
+                                        border: '1px solid rgba(212, 175, 55, 0.2)'
                                     }}>
-                                        <span style={{ fontSize: '2rem' }}>☁️</span>
+                                        <span style={{ fontSize: '2.5rem' }}>☁️</span>
                                     </div>
                                     <h3 style={{
                                         color: '#1e293b',
@@ -2262,7 +2302,7 @@ function SimpleApp() {
                                         Cloud Migration
                                     </h3>
                                     <p style={{
-                                        color: '#475569',
+                                        color: '#64748b',
                                         lineHeight: '1.7',
                                         margin: '0',
                                         fontSize: '1.05rem'
@@ -2273,26 +2313,34 @@ function SimpleApp() {
 
                                 {/* IT Project Management */}
                                 <div className="hover-lift animate-slide-in-right" style={{
-                                    background: '#ffffff',
+                                    background: 'white',
                                     padding: '2.5rem',
                                     borderRadius: '20px',
-                                    border: '2px solid #d4af37',
-                                    boxShadow: '0 10px 40px rgba(212, 175, 55, 0.15)',
+                                    boxShadow: '0 10px 40px rgba(0, 0, 0, 0.08), 0 0 30px rgba(212, 175, 55, 0.2)',
                                     animationDelay: '1s',
-                                    opacity: 0
+                                    opacity: 0,
+                                    border: '1px solid rgba(0, 0, 0, 0.05)',
+                                    borderTop: '8px solid transparent',
+                                    borderRight: '8px solid transparent',
+                                    backgroundImage: 'linear-gradient(white, white), linear-gradient(135deg, #f4e5a1 0%, #d4af37 25%, #f9e79f 50%, #d4af37 75%, #b8941f 100%)',
+                                    backgroundOrigin: 'border-box',
+                                    backgroundClip: 'padding-box, border-box',
+                                    transition: 'all 0.3s ease'
                                 }}>
                                     <div style={{
-                                        width: '60px',
-                                        height: '60px',
-                                        background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
-                                        borderRadius: '12px',
+                                        width: '70px',
+                                        height: '70px',
+                                        background: 'linear-gradient(135deg, rgba(244, 229, 161, 0.3) 0%, rgba(212, 175, 55, 0.4) 50%, rgba(249, 231, 159, 0.3) 100%)',
+                                        borderRadius: '16px',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
                                         marginBottom: '1.5rem',
-                                        boxShadow: '0 8px 20px rgba(212, 175, 55, 0.3)'
+                                        boxShadow: '0 8px 20px rgba(212, 175, 55, 0.15)',
+                                        backdropFilter: 'blur(10px)',
+                                        border: '1px solid rgba(212, 175, 55, 0.2)'
                                     }}>
-                                        <span style={{ fontSize: '2rem' }}>📊</span>
+                                        <span style={{ fontSize: '2.5rem' }}>📊</span>
                                     </div>
                                     <h3 style={{
                                         color: '#1e293b',
@@ -2303,7 +2351,7 @@ function SimpleApp() {
                                         IT Project Management
                                     </h3>
                                     <p style={{
-                                        color: '#475569',
+                                        color: '#64748b',
                                         lineHeight: '1.7',
                                         margin: '0',
                                         fontSize: '1.05rem'
@@ -2597,35 +2645,43 @@ function SimpleApp() {
                                 }}>
                                     {/* Managed IT Services */}
                                     <div className="hover-lift animate-slide-in-left" style={{
-                                        background: 'linear-gradient(135deg, #f4e5a1 0%, #e8d68f 100%)',
+                                        background: 'white',
                                         padding: '2.5rem',
                                         borderRadius: '20px',
-                                        border: '2px solid #d4af37',
-                                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.3)'
+                                        boxShadow: '0 10px 40px rgba(0, 0, 0, 0.08), 0 0 30px rgba(212, 175, 55, 0.2)',
+                                        border: '1px solid rgba(0, 0, 0, 0.05)',
+                                        borderTop: '8px solid transparent',
+                                        borderRight: '8px solid transparent',
+                                        backgroundImage: 'linear-gradient(white, white), linear-gradient(135deg, #f4e5a1 0%, #d4af37 25%, #f9e79f 50%, #d4af37 75%, #b8941f 100%)',
+                                        backgroundOrigin: 'border-box',
+                                        backgroundClip: 'padding-box, border-box',
+                                        transition: 'all 0.3s ease'
                                     }}>
                                         <div style={{
-                                            width: '60px',
-                                            height: '60px',
-                                            background: 'rgba(255, 255, 255, 0.5)',
-                                            borderRadius: '12px',
+                                            width: '70px',
+                                            height: '70px',
+                                            background: 'linear-gradient(135deg, rgba(244, 229, 161, 0.3) 0%, rgba(212, 175, 55, 0.4) 50%, rgba(249, 231, 159, 0.3) 100%)',
+                                            borderRadius: '16px',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             marginBottom: '1.5rem',
-                                            boxShadow: '0 8px 20px rgba(255, 255, 255, 0.3)'
+                                            boxShadow: '0 8px 20px rgba(212, 175, 55, 0.15)',
+                                            backdropFilter: 'blur(10px)',
+                                            border: '1px solid rgba(212, 175, 55, 0.2)'
                                         }}>
-                                            <span style={{ fontSize: '2rem' }}>⚙️</span>
+                                            <span style={{ fontSize: '2.5rem' }}>⚙️</span>
                                         </div>
                                         <h3 style={{
                                             color: '#1e293b',
                                             marginBottom: '1rem',
                                             fontSize: '1.5rem',
-                                            fontWeight: '800'
+                                            fontWeight: '700'
                                         }}>
                                             AWS Managed IT Services
                                         </h3>
                                         <p style={{
-                                            color: '#1e293b',
+                                            color: '#64748b',
                                             lineHeight: '1.7',
                                             margin: '0',
                                             fontSize: '1.05rem'
@@ -2636,37 +2692,47 @@ function SimpleApp() {
 
                                     {/* Cloud Services */}
                                     <div className="hover-lift animate-fade-in-up" style={{
-                                        background: 'linear-gradient(135deg, #f4e5a1 0%, #e8d68f 100%)',
+                                        background: 'white',
                                         padding: '2.5rem',
                                         borderRadius: '20px',
-                                        border: '2px solid #d4af37',
-                                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.3)',
+                                        boxShadow: '0 10px 40px rgba(0, 0, 0, 0.08), 0 0 30px rgba(212, 175, 55, 0.2)',
                                         animationDelay: '0.2s',
-                                        opacity: 0
+                                        opacity: 0,
+                                        position: 'relative',
+                                        overflow: 'hidden',
+                                        border: '1px solid rgba(0, 0, 0, 0.05)',
+                                        borderTop: '8px solid transparent',
+                                        borderRight: '8px solid transparent',
+                                        backgroundImage: 'linear-gradient(white, white), linear-gradient(135deg, #f4e5a1 0%, #d4af37 25%, #f9e79f 50%, #d4af37 75%, #b8941f 100%)',
+                                        backgroundOrigin: 'border-box',
+                                        backgroundClip: 'padding-box, border-box',
+                                        transition: 'all 0.3s ease'
                                     }}>
                                         <div style={{
-                                            width: '60px',
-                                            height: '60px',
-                                            background: 'rgba(255, 255, 255, 0.5)',
-                                            borderRadius: '12px',
+                                            width: '70px',
+                                            height: '70px',
+                                            background: 'linear-gradient(135deg, rgba(244, 229, 161, 0.3) 0%, rgba(212, 175, 55, 0.4) 50%, rgba(249, 231, 159, 0.3) 100%)',
+                                            borderRadius: '16px',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             marginBottom: '1.5rem',
-                                            boxShadow: '0 8px 20px rgba(255, 255, 255, 0.3)'
+                                            boxShadow: '0 8px 20px rgba(212, 175, 55, 0.15)',
+                                            backdropFilter: 'blur(10px)',
+                                            border: '1px solid rgba(212, 175, 55, 0.2)'
                                         }}>
-                                            <span style={{ fontSize: '2rem' }}>☁️</span>
+                                            <span style={{ fontSize: '2.5rem' }}>☁️</span>
                                         </div>
                                         <h3 style={{
                                             color: '#1e293b',
                                             marginBottom: '1rem',
                                             fontSize: '1.5rem',
-                                            fontWeight: '800'
+                                            fontWeight: '700'
                                         }}>
                                             Cloud Services
                                         </h3>
                                         <p style={{
-                                            color: '#1e293b',
+                                            color: '#64748b',
                                             lineHeight: '1.7',
                                             margin: '0',
                                             fontSize: '1.05rem'
@@ -2677,37 +2743,47 @@ function SimpleApp() {
 
                                     {/* Cybersecurity Services */}
                                     <div className="hover-lift animate-slide-in-right" style={{
-                                        background: 'linear-gradient(135deg, #f4e5a1 0%, #e8d68f 100%)',
+                                        background: 'white',
                                         padding: '2.5rem',
                                         borderRadius: '20px',
-                                        border: '2px solid #d4af37',
-                                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.3)',
+                                        boxShadow: '0 10px 40px rgba(0, 0, 0, 0.08), 0 0 30px rgba(212, 175, 55, 0.2)',
                                         animationDelay: '0.4s',
-                                        opacity: 0
+                                        opacity: 0,
+                                        position: 'relative',
+                                        overflow: 'hidden',
+                                        border: '1px solid rgba(0, 0, 0, 0.05)',
+                                        borderTop: '8px solid transparent',
+                                        borderRight: '8px solid transparent',
+                                        backgroundImage: 'linear-gradient(white, white), linear-gradient(135deg, #f4e5a1 0%, #d4af37 25%, #f9e79f 50%, #d4af37 75%, #b8941f 100%)',
+                                        backgroundOrigin: 'border-box',
+                                        backgroundClip: 'padding-box, border-box',
+                                        transition: 'all 0.3s ease'
                                     }}>
                                         <div style={{
-                                            width: '60px',
-                                            height: '60px',
-                                            background: 'rgba(255, 255, 255, 0.5)',
-                                            borderRadius: '12px',
+                                            width: '70px',
+                                            height: '70px',
+                                            background: 'linear-gradient(135deg, rgba(244, 229, 161, 0.3) 0%, rgba(212, 175, 55, 0.4) 50%, rgba(249, 231, 159, 0.3) 100%)',
+                                            borderRadius: '16px',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             marginBottom: '1.5rem',
-                                            boxShadow: '0 8px 20px rgba(255, 255, 255, 0.3)'
+                                            boxShadow: '0 8px 20px rgba(212, 175, 55, 0.15)',
+                                            backdropFilter: 'blur(10px)',
+                                            border: '1px solid rgba(212, 175, 55, 0.2)'
                                         }}>
-                                            <span style={{ fontSize: '2rem' }}>🔒</span>
+                                            <span style={{ fontSize: '2.5rem' }}>🔒</span>
                                         </div>
                                         <h3 style={{
                                             color: '#1e293b',
                                             marginBottom: '1rem',
                                             fontSize: '1.5rem',
-                                            fontWeight: '800'
+                                            fontWeight: '700'
                                         }}>
                                             Cybersecurity Services
                                         </h3>
                                         <p style={{
-                                            color: '#1e293b',
+                                            color: '#64748b',
                                             lineHeight: '1.7',
                                             margin: '0',
                                             fontSize: '1.05rem'
@@ -2718,37 +2794,47 @@ function SimpleApp() {
 
                                     {/* Network Design and Implementation */}
                                     <div className="hover-lift animate-slide-in-left" style={{
-                                        background: 'linear-gradient(135deg, #f4e5a1 0%, #e8d68f 100%)',
+                                        background: 'white',
                                         padding: '2.5rem',
                                         borderRadius: '20px',
-                                        border: '2px solid #d4af37',
-                                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.3)',
+                                        boxShadow: '0 10px 40px rgba(0, 0, 0, 0.08), 0 0 30px rgba(212, 175, 55, 0.2)',
                                         animationDelay: '0.6s',
-                                        opacity: 0
+                                        opacity: 0,
+                                        position: 'relative',
+                                        overflow: 'hidden',
+                                        border: '1px solid rgba(0, 0, 0, 0.05)',
+                                        borderTop: '8px solid transparent',
+                                        borderRight: '8px solid transparent',
+                                        backgroundImage: 'linear-gradient(white, white), linear-gradient(135deg, #f4e5a1 0%, #d4af37 25%, #f9e79f 50%, #d4af37 75%, #b8941f 100%)',
+                                        backgroundOrigin: 'border-box',
+                                        backgroundClip: 'padding-box, border-box',
+                                        transition: 'all 0.3s ease'
                                     }}>
                                         <div style={{
-                                            width: '60px',
-                                            height: '60px',
-                                            background: 'rgba(255, 255, 255, 0.5)',
-                                            borderRadius: '12px',
+                                            width: '70px',
+                                            height: '70px',
+                                            background: 'linear-gradient(135deg, rgba(244, 229, 161, 0.3) 0%, rgba(212, 175, 55, 0.4) 50%, rgba(249, 231, 159, 0.3) 100%)',
+                                            borderRadius: '16px',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             marginBottom: '1.5rem',
-                                            boxShadow: '0 8px 20px rgba(255, 255, 255, 0.3)'
+                                            boxShadow: '0 8px 20px rgba(212, 175, 55, 0.15)',
+                                            backdropFilter: 'blur(10px)',
+                                            border: '1px solid rgba(212, 175, 55, 0.2)'
                                         }}>
-                                            <span style={{ fontSize: '2rem' }}>🌐</span>
+                                            <span style={{ fontSize: '2.5rem' }}>🌐</span>
                                         </div>
                                         <h3 style={{
                                             color: '#1e293b',
                                             marginBottom: '1rem',
                                             fontSize: '1.5rem',
-                                            fontWeight: '800'
+                                            fontWeight: '700'
                                         }}>
                                             Network Design and Implementation
                                         </h3>
                                         <p style={{
-                                            color: '#1e293b',
+                                            color: '#64748b',
                                             lineHeight: '1.7',
                                             margin: '0',
                                             fontSize: '1.05rem'
@@ -2759,37 +2845,47 @@ function SimpleApp() {
 
                                     {/* Data Backup and Recovery */}
                                     <div className="hover-lift animate-fade-in-up" style={{
-                                        background: 'linear-gradient(135deg, #f4e5a1 0%, #e8d68f 100%)',
+                                        background: 'white',
                                         padding: '2.5rem',
                                         borderRadius: '20px',
-                                        border: '2px solid #d4af37',
-                                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.3)',
+                                        boxShadow: '0 10px 40px rgba(0, 0, 0, 0.08), 0 0 30px rgba(212, 175, 55, 0.2)',
                                         animationDelay: '0.8s',
-                                        opacity: 0
+                                        opacity: 0,
+                                        position: 'relative',
+                                        overflow: 'hidden',
+                                        border: '1px solid rgba(0, 0, 0, 0.05)',
+                                        borderTop: '8px solid transparent',
+                                        borderRight: '8px solid transparent',
+                                        backgroundImage: 'linear-gradient(white, white), linear-gradient(135deg, #f4e5a1 0%, #d4af37 25%, #f9e79f 50%, #d4af37 75%, #b8941f 100%)',
+                                        backgroundOrigin: 'border-box',
+                                        backgroundClip: 'padding-box, border-box',
+                                        transition: 'all 0.3s ease'
                                     }}>
                                         <div style={{
-                                            width: '60px',
-                                            height: '60px',
-                                            background: 'rgba(255, 255, 255, 0.5)',
-                                            borderRadius: '12px',
+                                            width: '70px',
+                                            height: '70px',
+                                            background: 'linear-gradient(135deg, rgba(244, 229, 161, 0.3) 0%, rgba(212, 175, 55, 0.4) 50%, rgba(249, 231, 159, 0.3) 100%)',
+                                            borderRadius: '16px',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             marginBottom: '1.5rem',
-                                            boxShadow: '0 8px 20px rgba(255, 255, 255, 0.3)'
+                                            boxShadow: '0 8px 20px rgba(212, 175, 55, 0.15)',
+                                            backdropFilter: 'blur(10px)',
+                                            border: '1px solid rgba(212, 175, 55, 0.2)'
                                         }}>
-                                            <span style={{ fontSize: '2rem' }}>💾</span>
+                                            <span style={{ fontSize: '2.5rem' }}>💾</span>
                                         </div>
                                         <h3 style={{
                                             color: '#1e293b',
                                             marginBottom: '1rem',
                                             fontSize: '1.5rem',
-                                            fontWeight: '800'
+                                            fontWeight: '700'
                                         }}>
                                             Data Backup and Recovery
                                         </h3>
                                         <p style={{
-                                            color: '#1e293b',
+                                            color: '#64748b',
                                             lineHeight: '1.7',
                                             margin: '0',
                                             fontSize: '1.05rem'
@@ -2800,37 +2896,47 @@ function SimpleApp() {
 
                                     {/* IT Consulting Services */}
                                     <div className="hover-lift animate-slide-in-right" style={{
-                                        background: 'linear-gradient(135deg, #f4e5a1 0%, #e8d68f 100%)',
+                                        background: 'white',
                                         padding: '2.5rem',
                                         borderRadius: '20px',
-                                        border: '2px solid #d4af37',
-                                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.3)',
+                                        boxShadow: '0 10px 40px rgba(0, 0, 0, 0.08), 0 0 30px rgba(212, 175, 55, 0.2)',
                                         animationDelay: '1s',
-                                        opacity: 0
+                                        opacity: 0,
+                                        position: 'relative',
+                                        overflow: 'hidden',
+                                        border: '1px solid rgba(0, 0, 0, 0.05)',
+                                        borderTop: '8px solid transparent',
+                                        borderRight: '8px solid transparent',
+                                        backgroundImage: 'linear-gradient(white, white), linear-gradient(135deg, #f4e5a1 0%, #d4af37 25%, #f9e79f 50%, #d4af37 75%, #b8941f 100%)',
+                                        backgroundOrigin: 'border-box',
+                                        backgroundClip: 'padding-box, border-box',
+                                        transition: 'all 0.3s ease'
                                     }}>
                                         <div style={{
-                                            width: '60px',
-                                            height: '60px',
-                                            background: 'rgba(255, 255, 255, 0.5)',
-                                            borderRadius: '12px',
+                                            width: '70px',
+                                            height: '70px',
+                                            background: 'linear-gradient(135deg, rgba(244, 229, 161, 0.3) 0%, rgba(212, 175, 55, 0.4) 50%, rgba(249, 231, 159, 0.3) 100%)',
+                                            borderRadius: '16px',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             marginBottom: '1.5rem',
-                                            boxShadow: '0 8px 20px rgba(255, 255, 255, 0.3)'
+                                            boxShadow: '0 8px 20px rgba(212, 175, 55, 0.15)',
+                                            backdropFilter: 'blur(10px)',
+                                            border: '1px solid rgba(212, 175, 55, 0.2)'
                                         }}>
-                                            <span style={{ fontSize: '2rem' }}>💡</span>
+                                            <span style={{ fontSize: '2.5rem' }}>💡</span>
                                         </div>
                                         <h3 style={{
                                             color: '#1e293b',
                                             marginBottom: '1rem',
                                             fontSize: '1.5rem',
-                                            fontWeight: '800'
+                                            fontWeight: '700'
                                         }}>
                                             IT Consulting Services
                                         </h3>
                                         <p style={{
-                                            color: '#1e293b',
+                                            color: '#64748b',
                                             lineHeight: '1.7',
                                             margin: '0',
                                             fontSize: '1.05rem'
