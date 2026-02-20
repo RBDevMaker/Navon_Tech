@@ -287,25 +287,25 @@ Resources:
   PublicContentLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub "/aws/lambda/${PublicContentFunction}"
+      LogGroupName: !Sub "/aws/lambda/${AWS::StackName}-PublicContentFunction"
       RetentionInDays: 30
 
   EmployeeLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub "/aws/lambda/${EmployeeFunction}"
+      LogGroupName: !Sub "/aws/lambda/${AWS::StackName}-EmployeeFunction"
       RetentionInDays: 30
 
   CareerLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub "/aws/lambda/${CareerFunction}"
+      LogGroupName: !Sub "/aws/lambda/${AWS::StackName}-CareerFunction"
       RetentionInDays: 30
 
   JobApplicationLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub "/aws/lambda/${JobApplicationFunction}"
+      LogGroupName: !Sub "/aws/lambda/${AWS::StackName}-JobApplicationFunction"
       RetentionInDays: 90
 
 Outputs:

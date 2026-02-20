@@ -78,8 +78,8 @@ const checkRateLimit = async (email, ipAddress) => {
         await dynamoClient.send(new PutItemCommand(putParams));
         return true;
     } catch (error) {
-        console.error('Rate limit check error:', error);
-        // If rate limiting fails, allow the request (fail open)
+        console.warn('Rate limit check error (allowing request):', error.message);
+        // If rate limiting fails (table doesn't exist, etc.), allow the request (fail open)
         return true;
     }
 };
@@ -156,18 +156,22 @@ exports.handler = async (event) => {
             };
         }
 
-        // Security: Check rate limiting
-        const rateLimitPassed = await checkRateLimit(sanitizedEmail, ipAddress);
-        if (!rateLimitPassed) {
-            console.warn('Rate limit exceeded for:', sanitizedEmail, ipAddress);
-            return {
-                statusCode: 429,
-                headers: CORS_HEADERS,
-                body: JSON.stringify({ 
-                    error: 'Too many requests',
-                    message: 'You have submitted too many applications. Please try again later.'
-                })
-            };
+        // Security: Check rate limiting (optional - only if table exists)
+        if (process.env.RATE_LIMIT_TABLE) {
+            const rateLimitPassed = await checkRateLimit(sanitizedEmail, ipAddress);
+            if (!rateLimitPassed) {
+                console.warn('Rate limit exceeded for:', sanitizedEmail, ipAddress);
+                return {
+                    statusCode: 429,
+                    headers: CORS_HEADERS,
+                    body: JSON.stringify({ 
+                        error: 'Too many requests',
+                        message: 'You have submitted too many applications. Please try again later.'
+                    })
+                };
+            }
+        } else {
+            console.log('Rate limiting disabled (no table configured)');
         }
 
         let resumeUrl = null;
