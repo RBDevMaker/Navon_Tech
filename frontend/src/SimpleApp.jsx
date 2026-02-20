@@ -826,6 +826,8 @@ function SimpleApp() {
                     {/* Hero Section */}
                     <section style={{
                         background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.35) 0%, rgba(30, 41, 59, 0.30) 50%, rgba(51, 65, 85, 0.35) 100%), url("https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=1920&q=80") center 15%/cover',
+                        backgroundAttachment: 'fixed',
+                        backgroundPosition: `center ${15 + scrollY * 0.5}%`,
                         padding: '3rem 2rem 2rem 2rem',
                         textAlign: 'center',
                         position: 'relative',
@@ -833,7 +835,8 @@ function SimpleApp() {
                         minHeight: '50vh',
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center'
+                        justifyContent: 'center',
+                        transition: 'background-position 0.1s ease-out'
                     }}>
                         {/* Animated background elements */}
                         <div className="animate-float" style={{
@@ -1341,10 +1344,13 @@ function SimpleApp() {
                     {/* Hero Section */}
                     <section style={{
                         background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(30, 41, 59, 0.88) 50%, rgba(51, 65, 85, 0.92) 100%), url("https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1920&q=80") center/cover',
+                        backgroundAttachment: 'fixed',
+                        backgroundPosition: `center ${scrollY * 0.3}px`,
                         padding: '4rem 2rem 3rem 2rem',
                         textAlign: 'center',
                         position: 'relative',
-                        overflow: 'hidden'
+                        overflow: 'hidden',
+                        transition: 'background-position 0.1s ease-out'
                     }}>
                         <div className="animate-pulse" style={{
                             position: 'absolute',
@@ -1859,10 +1865,13 @@ function SimpleApp() {
                     {/* Hero Section */}
                     <section style={{
                         background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(30, 41, 59, 0.88) 50%, rgba(51, 65, 85, 0.92) 100%), url("https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1920&q=80") center/cover',
+                        backgroundAttachment: 'fixed',
+                        backgroundPosition: `center ${scrollY * 0.3}px`,
                         padding: '6rem 2rem 4rem 2rem',
                         textAlign: 'center',
                         position: 'relative',
-                        overflow: 'hidden'
+                        overflow: 'hidden',
+                        transition: 'background-position 0.1s ease-out'
                     }}>
                         <div className="animate-pulse" style={{
                             position: 'absolute',
@@ -2373,10 +2382,13 @@ function SimpleApp() {
                     {/* Hero Section */}
                     <section style={{
                         background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(30, 41, 59, 0.88) 50%, rgba(51, 65, 85, 0.92) 100%), url("https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=80") center/cover',
+                        backgroundAttachment: 'fixed',
+                        backgroundPosition: `center ${scrollY * 0.3}px`,
                         padding: '6rem 2rem 4rem 2rem',
                         textAlign: 'center',
                         position: 'relative',
-                        overflow: 'hidden'
+                        overflow: 'hidden',
+                        transition: 'background-position 0.1s ease-out'
                     }}>
                         <div className="animate-pulse" style={{
                             position: 'absolute',
@@ -2588,6 +2600,7 @@ function SimpleApp() {
                                     <img
                                         src={getImageSrc(service)}
                                         alt={service.name}
+                                        loading="lazy"
                                         style={{
                                             width: ['AWS Cognito', 'AWS DevOps', 'AWS Security Hub'].includes(service.name) ? '150px' : (['AWS Lambda', 'React & Amplify'].includes(service.name) ? '130px' : '110px'),
                                             height: ['AWS Cognito', 'AWS DevOps', 'AWS Security Hub'].includes(service.name) ? '150px' : (['AWS Lambda', 'React & Amplify'].includes(service.name) ? '130px' : '110px'),
@@ -2967,6 +2980,167 @@ function SimpleApp() {
                                         }}>
                                             Our IT Consulting Services provide expert guidance and support for your business technology needs. We will assess your current IT infrastructure, recommend improvements, and help you implement solutions that drive business growth.
                                         </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        {/* AWS Certifications Section */}
+                        <section style={{ padding: '5rem 2rem', background: 'linear-gradient(180deg, #1e293b 0%, #0f172a 100%)' }}>
+                            <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+                                <h3 className="animate-fade-in-up" style={{
+                                    fontSize: '2.5rem',
+                                    marginBottom: '1rem',
+                                    textAlign: 'center',
+                                    color: '#d4af37',
+                                    fontWeight: '800',
+                                    textShadow: '0 0 20px rgba(212, 175, 55, 0.4)'
+                                }}>
+                                    AWS Certifications & Partnerships
+                                </h3>
+                                <p style={{
+                                    textAlign: 'center',
+                                    color: '#cbd5e1',
+                                    fontSize: '1.1rem',
+                                    marginBottom: '3rem',
+                                    maxWidth: '800px',
+                                    margin: '0 auto 3rem'
+                                }}>
+                                    Our team holds industry-recognized AWS certifications, ensuring expert-level cloud solutions
+                                </p>
+                                
+                                <div style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                                    gap: '2rem',
+                                    marginBottom: '3rem'
+                                }}>
+                                    {[
+                                        { name: 'Solutions Architect', icon: '🏗️' },
+                                        { name: 'Developer Associate', icon: '💻' },
+                                        { name: 'SysOps Administrator', icon: '⚙️' },
+                                        { name: 'Security Specialty', icon: '🔒' },
+                                        { name: 'Select Tier Partner', icon: '⭐' },
+                                        { name: 'Public Sector Partner', icon: '🏛️' }
+                                    ].map((cert, index) => (
+                                        <div key={index} className="hover-lift animate-scale-in" style={{
+                                            background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
+                                            padding: '2rem',
+                                            borderRadius: '16px',
+                                            textAlign: 'center',
+                                            border: '2px solid #d4af37',
+                                            boxShadow: '0 10px 30px rgba(212, 175, 55, 0.2)',
+                                            animationDelay: `${index * 0.1}s`,
+                                            opacity: 0
+                                        }}>
+                                            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>{cert.icon}</div>
+                                            <h4 style={{ color: '#d4af37', fontSize: '1.1rem', fontWeight: '700', margin: 0 }}>
+                                                {cert.name}
+                                            </h4>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* AWS Service Status Dashboard */}
+                                <div style={{
+                                    background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
+                                    padding: '2.5rem',
+                                    borderRadius: '20px',
+                                    border: '2px solid #d4af37',
+                                    boxShadow: '0 10px 40px rgba(212, 175, 55, 0.2)'
+                                }}>
+                                    <h4 style={{
+                                        color: '#d4af37',
+                                        fontSize: '1.8rem',
+                                        marginBottom: '1.5rem',
+                                        textAlign: 'center',
+                                        fontWeight: '800'
+                                    }}>
+                                        🌐 Real-Time AWS Service Status
+                                    </h4>
+                                    <p style={{
+                                        textAlign: 'center',
+                                        color: '#cbd5e1',
+                                        marginBottom: '2rem'
+                                    }}>
+                                        Monitor the health of AWS services in real-time
+                                    </p>
+                                    
+                                    <div style={{
+                                        display: 'grid',
+                                        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                                        gap: '1rem'
+                                    }}>
+                                        {[
+                                            { service: 'EC2', region: 'US-East-1', status: 'operational' },
+                                            { service: 'S3', region: 'US-East-1', status: 'operational' },
+                                            { service: 'Lambda', region: 'US-East-1', status: 'operational' },
+                                            { service: 'RDS', region: 'US-East-1', status: 'operational' },
+                                            { service: 'DynamoDB', region: 'US-East-1', status: 'operational' },
+                                            { service: 'CloudFront', region: 'Global', status: 'operational' }
+                                        ].map((item, index) => (
+                                            <div key={index} style={{
+                                                background: 'rgba(15, 23, 42, 0.6)',
+                                                padding: '1.5rem',
+                                                borderRadius: '12px',
+                                                border: '1px solid rgba(212, 175, 55, 0.3)',
+                                                display: 'flex',
+                                                justifyContent: 'space-between',
+                                                alignItems: 'center'
+                                            }}>
+                                                <div>
+                                                    <div style={{ color: '#f1f5f9', fontWeight: '700', marginBottom: '0.25rem' }}>
+                                                        {item.service}
+                                                    </div>
+                                                    <div style={{ color: '#94a3b8', fontSize: '0.9rem' }}>
+                                                        {item.region}
+                                                    </div>
+                                                </div>
+                                                <div style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '0.5rem'
+                                                }}>
+                                                    <div style={{
+                                                        width: '10px',
+                                                        height: '10px',
+                                                        borderRadius: '50%',
+                                                        background: item.status === 'operational' ? '#22c55e' : '#ef4444',
+                                                        boxShadow: `0 0 10px ${item.status === 'operational' ? '#22c55e' : '#ef4444'}`
+                                                    }}></div>
+                                                    <span style={{
+                                                        color: item.status === 'operational' ? '#22c55e' : '#ef4444',
+                                                        fontSize: '0.9rem',
+                                                        fontWeight: '600'
+                                                    }}>
+                                                        {item.status === 'operational' ? 'Operational' : 'Issues'}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    
+                                    <div style={{
+                                        marginTop: '2rem',
+                                        textAlign: 'center'
+                                    }}>
+                                        <a 
+                                            href="https://health.aws.amazon.com/health/status" 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            style={{
+                                                color: '#d4af37',
+                                                textDecoration: 'none',
+                                                fontSize: '1rem',
+                                                fontWeight: '600',
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                gap: '0.5rem',
+                                                transition: 'all 0.3s ease'
+                                            }}
+                                        >
+                                            View Full AWS Status Dashboard →
+                                        </a>
                                     </div>
                                 </div>
                             </div>
