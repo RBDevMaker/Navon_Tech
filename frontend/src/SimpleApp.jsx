@@ -3077,7 +3077,11 @@ function SimpleApp() {
                                             { service: 'Lambda', region: 'US-East-1', status: 'operational' },
                                             { service: 'RDS', region: 'US-East-1', status: 'operational' },
                                             { service: 'DynamoDB', region: 'US-East-1', status: 'operational' },
-                                            { service: 'CloudFront', region: 'Global', status: 'operational' }
+                                            { service: 'CloudFront', region: 'Global', status: 'operational' },
+                                            { service: 'API Gateway', region: 'US-East-1', status: 'operational' },
+                                            { service: 'CloudWatch', region: 'US-East-1', status: 'operational' },
+                                            { service: 'SES', region: 'US-East-1', status: 'operational' },
+                                            { service: 'Cognito', region: 'US-East-1', status: 'operational' }
                                         ].map((item, index) => (
                                             <div key={index} style={{
                                                 background: 'rgba(15, 23, 42, 0.6)',
