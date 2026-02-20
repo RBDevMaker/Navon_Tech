@@ -3297,6 +3297,14 @@ function SimpleApp() {
                             
                             <form onSubmit={async (e) => {
                                 e.preventDefault();
+                                
+                                // Get reCAPTCHA response
+                                const recaptchaResponse = window.grecaptcha && window.grecaptcha.getResponse();
+                                if (!recaptchaResponse) {
+                                    alert('Please complete the reCAPTCHA verification');
+                                    return;
+                                }
+                                
                                 const formData = new FormData(e.target);
                                 const name = formData.get('name');
                                 const email = formData.get('email');
@@ -3357,7 +3365,8 @@ function SimpleApp() {
                                             position,
                                             resumeData,
                                             resumeFileName,
-                                            resumeContentType
+                                            resumeContentType,
+                                            recaptchaToken: recaptchaResponse
                                         })
                                     });
 
@@ -3366,6 +3375,10 @@ function SimpleApp() {
                                     if (response.ok) {
                                         alert('✅ Application submitted successfully! We will review your application and get back to you soon.');
                                         e.target.reset();
+                                        // Reset reCAPTCHA
+                                        if (window.grecaptcha) {
+                                            window.grecaptcha.reset();
+                                        }
                                         // Reset file upload display
                                         const fileLabel = document.getElementById('file-label');
                                         if (fileLabel) {
@@ -3379,6 +3392,10 @@ function SimpleApp() {
                                         }
                                     } else {
                                         console.error('API Error:', result);
+                                        // Reset reCAPTCHA on error
+                                        if (window.grecaptcha) {
+                                            window.grecaptcha.reset();
+                                        }
                                         throw new Error(result.message || result.error || 'Failed to submit application');
                                     }
                                 } catch (error) {
@@ -3521,6 +3538,20 @@ function SimpleApp() {
                                             <small style={{ color: '#64748b' }}>PDF, DOC, or DOCX (max 5MB)</small>
                                         </label>
                                     </div>
+                                </div>
+                                
+                                {/* reCAPTCHA */}
+                                <div style={{ 
+                                    display: 'flex', 
+                                    justifyContent: 'center', 
+                                    marginTop: '1.5rem',
+                                    marginBottom: '1rem'
+                                }}>
+                                    <div 
+                                        className="g-recaptcha" 
+                                        data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+                                        data-theme="light"
+                                    ></div>
                                 </div>
                                 
                                 <div style={{ textAlign: 'center', marginTop: '1rem' }}>
