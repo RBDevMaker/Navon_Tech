@@ -2391,7 +2391,8 @@ function SimpleApp() {
                                 marginBottom: '2rem',
                                 color: 'white',
                                 fontWeight: '800',
-                                letterSpacing: '-0.02em'
+                                letterSpacing: '-0.02em',
+                                animationDelay: '0.2s'
                             }}>
                                 AWS <span className="gradient-text">Expertise</span>
                             </h2>
@@ -2401,11 +2402,12 @@ function SimpleApp() {
                                 maxWidth: '800px',
                                 margin: '0 auto',
                                 lineHeight: '1.8',
-                                animationDelay: '0.2s',
+                                animationDelay: '0.4s',
                                 opacity: 0,
-                                animation: 'fadeInUp 0.8s ease-out 0.2s forwards'
+                                animation: 'fadeInUp 0.8s ease-out 0.4s forwards'
                             }}>
-                                Delivering secure, scalable cloud solutions with AWS Select Tier and Public Sector Partnership
+                                Delivering secure, scalable cloud solutions with<br />
+                                AWS Select Tier and Public Sector Partnership
                             </p>
                         </div>
                     </section>
@@ -2511,7 +2513,7 @@ function SimpleApp() {
                         <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
                             <h3 className="animate-fade-in-up" style={{
                                 fontSize: '2.5rem',
-                                marginBottom: '3rem',
+                                marginBottom: '2rem',
                                 textAlign: 'center',
                                 color: '#d4af37',
                                 fontWeight: '800',
@@ -2519,6 +2521,22 @@ function SimpleApp() {
                             }}>
                                 AWS Services
                             </h3>
+                            
+                            <div className="animate-fade-in-up" style={{ 
+                                marginBottom: '3rem',
+                                display: 'flex',
+                                justifyContent: 'center'
+                            }}>
+                                <img 
+                                    src={`${s3BaseUrl}/public/images/services/aws.png`}
+                                    alt="AWS Logo" 
+                                    style={{ 
+                                        maxWidth: '120px',
+                                        height: 'auto',
+                                        filter: 'drop-shadow(0 4px 20px rgba(212, 175, 55, 0.3))'
+                                    }}
+                                />
+                            </div>
                             
                             <div style={{
                                 display: 'grid',
@@ -2537,7 +2555,10 @@ function SimpleApp() {
                                     { name: 'React & Amplify', file: 'React_and_Amplify.jpg' },
                                     { name: 'Route 53 & Domains', file: 'Route_53_Domains.jpg' },
                                     { name: 'DynamoDB', file: 'Dynamo_DB.jpeg' },
-                                { name: 'AWS Shield / WAF', file: 'AWS_Shield_WAF.jpeg' }
+                                    { name: 'AWS Shield / WAF', file: 'AWS_Shield_WAF.jpeg' },
+                                    { name: 'Simple Email Service SES', file: 'ses.jpeg' },
+                                    { name: 'CloudWatch', file: 'Cloudwatch.png' },
+                                    { name: 'Relational Database Service', file: 'rds.png' }
                             ].map((service, index) => {
                                 const getImageSrc = (service) => {
                                     if (service.name === 'DynamoDB') return `${s3BaseUrl}/Dynamo_DB.jpeg`;
