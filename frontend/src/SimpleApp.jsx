@@ -1780,7 +1780,7 @@ function SimpleApp() {
                                 {/* Our Values spans full width */}
                                 <div className="hover-lift animate-slide-in-right" style={{ 
                                     background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
-                                    padding: '2.5rem', 
+                                    padding: '1.5rem', 
                                     borderRadius: '20px',
                                     border: '3px solid #d4af37',
                                     boxShadow: '0 10px 40px rgba(212, 175, 55, 0.2)',
@@ -1788,12 +1788,13 @@ function SimpleApp() {
                                     opacity: 0,
                                     marginBottom: '4rem',
                                     overflowWrap: 'break-word',
-                                    wordWrap: 'break-word'
+                                    wordWrap: 'break-word',
+                                    overflow: 'hidden'
                                 }}>
                                     <h3 style={{ 
                                         color: '#d4af37', 
                                         marginBottom: '1.5rem', 
-                                        fontSize: '1.8rem',
+                                        fontSize: 'clamp(1.3rem, 4vw, 1.8rem)',
                                         fontWeight: '800',
                                         textShadow: '0 0 15px rgba(212, 175, 55, 0.4)',
                                         textAlign: 'center'
@@ -1801,19 +1802,19 @@ function SimpleApp() {
                                     <ul style={{ 
                                         color: '#cbd5e1', 
                                         margin: '0', 
-                                        paddingLeft: '1.5rem', 
-                                        fontSize: '1.05rem', 
-                                        lineHeight: '2',
-                                        display: 'grid',
-                                        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                                        gap: '1rem',
+                                        paddingLeft: '1rem', 
+                                        fontSize: 'clamp(0.9rem, 2.5vw, 1.05rem)', 
+                                        lineHeight: '1.8',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: '0.75rem',
                                         listStyle: 'none'
                                     }}>
-                                        <li style={{ marginBottom: '0.5rem' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> Reliability - Delivering consistent, dependable solutions</li>
-                                        <li style={{ marginBottom: '0.5rem' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> Security - Protecting mission-critical data and systems</li>
-                                        <li style={{ marginBottom: '0.5rem' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> Innovation - Embracing cutting-edge technology</li>
-                                        <li style={{ marginBottom: '0.5rem' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> Excellence - Exceeding the highest standards</li>
-                                        <li style={{ marginBottom: '0.5rem' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> Integrity - Operating with transparency and trust</li>
+                                        <li style={{ marginBottom: '0.5rem', wordBreak: 'break-word' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> Reliability - Delivering consistent, dependable solutions</li>
+                                        <li style={{ marginBottom: '0.5rem', wordBreak: 'break-word' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> Security - Protecting mission-critical data and systems</li>
+                                        <li style={{ marginBottom: '0.5rem', wordBreak: 'break-word' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> Innovation - Embracing cutting-edge technology</li>
+                                        <li style={{ marginBottom: '0.5rem', wordBreak: 'break-word' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> Excellence - Exceeding the highest standards</li>
+                                        <li style={{ marginBottom: '0.5rem', wordBreak: 'break-word' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> Integrity - Operating with transparency and trust</li>
                                     </ul>
                                 </div>
                                 
