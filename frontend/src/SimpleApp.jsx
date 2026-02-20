@@ -1786,7 +1786,9 @@ function SimpleApp() {
                                     boxShadow: '0 10px 40px rgba(212, 175, 55, 0.2)',
                                     animationDelay: '0.4s',
                                     opacity: 0,
-                                    marginBottom: '4rem'
+                                    marginBottom: '4rem',
+                                    overflowWrap: 'break-word',
+                                    wordWrap: 'break-word'
                                 }}>
                                     <h3 style={{ 
                                         color: '#d4af37', 
@@ -1803,7 +1805,7 @@ function SimpleApp() {
                                         fontSize: '1.05rem', 
                                         lineHeight: '2',
                                         display: 'grid',
-                                        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                                        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
                                         gap: '1rem',
                                         listStyle: 'none'
                                     }}>
