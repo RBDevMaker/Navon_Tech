@@ -958,7 +958,7 @@ function SimpleApp() {
                                 gridTemplateColumns: 'repeat(3, 1fr)', 
                                 gap: '2rem'
                             }}>
-                                {/* Satisfaction Guaranteed */}
+                                {/* Services and Solutions */}
                                 <div className="hover-lift animate-slide-in-left" style={{
                                     background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
                                     padding: '3rem',
@@ -969,71 +969,6 @@ function SimpleApp() {
                                     overflow: 'hidden',
                                     display: 'flex',
                                     flexDirection: 'column'
-                                }}>
-                                    <div style={{
-                                        position: 'absolute',
-                                        top: '-50px',
-                                        right: '-50px',
-                                        width: '150px',
-                                        height: '150px',
-                                        background: 'radial-gradient(circle, rgba(245, 158, 11, 0.2) 0%, transparent 70%)',
-                                        borderRadius: '50%'
-                                    }}></div>
-                                    <h3 style={{ 
-                                        color: 'white', 
-                                        marginBottom: '1.5rem', 
-                                        fontSize: '1.8rem',
-                                        fontWeight: '700'
-                                    }}>
-                                        Satisfaction Guaranteed
-                                    </h3>
-                                    <p style={{ 
-                                        color: '#cbd5e1', 
-                                        lineHeight: '1.8',
-                                        marginBottom: '1rem',
-                                        fontSize: '1.05rem',
-                                        flex: 1
-                                    }}>
-                                        We provide tailored IT solutions that fit your company's needs and budget, delivering professional customer service every step of the way.
-                                    </p>
-                                    <p style={{ 
-                                        color: '#d4af37', 
-                                        fontWeight: '600',
-                                        marginBottom: '2rem',
-                                        fontSize: '1.1rem'
-                                    }}>
-                                        We guarantee you will be satisfied with our work.
-                                    </p>
-                                    <div style={{ textAlign: 'center' }}>
-                                        <a href="#contact" style={{
-                                            background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
-                                            color: 'white',
-                                            padding: '1rem 2rem',
-                                            borderRadius: '10px',
-                                            textDecoration: 'none',
-                                            fontWeight: '600',
-                                            display: 'inline-block',
-                                            boxShadow: '0 8px 20px rgba(212, 175, 55, 0.3)',
-                                            transition: 'all 0.3s ease'
-                                        }}>
-                                            Contact Us →
-                                        </a>
-                                    </div>
-                                </div>
-                                
-                                {/* Services and Solutions */}
-                                <div className="hover-lift animate-fade-in-up" style={{
-                                    background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
-                                    padding: '3rem',
-                                    borderRadius: '20px',
-                                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                                    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
-                                    position: 'relative',
-                                    overflow: 'hidden',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    animationDelay: '0.3s',
-                                    opacity: 0
                                 }}>
                                     <div className="animate-pulse" style={{
                                         position: 'absolute',
@@ -1079,7 +1014,7 @@ function SimpleApp() {
                                 </div>
                                 
                                 {/* Technical Experience */}
-                                <div className="hover-lift animate-slide-in-right" style={{
+                                <div className="hover-lift animate-fade-in-up" style={{
                                     background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
                                     padding: '3rem',
                                     borderRadius: '20px',
@@ -1089,7 +1024,7 @@ function SimpleApp() {
                                     overflow: 'hidden',
                                     display: 'flex',
                                     flexDirection: 'column',
-                                    animationDelay: '0.6s',
+                                    animationDelay: '0.3s',
                                     opacity: 0
                                 }}>
                                     <div className="animate-pulse" style={{
@@ -1151,6 +1086,71 @@ function SimpleApp() {
                                             cursor: 'pointer'
                                         }}>
                                             Learn More →
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                {/* Satisfaction Guaranteed */}
+                                <div className="hover-lift animate-slide-in-right" style={{
+                                    background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
+                                    padding: '3rem',
+                                    borderRadius: '20px',
+                                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                                    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+                                    position: 'relative',
+                                    overflow: 'hidden',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    animationDelay: '0.6s',
+                                    opacity: 0
+                                }}>
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '-50px',
+                                        right: '-50px',
+                                        width: '150px',
+                                        height: '150px',
+                                        background: 'radial-gradient(circle, rgba(245, 158, 11, 0.2) 0%, transparent 70%)',
+                                        borderRadius: '50%'
+                                    }}></div>
+                                    <h3 style={{ 
+                                        color: 'white', 
+                                        marginBottom: '1.5rem', 
+                                        fontSize: '1.8rem',
+                                        fontWeight: '700'
+                                    }}>
+                                        Satisfaction Guaranteed
+                                    </h3>
+                                    <p style={{ 
+                                        color: '#cbd5e1', 
+                                        lineHeight: '1.8',
+                                        marginBottom: '1rem',
+                                        fontSize: '1.05rem',
+                                        flex: 1
+                                    }}>
+                                        We provide tailored IT solutions that fit your company's needs and budget, delivering professional customer service every step of the way.
+                                    </p>
+                                    <p style={{ 
+                                        color: '#d4af37', 
+                                        fontWeight: '600',
+                                        marginBottom: '2rem',
+                                        fontSize: '1.1rem'
+                                    }}>
+                                        We guarantee you will be satisfied with our work.
+                                    </p>
+                                    <div style={{ textAlign: 'center' }}>
+                                        <a href="#contact" style={{
+                                            background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
+                                            color: 'white',
+                                            padding: '1rem 2rem',
+                                            borderRadius: '10px',
+                                            textDecoration: 'none',
+                                            fontWeight: '600',
+                                            display: 'inline-block',
+                                            boxShadow: '0 8px 20px rgba(212, 175, 55, 0.3)',
+                                            transition: 'all 0.3s ease'
+                                        }}>
+                                            Contact Us →
                                         </a>
                                     </div>
                                 </div>
