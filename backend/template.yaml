@@ -111,16 +111,26 @@ Resources:
       Description: Handles job application form submissions and sends emails
       MemorySize: 1024
       Timeout: 30
+      Environment:
+        Variables:
+          RATE_LIMIT_TABLE: !Ref RateLimitTable
       Policies:
         - S3CrudPolicy:
             BucketName: navon-tech-images
+        - DynamoDBCrudPolicy:
+            TableName: !Ref RateLimitTable
         - Statement:
             - Effect: Allow
               Action:
                 - ses:SendEmail
                 - ses:SendRawEmail
               Resource: "*"
-        - CloudWatchLogsFullAccess
+            - Effect: Allow
+              Action:
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+              Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"
       Events:
         SubmitApplication:
           Type: Api
@@ -138,6 +148,35 @@ Resources:
             Method: OPTIONS
             Auth:
               Authorizer: NONE
+
+  # Rate Limiting Table for Job Applications
+  RateLimitTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: JobApplicationRateLimit
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: email
+          AttributeType: S
+        - AttributeName: timestamp
+          AttributeType: N
+      KeySchema:
+        - AttributeName: email
+          KeyType: HASH
+        - AttributeName: timestamp
+          KeyType: RANGE
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      SSESpecification:
+        SSEEnabled: true
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Purpose
+          Value: RateLimiting
 
   # DynamoDB Table with Security
   CompanyDataTable:
@@ -238,12 +277,36 @@ Resources:
       IdTokenValidity: 1
       RefreshTokenValidity: 30
 
-  # CloudWatch Log Groups
+  # CloudWatch Log Groups with Retention
   ApiGatewayLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub "/aws/apigateway/${AWS::StackName}"
       RetentionInDays: 14
+
+  PublicContentLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${PublicContentFunction}"
+      RetentionInDays: 30
+
+  EmployeeLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${EmployeeFunction}"
+      RetentionInDays: 30
+
+  CareerLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${CareerFunction}"
+      RetentionInDays: 30
+
+  JobApplicationLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${JobApplicationFunction}"
+      RetentionInDays: 90
 
 Outputs:
   ApiGatewayEndpoint:
