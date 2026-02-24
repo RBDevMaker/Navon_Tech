@@ -3588,7 +3588,7 @@ function SimpleApp() {
                                 {[
                                     { icon: '🏖️', title: 'Generous PTO', desc: 'Competitive paid time off with flexible scheduling' },
                                     { icon: '🎉', title: 'Paid Holidays', desc: '11 holidays: New Year\'s Day, MLK Day, President\'s Day, Memorial Day, Juneteenth, Independence Day, Labor Day, Columbus Day, Veteran\'s Day, Thanksgiving, Christmas' },
-                                    { icon: '💰', title: '401k & Profit Sharing', desc: '3% safe-harbor with immediate vesting after 30 days. Traditional pre-tax and Roth options. Annual profit-sharing contributions' },
+                                    { icon: '💰', title: '401k & Profit Sharing', desc: '3% safe-harbor (company contribution) with immediate vesting after 30 days. Traditional pre-tax and Roth options. Annual profit-sharing contributions' },
                                     { icon: '🏥', title: 'Medical Insurance - 100% Company Paid', desc: 'Anthem Gold PPO/HSA and Platinum PPO plans. Coverage for employee, spouse/domestic partner, and children up to age 26' },
                                     { icon: '🦷', title: 'Dental Insurance - 100% Company Paid', desc: 'Essential Choice Classic plan with $1,500 annual maximum. Anthem Dental network' },
                                     { icon: '👀', title: 'Vision Insurance - 100% Company Paid', desc: 'Blue View Vision Plan with $10 exam copay, $130 frame allowance, and contact lens benefit' },
