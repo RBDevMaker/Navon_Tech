@@ -11,8 +11,7 @@ const HomePage = () => {
                     <div className="hero-text">
                         <h1>Cloud-Native Technology Solutions</h1>
                         <p>
-                            Empowering businesses with scalable, secure, and innovative
-                            cloud infrastructure solutions built on AWS.
+                            Navon Technologies is a Service-Disabled Veteran-Owned Small Business and AWS Partner serving both public and private sectors. We provide technical services for development, automation, testing, implementation, and maintenance support for our customers' mission critical applications whether they are on-prem or in the cloud.
                         </p>
                         <div className="hero-buttons">
                             <button className="btn btn-primary">Get Started</button>

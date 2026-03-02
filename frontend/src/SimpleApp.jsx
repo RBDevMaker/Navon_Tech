@@ -936,7 +936,7 @@ function SimpleApp() {
                                     margin: '0',
                                     textShadow: '0 2px 10px rgba(0, 0, 0, 0.5)'
                                 }}>
-                                    Navon Technologies is a Service-Disabled Veteran-Owned Small Business and AWS Partner serving both public and private sectors. We provide technical services for development, automation, testing, implementation, and maintenance support for our customers' mission and business for critical applications whether they are on-prem or in the cloud.
+                                    Navon Technologies is a Service-Disabled Veteran-Owned Small Business and AWS Partner serving both public and private sectors. We provide technical services for development, automation, testing, implementation, and maintenance support for our customers' mission critical applications whether they are on-prem or in the cloud.
                                 </p>
                             </div>
                         </div>
