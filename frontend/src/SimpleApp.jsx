@@ -3954,7 +3954,7 @@ function SimpleApp() {
                                     </svg>
                                     <span>LinkedIn</span>
                                 </a>
-                                <a href="https://facebook.com/navontechnologies" target="_blank" rel="noopener noreferrer" className="hover-lift" style={{
+                                <a href="https://www.facebook.com/profile.php?id=61587213872677" target="_blank" rel="noopener noreferrer" className="hover-lift" style={{
                                     color: '#0f172a',
                                     textDecoration: 'none',
                                     display: 'flex',
@@ -3979,7 +3979,7 @@ function SimpleApp() {
                                     </svg>
                                     <span>Facebook</span>
                                 </a>
-                                <a href="https://instagram.com/navontechnologies" target="_blank" rel="noopener noreferrer" className="hover-lift" style={{
+                                <a href="https://www.instagram.com/navon_tech/" target="_blank" rel="noopener noreferrer" className="hover-lift" style={{
                                     color: '#0f172a',
                                     textDecoration: 'none',
                                     display: 'flex',
