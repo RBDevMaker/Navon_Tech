@@ -877,6 +877,71 @@ function SimpleApp() {
                         }}></div>
                         
                         <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+                            {/* Pronunciation Guide */}
+                            <div className="animate-fade-in-up" style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '12px',
+                                margin: '0 auto 1.5rem auto',
+                                animationDelay: '0.1s',
+                                opacity: 0,
+                                animation: 'fadeInUp 0.8s ease-out 0.1s forwards'
+                            }}>
+                                <span style={{
+                                    fontSize: '2rem',
+                                    fontWeight: '700'
+                                }}>
+                                    <span style={{ color: 'white' }}>Navon</span>{' '}
+                                    <span style={{ color: '#d4af37' }}>Technologies</span>
+                                </span>
+                                <span style={{
+                                    color: '#94a3b8',
+                                    fontSize: '1rem',
+                                    fontStyle: 'italic'
+                                }}>
+                                    Pronounced: NAH-vahn
+                                </span>
+                                <button
+                                    onClick={() => {
+                                        const utterance = new SpeechSynthesisUtterance('nuh von');
+                                        utterance.rate = 0.8;
+                                        utterance.pitch = 1;
+                                        window.speechSynthesis.speak(utterance);
+                                    }}
+                                    style={{
+                                        background: 'rgba(212, 175, 55, 0.2)',
+                                        border: '1px solid rgba(212, 175, 55, 0.5)',
+                                        borderRadius: '50%',
+                                        width: '36px',
+                                        height: '36px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s ease',
+                                        padding: '0'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.background = 'rgba(212, 175, 55, 0.4)';
+                                        e.currentTarget.style.transform = 'scale(1.1)';
+                                        e.currentTarget.style.boxShadow = '0 0 20px rgba(212, 175, 55, 0.6)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.background = 'rgba(212, 175, 55, 0.2)';
+                                        e.currentTarget.style.transform = 'scale(1)';
+                                        e.currentTarget.style.boxShadow = 'none';
+                                    }}
+                                    title="Listen to pronunciation"
+                                >
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4af37" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                                        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                                    </svg>
+                                </button>
+                            </div>
+
                             <h1 className="animate-fade-in-up" style={{
                                 fontSize: '3.5rem',
                                 margin: '0 0 2rem 0',
