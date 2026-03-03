@@ -2580,8 +2580,6 @@ function SimpleApp() {
                                     { name: 'Relational Database Service', file: 'rds.png' }
                             ].map((service, index) => {
                                 const getImageSrc = (service) => {
-                                    if (service.name === 'DynamoDB') return `${s3BaseUrl}/Dynamo_DB.jpeg`;
-                                    if (service.name === 'AWS Shield / WAF') return `${s3BaseUrl}/AWS_Shield_WAF.jpeg`;
                                     return `${s3BaseUrl}/public/images/services/${service.file}`;
                                 };
                                 
