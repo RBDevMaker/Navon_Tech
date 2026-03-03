@@ -2992,63 +2992,9 @@ function SimpleApp() {
                             </div>
                         </section>
 
-                        {/* AWS Certifications Section */}
+                        {/* AWS Service Status Dashboard */}
                         <section style={{ padding: '5rem 2rem', background: 'linear-gradient(180deg, #1e293b 0%, #0f172a 100%)' }}>
                             <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-                                <h3 className="animate-fade-in-up" style={{
-                                    fontSize: '2.5rem',
-                                    marginBottom: '1rem',
-                                    textAlign: 'center',
-                                    color: '#d4af37',
-                                    fontWeight: '800',
-                                    textShadow: '0 0 20px rgba(212, 175, 55, 0.4)'
-                                }}>
-                                    AWS Certifications & Partnerships
-                                </h3>
-                                <p style={{
-                                    textAlign: 'center',
-                                    color: '#cbd5e1',
-                                    fontSize: '1.1rem',
-                                    marginBottom: '3rem',
-                                    maxWidth: '800px',
-                                    margin: '0 auto 3rem'
-                                }}>
-                                    Our team holds industry-recognized AWS certifications, ensuring expert-level cloud solutions
-                                </p>
-                                
-                                <div style={{
-                                    display: 'grid',
-                                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                                    gap: '2rem',
-                                    marginBottom: '3rem'
-                                }}>
-                                    {[
-                                        { name: 'Solutions Architect', icon: '🏗️' },
-                                        { name: 'Developer Associate', icon: '💻' },
-                                        { name: 'SysOps Administrator', icon: '⚙️' },
-                                        { name: 'Security Specialty', icon: '🔒' },
-                                        { name: 'Select Tier Partner', icon: '⭐' },
-                                        { name: 'Public Sector Partner', icon: '🏛️' }
-                                    ].map((cert, index) => (
-                                        <div key={index} className="hover-lift animate-scale-in" style={{
-                                            background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
-                                            padding: '2rem',
-                                            borderRadius: '16px',
-                                            textAlign: 'center',
-                                            border: '2px solid #d4af37',
-                                            boxShadow: '0 10px 30px rgba(212, 175, 55, 0.2)',
-                                            animationDelay: `${index * 0.1}s`,
-                                            opacity: 0
-                                        }}>
-                                            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>{cert.icon}</div>
-                                            <h4 style={{ color: '#d4af37', fontSize: '1.1rem', fontWeight: '700', margin: 0 }}>
-                                                {cert.name}
-                                            </h4>
-                                        </div>
-                                    ))}
-                                </div>
-
-                                {/* AWS Service Status Dashboard */}
                                 <div style={{
                                     background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
                                     padding: '2.5rem',
