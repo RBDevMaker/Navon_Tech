@@ -1700,7 +1700,8 @@ function SimpleApp() {
                                         'AWS Sales Accredited.jpeg',
                                         'AWS Cloud Practitioner.jpeg',
                                         'AWS Solution Architect.jpeg',
-                                        'AWS Certified Developer.jpeg'
+                                        'AWS Certified Developer.jpeg',
+                                        'aws_networking.png'
                                     ].map((cert, index) => (
                                         <div key={index} className="hover-lift animate-scale-in" style={{
                                             background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
