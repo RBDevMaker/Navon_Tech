@@ -2055,11 +2055,15 @@ function SimpleApp() {
                                     fontSize: '2.5rem',
                                     marginBottom: '1.5rem',
                                     textAlign: 'center',
-                                    color: '#d4af37',
                                     fontWeight: '800',
-                                    textShadow: '0 0 20px rgba(212, 175, 55, 0.4)'
+                                    color: '#0f172a',
+                                    textShadow: '0 2px 4px rgba(255, 255, 255, 0.3)',
+                                    background: 'linear-gradient(135deg, #d4af37 0%, #f4e5a1 50%, #d4af37 100%)',
+                                    padding: '1rem 2rem',
+                                    borderRadius: '8px',
+                                    boxShadow: '0 0 30px rgba(212, 175, 55, 0.6)'
                                 }}>
-                                    Boost Your Project with <span style={{ color: '#d4af37' }}>Navon Technologies IT Services</span>
+                                    Boost Your Project with <span style={{ color: '#0f172a' }}>Navon Technologies IT Services</span>
                                 </h2>
                                 <p className="animate-fade-in-up" style={{
                                     fontSize: '1.1rem',
@@ -2668,9 +2672,13 @@ function SimpleApp() {
                                     fontSize: '2.5rem',
                                     marginBottom: '3rem',
                                     textAlign: 'center',
-                                    color: '#d4af37',
                                     fontWeight: '800',
-                                    textShadow: '0 0 20px rgba(212, 175, 55, 0.4)'
+                                    color: '#0f172a',
+                                    textShadow: '0 2px 4px rgba(255, 255, 255, 0.3)',
+                                    background: 'linear-gradient(135deg, #d4af37 0%, #f4e5a1 50%, #d4af37 100%)',
+                                    padding: '1rem 2rem',
+                                    borderRadius: '8px',
+                                    boxShadow: '0 0 30px rgba(212, 175, 55, 0.6)'
                                 }}>
                                     Professional IT Services for Your Business
                                 </h2>
@@ -3183,9 +3191,13 @@ function SimpleApp() {
                             fontSize: '2.5rem',
                             marginBottom: '3rem',
                             textAlign: 'center',
-                            color: '#d4af37',
                             fontWeight: '800',
-                            textShadow: '0 0 20px rgba(212, 175, 55, 0.4)'
+                            color: '#0f172a',
+                            textShadow: '0 2px 4px rgba(255, 255, 255, 0.3)',
+                            background: 'linear-gradient(135deg, #d4af37 0%, #f4e5a1 50%, #d4af37 100%)',
+                            padding: '1rem 2rem',
+                            borderRadius: '8px',
+                            boxShadow: '0 0 30px rgba(212, 175, 55, 0.6)'
                         }}>
                             Join Our Mission-Critical Team
                         </h2>
@@ -3745,7 +3757,7 @@ function SimpleApp() {
                             borderRadius: '8px',
                             boxShadow: '0 0 30px rgba(212, 175, 55, 0.6)'
                         }}>
-                            Ready to Secure Your Mission?
+                            Contact Us
                         </h2>
                         <div style={{
                             display: 'flex',
