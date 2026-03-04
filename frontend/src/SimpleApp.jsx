@@ -890,7 +890,7 @@ function SimpleApp() {
                                 animation: 'fadeInUp 0.8s ease-out 0.1s forwards'
                             }}>
                                 <span style={{
-                                    fontSize: 'clamp(2rem, 8vw, 4rem)',
+                                    fontSize: 'clamp(2.5rem, 10vw, 5rem)',
                                     fontWeight: '700'
                                 }}>
                                     <span style={{ color: 'white' }}>Navon</span>{' '}
@@ -949,7 +949,7 @@ function SimpleApp() {
                                 </div>
                             </div>
                             <h2 className="animate-fade-in-up" style={{
-                                fontSize: '1.8rem',
+                                fontSize: 'clamp(1rem, 3vw, 1.4rem)',
                                 background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
                                 WebkitBackgroundClip: 'text',
                                 WebkitTextFillColor: 'transparent',
