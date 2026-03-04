@@ -7537,12 +7537,12 @@ function SimpleApp() {
                             marginBottom: '3rem'
                         }}>
                             {[
+                                { icon: '📧', name: 'Microsoft 365 Email', desc: 'Corporate email access', status: 'Active', link: 'https://outlook.office.com' },
                                 { icon: '👥', name: 'Rippling', desc: 'HR, payroll, and benefits management', status: 'Active', link: 'https://app.rippling.com' },
                                 { icon: '☁️', name: 'AWS Console Access', desc: 'Manage cloud infrastructure', status: 'Active', link: 'https://console.aws.amazon.com' },
-                                { icon: '📊', name: 'Project Management Suite', desc: 'Track tasks and milestones', status: 'Coming Soon' },
                                 { icon: '💻', name: 'GitHub', desc: 'Secure Code Repository - Git version control', status: 'Active', link: 'https://github.com' },
+                                { icon: '📊', name: 'Project Management Suite', desc: 'Track tasks and milestones', status: 'Coming Soon' },
                                 { icon: '💬', name: 'Encrypted Communications', desc: 'Secure messaging platform', status: 'Coming Soon' },
-                                { icon: '📧', name: 'Microsoft 365 Email', desc: 'Corporate email access', status: 'Active', link: 'https://outlook.office.com' },
                                 { icon: '🔍', name: 'Security Compliance Dashboard', desc: 'Monitor compliance status', status: 'Coming Soon' },
                                 { icon: '📚', name: 'Documentation Wiki', desc: 'Internal knowledge base', status: 'Coming Soon' },
                                 { icon: '🎯', name: 'Task Automation', desc: 'Workflow automation tools', status: 'Coming Soon' },
