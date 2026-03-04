@@ -354,11 +354,16 @@ www.navontech.com
         };
 
         // Send both emails in parallel for faster response
-        await Promise.all([
+        console.log('Sending HR notification email to: hr@navontech.com');
+        console.log('Sending applicant confirmation email to:', sanitizedEmail);
+        
+        const [hrEmailResult, applicantEmailResult] = await Promise.all([
             sesClient.send(new SendEmailCommand(hrEmailParams)),
             sesClient.send(new SendEmailCommand(applicantEmailParams))
         ]);
 
+        console.log('HR email sent successfully. MessageId:', hrEmailResult.MessageId);
+        console.log('Applicant confirmation email sent successfully. MessageId:', applicantEmailResult.MessageId);
         console.log('Application processed successfully for:', sanitizedEmail);
 
         return {
