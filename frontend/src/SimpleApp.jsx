@@ -4595,31 +4595,52 @@ function SimpleApp() {
                                     boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
                                     transition: 'all 0.4s ease',
                                     position: 'relative',
-                                    overflow: 'hidden'
+                                    overflow: 'hidden',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'space-between'
                                 }}>
+                                {/* Coming Soon Flag */}
                                 <div style={{
-                                    fontSize: '4rem',
-                                    marginBottom: '1.5rem',
-                                    filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))'
-                                }}>
-                                    👥
-                                </div>
-                                <h3 style={{
+                                    position: 'absolute',
+                                    top: '15px',
+                                    left: '15px',
+                                    background: '#ef4444',
                                     color: 'white',
-                                    fontSize: '1.5rem',
+                                    padding: '0.4rem 0.8rem',
+                                    borderRadius: '6px',
+                                    fontSize: '0.75rem',
                                     fontWeight: '700',
-                                    marginBottom: '1rem'
+                                    boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                                    zIndex: 10
                                 }}>
-                                    Employee Profile & Directory
-                                </h3>
-                                <p style={{
-                                    color: '#cbd5e1',
-                                    fontSize: '1rem',
-                                    lineHeight: '1.6',
-                                    marginBottom: '2rem'
-                                }}>
-                                    Manage your profile, view team directory, and update contact information
-                                </p>
+                                    Coming Soon
+                                </div>
+                                <div>
+                                    <div style={{
+                                        fontSize: '4rem',
+                                        marginBottom: '1.5rem',
+                                        filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))'
+                                    }}>
+                                        👥
+                                    </div>
+                                    <h3 style={{
+                                        color: 'white',
+                                        fontSize: '1.5rem',
+                                        fontWeight: '700',
+                                        marginBottom: '1rem'
+                                    }}>
+                                        Employee Profile & Directory
+                                    </h3>
+                                    <p style={{
+                                        color: '#cbd5e1',
+                                        fontSize: '1rem',
+                                        lineHeight: '1.6',
+                                        marginBottom: '2rem'
+                                    }}>
+                                        Manage your profile, view team directory, and update contact information
+                                    </p>
+                                </div>
                                 <div style={{
                                     background: 'rgba(212, 175, 55, 0.2)',
                                     border: '2px solid #d4af37',
@@ -4635,11 +4656,11 @@ function SimpleApp() {
                                 </div>
                             </div>
 
-                            {/* Card 2: Time Card Management */}
+                            {/* Card 2: Secure Tools & Applications */}
                             <div 
                                 className="hover-lift animate-scale-in" 
                                 onClick={() => {
-                                    setCurrentPage('timecardmanagement');
+                                    setCurrentPage('securetools');
                                     window.scrollTo({ top: 0, behavior: 'smooth' });
                                 }}
                                 style={{
@@ -4653,31 +4674,52 @@ function SimpleApp() {
                                     transition: 'all 0.4s ease',
                                     position: 'relative',
                                     overflow: 'hidden',
-                                    animationDelay: '0.1s'
+                                    animationDelay: '0.1s',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'space-between'
                                 }}>
+                                {/* Active Flag */}
                                 <div style={{
-                                    fontSize: '4rem',
-                                    marginBottom: '1.5rem',
-                                    filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))'
-                                }}>
-                                    ⏰
-                                </div>
-                                <h3 style={{
+                                    position: 'absolute',
+                                    top: '15px',
+                                    left: '15px',
+                                    background: '#10b981',
                                     color: 'white',
-                                    fontSize: '1.5rem',
+                                    padding: '0.4rem 0.8rem',
+                                    borderRadius: '6px',
+                                    fontSize: '0.75rem',
                                     fontWeight: '700',
-                                    marginBottom: '1rem'
+                                    boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                                    zIndex: 10
                                 }}>
-                                    Time Card Management
-                                </h3>
-                                <p style={{
-                                    color: '#cbd5e1',
-                                    fontSize: '1rem',
-                                    lineHeight: '1.6',
-                                    marginBottom: '2rem'
-                                }}>
-                                    Track time, submit time-off requests, and manage work schedules
-                                </p>
+                                    Active
+                                </div>
+                                <div>
+                                    <div style={{
+                                        fontSize: '4rem',
+                                        marginBottom: '1.5rem',
+                                        filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))'
+                                    }}>
+                                        💻
+                                    </div>
+                                    <h3 style={{
+                                        color: 'white',
+                                        fontSize: '1.5rem',
+                                        fontWeight: '700',
+                                        marginBottom: '1rem'
+                                    }}>
+                                        Secure Tools & Applications
+                                    </h3>
+                                    <p style={{
+                                        color: '#cbd5e1',
+                                        fontSize: '1rem',
+                                        lineHeight: '1.6',
+                                        marginBottom: '2rem'
+                                    }}>
+                                        AWS Console, project management, code repositories, and communication tools
+                                    </p>
+                                </div>
                                 <div style={{
                                     background: 'rgba(212, 175, 55, 0.2)',
                                     border: '2px solid #d4af37',
@@ -4711,31 +4753,52 @@ function SimpleApp() {
                                     transition: 'all 0.4s ease',
                                     position: 'relative',
                                     overflow: 'hidden',
-                                    animationDelay: '0.2s'
+                                    animationDelay: '0.2s',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'space-between'
                                 }}>
+                                {/* Coming Soon Flag */}
                                 <div style={{
-                                    fontSize: '4rem',
-                                    marginBottom: '1.5rem',
-                                    filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))'
-                                }}>
-                                    📄
-                                </div>
-                                <h3 style={{
+                                    position: 'absolute',
+                                    top: '15px',
+                                    left: '15px',
+                                    background: '#ef4444',
                                     color: 'white',
-                                    fontSize: '1.5rem',
+                                    padding: '0.4rem 0.8rem',
+                                    borderRadius: '6px',
+                                    fontSize: '0.75rem',
                                     fontWeight: '700',
-                                    marginBottom: '1rem'
+                                    boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                                    zIndex: 10
                                 }}>
-                                    Secure Document Management
-                                </h3>
-                                <p style={{
-                                    color: '#cbd5e1',
-                                    fontSize: '1rem',
-                                    lineHeight: '1.6',
-                                    marginBottom: '2rem'
-                                }}>
-                                    Access encrypted files, project documents, and compliance materials
-                                </p>
+                                    Coming Soon
+                                </div>
+                                <div>
+                                    <div style={{
+                                        fontSize: '4rem',
+                                        marginBottom: '1.5rem',
+                                        filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))'
+                                    }}>
+                                        📄
+                                    </div>
+                                    <h3 style={{
+                                        color: 'white',
+                                        fontSize: '1.5rem',
+                                        fontWeight: '700',
+                                        marginBottom: '1rem'
+                                    }}>
+                                        Secure Document Management
+                                    </h3>
+                                    <p style={{
+                                        color: '#cbd5e1',
+                                        fontSize: '1rem',
+                                        lineHeight: '1.6',
+                                        marginBottom: '2rem'
+                                    }}>
+                                        Access encrypted files, project documents, and compliance materials
+                                    </p>
+                                </div>
                                 <div style={{
                                     background: 'rgba(212, 175, 55, 0.2)',
                                     border: '2px solid #d4af37',
@@ -4751,11 +4814,11 @@ function SimpleApp() {
                                 </div>
                             </div>
 
-                            {/* Card 4: Secure Tools & Applications */}
+                            {/* Card 4: Time Card Management */}
                             <div 
                                 className="hover-lift animate-scale-in" 
                                 onClick={() => {
-                                    setCurrentPage('securetools');
+                                    setCurrentPage('timecardmanagement');
                                     window.scrollTo({ top: 0, behavior: 'smooth' });
                                 }}
                                 style={{
@@ -4769,31 +4832,52 @@ function SimpleApp() {
                                     transition: 'all 0.4s ease',
                                     position: 'relative',
                                     overflow: 'hidden',
-                                    animationDelay: '0.3s'
+                                    animationDelay: '0.3s',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'space-between'
                                 }}>
+                                {/* Coming Soon Flag */}
                                 <div style={{
-                                    fontSize: '4rem',
-                                    marginBottom: '1.5rem',
-                                    filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))'
-                                }}>
-                                    💻
-                                </div>
-                                <h3 style={{
+                                    position: 'absolute',
+                                    top: '15px',
+                                    left: '15px',
+                                    background: '#ef4444',
                                     color: 'white',
-                                    fontSize: '1.5rem',
+                                    padding: '0.4rem 0.8rem',
+                                    borderRadius: '6px',
+                                    fontSize: '0.75rem',
                                     fontWeight: '700',
-                                    marginBottom: '1rem'
+                                    boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                                    zIndex: 10
                                 }}>
-                                    Secure Tools & Applications
-                                </h3>
-                                <p style={{
-                                    color: '#cbd5e1',
-                                    fontSize: '1rem',
-                                    lineHeight: '1.6',
-                                    marginBottom: '2rem'
-                                }}>
-                                    AWS Console, project management, code repositories, and communication tools
-                                </p>
+                                    Coming Soon
+                                </div>
+                                <div>
+                                    <div style={{
+                                        fontSize: '4rem',
+                                        marginBottom: '1.5rem',
+                                        filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))'
+                                    }}>
+                                        ⏰
+                                    </div>
+                                    <h3 style={{
+                                        color: 'white',
+                                        fontSize: '1.5rem',
+                                        fontWeight: '700',
+                                        marginBottom: '1rem'
+                                    }}>
+                                        Time Card Management
+                                    </h3>
+                                    <p style={{
+                                        color: '#cbd5e1',
+                                        fontSize: '1rem',
+                                        lineHeight: '1.6',
+                                        marginBottom: '2rem'
+                                    }}>
+                                        Track time, submit time-off requests, and manage work schedules
+                                    </p>
+                                </div>
                                 <div style={{
                                     background: 'rgba(212, 175, 55, 0.2)',
                                     border: '2px solid #d4af37',
@@ -4827,31 +4911,52 @@ function SimpleApp() {
                                     transition: 'all 0.4s ease',
                                     position: 'relative',
                                     overflow: 'hidden',
-                                    animationDelay: '0.4s'
+                                    animationDelay: '0.4s',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'space-between'
                                 }}>
+                                {/* Coming Soon Flag */}
                                 <div style={{
-                                    fontSize: '4rem',
-                                    marginBottom: '1.5rem',
-                                    filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))'
-                                }}>
-                                    💼
-                                </div>
-                                <h3 style={{
+                                    position: 'absolute',
+                                    top: '15px',
+                                    left: '15px',
+                                    background: '#ef4444',
                                     color: 'white',
-                                    fontSize: '1.5rem',
+                                    padding: '0.4rem 0.8rem',
+                                    borderRadius: '6px',
+                                    fontSize: '0.75rem',
                                     fontWeight: '700',
-                                    marginBottom: '1rem'
+                                    boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                                    zIndex: 10
                                 }}>
-                                    Internal Career Hub
-                                </h3>
-                                <p style={{
-                                    color: '#cbd5e1',
-                                    fontSize: '1rem',
-                                    lineHeight: '1.6',
-                                    marginBottom: '2rem'
-                                }}>
-                                    View internal job postings, career advancement opportunities, and referral programs
-                                </p>
+                                    Coming Soon
+                                </div>
+                                <div>
+                                    <div style={{
+                                        fontSize: '4rem',
+                                        marginBottom: '1.5rem',
+                                        filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))'
+                                    }}>
+                                        💼
+                                    </div>
+                                    <h3 style={{
+                                        color: 'white',
+                                        fontSize: '1.5rem',
+                                        fontWeight: '700',
+                                        marginBottom: '1rem'
+                                    }}>
+                                        Internal Career Hub
+                                    </h3>
+                                    <p style={{
+                                        color: '#cbd5e1',
+                                        fontSize: '1rem',
+                                        lineHeight: '1.6',
+                                        marginBottom: '2rem'
+                                    }}>
+                                        View internal job postings, career advancement opportunities, and referral programs
+                                    </p>
+                                </div>
                                 <div style={{
                                     background: 'rgba(212, 175, 55, 0.2)',
                                     border: '2px solid #d4af37',
@@ -7432,17 +7537,18 @@ function SimpleApp() {
                             marginBottom: '3rem'
                         }}>
                             {[
-                                { icon: '☁️', name: 'AWS Console Access', desc: 'Manage cloud infrastructure', status: 'Active' },
-                                { icon: '📊', name: 'Project Management Suite', desc: 'Track tasks and milestones', status: 'Active' },
-                                { icon: '💻', name: 'Secure Code Repository', desc: 'Git version control', status: 'Active' },
-                                { icon: '💬', name: 'Encrypted Communications', desc: 'Secure messaging platform', status: 'Active' },
-                                { icon: '📧', name: 'Email System', desc: 'Corporate email access', status: 'Active' },
-                                { icon: '🔍', name: 'Security Compliance Dashboard', desc: 'Monitor compliance status', status: 'Active' },
-                                { icon: '�', name: 'Documentation Wiki', desc: 'Internal knowledge base', status: 'Active' },
-                                { icon: '🎯', name: 'Task Automation', desc: 'Workflow automation tools', status: 'Active' },
-                                { icon: '📈', name: 'Analytics Platform', desc: 'Business intelligence tools', status: 'Active' },
-                                { icon: '�', name: 'VPN Access', desc: 'Secure network connection', status: 'Active' },
-                                { icon: '�️', name: 'Database Tools', desc: 'Query and manage databases', status: 'Active' }
+                                { icon: '👥', name: 'Rippling', desc: 'HR, payroll, and benefits management', status: 'Active', link: 'https://app.rippling.com' },
+                                { icon: '☁️', name: 'AWS Console Access', desc: 'Manage cloud infrastructure', status: 'Active', link: 'https://console.aws.amazon.com' },
+                                { icon: '📊', name: 'Project Management Suite', desc: 'Track tasks and milestones', status: 'Coming Soon' },
+                                { icon: '💻', name: 'GitHub', desc: 'Secure Code Repository - Git version control', status: 'Active', link: 'https://github.com' },
+                                { icon: '💬', name: 'Encrypted Communications', desc: 'Secure messaging platform', status: 'Coming Soon' },
+                                { icon: '📧', name: 'Email System', desc: 'Corporate email access', status: 'Coming Soon' },
+                                { icon: '🔍', name: 'Security Compliance Dashboard', desc: 'Monitor compliance status', status: 'Coming Soon' },
+                                { icon: '📚', name: 'Documentation Wiki', desc: 'Internal knowledge base', status: 'Coming Soon' },
+                                { icon: '🎯', name: 'Task Automation', desc: 'Workflow automation tools', status: 'Coming Soon' },
+                                { icon: '📈', name: 'Analytics Platform', desc: 'Business intelligence tools', status: 'Coming Soon' },
+                                { icon: '🔒', name: 'VPN Access', desc: 'Secure network connection', status: 'Coming Soon' },
+                                { icon: '🗄️', name: 'Database Tools', desc: 'Query and manage databases', status: 'Coming Soon' }
                             ].map((tool, index) => (
                                 <div key={index} className="hover-lift animate-scale-in" style={{
                                     background: 'white',
@@ -7490,16 +7596,24 @@ function SimpleApp() {
                                     }}>
                                         {tool.desc}
                                     </p>
-                                    <button style={{
+                                    <button 
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            if (tool.link) {
+                                                window.open(tool.link, '_blank');
+                                            }
+                                        }}
+                                        style={{
                                         background: '#1e3a8a',
                                         color: 'white',
                                         border: 'none',
                                         padding: '0.5rem 1rem',
                                         borderRadius: '6px',
-                                        cursor: 'pointer',
+                                        cursor: tool.link ? 'pointer' : 'not-allowed',
                                         fontWeight: '600',
                                         width: '100%',
-                                        fontSize: '0.9rem'
+                                        fontSize: '0.9rem',
+                                        opacity: tool.link ? 1 : 0.6
                                     }}>
                                         Launch Tool
                                     </button>
