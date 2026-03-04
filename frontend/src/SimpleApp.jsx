@@ -890,7 +890,7 @@ function SimpleApp() {
                                 animation: 'fadeInUp 0.8s ease-out 0.1s forwards'
                             }}>
                                 <span style={{
-                                    fontSize: '4rem',
+                                    fontSize: 'clamp(2rem, 8vw, 4rem)',
                                     fontWeight: '700'
                                 }}>
                                     <span style={{ color: 'white' }}>Navon</span>{' '}
