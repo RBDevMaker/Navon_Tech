@@ -8923,10 +8923,14 @@ function SimpleApp() {
                                     href="#portal"
                                     onClick={(e) => {
                                         e.preventDefault();
-                                        // Only open if Ctrl (Windows/Linux) or Cmd (Mac) is pressed
-                                        if (e.ctrlKey || e.metaKey) {
+                                        // On mobile (touch devices) or with Ctrl/Cmd key
+                                        if (e.ctrlKey || e.metaKey || ('ontouchstart' in window)) {
                                             setShowSecureModal(true);
                                         }
+                                    }}
+                                    onTouchEnd={(e) => {
+                                        e.preventDefault();
+                                        setShowSecureModal(true);
                                     }}
                                     style={{
                                         fontSize: '1.8rem',
@@ -8935,7 +8939,8 @@ function SimpleApp() {
                                         display: 'inline-block',
                                         transition: 'all 0.4s ease',
                                         filter: 'drop-shadow(0 0 8px rgba(212, 175, 55, 0.6))',
-                                        cursor: 'pointer'
+                                        cursor: 'pointer',
+                                        touchAction: 'manipulation'
                                     }}
                                     onMouseOver={(e) => {
                                         e.target.style.transform = 'rotate(45deg) scale(1.2)';
@@ -8945,7 +8950,7 @@ function SimpleApp() {
                                         e.target.style.transform = 'rotate(0deg) scale(1)';
                                         e.target.style.filter = 'drop-shadow(0 0 8px rgba(212, 175, 55, 0.6))';
                                     }}
-                                    title="Secure Portal - Ctrl+Click (or Cmd+Click) to access"
+                                    title="Secure Portal - Tap on mobile or Ctrl+Click (Cmd+Click) on desktop to access"
                                 >
                                     🛡️
                                 </a>
