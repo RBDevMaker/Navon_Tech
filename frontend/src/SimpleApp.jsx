@@ -8,6 +8,7 @@ function SimpleApp() {
     const [isHRView, setIsHRView] = useState(false);
     const [showTimeOffModal, setShowTimeOffModal] = useState(false);
     const [userRole, setUserRole] = useState('employee'); // 'employee', 'hr', 'admin'
+    const [selectedJob, setSelectedJob] = useState(''); // For prefilling job application
     const [uploadedFiles, setUploadedFiles] = useState({
         employeeHandbook: [],
         benefits: [],
@@ -3280,7 +3281,7 @@ function SimpleApp() {
                         </div>
                         
                         {/* Application Form Card */}
-                        <div style={{
+                        <div id="application-form" style={{
                             background: 'white',
                             padding: '3rem',
                             borderRadius: '12px',
@@ -3470,6 +3471,8 @@ function SimpleApp() {
                                         type="text"
                                         name="position"
                                         required
+                                        value={selectedJob}
+                                        onChange={(e) => setSelectedJob(e.target.value)}
                                         placeholder="Example: Software Developer, Project Manager, Systems Engineer, etc."
                                         style={{
                                             width: '100%',
@@ -7681,7 +7684,9 @@ function SimpleApp() {
                                 padding: '2rem',
                                 borderRadius: '12px',
                                 border: '2px solid #d4af37',
-                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                display: 'flex',
+                                flexDirection: 'column'
                             }}>
                                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
                                     <div style={{
@@ -7694,7 +7699,7 @@ function SimpleApp() {
                                         Internal Job Postings
                                     </h3>
                                 </div>
-                                <div style={{ marginBottom: '1rem' }}>
+                                <div style={{ marginBottom: '1rem', flex: 1 }}>
                                     <div style={{
                                         background: '#f8fafc',
                                         padding: '1rem',
@@ -7750,7 +7755,8 @@ function SimpleApp() {
                                     borderRadius: '6px',
                                     cursor: 'pointer',
                                     fontWeight: '600',
-                                    width: '100%'
+                                    width: '100%',
+                                    marginTop: 'auto'
                                 }}>
                                     View All Openings
                                 </button>
@@ -7763,7 +7769,9 @@ function SimpleApp() {
                                 borderRadius: '12px',
                                 border: '2px solid #d4af37',
                                 boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                animationDelay: '0.1s'
+                                animationDelay: '0.1s',
+                                display: 'flex',
+                                flexDirection: 'column'
                             }}>
                                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
                                     <div style={{
@@ -7776,7 +7784,7 @@ function SimpleApp() {
                                         Career Development
                                     </h3>
                                 </div>
-                                <div style={{ marginBottom: '1rem' }}>
+                                <div style={{ marginBottom: '1rem', flex: 1 }}>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
                                         • Training programs
                                     </p>
@@ -7784,16 +7792,15 @@ function SimpleApp() {
                                         • Certification support
                                     </p>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Mentorship opportunities
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Leadership programs
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
                                         • Skills assessments
                                     </p>
                                 </div>
-                                <button style={{
+                                <button 
+                                    onClick={() => {
+                                        setCurrentPage('developmentprograms');
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }}
+                                    style={{
                                     background: '#1e3a8a',
                                     color: 'white',
                                     border: 'none',
@@ -7801,7 +7808,8 @@ function SimpleApp() {
                                     borderRadius: '6px',
                                     cursor: 'pointer',
                                     fontWeight: '600',
-                                    width: '100%'
+                                    width: '100%',
+                                    marginTop: 'auto'
                                 }}>
                                     Explore Programs
                                 </button>
@@ -7814,7 +7822,9 @@ function SimpleApp() {
                                 borderRadius: '12px',
                                 border: '2px solid #d4af37',
                                 boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                animationDelay: '0.2s'
+                                animationDelay: '0.2s',
+                                display: 'flex',
+                                flexDirection: 'column'
                             }}>
                                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
                                     <div style={{
@@ -7827,7 +7837,7 @@ function SimpleApp() {
                                         Employee Referrals
                                     </h3>
                                 </div>
-                                <div style={{ marginBottom: '1rem' }}>
+                                <div style={{ marginBottom: '1rem', flex: 1 }}>
                                     <div style={{
                                         background: '#f0fdf4',
                                         padding: '1rem',
@@ -7860,7 +7870,8 @@ function SimpleApp() {
                                     borderRadius: '6px',
                                     cursor: 'pointer',
                                     fontWeight: '600',
-                                    width: '100%'
+                                    width: '100%',
+                                    marginTop: 'auto'
                                 }}>
                                     Refer a Candidate
                                 </button>
@@ -7904,6 +7915,151 @@ function SimpleApp() {
                                     <div style={{ fontSize: '0.9rem', color: '#64748b' }}>360° reviews</div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {/* DEVELOPMENT PROGRAMS PAGE */}
+            {currentPage === 'developmentprograms' && (
+                <section style={{ 
+                    padding: '4rem 2rem', 
+                    background: '#f1f5f9',
+                    minHeight: '100vh'
+                }}>
+                    <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                            <h2 style={{
+                                fontSize: '3rem',
+                                marginBottom: '1rem',
+                                color: '#1e3a8a',
+                                fontWeight: '800'
+                            }}>
+                                📚 Professional Development Programs
+                            </h2>
+                            <p style={{
+                                fontSize: '1.2rem',
+                                color: '#475569',
+                                maxWidth: '800px',
+                                margin: '0 auto 2rem auto'
+                            }}>
+                                Explore our learning and development opportunities
+                            </p>
+                            <button 
+                                onClick={() => {
+                                    setCurrentPage('careerhub');
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                style={{
+                                    background: '#d4af37',
+                                    color: '#0f172a',
+                                    border: 'none',
+                                    padding: '1rem 2rem',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: '700',
+                                    fontSize: '1rem'
+                                }}>
+                                ← Back to Career Hub
+                            </button>
+                        </div>
+
+                        {/* Programs List */}
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                            gap: '2rem'
+                        }}>
+                            {[
+                                { 
+                                    icon: '📖', 
+                                    name: "O'Reilly Media", 
+                                    desc: 'Access to thousands of books, videos, and live training courses on technology and business topics',
+                                    link: 'https://www.oreilly.com',
+                                    status: 'Active'
+                                },
+                                { 
+                                    icon: '🎓', 
+                                    name: 'AWS Training & Certification', 
+                                    desc: 'Free AWS training courses and certification exam support',
+                                    status: 'Active'
+                                }
+                            ].map((program, index) => (
+                                <div key={index} className="hover-lift animate-scale-in" style={{
+                                    background: 'white',
+                                    padding: '2rem',
+                                    borderRadius: '12px',
+                                    border: '2px solid #e2e8f0',
+                                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                    animationDelay: `${index * 0.1}s`
+                                }}>
+                                    <div style={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'flex-start',
+                                        marginBottom: '1rem'
+                                    }}>
+                                        <div style={{ fontSize: '3rem' }}>
+                                            {program.icon}
+                                        </div>
+                                        <span style={{
+                                            background: '#10b981',
+                                            color: 'white',
+                                            padding: '0.25rem 0.75rem',
+                                            borderRadius: '12px',
+                                            fontSize: '0.75rem',
+                                            fontWeight: '600'
+                                        }}>
+                                            {program.status}
+                                        </span>
+                                    </div>
+                                    <h3 style={{
+                                        color: '#1e3a8a',
+                                        fontSize: '1.3rem',
+                                        fontWeight: '700',
+                                        marginBottom: '0.75rem'
+                                    }}>
+                                        {program.name}
+                                    </h3>
+                                    <p style={{
+                                        color: '#64748b',
+                                        fontSize: '0.95rem',
+                                        marginBottom: '1.5rem',
+                                        lineHeight: '1.6'
+                                    }}>
+                                        {program.desc}
+                                    </p>
+                                    {program.link ? (
+                                        <button 
+                                            onClick={() => window.open(program.link, '_blank')}
+                                            style={{
+                                            background: '#1e3a8a',
+                                            color: 'white',
+                                            border: 'none',
+                                            padding: '0.75rem 1.5rem',
+                                            borderRadius: '6px',
+                                            cursor: 'pointer',
+                                            fontWeight: '600',
+                                            width: '100%'
+                                        }}>
+                                            Access Program
+                                        </button>
+                                    ) : (
+                                        <button style={{
+                                            background: '#94a3b8',
+                                            color: 'white',
+                                            border: 'none',
+                                            padding: '0.75rem 1.5rem',
+                                            borderRadius: '6px',
+                                            cursor: 'not-allowed',
+                                            fontWeight: '600',
+                                            width: '100%'
+                                        }}>
+                                            Contact HR
+                                        </button>
+                                    )}
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </section>
@@ -8027,7 +8183,15 @@ function SimpleApp() {
                                     </div>
                                 </div>
                                 
-                                <button style={{
+                                <button 
+                                    onClick={() => {
+                                        setSelectedJob('Senior Cloud Architect');
+                                        setCurrentPage('careers');
+                                        setTimeout(() => {
+                                            document.getElementById('application-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                        }, 100);
+                                    }}
+                                    style={{
                                     background: '#1e3a8a',
                                     color: 'white',
                                     border: 'none',
@@ -8110,7 +8274,15 @@ function SimpleApp() {
                                     </div>
                                 </div>
                                 
-                                <button style={{
+                                <button 
+                                    onClick={() => {
+                                        setSelectedJob('Project Manager');
+                                        setCurrentPage('careers');
+                                        setTimeout(() => {
+                                            document.getElementById('application-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                        }, 100);
+                                    }}
+                                    style={{
                                     background: '#1e3a8a',
                                     color: 'white',
                                     border: 'none',
@@ -8193,7 +8365,15 @@ function SimpleApp() {
                                     </div>
                                 </div>
                                 
-                                <button style={{
+                                <button 
+                                    onClick={() => {
+                                        setSelectedJob('Security Analyst');
+                                        setCurrentPage('careers');
+                                        setTimeout(() => {
+                                            document.getElementById('application-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                        }, 100);
+                                    }}
+                                    style={{
                                     background: '#1e3a8a',
                                     color: 'white',
                                     border: 'none',
@@ -8276,7 +8456,15 @@ function SimpleApp() {
                                     </div>
                                 </div>
                                 
-                                <button style={{
+                                <button 
+                                    onClick={() => {
+                                        setSelectedJob('DevOps Engineer');
+                                        setCurrentPage('careers');
+                                        setTimeout(() => {
+                                            document.getElementById('application-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                        }, 100);
+                                    }}
+                                    style={{
                                     background: '#1e3a8a',
                                     color: 'white',
                                     border: 'none',
@@ -8359,7 +8547,15 @@ function SimpleApp() {
                                     </div>
                                 </div>
                                 
-                                <button style={{
+                                <button 
+                                    onClick={() => {
+                                        setSelectedJob('Network Engineer');
+                                        setCurrentPage('careers');
+                                        setTimeout(() => {
+                                            document.getElementById('application-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                        }, 100);
+                                    }}
+                                    style={{
                                     background: '#1e3a8a',
                                     color: 'white',
                                     border: 'none',
