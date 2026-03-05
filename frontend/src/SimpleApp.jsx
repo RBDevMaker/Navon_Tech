@@ -9,6 +9,7 @@ function SimpleApp() {
     const [showTimeOffModal, setShowTimeOffModal] = useState(false);
     const [userRole, setUserRole] = useState('employee'); // 'employee', 'hr', 'admin'
     const [selectedJob, setSelectedJob] = useState(''); // For prefilling job application
+    const [showReferralForm, setShowReferralForm] = useState(false); // For referral form modal
     const [uploadedFiles, setUploadedFiles] = useState({
         employeeHandbook: [],
         benefits: [],
@@ -7862,7 +7863,12 @@ function SimpleApp() {
                                         • View bonus eligibility
                                     </p>
                                 </div>
-                                <button style={{
+                                <button 
+                                    onClick={() => {
+                                        setCurrentPage('referrals');
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }}
+                                    style={{
                                     background: '#1e3a8a',
                                     color: 'white',
                                     border: 'none',
@@ -7917,6 +7923,717 @@ function SimpleApp() {
                             </div>
                         </div>
                     </div>
+                </section>
+            )}
+
+            {/* EMPLOYEE REFERRALS PAGE */}
+            {currentPage === 'referrals' && (
+                <section style={{ 
+                    padding: '4rem 2rem', 
+                    background: '#f1f5f9',
+                    minHeight: '100vh'
+                }}>
+                    <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                            <h2 style={{
+                                fontSize: '3rem',
+                                marginBottom: '1rem',
+                                color: '#1e3a8a',
+                                fontWeight: '800'
+                            }}>
+                                🤝 Employee Referral Program
+                            </h2>
+                            <p style={{
+                                fontSize: '1.2rem',
+                                color: '#475569',
+                                maxWidth: '800px',
+                                margin: '0 auto 2rem auto'
+                            }}>
+                                Help us grow our team and earn rewards for successful referrals
+                            </p>
+                            <button 
+                                onClick={() => {
+                                    setCurrentPage('careerhub');
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                style={{
+                                    background: '#d4af37',
+                                    color: '#0f172a',
+                                    border: 'none',
+                                    padding: '1rem 2rem',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: '700',
+                                    fontSize: '1rem'
+                                }}>
+                                ← Back to Career Hub
+                            </button>
+                        </div>
+
+                        {/* Referral Options Grid */}
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                            gap: '2rem',
+                            marginBottom: '3rem'
+                        }}>
+                            {/* Submit Candidate Referrals */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                display: 'flex',
+                                flexDirection: 'column'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        fontSize: '2.5rem',
+                                        marginRight: '1rem'
+                                    }}>
+                                        📝
+                                    </div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        Submit Candidate Referrals
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem', flex: 1 }}>
+                                    <p style={{ color: '#64748b', marginBottom: '1rem', lineHeight: '1.6' }}>
+                                        Know someone who would be a great fit? Submit their information and help us find top talent.
+                                    </p>
+                                    <div style={{
+                                        background: '#f0fdf4',
+                                        padding: '1rem',
+                                        borderRadius: '8px',
+                                        border: '1px solid #86efac',
+                                        marginBottom: '1rem'
+                                    }}>
+                                        <div style={{ fontWeight: '600', color: '#15803d', marginBottom: '0.5rem' }}>
+                                            💰 Referral Bonuses:
+                                        </div>
+                                        <ul style={{ margin: 0, paddingLeft: '1.5rem', color: '#166534' }}>
+                                            <li>Technical Roles: Up to $5,000</li>
+                                            <li>Management Roles: Up to $3,000</li>
+                                            <li>Entry Level: Up to $1,000</li>
+                                        </ul>
+                                    </div>
+                                    <p style={{ color: '#64748b', fontSize: '0.9rem', fontStyle: 'italic' }}>
+                                        Bonus paid after successful hire and 90-day retention period
+                                    </p>
+                                </div>
+                                <button 
+                                    onClick={() => setShowReferralForm(true)}
+                                    style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    width: '100%',
+                                    marginTop: 'auto'
+                                }}>
+                                    Submit Referral
+                                </button>
+                            </div>
+
+                            {/* Track Referral Status */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.1s',
+                                display: 'flex',
+                                flexDirection: 'column'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        fontSize: '2.5rem',
+                                        marginRight: '1rem'
+                                    }}>
+                                        📊
+                                    </div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        Track Referral Status
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem', flex: 1 }}>
+                                    <p style={{ color: '#64748b', marginBottom: '1rem', lineHeight: '1.6' }}>
+                                        Monitor the progress of your referrals through each stage of the hiring process.
+                                    </p>
+                                    <div style={{
+                                        background: '#f8fafc',
+                                        padding: '1rem',
+                                        borderRadius: '8px',
+                                        marginBottom: '0.75rem',
+                                        border: '1px solid #e2e8f0'
+                                    }}>
+                                        <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>
+                                            Referral Stages:
+                                        </div>
+                                        <ul style={{ margin: 0, paddingLeft: '1.5rem', color: '#64748b', fontSize: '0.9rem' }}>
+                                            <li>Submitted</li>
+                                            <li>Under Review</li>
+                                            <li>Interview Scheduled</li>
+                                            <li>Offer Extended</li>
+                                            <li>Hired</li>
+                                        </ul>
+                                    </div>
+                                    <p style={{ color: '#64748b', fontSize: '0.9rem' }}>
+                                        You'll receive email notifications at each stage
+                                    </p>
+                                </div>
+                                <button style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    width: '100%',
+                                    marginTop: 'auto'
+                                }}>
+                                    View My Referrals
+                                </button>
+                            </div>
+
+                            {/* View Bonus Eligibility */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.2s',
+                                display: 'flex',
+                                flexDirection: 'column'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        fontSize: '2.5rem',
+                                        marginRight: '1rem'
+                                    }}>
+                                        💵
+                                    </div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        View Bonus Eligibility
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem', flex: 1 }}>
+                                    <p style={{ color: '#64748b', marginBottom: '1rem', lineHeight: '1.6' }}>
+                                        Check your current and pending referral bonuses, and see your total earnings.
+                                    </p>
+                                    <div style={{
+                                        background: '#fef3c7',
+                                        padding: '1rem',
+                                        borderRadius: '8px',
+                                        border: '1px solid #fbbf24',
+                                        marginBottom: '1rem'
+                                    }}>
+                                        <div style={{ fontWeight: '600', color: '#d97706', marginBottom: '0.5rem' }}>
+                                            💡 Eligibility Requirements:
+                                        </div>
+                                        <ul style={{ margin: 0, paddingLeft: '1.5rem', color: '#92400e', fontSize: '0.9rem' }}>
+                                            <li>Must be active employee</li>
+                                            <li>Candidate must be hired</li>
+                                            <li>90-day retention period</li>
+                                            <li>Cannot refer family members</li>
+                                        </ul>
+                                    </div>
+                                    <p style={{ color: '#64748b', fontSize: '0.9rem' }}>
+                                        Bonuses are paid via payroll after retention period
+                                    </p>
+                                </div>
+                                <button style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    width: '100%',
+                                    marginTop: 'auto'
+                                }}>
+                                    Check Bonus Status
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Program Information */}
+                        <div style={{
+                            background: 'white',
+                            padding: '2rem',
+                            borderRadius: '12px',
+                            border: '2px solid #d4af37',
+                            marginBottom: '2rem'
+                        }}>
+                            <h3 style={{ color: '#1e3a8a', marginBottom: '1.5rem', fontSize: '1.5rem', textAlign: 'center' }}>
+                                📋 How the Referral Program Works
+                            </h3>
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                                gap: '2rem'
+                            }}>
+                                <div style={{ textAlign: 'center' }}>
+                                    <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>1️⃣</div>
+                                    <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>Submit Referral</div>
+                                    <div style={{ fontSize: '0.9rem', color: '#64748b' }}>Provide candidate's contact info and resume</div>
+                                </div>
+                                <div style={{ textAlign: 'center' }}>
+                                    <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>2️⃣</div>
+                                    <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>HR Reviews</div>
+                                    <div style={{ fontSize: '0.9rem', color: '#64748b' }}>Our team evaluates the candidate</div>
+                                </div>
+                                <div style={{ textAlign: 'center' }}>
+                                    <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>3️⃣</div>
+                                    <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>Interview Process</div>
+                                    <div style={{ fontSize: '0.9rem', color: '#64748b' }}>Qualified candidates are interviewed</div>
+                                </div>
+                                <div style={{ textAlign: 'center' }}>
+                                    <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>4️⃣</div>
+                                    <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>Get Rewarded</div>
+                                    <div style={{ fontSize: '0.9rem', color: '#64748b' }}>Earn bonus after 90-day retention</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Referral Submission Form Modal */}
+                    {showReferralForm && (
+                        <div style={{
+                            position: 'fixed',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            background: 'rgba(0, 0, 0, 0.7)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            zIndex: 1000,
+                            padding: '2rem'
+                        }}>
+                            <div style={{
+                                background: 'white',
+                                padding: '3rem',
+                                borderRadius: '12px',
+                                maxWidth: '600px',
+                                width: '100%',
+                                maxHeight: '90vh',
+                                overflowY: 'auto',
+                                position: 'relative'
+                            }}>
+                                <button 
+                                    onClick={() => setShowReferralForm(false)}
+                                    style={{
+                                        position: 'absolute',
+                                        top: '1rem',
+                                        right: '1rem',
+                                        background: 'none',
+                                        border: 'none',
+                                        fontSize: '1.5rem',
+                                        cursor: 'pointer',
+                                        color: '#64748b'
+                                    }}>
+                                    ✕
+                                </button>
+
+                                <h3 style={{ 
+                                    color: '#1e3a8a', 
+                                    marginBottom: '1rem', 
+                                    fontSize: '1.8rem', 
+                                    fontWeight: '800'
+                                }}>
+                                    Submit Employee Referral
+                                </h3>
+                                <p style={{ 
+                                    color: '#64748b', 
+                                    marginBottom: '2rem',
+                                    fontSize: '1rem'
+                                }}>
+                                    Refer a qualified candidate and earn up to $5,000
+                                </p>
+
+                                <form onSubmit={async (e) => {
+                                    e.preventDefault();
+                                    const formData = new FormData(e.target);
+                                    const referrerName = formData.get('referrerName');
+                                    const referrerEmail = formData.get('referrerEmail');
+                                    const candidateName = formData.get('candidateName');
+                                    const candidateEmail = formData.get('candidateEmail');
+                                    const candidatePhone = formData.get('candidatePhone');
+                                    const position = formData.get('position');
+                                    const relationship = formData.get('relationship');
+                                    const notes = formData.get('notes');
+                                    const resume = formData.get('resume');
+                                    
+                                    // Validate email formats
+                                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                                    if (!emailRegex.test(referrerEmail) || !emailRegex.test(candidateEmail)) {
+                                        alert('Please enter valid email addresses');
+                                        return;
+                                    }
+                                    
+                                    // Validate all required fields
+                                    if (!referrerName || !referrerEmail || !candidateName || !candidateEmail || !candidatePhone || !position) {
+                                        alert('Please fill out all required fields');
+                                        return;
+                                    }
+
+                                    // Show loading state
+                                    const submitButton = e.target.querySelector('button[type="submit"]');
+                                    const originalText = submitButton.textContent;
+                                    submitButton.textContent = 'Submitting...';
+                                    submitButton.disabled = true;
+
+                                    try {
+                                        // Convert resume to base64 if provided
+                                        let resumeData = null;
+                                        let resumeFileName = null;
+                                        let resumeContentType = null;
+
+                                        if (resume && resume.size > 0) {
+                                            resumeFileName = resume.name;
+                                            resumeContentType = resume.type;
+                                            
+                                            // Read file as base64
+                                            const reader = new FileReader();
+                                            resumeData = await new Promise((resolve, reject) => {
+                                                reader.onload = () => {
+                                                    const base64 = reader.result.split(',')[1];
+                                                    resolve(base64);
+                                                };
+                                                reader.onerror = reject;
+                                                reader.readAsDataURL(resume);
+                                            });
+                                        }
+
+                                        // Send to API (using same endpoint as job applications)
+                                        const apiEndpoint = 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/prod/api/apply';
+                                        const response = await fetch(apiEndpoint, {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json'
+                                            },
+                                            body: JSON.stringify({
+                                                name: candidateName,
+                                                email: candidateEmail,
+                                                position: `REFERRAL: ${position}`,
+                                                resumeData,
+                                                resumeFileName,
+                                                resumeContentType,
+                                                referralInfo: {
+                                                    referrerName,
+                                                    referrerEmail,
+                                                    candidatePhone,
+                                                    relationship,
+                                                    notes
+                                                }
+                                            })
+                                        });
+
+                                        const result = await response.json();
+
+                                        if (response.ok) {
+                                            alert('✅ Referral submitted successfully! HR will review the candidate and you will receive updates via email.');
+                                            e.target.reset();
+                                            setShowReferralForm(false);
+                                        } else {
+                                            console.error('API Error:', result);
+                                            throw new Error(result.message || result.error || 'Failed to submit referral');
+                                        }
+                                    } catch (error) {
+                                        console.error('Error submitting referral:', error);
+                                        alert(`❌ Failed to submit referral. Error: ${error.message}\n\nPlease try again or email HR directly at hr@navontech.com`);
+                                    } finally {
+                                        submitButton.textContent = originalText;
+                                        submitButton.disabled = false;
+                                    }
+                                }}>
+                                    <div style={{ display: 'grid', gap: '1.5rem' }}>
+                                        {/* Referrer Information */}
+                                        <div style={{
+                                            background: '#f0f9ff',
+                                            padding: '1rem',
+                                            borderRadius: '8px',
+                                            border: '1px solid #bae6fd'
+                                        }}>
+                                            <h4 style={{ color: '#0369a1', margin: '0 0 1rem 0' }}>Your Information</h4>
+                                            
+                                            <div style={{ marginBottom: '1rem' }}>
+                                                <label style={{ 
+                                                    display: 'block', 
+                                                    color: '#0f172a', 
+                                                    fontWeight: '600', 
+                                                    marginBottom: '0.5rem',
+                                                    fontSize: '0.9rem'
+                                                }}>
+                                                    Your Name<span style={{ color: '#ef4444' }}>*</span>
+                                                </label>
+                                                <input 
+                                                    type="text"
+                                                    name="referrerName"
+                                                    required
+                                                    placeholder="Your full name"
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '0.75rem',
+                                                        border: '2px solid #e2e8f0',
+                                                        borderRadius: '8px',
+                                                        fontSize: '1rem',
+                                                        fontFamily: 'inherit'
+                                                    }}
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label style={{ 
+                                                    display: 'block', 
+                                                    color: '#0f172a', 
+                                                    fontWeight: '600', 
+                                                    marginBottom: '0.5rem',
+                                                    fontSize: '0.9rem'
+                                                }}>
+                                                    Your Email<span style={{ color: '#ef4444' }}>*</span>
+                                                </label>
+                                                <input 
+                                                    type="email"
+                                                    name="referrerEmail"
+                                                    required
+                                                    placeholder="your.email@navontech.com"
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '0.75rem',
+                                                        border: '2px solid #e2e8f0',
+                                                        borderRadius: '8px',
+                                                        fontSize: '1rem',
+                                                        fontFamily: 'inherit'
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Candidate Information */}
+                                        <div style={{
+                                            background: '#fef3c7',
+                                            padding: '1rem',
+                                            borderRadius: '8px',
+                                            border: '1px solid #fbbf24'
+                                        }}>
+                                            <h4 style={{ color: '#d97706', margin: '0 0 1rem 0' }}>Candidate Information</h4>
+                                            
+                                            <div style={{ marginBottom: '1rem' }}>
+                                                <label style={{ 
+                                                    display: 'block', 
+                                                    color: '#0f172a', 
+                                                    fontWeight: '600', 
+                                                    marginBottom: '0.5rem',
+                                                    fontSize: '0.9rem'
+                                                }}>
+                                                    Candidate Name<span style={{ color: '#ef4444' }}>*</span>
+                                                </label>
+                                                <input 
+                                                    type="text"
+                                                    name="candidateName"
+                                                    required
+                                                    placeholder="Candidate's full name"
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '0.75rem',
+                                                        border: '2px solid #e2e8f0',
+                                                        borderRadius: '8px',
+                                                        fontSize: '1rem',
+                                                        fontFamily: 'inherit'
+                                                    }}
+                                                />
+                                            </div>
+
+                                            <div style={{ marginBottom: '1rem' }}>
+                                                <label style={{ 
+                                                    display: 'block', 
+                                                    color: '#0f172a', 
+                                                    fontWeight: '600', 
+                                                    marginBottom: '0.5rem',
+                                                    fontSize: '0.9rem'
+                                                }}>
+                                                    Candidate Email<span style={{ color: '#ef4444' }}>*</span>
+                                                </label>
+                                                <input 
+                                                    type="email"
+                                                    name="candidateEmail"
+                                                    required
+                                                    placeholder="candidate@email.com"
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '0.75rem',
+                                                        border: '2px solid #e2e8f0',
+                                                        borderRadius: '8px',
+                                                        fontSize: '1rem',
+                                                        fontFamily: 'inherit'
+                                                    }}
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label style={{ 
+                                                    display: 'block', 
+                                                    color: '#0f172a', 
+                                                    fontWeight: '600', 
+                                                    marginBottom: '0.5rem',
+                                                    fontSize: '0.9rem'
+                                                }}>
+                                                    Candidate Phone<span style={{ color: '#ef4444' }}>*</span>
+                                                </label>
+                                                <input 
+                                                    type="tel"
+                                                    name="candidatePhone"
+                                                    required
+                                                    placeholder="(555) 123-4567"
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '0.75rem',
+                                                        border: '2px solid #e2e8f0',
+                                                        borderRadius: '8px',
+                                                        fontSize: '1rem',
+                                                        fontFamily: 'inherit'
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Position and Relationship */}
+                                        <div>
+                                            <label style={{ 
+                                                display: 'block', 
+                                                color: '#0f172a', 
+                                                fontWeight: '600', 
+                                                marginBottom: '0.5rem',
+                                                fontSize: '0.9rem'
+                                            }}>
+                                                Position/Role<span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input 
+                                                type="text"
+                                                name="position"
+                                                required
+                                                placeholder="e.g., Senior Cloud Architect, DevOps Engineer"
+                                                style={{
+                                                    width: '100%',
+                                                    padding: '0.75rem',
+                                                    border: '2px solid #e2e8f0',
+                                                    borderRadius: '8px',
+                                                    fontSize: '1rem',
+                                                    fontFamily: 'inherit'
+                                                }}
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label style={{ 
+                                                display: 'block', 
+                                                color: '#0f172a', 
+                                                fontWeight: '600', 
+                                                marginBottom: '0.5rem',
+                                                fontSize: '0.9rem'
+                                            }}>
+                                                Relationship to Candidate
+                                            </label>
+                                            <input 
+                                                type="text"
+                                                name="relationship"
+                                                placeholder="e.g., Former colleague, Friend, Professional contact"
+                                                style={{
+                                                    width: '100%',
+                                                    padding: '0.75rem',
+                                                    border: '2px solid #e2e8f0',
+                                                    borderRadius: '8px',
+                                                    fontSize: '1rem',
+                                                    fontFamily: 'inherit'
+                                                }}
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label style={{ 
+                                                display: 'block', 
+                                                color: '#0f172a', 
+                                                fontWeight: '600', 
+                                                marginBottom: '0.5rem',
+                                                fontSize: '0.9rem'
+                                            }}>
+                                                Additional Notes
+                                            </label>
+                                            <textarea 
+                                                name="notes"
+                                                rows="4"
+                                                placeholder="Why would this candidate be a great fit? Any relevant skills or experience..."
+                                                style={{
+                                                    width: '100%',
+                                                    padding: '0.75rem',
+                                                    border: '2px solid #e2e8f0',
+                                                    borderRadius: '8px',
+                                                    fontSize: '1rem',
+                                                    fontFamily: 'inherit',
+                                                    resize: 'vertical'
+                                                }}
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label style={{ 
+                                                display: 'block', 
+                                                color: '#0f172a', 
+                                                fontWeight: '600', 
+                                                marginBottom: '0.5rem',
+                                                fontSize: '0.9rem'
+                                            }}>
+                                                Candidate's Resume (Optional)
+                                            </label>
+                                            <input 
+                                                type="file"
+                                                name="resume"
+                                                accept=".pdf,.doc,.docx"
+                                                style={{
+                                                    width: '100%',
+                                                    padding: '0.75rem',
+                                                    border: '2px solid #e2e8f0',
+                                                    borderRadius: '8px',
+                                                    fontSize: '1rem',
+                                                    fontFamily: 'inherit'
+                                                }}
+                                            />
+                                            <small style={{ color: '#64748b', fontSize: '0.85rem' }}>
+                                                PDF, DOC, or DOCX (max 5MB)
+                                            </small>
+                                        </div>
+
+                                        <button 
+                                            type="submit"
+                                            style={{
+                                                background: '#1e3a8a',
+                                                color: 'white',
+                                                border: 'none',
+                                                padding: '1rem 2rem',
+                                                borderRadius: '8px',
+                                                cursor: 'pointer',
+                                                fontWeight: '700',
+                                                fontSize: '1rem',
+                                                width: '100%'
+                                            }}>
+                                            Submit Referral
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )}
                 </section>
             )}
 
