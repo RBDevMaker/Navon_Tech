@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { uploadProfilePicture, uploadDocument, canUpload, deleteFromS3 } from './services/s3Upload';
 
 function SimpleApp() {
     const s3BaseUrl = "https://navon-tech-images.s3.us-east-1.amazonaws.com";
@@ -10,6 +11,23 @@ function SimpleApp() {
     const [userRole, setUserRole] = useState('employee'); // 'employee', 'hr', 'admin'
     const [selectedJob, setSelectedJob] = useState(''); // For prefilling job application
     const [showReferralForm, setShowReferralForm] = useState(false); // For referral form modal
+    const [profileData, setProfileData] = useState({
+        name: '',
+        email: '',
+        phone: '',
+        department: '',
+        title: '',
+        location: '',
+        emergencyContact: '',
+        emergencyPhone: '',
+        profilePicture: '',
+        // HR-managed fields
+        salary: '',
+        startDate: '',
+        manager: '',
+        employeeId: ''
+    });
+    const [teamMembers, setTeamMembers] = useState([]);
     const [uploadedFiles, setUploadedFiles] = useState({
         employeeHandbook: [],
         benefits: [],
@@ -4604,22 +4622,6 @@ function SimpleApp() {
                                     flexDirection: 'column',
                                     justifyContent: 'space-between'
                                 }}>
-                                {/* Coming Soon Flag */}
-                                <div style={{
-                                    position: 'absolute',
-                                    top: '15px',
-                                    left: '15px',
-                                    background: '#ef4444',
-                                    color: 'white',
-                                    padding: '0.4rem 0.8rem',
-                                    borderRadius: '6px',
-                                    fontSize: '0.75rem',
-                                    fontWeight: '700',
-                                    boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-                                    zIndex: 10
-                                }}>
-                                    Coming Soon
-                                </div>
                                 <div>
                                     <div style={{
                                         fontSize: '4rem',
@@ -4683,22 +4685,6 @@ function SimpleApp() {
                                     flexDirection: 'column',
                                     justifyContent: 'space-between'
                                 }}>
-                                {/* Active Flag */}
-                                <div style={{
-                                    position: 'absolute',
-                                    top: '15px',
-                                    left: '15px',
-                                    background: '#10b981',
-                                    color: 'white',
-                                    padding: '0.4rem 0.8rem',
-                                    borderRadius: '6px',
-                                    fontSize: '0.75rem',
-                                    fontWeight: '700',
-                                    boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-                                    zIndex: 10
-                                }}>
-                                    Active
-                                </div>
                                 <div>
                                     <div style={{
                                         fontSize: '4rem',
@@ -4762,22 +4748,6 @@ function SimpleApp() {
                                     flexDirection: 'column',
                                     justifyContent: 'space-between'
                                 }}>
-                                {/* Coming Soon Flag */}
-                                <div style={{
-                                    position: 'absolute',
-                                    top: '15px',
-                                    left: '15px',
-                                    background: '#ef4444',
-                                    color: 'white',
-                                    padding: '0.4rem 0.8rem',
-                                    borderRadius: '6px',
-                                    fontSize: '0.75rem',
-                                    fontWeight: '700',
-                                    boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-                                    zIndex: 10
-                                }}>
-                                    Coming Soon
-                                </div>
                                 <div>
                                     <div style={{
                                         fontSize: '4rem',
@@ -4920,22 +4890,6 @@ function SimpleApp() {
                                     flexDirection: 'column',
                                     justifyContent: 'space-between'
                                 }}>
-                                {/* Coming Soon Flag */}
-                                <div style={{
-                                    position: 'absolute',
-                                    top: '15px',
-                                    left: '15px',
-                                    background: '#ef4444',
-                                    color: 'white',
-                                    padding: '0.4rem 0.8rem',
-                                    borderRadius: '6px',
-                                    fontSize: '0.75rem',
-                                    fontWeight: '700',
-                                    boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-                                    zIndex: 10
-                                }}>
-                                    Coming Soon
-                                </div>
                                 <div>
                                     <div style={{
                                         fontSize: '4rem',
@@ -5228,6 +5182,38 @@ function SimpleApp() {
                             }}>
                                 Update your personal information and profile settings
                             </p>
+                            
+                            {/* Role Switcher for Testing */}
+                            <div style={{
+                                background: 'white',
+                                padding: '1rem',
+                                borderRadius: '8px',
+                                border: '2px solid #d4af37',
+                                marginBottom: '1.5rem',
+                                display: 'inline-block'
+                            }}>
+                                <label style={{ marginRight: '1rem', fontWeight: '600', color: '#1e3a8a' }}>
+                                    Current Role:
+                                </label>
+                                <select 
+                                    value={userRole} 
+                                    onChange={(e) => setUserRole(e.target.value)}
+                                    style={{
+                                        padding: '0.5rem 1rem',
+                                        borderRadius: '6px',
+                                        border: '2px solid #1e3a8a',
+                                        fontWeight: '600',
+                                        cursor: 'pointer',
+                                        background: 'white'
+                                    }}>
+                                    <option value="employee">Employee</option>
+                                    <option value="hr">HR</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                            
+                            <br />
+                            
                             <button 
                                 onClick={() => {
                                     setCurrentPage('employeeprofile');
@@ -5279,7 +5265,7 @@ function SimpleApp() {
                                     <div style={{
                                         width: '150px',
                                         height: '150px',
-                                        background: '#1e3a8a',
+                                        background: profileData.profilePicture ? 'transparent' : '#1e3a8a',
                                         borderRadius: '50%',
                                         display: 'flex',
                                         alignItems: 'center',
@@ -5288,21 +5274,94 @@ function SimpleApp() {
                                         fontWeight: 'bold',
                                         fontSize: '3rem',
                                         border: '4px solid #d4af37',
-                                        boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
+                                        boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                                        overflow: 'hidden',
+                                        position: 'relative'
                                     }}>
-                                        👤
+                                        {profileData.profilePicture ? (
+                                            <img 
+                                                src={profileData.profilePicture} 
+                                                alt="Profile" 
+                                                style={{
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    objectFit: 'cover'
+                                                }}
+                                            />
+                                        ) : (
+                                            '👤'
+                                        )}
                                     </div>
                                     
                                     {/* Upload Button */}
-                                    <div>
+                                    <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
                                         <input
                                             type="file"
                                             accept="image/*"
                                             id="profilePicUpload"
                                             style={{ display: 'none' }}
-                                            onChange={(e) => {
+                                            onChange={async (e) => {
                                                 if (e.target.files && e.target.files[0]) {
-                                                    alert('Profile picture upload functionality would be integrated here');
+                                                    const file = e.target.files[0];
+                                                    
+                                                    // Validate file size (max 5MB)
+                                                    if (file.size > 5 * 1024 * 1024) {
+                                                        alert('❌ File size must be less than 5MB');
+                                                        return;
+                                                    }
+                                                    
+                                                    // Validate file type
+                                                    if (!file.type.startsWith('image/')) {
+                                                        alert('❌ Please upload an image file');
+                                                        return;
+                                                    }
+                                                    
+                                                    // Create local preview immediately
+                                                    const previewUrl = URL.createObjectURL(file);
+                                                    setProfileData(prev => ({
+                                                        ...prev,
+                                                        profilePicture: previewUrl
+                                                    }));
+                                                    
+                                                    try {
+                                                        // Show loading state
+                                                        const label = document.querySelector('label[for="profilePicUpload"]');
+                                                        const originalText = label.textContent;
+                                                        label.textContent = '⏳ Uploading...';
+                                                        label.style.pointerEvents = 'none';
+                                                        
+                                                        // Upload to S3 (returns local URL for now)
+                                                        const employeeId = profileData.email || 'user';
+                                                        const oldImageUrl = profileData.profilePicture;
+                                                        const imageUrl = await uploadProfilePicture(file, employeeId, oldImageUrl);
+                                                        
+                                                        // Update profile data with URL (same as preview for now)
+                                                        setProfileData(prev => ({
+                                                            ...prev,
+                                                            profilePicture: imageUrl
+                                                        }));
+                                                        
+                                                        alert('✅ Profile picture uploaded successfully!');
+                                                        
+                                                        // Reset label
+                                                        label.textContent = originalText;
+                                                        label.style.pointerEvents = 'auto';
+                                                    } catch (error) {
+                                                        console.error('Upload error:', error);
+                                                        alert('❌ Failed to upload profile picture. Please try again.');
+                                                        
+                                                        // Revert to no image on error
+                                                        setProfileData(prev => ({
+                                                            ...prev,
+                                                            profilePicture: ''
+                                                        }));
+                                                        URL.revokeObjectURL(previewUrl);
+                                                        
+                                                        // Reset label
+                                                        const label = document.querySelector('label[for="profilePicUpload"]');
+                                                        label.textContent = '📷 Upload New Photo';
+                                                        label.style.pointerEvents = 'auto';
+                                                    }
                                                 }
                                             }}
                                         />
@@ -5328,6 +5387,50 @@ function SimpleApp() {
                                             }}>
                                             📷 Upload New Photo
                                         </label>
+                                        
+                                        {profileData.profilePicture && (
+                                            <button
+                                                type="button"
+                                                onClick={async () => {
+                                                    if (confirm('Are you sure you want to remove your profile picture?')) {
+                                                        try {
+                                                            // Delete from S3
+                                                            await deleteFromS3(profileData.profilePicture);
+                                                            
+                                                            // Clear from state
+                                                            setProfileData(prev => ({
+                                                                ...prev,
+                                                                profilePicture: ''
+                                                            }));
+                                                            
+                                                            alert('✅ Profile picture removed successfully!');
+                                                        } catch (error) {
+                                                            console.error('Delete error:', error);
+                                                            alert('❌ Failed to remove profile picture. Please try again.');
+                                                        }
+                                                    }
+                                                }}
+                                                style={{
+                                                    background: '#ef4444',
+                                                    color: 'white',
+                                                    padding: '0.75rem 2rem',
+                                                    borderRadius: '8px',
+                                                    cursor: 'pointer',
+                                                    fontWeight: '700',
+                                                    border: 'none',
+                                                    transition: 'all 0.3s ease'
+                                                }}
+                                                onMouseOver={(e) => {
+                                                    e.target.style.transform = 'translateY(-2px)';
+                                                    e.target.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.4)';
+                                                }}
+                                                onMouseOut={(e) => {
+                                                    e.target.style.transform = 'translateY(0)';
+                                                    e.target.style.boxShadow = 'none';
+                                                }}>
+                                                🗑️ Remove Photo
+                                            </button>
+                                        )}
                                     </div>
                                     <p style={{
                                         color: '#64748b',
@@ -5342,7 +5445,37 @@ function SimpleApp() {
                             {/* Personal Information Form */}
                             <form onSubmit={(e) => {
                                 e.preventDefault();
-                                alert('Profile update functionality would be integrated here');
+                                const formData = new FormData(e.target);
+                                
+                                // Collect form data
+                                const updatedProfile = {
+                                    firstName: formData.get('firstName'),
+                                    lastName: formData.get('lastName'),
+                                    title: formData.get('title'),
+                                    department: formData.get('department'),
+                                    email: formData.get('email'),
+                                    phone: formData.get('phone'),
+                                    location: formData.get('location'),
+                                    emergencyContact: formData.get('emergencyContact'),
+                                    showInDirectory: formData.get('showInDirectory') === 'on',
+                                    // HR-only fields
+                                    employeeId: formData.get('employeeId') || profileData.employeeId,
+                                    startDate: formData.get('startDate') || profileData.startDate,
+                                    salary: formData.get('salary') || profileData.salary,
+                                    manager: formData.get('manager') || profileData.manager
+                                };
+                                
+                                // Update profile state
+                                setProfileData(prev => ({
+                                    ...prev,
+                                    ...updatedProfile,
+                                    name: `${updatedProfile.firstName} ${updatedProfile.lastName}`
+                                }));
+                                
+                                // In production, this would save to a database
+                                console.log('Profile updated:', updatedProfile);
+                                
+                                alert('✅ Profile updated successfully!');
                             }}>
                                 <h3 style={{
                                     color: '#1e3a8a',
@@ -5371,6 +5504,12 @@ function SimpleApp() {
                                         </label>
                                         <input
                                             type="text"
+                                            name="firstName"
+                                            value={profileData.name?.split(' ')[0] || ''}
+                                            onChange={(e) => setProfileData(prev => ({
+                                                ...prev,
+                                                name: `${e.target.value} ${prev.name?.split(' ')[1] || ''}`
+                                            }))}
                                             placeholder="Enter first name"
                                             style={{
                                                 width: '100%',
@@ -5398,6 +5537,12 @@ function SimpleApp() {
                                         </label>
                                         <input
                                             type="text"
+                                            name="lastName"
+                                            value={profileData.name?.split(' ')[1] || ''}
+                                            onChange={(e) => setProfileData(prev => ({
+                                                ...prev,
+                                                name: `${prev.name?.split(' ')[0] || ''} ${e.target.value}`
+                                            }))}
                                             placeholder="Enter last name"
                                             style={{
                                                 width: '100%',
@@ -5425,6 +5570,9 @@ function SimpleApp() {
                                         </label>
                                         <input
                                             type="text"
+                                            name="title"
+                                            value={profileData.title || ''}
+                                            onChange={(e) => setProfileData(prev => ({ ...prev, title: e.target.value }))}
                                             placeholder="Enter job title"
                                             style={{
                                                 width: '100%',
@@ -5452,6 +5600,9 @@ function SimpleApp() {
                                         </label>
                                         <input
                                             type="text"
+                                            name="department"
+                                            value={profileData.department || ''}
+                                            onChange={(e) => setProfileData(prev => ({ ...prev, department: e.target.value }))}
                                             placeholder="Enter department"
                                             style={{
                                                 width: '100%',
@@ -5479,6 +5630,9 @@ function SimpleApp() {
                                         </label>
                                         <input
                                             type="email"
+                                            name="email"
+                                            value={profileData.email || ''}
+                                            onChange={(e) => setProfileData(prev => ({ ...prev, email: e.target.value }))}
                                             placeholder="Enter email"
                                             style={{
                                                 width: '100%',
@@ -5506,6 +5660,9 @@ function SimpleApp() {
                                         </label>
                                         <input
                                             type="tel"
+                                            name="phone"
+                                            value={profileData.phone || ''}
+                                            onChange={(e) => setProfileData(prev => ({ ...prev, phone: e.target.value }))}
                                             placeholder="Enter phone number"
                                             style={{
                                                 width: '100%',
@@ -5533,6 +5690,9 @@ function SimpleApp() {
                                         </label>
                                         <input
                                             type="text"
+                                            name="location"
+                                            value={profileData.location || ''}
+                                            onChange={(e) => setProfileData(prev => ({ ...prev, location: e.target.value }))}
                                             placeholder="Enter location"
                                             style={{
                                                 width: '100%',
@@ -5560,6 +5720,9 @@ function SimpleApp() {
                                         </label>
                                         <input
                                             type="tel"
+                                            name="emergencyContact"
+                                            value={profileData.emergencyContact || ''}
+                                            onChange={(e) => setProfileData(prev => ({ ...prev, emergencyContact: e.target.value }))}
                                             placeholder="Enter emergency contact"
                                             style={{
                                                 width: '100%',
@@ -5599,6 +5762,7 @@ function SimpleApp() {
                                     }}>
                                         <input
                                             type="checkbox"
+                                            name="showInDirectory"
                                             defaultChecked={false}
                                             style={{
                                                 width: '20px',
@@ -5620,6 +5784,170 @@ function SimpleApp() {
                                         </div>
                                     </label>
                                 </div>
+
+                                {/* HR-Only Section */}
+                                {(userRole === 'hr' || userRole === 'admin') && (
+                                    <div style={{
+                                        marginTop: '2rem',
+                                        padding: '1.5rem',
+                                        background: '#fef3c7',
+                                        borderRadius: '8px',
+                                        border: '2px solid #f59e0b'
+                                    }}>
+                                        <div style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            marginBottom: '1rem'
+                                        }}>
+                                            <h4 style={{
+                                                color: '#92400e',
+                                                fontSize: '1.2rem',
+                                                margin: 0
+                                            }}>
+                                                🔐 HR-Only Information
+                                            </h4>
+                                            <span style={{
+                                                background: '#dc2626',
+                                                color: 'white',
+                                                padding: '0.25rem 0.75rem',
+                                                borderRadius: '12px',
+                                                fontSize: '0.75rem',
+                                                fontWeight: '700',
+                                                marginLeft: '1rem'
+                                            }}>
+                                                RESTRICTED ACCESS
+                                            </span>
+                                        </div>
+                                        <p style={{
+                                            color: '#92400e',
+                                            fontSize: '0.9rem',
+                                            marginBottom: '1.5rem'
+                                        }}>
+                                            Only HR and Admin users can view and edit these fields
+                                        </p>
+
+                                        <div style={{
+                                            display: 'grid',
+                                            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                                            gap: '1.5rem'
+                                        }}>
+                                            {/* Employee ID */}
+                                            <div>
+                                                <label style={{
+                                                    display: 'block',
+                                                    marginBottom: '0.5rem',
+                                                    color: '#92400e',
+                                                    fontWeight: '600',
+                                                    fontSize: '0.9rem'
+                                                }}>
+                                                    Employee ID
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    name="employeeId"
+                                                    value={profileData.employeeId || ''}
+                                                    onChange={(e) => setProfileData(prev => ({ ...prev, employeeId: e.target.value }))}
+                                                    placeholder="e.g., EMP-2024-001"
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '0.75rem',
+                                                        border: '2px solid #fbbf24',
+                                                        borderRadius: '8px',
+                                                        fontSize: '1rem',
+                                                        outline: 'none',
+                                                        background: 'white'
+                                                    }}
+                                                />
+                                            </div>
+
+                                            {/* Start Date */}
+                                            <div>
+                                                <label style={{
+                                                    display: 'block',
+                                                    marginBottom: '0.5rem',
+                                                    color: '#92400e',
+                                                    fontWeight: '600',
+                                                    fontSize: '0.9rem'
+                                                }}>
+                                                    Start Date
+                                                </label>
+                                                <input
+                                                    type="date"
+                                                    name="startDate"
+                                                    value={profileData.startDate || ''}
+                                                    onChange={(e) => setProfileData(prev => ({ ...prev, startDate: e.target.value }))}
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '0.75rem',
+                                                        border: '2px solid #fbbf24',
+                                                        borderRadius: '8px',
+                                                        fontSize: '1rem',
+                                                        outline: 'none',
+                                                        background: 'white'
+                                                    }}
+                                                />
+                                            </div>
+
+                                            {/* Salary */}
+                                            <div>
+                                                <label style={{
+                                                    display: 'block',
+                                                    marginBottom: '0.5rem',
+                                                    color: '#92400e',
+                                                    fontWeight: '600',
+                                                    fontSize: '0.9rem'
+                                                }}>
+                                                    Annual Salary
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    name="salary"
+                                                    value={profileData.salary || ''}
+                                                    onChange={(e) => setProfileData(prev => ({ ...prev, salary: e.target.value }))}
+                                                    placeholder="e.g., $95,000"
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '0.75rem',
+                                                        border: '2px solid #fbbf24',
+                                                        borderRadius: '8px',
+                                                        fontSize: '1rem',
+                                                        outline: 'none',
+                                                        background: 'white'
+                                                    }}
+                                                />
+                                            </div>
+
+                                            {/* Manager */}
+                                            <div>
+                                                <label style={{
+                                                    display: 'block',
+                                                    marginBottom: '0.5rem',
+                                                    color: '#92400e',
+                                                    fontWeight: '600',
+                                                    fontSize: '0.9rem'
+                                                }}>
+                                                    Manager
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    name="manager"
+                                                    value={profileData.manager || ''}
+                                                    onChange={(e) => setProfileData(prev => ({ ...prev, manager: e.target.value }))}
+                                                    placeholder="Manager's name"
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '0.75rem',
+                                                        border: '2px solid #fbbf24',
+                                                        borderRadius: '8px',
+                                                        fontSize: '1rem',
+                                                        outline: 'none',
+                                                        background: 'white'
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
 
                                 {/* Action Buttons */}
                                 <div style={{
@@ -6766,6 +7094,145 @@ function SimpleApp() {
                             gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
                             gap: '2rem'
                         }}>
+                            {/* Current User's Profile (if they opted in) */}
+                            {profileData.name && (
+                                <div className="hover-lift animate-scale-in" style={{
+                                    background: 'white',
+                                    padding: '2rem',
+                                    borderRadius: '12px',
+                                    border: '2px solid #d4af37',
+                                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                                }}>
+                                    <div style={{ marginBottom: '1.5rem' }}>
+                                        <div style={{
+                                            background: '#f8fafc',
+                                            padding: '1.5rem',
+                                            borderRadius: '8px',
+                                            border: '1px solid #e2e8f0',
+                                            marginBottom: isHRView ? '1rem' : '0'
+                                        }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+                                                <div style={{
+                                                    width: '60px',
+                                                    height: '60px',
+                                                    background: profileData.profilePicture ? 'transparent' : '#1e3a8a',
+                                                    borderRadius: '50%',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    color: 'white',
+                                                    fontWeight: 'bold',
+                                                    fontSize: '1.5rem',
+                                                    marginRight: '1rem',
+                                                    overflow: 'hidden',
+                                                    border: '2px solid #d4af37'
+                                                }}>
+                                                    {profileData.profilePicture ? (
+                                                        <img 
+                                                            src={profileData.profilePicture} 
+                                                            alt={profileData.name}
+                                                            style={{
+                                                                width: '100%',
+                                                                height: '100%',
+                                                                objectFit: 'cover'
+                                                            }}
+                                                        />
+                                                    ) : (
+                                                        profileData.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'ME'
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <div style={{ fontWeight: '600', color: '#1e3a8a' }}>
+                                                        {profileData.name || 'Your Name'} 
+                                                        <span style={{
+                                                            background: '#10b981',
+                                                            color: 'white',
+                                                            padding: '0.2rem 0.5rem',
+                                                            borderRadius: '4px',
+                                                            fontSize: '0.7rem',
+                                                            marginLeft: '0.5rem'
+                                                        }}>
+                                                            YOU
+                                                        </span>
+                                                    </div>
+                                                    <div style={{ color: '#64748b', fontSize: '0.9rem' }}>
+                                                        {profileData.title || 'Your Title'}
+                                                    </div>
+                                                    {isHRView && (
+                                                        <div style={{ color: '#64748b', fontSize: '0.8rem' }}>
+                                                            Employee ID: {profileData.email?.split('@')[0].toUpperCase() || 'N/A'}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div style={{ fontSize: '0.9rem', color: '#475569' }}>
+                                                <div style={{ marginBottom: '0.5rem' }}>
+                                                    📧 {profileData.email || 'your.email@navontech.com'}
+                                                </div>
+                                                {isHRView && (
+                                                    <>
+                                                        {profileData.phone && (
+                                                            <div style={{ marginBottom: '0.5rem' }}>
+                                                                📱 {profileData.phone}
+                                                            </div>
+                                                        )}
+                                                        {profileData.location && (
+                                                            <div style={{ marginBottom: '0.5rem' }}>
+                                                                🏢 {profileData.location}
+                                                            </div>
+                                                        )}
+                                                        {profileData.department && (
+                                                            <div style={{ marginBottom: '0.5rem' }}>
+                                                                🏷️ Department: {profileData.department}
+                                                            </div>
+                                                        )}
+                                                        {profileData.startDate && (
+                                                            <div style={{ marginBottom: '0.5rem' }}>
+                                                                📅 Start Date: {new Date(profileData.startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                                            </div>
+                                                        )}
+                                                        {profileData.salary && (
+                                                            <div style={{ marginBottom: '0.5rem' }}>
+                                                                💰 Salary: {profileData.salary}
+                                                            </div>
+                                                        )}
+                                                        {profileData.manager && (
+                                                            <div style={{ marginBottom: '0.5rem' }}>
+                                                                👤 Manager: {profileData.manager}
+                                                            </div>
+                                                        )}
+                                                        {profileData.emergencyContact && (
+                                                            <div>
+                                                                🚨 Emergency Contact: {profileData.emergencyContact}
+                                                            </div>
+                                                        )}
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
+                                        {isHRView && profileData.title && (
+                                            <div style={{
+                                                display: 'grid',
+                                                gridTemplateColumns: '1fr',
+                                                gap: '0.5rem',
+                                                fontSize: '0.85rem'
+                                            }}>
+                                                <div style={{
+                                                    background: '#dcfce7',
+                                                    color: '#166534',
+                                                    padding: '0.5rem',
+                                                    borderRadius: '6px',
+                                                    textAlign: 'center',
+                                                    fontWeight: '600'
+                                                }}>
+                                                    Profile Updated
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                            
                             {/* John Doe Card - Conditional View Based on HR Access */}
                             <div className="hover-lift animate-scale-in" style={{
                                 background: 'white',
@@ -7245,7 +7712,9 @@ function SimpleApp() {
                                 padding: '2rem',
                                 borderRadius: '12px',
                                 border: '2px solid #d4af37',
-                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                display: 'flex',
+                                flexDirection: 'column'
                             }}>
                                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
                                     <div style={{
@@ -7267,7 +7736,7 @@ function SimpleApp() {
                                         HR Documents
                                     </h3>
                                 </div>
-                                <div style={{ marginBottom: '1rem' }}>
+                                <div style={{ marginBottom: '1rem', flex: 1 }}>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
                                         • Employee handbook
                                     </p>
@@ -7291,7 +7760,8 @@ function SimpleApp() {
                                         borderRadius: '6px',
                                         cursor: 'pointer',
                                         fontWeight: '600',
-                                        width: '100%'
+                                        width: '100%',
+                                        marginTop: 'auto'
                                     }}>
                                     Access HR Files
                                 </button>
@@ -7304,7 +7774,9 @@ function SimpleApp() {
                                 borderRadius: '12px',
                                 border: '2px solid #d4af37',
                                 boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                animationDelay: '0.1s'
+                                animationDelay: '0.1s',
+                                display: 'flex',
+                                flexDirection: 'column'
                             }}>
                                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
                                     <div style={{
@@ -7317,7 +7789,7 @@ function SimpleApp() {
                                         Compliance & Security
                                     </h3>
                                 </div>
-                                <div style={{ marginBottom: '1rem' }}>
+                                <div style={{ marginBottom: '1rem', flex: 1 }}>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
                                         • Security policies
                                     </p>
@@ -7339,57 +7811,10 @@ function SimpleApp() {
                                     borderRadius: '6px',
                                     cursor: 'pointer',
                                     fontWeight: '600',
-                                    width: '100%'
+                                    width: '100%',
+                                    marginTop: 'auto'
                                 }}>
                                     View Compliance
-                                </button>
-                            </div>
-
-                            {/* Project Documents */}
-                            <div className="hover-lift animate-scale-in" style={{
-                                background: 'white',
-                                padding: '2rem',
-                                borderRadius: '12px',
-                                border: '2px solid #d4af37',
-                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                animationDelay: '0.2s'
-                            }}>
-                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
-                                    <div style={{
-                                        fontSize: '2.5rem',
-                                        marginRight: '1rem'
-                                    }}>
-                                        📄
-                                    </div>
-                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
-                                        Project Documents
-                                    </h3>
-                                </div>
-                                <div style={{ marginBottom: '1rem' }}>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Active project files
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Technical specifications
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Design documents
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Meeting notes & minutes
-                                    </p>
-                                </div>
-                                <button style={{
-                                    background: '#1e3a8a',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '0.75rem 1.5rem',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600',
-                                    width: '100%'
-                                }}>
-                                    Browse Projects
                                 </button>
                             </div>
 
@@ -7400,7 +7825,9 @@ function SimpleApp() {
                                 borderRadius: '12px',
                                 border: '2px solid #d4af37',
                                 boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                animationDelay: '0.3s'
+                                animationDelay: '0.2s',
+                                display: 'flex',
+                                flexDirection: 'column'
                             }}>
                                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
                                     <div style={{
@@ -7413,7 +7840,7 @@ function SimpleApp() {
                                         Shared Resources
                                     </h3>
                                 </div>
-                                <div style={{ marginBottom: '1rem' }}>
+                                <div style={{ marginBottom: '1rem', flex: 1 }}>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
                                         • Templates & forms
                                     </p>
@@ -7435,9 +7862,63 @@ function SimpleApp() {
                                     borderRadius: '6px',
                                     cursor: 'pointer',
                                     fontWeight: '600',
-                                    width: '100%'
+                                    width: '100%',
+                                    marginTop: 'auto'
                                 }}>
                                     Browse Resources
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Upload Section */}
+                        <div style={{
+                            background: '#fff3cd',
+                            padding: '1.5rem',
+                            borderRadius: '12px',
+                            border: '2px solid #ffc107',
+                            marginBottom: '2rem',
+                            textAlign: 'center'
+                        }}>
+                            <h4 style={{ color: '#856404', marginBottom: '1rem' }}>🔄 Demo: Switch User Role</h4>
+                            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                                <button 
+                                    onClick={() => switchRole('employee')}
+                                    style={{
+                                        background: userRole === 'employee' ? '#1e3a8a' : '#94a3b8',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '0.5rem 1rem',
+                                        borderRadius: '6px',
+                                        cursor: 'pointer',
+                                        fontWeight: '600'
+                                    }}>
+                                    Employee
+                                </button>
+                                <button 
+                                    onClick={() => switchRole('hr')}
+                                    style={{
+                                        background: userRole === 'hr' ? '#1e3a8a' : '#94a3b8',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '0.5rem 1rem',
+                                        borderRadius: '6px',
+                                        cursor: 'pointer',
+                                        fontWeight: '600'
+                                    }}>
+                                    HR Manager
+                                </button>
+                                <button 
+                                    onClick={() => switchRole('admin')}
+                                    style={{
+                                        background: userRole === 'admin' ? '#1e3a8a' : '#94a3b8',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '0.5rem 1rem',
+                                        borderRadius: '6px',
+                                        cursor: 'pointer',
+                                        fontWeight: '600'
+                                    }}>
+                                    Admin
                                 </button>
                             </div>
                         </div>
@@ -7472,7 +7953,50 @@ function SimpleApp() {
                             <p style={{ color: '#64748b', marginBottom: '1.5rem' }}>
                                 All uploads are encrypted and scanned for security compliance
                             </p>
-                            <button style={{
+                            <input
+                                type="file"
+                                id="documentUpload"
+                                multiple
+                                style={{ display: 'none' }}
+                                onChange={async (e) => {
+                                    if (!canUpload(userRole, 'document')) {
+                                        alert('❌ Access Denied: Only HR and Admin users can upload documents.\n\nCurrent Role: ' + userRole.toUpperCase() + '\nRequired Role: HR or ADMIN');
+                                        e.target.value = '';
+                                        return;
+                                    }
+                                    
+                                    if (e.target.files && e.target.files.length > 0) {
+                                        const files = Array.from(e.target.files);
+                                        
+                                        try {
+                                            const button = document.querySelector('label[for="documentUpload"]');
+                                            const originalText = button.textContent;
+                                            button.textContent = '⏳ Uploading...';
+                                            button.style.pointerEvents = 'none';
+                                            
+                                            for (const file of files) {
+                                                await uploadDocument(file, 'General');
+                                            }
+                                            
+                                            alert(`✅ Successfully uploaded ${files.length} file(s)!`);
+                                            
+                                            button.textContent = originalText;
+                                            button.style.pointerEvents = 'auto';
+                                            e.target.value = '';
+                                        } catch (error) {
+                                            console.error('Upload error:', error);
+                                            alert('❌ Failed to upload documents. Please try again.');
+                                            
+                                            const button = document.querySelector('label[for="documentUpload"]');
+                                            button.textContent = 'Select Files to Upload';
+                                            button.style.pointerEvents = 'auto';
+                                        }
+                                    }
+                                }}
+                            />
+                            <label
+                                htmlFor="documentUpload"
+                                style={{
                                 background: '#d4af37',
                                 color: '#0f172a',
                                 border: 'none',
@@ -7480,10 +8004,15 @@ function SimpleApp() {
                                 borderRadius: '8px',
                                 cursor: 'pointer',
                                 fontWeight: '700',
-                                fontSize: '1rem'
+                                fontSize: '1rem',
+                                display: 'inline-block'
                             }}>
                                 Select Files to Upload
-                            </button>
+                            </label>
+                            <p style={{ color: '#64748b', marginTop: '1rem', fontSize: '0.9rem' }}>
+                                Current Role: <strong>{userRole.toUpperCase()}</strong> | 
+                                Upload Access: <strong>{canUpload(userRole, 'document') ? '✅ Granted' : '❌ Denied'}</strong>
+                            </p>
                         </div>
                     </div>
                 </section>
@@ -7546,13 +8075,7 @@ function SimpleApp() {
                                 { icon: '☁️', name: 'AWS Console Access', desc: 'Manage cloud infrastructure', status: 'Active', link: 'https://console.aws.amazon.com' },
                                 { icon: '💻', name: 'GitHub', desc: 'Secure Code Repository - Git version control', status: 'Active', link: 'https://github.com' },
                                 { icon: '📊', name: 'Project Management Suite', desc: 'Track tasks and milestones', status: 'Coming Soon' },
-                                { icon: '💬', name: 'Encrypted Communications', desc: 'Secure messaging platform', status: 'Coming Soon' },
-                                { icon: '🔍', name: 'Security Compliance Dashboard', desc: 'Monitor compliance status', status: 'Coming Soon' },
-                                { icon: '📚', name: 'Documentation Wiki', desc: 'Internal knowledge base', status: 'Coming Soon' },
-                                { icon: '🎯', name: 'Task Automation', desc: 'Workflow automation tools', status: 'Coming Soon' },
-                                { icon: '📈', name: 'Analytics Platform', desc: 'Business intelligence tools', status: 'Coming Soon' },
-                                { icon: '🔒', name: 'VPN Access', desc: 'Secure network connection', status: 'Coming Soon' },
-                                { icon: '🗄️', name: 'Database Tools', desc: 'Query and manage databases', status: 'Coming Soon' }
+                                { icon: '💬', name: 'Encrypted Communications', desc: 'Secure messaging platform', status: 'Coming Soon' }
                             ].map((tool, index) => (
                                 <div key={index} className="hover-lift animate-scale-in" style={{
                                     background: 'white',
