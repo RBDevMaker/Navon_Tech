@@ -10041,16 +10041,17 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                         borderRadius: '12px',
                         boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
                         overflow: 'hidden',
-                        border: '2px solid rgba(212, 175, 55, 0.3)'
+                        border: '2px solid rgba(212, 175, 55, 0.3)',
+                        fontFamily: '"Times New Roman", Times, serif'
                     }}>
                         {/* Header */}
                         <div style={{
-                            padding: '2rem',
+                            padding: '1.5rem',
                             textAlign: 'center'
                         }}>
                             <div style={{
-                                fontSize: '2.5rem',
-                                marginBottom: '0.5rem'
+                                fontSize: '2rem',
+                                marginBottom: '0.3rem'
                             }}>
                                 🔐
                             </div>
@@ -10058,14 +10059,14 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 color: 'white',
                                 fontSize: '1.8rem',
                                 fontWeight: '700',
-                                margin: '0 0 0.3rem 0',
+                                margin: '0 0 0.2rem 0',
                                 lineHeight: '1.3'
                             }}>
                                 Navon Technologies<br />Employee Portal
                             </h2>
                             <p style={{
                                 color: 'rgba(255, 255, 255, 0.9)',
-                                fontSize: '0.95rem',
+                                fontSize: '1rem',
                                 margin: 0
                             }}>
                                 Secure Sign In
@@ -10073,20 +10074,20 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                         </div>
 
                         {/* Login Form */}
-                        <div style={{ padding: '2.5rem' }}>
+                        <div style={{ padding: '1.5rem' }}>
                             <form onSubmit={(e) => {
                                 e.preventDefault();
                                 // Placeholder - would integrate with AWS Cognito
                                 alert('AWS Cognito authentication would be integrated here');
                             }}>
                                 {/* Username Field */}
-                                <div style={{ marginBottom: '1.5rem' }}>
+                                <div style={{ marginBottom: '1rem' }}>
                                     <label style={{
                                         display: 'block',
-                                        marginBottom: '0.5rem',
+                                        marginBottom: '0.4rem',
                                         color: 'white',
                                         fontWeight: '600',
-                                        fontSize: '0.9rem'
+                                        fontSize: '0.85rem'
                                     }}>
                                         Email
                                     </label>
@@ -10095,10 +10096,10 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         placeholder="your.email@navontech.com"
                                         style={{
                                             width: '100%',
-                                            padding: '0.75rem',
+                                            padding: '0.65rem',
                                             border: '2px solid rgba(255, 255, 255, 0.3)',
                                             borderRadius: '8px',
-                                            fontSize: '1rem',
+                                            fontSize: '0.95rem',
                                             background: 'rgba(255, 255, 255, 0.9)',
                                             color: '#1e293b',
                                             transition: 'all 0.3s ease',
@@ -10110,13 +10111,13 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 </div>
 
                                 {/* Password Field */}
-                                <div style={{ marginBottom: '1rem' }}>
+                                <div style={{ marginBottom: '0.8rem' }}>
                                     <label style={{
                                         display: 'block',
-                                        marginBottom: '0.5rem',
+                                        marginBottom: '0.4rem',
                                         color: 'white',
                                         fontWeight: '600',
-                                        fontSize: '0.9rem'
+                                        fontSize: '0.85rem'
                                     }}>
                                         Password
                                     </label>
@@ -10125,10 +10126,10 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         placeholder="Enter your password"
                                         style={{
                                             width: '100%',
-                                            padding: '0.75rem',
+                                            padding: '0.65rem',
                                             border: '2px solid rgba(255, 255, 255, 0.3)',
                                             borderRadius: '8px',
-                                            fontSize: '1rem',
+                                            fontSize: '0.95rem',
                                             background: 'rgba(255, 255, 255, 0.9)',
                                             color: '#1e293b',
                                             transition: 'all 0.3s ease',
@@ -10141,7 +10142,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
 
                                 {/* Forgot Password Link */}
                                 <div style={{ 
-                                    textAlign: 'right', 
+                                    textAlign: 'center', 
                                     marginBottom: '1.5rem' 
                                 }}>
                                     <a href="#" 
@@ -10157,7 +10158,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     }}
                                     onMouseOver={(e) => e.target.style.textDecoration = 'underline'}
                                     onMouseOut={(e) => e.target.style.textDecoration = 'none'}>
-                                        Forgot password?
+                                        Forgot Password?
                                     </a>
                                 </div>
 
@@ -10166,8 +10167,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     type="submit"
                                     style={{
                                         width: '100%',
-                                        background: '#0f172a',
-                                        color: 'white',
+                                        background: '#d4af37',
+                                        color: '#0f172a',
                                         border: 'none',
                                         padding: '1rem',
                                         borderRadius: '8px',
@@ -10179,7 +10180,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     }}
                                     onMouseOver={(e) => {
                                         e.target.style.transform = 'translateY(-2px)';
-                                        e.target.style.boxShadow = '0 10px 20px rgba(15, 23, 42, 0.5)';
+                                        e.target.style.boxShadow = '0 10px 20px rgba(212, 175, 55, 0.5)';
                                     }}
                                     onMouseOut={(e) => {
                                         e.target.style.transform = 'translateY(0)';
@@ -10188,63 +10189,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     Sign In
                                 </button>
                             </form>
-                        </div>
-                    </div>
-                </section>
-            )}
-                                        transition: 'all 0.3s ease'
-                                    }}
-                                    onMouseOver={(e) => {
-                                        e.target.style.background = '#1e3a8a';
-                                        e.target.style.color = 'white';
-                                    }}
-                                    onMouseOut={(e) => {
-                                        e.target.style.background = 'transparent';
-                                        e.target.style.color = '#1e3a8a';
-                                    }}>
-                                    Request Access
-                                </button>
-                            </form>
-
-                            {/* Back to Home */}
-                            <div style={{ 
-                                textAlign: 'center', 
-                                marginTop: '1.5rem',
-                                paddingTop: '1.5rem',
-                                borderTop: '1px solid #e2e8f0'
-                            }}>
-                                <button
-                                    onClick={() => {
-                                        setCurrentPage('home');
-                                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                                    }}
-                                    style={{
-                                        background: 'transparent',
-                                        border: 'none',
-                                        color: '#64748b',
-                                        fontSize: '0.9rem',
-                                        cursor: 'pointer',
-                                        textDecoration: 'underline'
-                                    }}>
-                                    ← Back to Home
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Footer */}
-                        <div style={{
-                            background: '#f8fafc',
-                            padding: '1rem',
-                            textAlign: 'center',
-                            borderTop: '1px solid #e2e8f0'
-                        }}>
-                            <p style={{
-                                margin: 0,
-                                fontSize: '0.8rem',
-                                color: '#94a3b8'
-                            }}>
-                                🛡️ Powered by AWS Cognito | Secure by Design
-                            </p>
                         </div>
                     </div>
                 </section>
@@ -10585,7 +10529,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                         boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
                         position: 'relative',
                         animation: 'scaleIn 0.3s ease-out',
-                        border: '3px solid #d4af37'
+                        border: '3px solid #d4af37',
+                        fontFamily: '"Times New Roman", Times, serif'
                     }}
                     onClick={(e) => e.stopPropagation()}>
                         {/* Close button */}
