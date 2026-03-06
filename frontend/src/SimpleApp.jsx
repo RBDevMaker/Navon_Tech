@@ -5275,33 +5275,28 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 Update your personal information and profile settings
                             </p>
                             
-                            {/* Role Switcher for Testing */}
+                            {/* View Indicator */}
                             <div style={{
-                                background: 'white',
-                                padding: '1rem',
+                                background: userRole === 'employee' ? '#dbeafe' : '#fef3c7',
+                                padding: '1rem 1.5rem',
                                 borderRadius: '8px',
-                                border: '2px solid #d4af37',
+                                border: `2px solid ${userRole === 'employee' ? '#3b82f6' : '#d4af37'}`,
                                 marginBottom: '1.5rem',
-                                display: 'inline-block'
+                                display: 'inline-block',
+                                textAlign: 'left'
                             }}>
-                                <label style={{ marginRight: '1rem', fontWeight: '600', color: '#1e3a8a' }}>
-                                    Current Role:
-                                </label>
-                                <select 
-                                    value={userRole} 
-                                    onChange={(e) => setUserRole(e.target.value)}
-                                    style={{
-                                        padding: '0.5rem 1rem',
-                                        borderRadius: '6px',
-                                        border: '2px solid #1e3a8a',
-                                        fontWeight: '600',
-                                        cursor: 'pointer',
-                                        background: 'white'
-                                    }}>
-                                    <option value="employee">Employee</option>
-                                    <option value="hr">HR</option>
-                                    <option value="admin">Admin</option>
-                                </select>
+                                <div style={{ fontWeight: '700', color: '#1e3a8a', marginBottom: '0.5rem', fontSize: '1.1rem' }}>
+                                    {userRole === 'superadmin' && '⭐ Super Admin View'}
+                                    {userRole === 'admin' && '🔧 Admin View'}
+                                    {userRole === 'hr' && '👥 HR View'}
+                                    {userRole === 'employee' && '👤 Employee View'}
+                                </div>
+                                <div style={{ color: '#475569', fontSize: '0.9rem' }}>
+                                    {userRole === 'superadmin' && 'Full system access with all HR and Admin permissions'}
+                                    {userRole === 'admin' && 'Full administrative access to all features'}
+                                    {userRole === 'hr' && 'Access to employee management and HR features'}
+                                    {userRole === 'employee' && 'Standard employee access to personal information'}
+                                </div>
                             </div>
                             
                             <br />
@@ -5752,6 +5747,68 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             onFocus={(e) => e.target.style.borderColor = '#1e3a8a'}
                                             onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
                                         />
+                                    </div>
+
+                                    {/* Employee Group */}
+                                    <div>
+                                        <label style={{
+                                            display: 'block',
+                                            marginBottom: '0.5rem',
+                                            color: '#334155',
+                                            fontWeight: '600',
+                                            fontSize: '0.9rem'
+                                        }}>
+                                            Employee Group
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="employeeGroup"
+                                            value={profileData.employeeGroup || ''}
+                                            onChange={(e) => setProfileData(prev => ({ ...prev, employeeGroup: e.target.value }))}
+                                            placeholder="Enter employee group (e.g., Engineering, Sales)"
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                border: '2px solid #e2e8f0',
+                                                borderRadius: '8px',
+                                                fontSize: '1rem',
+                                                outline: 'none'
+                                            }}
+                                            onFocus={(e) => e.target.style.borderColor = '#1e3a8a'}
+                                            onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                                        />
+                                    </div>
+
+                                    {/* Group (Access Level) - Read Only */}
+                                    <div>
+                                        <label style={{
+                                            display: 'block',
+                                            marginBottom: '0.5rem',
+                                            color: '#334155',
+                                            fontWeight: '600',
+                                            fontSize: '0.9rem'
+                                        }}>
+                                            Group (Access Level)
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={userRole === 'superadmin' ? 'SuperAdmin' : userRole === 'admin' ? 'Admin' : userRole === 'hr' ? 'HR' : 'Employee'}
+                                            readOnly
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                border: '2px solid #e2e8f0',
+                                                borderRadius: '8px',
+                                                fontSize: '1rem',
+                                                outline: 'none',
+                                                background: '#f8fafc',
+                                                color: '#64748b',
+                                                cursor: 'not-allowed'
+                                            }}
+                                        />
+                                        <p style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.25rem' }}>
+                                            This is determined by your Cognito group membership
+                                        </p>
                                     </div>
 
                                     {/* Email */}
@@ -7154,98 +7211,27 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             }}>
                                 Search and connect with team members across the organization
                             </p>
+                            
+                            {/* View Indicator */}
                             <div style={{
-                                background: '#f0f9ff',
-                                border: '2px solid #0ea5e9',
+                                background: userRole === 'employee' ? '#dbeafe' : '#fef3c7',
+                                padding: '1rem 1.5rem',
                                 borderRadius: '8px',
-                                padding: '1rem',
-                                margin: '0 auto 1rem auto',
+                                border: `2px solid ${userRole === 'employee' ? '#3b82f6' : '#d4af37'}`,
+                                marginBottom: '1.5rem',
+                                display: 'inline-block',
+                                textAlign: 'left',
                                 maxWidth: '600px'
                             }}>
-                                <p style={{
-                                    margin: 0,
-                                    fontSize: '0.9rem',
-                                    color: '#0369a1'
-                                }}>
-                                    ℹ️ <strong>{isHRView ? 'HR View:' : 'Employee View:'}</strong> {isHRView ? 'Full directory access with all employee information.' : 'You can see Name, Title, and Email only. HR team members have access to full directory information.'}
-                                </p>
-                            </div>
-                            
-                            {/* Development HR View Toggle */}
-                            <div style={{ marginBottom: '1rem' }}>
-                                <button 
-                                    onClick={() => setIsHRView(!isHRView)}
-                                    style={{
-                                        background: isHRView ? '#10b981' : '#f59e0b',
-                                        color: 'white',
-                                        border: 'none',
-                                        padding: '0.75rem 1.5rem',
-                                        borderRadius: '8px',
-                                        cursor: 'pointer',
-                                        fontWeight: '700',
-                                        fontSize: '0.9rem',
-                                        marginBottom: '0.5rem'
-                                    }}>
-                                    🚧 {isHRView ? 'Switch to Employee View' : 'Switch to HR View'} (Development)
-                                </button>
-                            </div>
-                            
-                            {/* Role Switcher */}
-                            <div style={{ 
-                                marginBottom: '1rem',
-                                background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-                                padding: '1rem',
-                                borderRadius: '12px',
-                                border: '2px solid #d4af37',
-                                maxWidth: '600px',
-                                margin: '0 auto 1rem auto'
-                            }}>
-                                <div style={{ marginBottom: '0.5rem', fontSize: '0.9rem', color: '#64748b', fontWeight: '600' }}>
-                                    👤 Current Role: <span style={{ color: '#1e3a8a', fontWeight: '700' }}>{userRole.toUpperCase()}</span>
+                                <div style={{ fontWeight: '700', color: '#1e3a8a', marginBottom: '0.5rem', fontSize: '1.1rem' }}>
+                                    {userRole === 'superadmin' && '⭐ Super Admin View'}
+                                    {userRole === 'admin' && '🔧 Admin View'}
+                                    {userRole === 'hr' && '👥 HR View'}
+                                    {userRole === 'employee' && '👤 Employee View'}
                                 </div>
-                                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-                                    <button
-                                        onClick={() => switchRole('employee')}
-                                        style={{
-                                            background: userRole === 'employee' ? '#1e3a8a' : 'transparent',
-                                            color: userRole === 'employee' ? 'white' : '#1e3a8a',
-                                            border: '2px solid #1e3a8a',
-                                            padding: '0.5rem 1rem',
-                                            borderRadius: '6px',
-                                            cursor: 'pointer',
-                                            fontSize: '0.85rem',
-                                            fontWeight: '600'
-                                        }}>
-                                        👨‍💼 Employee
-                                    </button>
-                                    <button
-                                        onClick={() => switchRole('hr')}
-                                        style={{
-                                            background: userRole === 'hr' ? '#d4af37' : 'transparent',
-                                            color: userRole === 'hr' ? '#0f172a' : '#d4af37',
-                                            border: '2px solid #d4af37',
-                                            padding: '0.5rem 1rem',
-                                            borderRadius: '6px',
-                                            cursor: 'pointer',
-                                            fontSize: '0.85rem',
-                                            fontWeight: '600'
-                                        }}>
-                                        👩‍💼 HR Manager
-                                    </button>
-                                    <button
-                                        onClick={() => switchRole('admin')}
-                                        style={{
-                                            background: userRole === 'admin' ? '#ef4444' : 'transparent',
-                                            color: userRole === 'admin' ? 'white' : '#ef4444',
-                                            border: '2px solid #ef4444',
-                                            padding: '0.5rem 1rem',
-                                            borderRadius: '6px',
-                                            cursor: 'pointer',
-                                            fontSize: '0.85rem',
-                                            fontWeight: '600'
-                                        }}>
-                                        🔧 Admin
-                                    </button>
+                                <div style={{ color: '#475569', fontSize: '0.9rem' }}>
+                                    {(userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') && 'Full directory access with all employee information and management capabilities'}
+                                    {userRole === 'employee' && 'You can see Name, Title, and Email only. Contact HR for additional information.'}
                                 </div>
                             </div>
                             
