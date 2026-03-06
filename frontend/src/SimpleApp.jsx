@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { uploadProfilePicture, uploadDocument, canUpload, deleteFromS3 } from './services/s3Upload';
 
-function SimpleApp() {
+function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const s3BaseUrl = "https://navon-tech-images.s3.us-east-1.amazonaws.com";
     const [currentPage, setCurrentPage] = useState('home');
     const [scrollY, setScrollY] = useState(0);
     const [showSecureModal, setShowSecureModal] = useState(false);
     const [isHRView, setIsHRView] = useState(false);
     const [showTimeOffModal, setShowTimeOffModal] = useState(false);
-    const [userRole, setUserRole] = useState('employee'); // 'employee', 'hr', 'admin'
+    const [userRole, setUserRole] = useState(authenticatedUserRole || 'employee'); // Use authenticated role
     const [selectedJob, setSelectedJob] = useState(''); // For prefilling job application
     const [showReferralForm, setShowReferralForm] = useState(false); // For referral form modal
     const [profileData, setProfileData] = useState({
@@ -48,6 +48,13 @@ function SimpleApp() {
 
         return () => window.removeEventListener('hashchange', handleHashChange);
     }, []);
+
+    // Update userRole when authenticated role changes
+    useEffect(() => {
+        if (authenticatedUserRole) {
+            setUserRole(authenticatedUserRole);
+        }
+    }, [authenticatedUserRole]);
 
     // Handle scroll for parallax effects
     useEffect(() => {
