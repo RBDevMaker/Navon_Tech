@@ -4,6 +4,40 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://your-api-gateway-url';
 
 /**
+ * List folders and files in S3 bucket
+ * @param {string} prefix - Optional folder prefix to list (e.g., 'Documents/')
+ * @returns {Promise<Object>} - Object containing folders and files arrays
+ */
+export async function listS3Contents(prefix = '') {
+    try {
+        console.log('Listing S3 contents for prefix:', prefix);
+        
+        const response = await fetch(`${API_BASE_URL}/upload-to-s3`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                action: 'list',
+                prefix: prefix
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`List failed: ${response.statusText}`);
+        }
+        
+        const result = await response.json();
+        console.log('List successful:', result);
+        
+        return result;
+    } catch (error) {
+        console.error('Error listing S3 contents:', error);
+        throw new Error('Failed to list S3 contents: ' + error.message);
+    }
+}
+
+/**
  * Upload file to S3 bucket via Lambda function
  * @param {File} file - The file to upload
  * @param {string} folder - The S3 folder path (e.g., 'Team-Directory', 'Documents')
@@ -18,6 +52,8 @@ export async function uploadToS3(file, folder, fileName = null) {
         const s3Key = `${folder}/${sanitizedFileName}`;
         
         console.log('Uploading to S3:', s3Key);
+        console.log('API_BASE_URL:', API_BASE_URL);
+        console.log('Full URL:', `${API_BASE_URL}/upload-to-s3`);
         
         // Convert file to base64
         const base64File = await fileToBase64(file);
@@ -37,8 +73,13 @@ export async function uploadToS3(file, folder, fileName = null) {
             })
         });
         
+        console.log('Response status:', response.status);
+        console.log('Response statusText:', response.statusText);
+        
         if (!response.ok) {
-            throw new Error(`Upload failed: ${response.statusText}`);
+            const errorText = await response.text();
+            console.error('Error response:', errorText);
+            throw new Error(`Upload failed: ${response.statusText} - ${errorText}`);
         }
         
         const result = await response.json();
@@ -85,18 +126,21 @@ export async function deleteFromS3(fileUrl) {
         console.log('Deleting from S3:', fileUrl);
         
         // Call Lambda function to delete from S3
-        const response = await fetch(`${API_BASE_URL}/delete-from-s3`, {
+        const response = await fetch(`${API_BASE_URL}/upload-to-s3`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
+                action: 'delete',
                 fileUrl: fileUrl
             })
         });
         
         if (!response.ok) {
-            throw new Error(`Delete failed: ${response.statusText}`);
+            const errorText = await response.text();
+            console.error('Delete error response:', errorText);
+            throw new Error(`Delete failed: ${response.statusText} - ${errorText}`);
         }
         
         console.log('Delete successful');
@@ -166,5 +210,6 @@ export default {
     uploadProfilePicture,
     uploadDocument,
     canUpload,
-    deleteFromS3
+    deleteFromS3,
+    listS3Contents
 };

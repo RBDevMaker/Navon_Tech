@@ -81,11 +81,113 @@ async function handleDirectory(method, event) {
 }
 
 async function handleProfile(method, event) {
-    // Employee profile management
+    const body = event.body ? JSON.parse(event.body) : {};
+    const { employeeId } = event.queryStringParameters || {};
+
+    if (method === 'GET') {
+        // Get employee profile
+        if (!employeeId) {
+            return {
+                statusCode: 400,
+                headers,
+                body: JSON.stringify({ error: 'employeeId is required' })
+            };
+        }
+
+        const command = new QueryCommand({
+            TableName: process.env.DYNAMODB_TABLE,
+            KeyConditionExpression: 'PK = :pk AND SK = :sk',
+            ExpressionAttributeValues: {
+                ':pk': `EMPLOYEE#${employeeId}`,
+                ':sk': 'PROFILE'
+            }
+        });
+
+        const result = await dynamodb.send(command);
+
+        return {
+            statusCode: 200,
+            headers,
+            body: JSON.stringify({
+                profile: result.Items?.[0] || null
+            })
+        };
+    }
+
+    if (method === 'POST' || method === 'PUT') {
+        // Create or update employee profile
+        const {
+            employeeId: id,
+            firstName,
+            lastName,
+            email,
+            phone,
+            title,
+            department,
+            location,
+            emergencyContact,
+            emergencyPhone,
+            profilePicture,
+            showInDirectory,
+            // HR-managed fields
+            salary,
+            startDate,
+            manager
+        } = body;
+
+        if (!id || !email) {
+            return {
+                statusCode: 400,
+                headers,
+                body: JSON.stringify({ error: 'employeeId and email are required' })
+            };
+        }
+
+        const timestamp = new Date().toISOString();
+        const profileData = {
+            PK: `EMPLOYEE#${id}`,
+            SK: 'PROFILE',
+            employeeId: id,
+            firstName,
+            lastName,
+            name: `${firstName} ${lastName}`,
+            email,
+            phone,
+            title,
+            department,
+            location,
+            emergencyContact,
+            emergencyPhone,
+            profilePicture,
+            showInDirectory: showInDirectory || false,
+            salary,
+            startDate,
+            manager,
+            updatedAt: timestamp,
+            createdAt: timestamp
+        };
+
+        const command = new PutCommand({
+            TableName: process.env.DYNAMODB_TABLE,
+            Item: profileData
+        });
+
+        await dynamodb.send(command);
+
+        return {
+            statusCode: 200,
+            headers,
+            body: JSON.stringify({
+                message: 'Profile saved successfully',
+                profile: profileData
+            })
+        };
+    }
+
     return {
-        statusCode: 200,
+        statusCode: 405,
         headers,
-        body: JSON.stringify({ message: 'Profile endpoint - coming soon' })
+        body: JSON.stringify({ error: 'Method not allowed' })
     };
 }
 

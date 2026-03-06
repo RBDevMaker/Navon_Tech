@@ -33,6 +33,7 @@ function SimpleApp() {
         benefits: [],
         forms: []
     });
+    const [pendingProfilePicture, setPendingProfilePicture] = useState(null);
 
     // Handle hash changes for navigation
     useEffect(() => {
@@ -5300,21 +5301,26 @@ function SimpleApp() {
                                             accept="image/*"
                                             id="profilePicUpload"
                                             style={{ display: 'none' }}
-                                            onChange={async (e) => {
+                                            onChange={(e) => {
                                                 if (e.target.files && e.target.files[0]) {
                                                     const file = e.target.files[0];
                                                     
-                                                    // Validate file size (max 5MB)
-                                                    if (file.size > 5 * 1024 * 1024) {
-                                                        alert('❌ File size must be less than 5MB');
+                                                    // Validate file size (max 10MB)
+                                                    if (file.size > 10 * 1024 * 1024) {
+                                                        alert('❌ File size must be less than 10MB');
+                                                        e.target.value = '';
                                                         return;
                                                     }
                                                     
                                                     // Validate file type
                                                     if (!file.type.startsWith('image/')) {
                                                         alert('❌ Please upload an image file');
+                                                        e.target.value = '';
                                                         return;
                                                     }
+                                                    
+                                                    // Store the file for later upload
+                                                    setPendingProfilePicture(file);
                                                     
                                                     // Create local preview immediately
                                                     const previewUrl = URL.createObjectURL(file);
@@ -5322,46 +5328,6 @@ function SimpleApp() {
                                                         ...prev,
                                                         profilePicture: previewUrl
                                                     }));
-                                                    
-                                                    try {
-                                                        // Show loading state
-                                                        const label = document.querySelector('label[for="profilePicUpload"]');
-                                                        const originalText = label.textContent;
-                                                        label.textContent = '⏳ Uploading...';
-                                                        label.style.pointerEvents = 'none';
-                                                        
-                                                        // Upload to S3 (returns local URL for now)
-                                                        const employeeId = profileData.email || 'user';
-                                                        const oldImageUrl = profileData.profilePicture;
-                                                        const imageUrl = await uploadProfilePicture(file, employeeId, oldImageUrl);
-                                                        
-                                                        // Update profile data with URL (same as preview for now)
-                                                        setProfileData(prev => ({
-                                                            ...prev,
-                                                            profilePicture: imageUrl
-                                                        }));
-                                                        
-                                                        alert('✅ Profile picture uploaded successfully!');
-                                                        
-                                                        // Reset label
-                                                        label.textContent = originalText;
-                                                        label.style.pointerEvents = 'auto';
-                                                    } catch (error) {
-                                                        console.error('Upload error:', error);
-                                                        alert('❌ Failed to upload profile picture. Please try again.');
-                                                        
-                                                        // Revert to no image on error
-                                                        setProfileData(prev => ({
-                                                            ...prev,
-                                                            profilePicture: ''
-                                                        }));
-                                                        URL.revokeObjectURL(previewUrl);
-                                                        
-                                                        // Reset label
-                                                        const label = document.querySelector('label[for="profilePicUpload"]');
-                                                        label.textContent = '📷 Upload New Photo';
-                                                        label.style.pointerEvents = 'auto';
-                                                    }
                                                 }
                                             }}
                                         />
@@ -5443,9 +5409,15 @@ function SimpleApp() {
                             </div>
 
                             {/* Personal Information Form */}
-                            <form onSubmit={(e) => {
+                            <form onSubmit={async (e) => {
                                 e.preventDefault();
+                                console.log('=== FORM SUBMIT STARTED ===');
                                 const formData = new FormData(e.target);
+                                
+                                console.log('FormData entries:');
+                                for (let [key, value] of formData.entries()) {
+                                    console.log(`  ${key}: ${value}`);
+                                }
                                 
                                 // Collect form data
                                 const updatedProfile = {
@@ -5465,6 +5437,75 @@ function SimpleApp() {
                                     manager: formData.get('manager') || profileData.manager
                                 };
                                 
+                                console.log('updatedProfile object:', updatedProfile);
+                                
+                                // Upload profile picture if there's a pending one
+                                if (pendingProfilePicture) {
+                                    try {
+                                        const employeeId = updatedProfile.email || 'user';
+                                        const oldImageUrl = profileData.profilePicture?.startsWith('blob:') ? null : profileData.profilePicture;
+                                        const imageUrl = await uploadProfilePicture(pendingProfilePicture, employeeId, oldImageUrl);
+                                        
+                                        // Update with S3 URL
+                                        updatedProfile.profilePicture = imageUrl;
+                                        setPendingProfilePicture(null);
+                                    } catch (error) {
+                                        console.error('Profile picture upload error:', error);
+                                        alert('⚠️ Profile saved but profile picture upload failed. Please try uploading the picture again.');
+                                    }
+                                }
+                                
+                                // Save profile to database
+                                try {
+                                    // Ensure we have an employeeId (use email if not set)
+                                    const employeeIdToSave = updatedProfile.employeeId || updatedProfile.email;
+                                    
+                                    console.log('=== PROFILE SAVE DEBUG ===');
+                                    console.log('updatedProfile.employeeId:', updatedProfile.employeeId);
+                                    console.log('updatedProfile.email:', updatedProfile.email);
+                                    console.log('employeeIdToSave:', employeeIdToSave);
+                                    console.log('Full updatedProfile:', JSON.stringify(updatedProfile, null, 2));
+                                    
+                                    if (!employeeIdToSave || !updatedProfile.email) {
+                                        alert(`⚠️ Email is required to save profile.\n\nemployeeId: ${employeeIdToSave}\nemail: ${updatedProfile.email}`);
+                                        return;
+                                    }
+                                    
+                                    const profilePayload = {
+                                        ...updatedProfile,
+                                        employeeId: employeeIdToSave  // Override with the correct employeeId
+                                    };
+                                    
+                                    console.log('Payload being sent:', JSON.stringify(profilePayload, null, 2));
+                                    
+                                    const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/employee/profile`;
+                                    console.log('API URL:', apiUrl);
+                                    console.log('========================');
+                                    
+                                    const response = await fetch(apiUrl, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        },
+                                        body: JSON.stringify(profilePayload)
+                                    });
+                                    
+                                    console.log('Response status:', response.status);
+                                    const responseText = await response.text();
+                                    console.log('Response body:', responseText);
+                                    
+                                    if (!response.ok) {
+                                        throw new Error(`Failed to save profile: ${response.status} - ${responseText}`);
+                                    }
+                                    
+                                    const result = JSON.parse(responseText);
+                                    console.log('Profile saved to database:', result);
+                                } catch (error) {
+                                    console.error('Error saving profile:', error);
+                                    alert(`⚠️ Failed to save profile to database: ${error.message}`);
+                                    return;
+                                }
+                                
                                 // Update profile state
                                 setProfileData(prev => ({
                                     ...prev,
@@ -5475,7 +5516,12 @@ function SimpleApp() {
                                 // In production, this would save to a database
                                 console.log('Profile updated:', updatedProfile);
                                 
-                                alert('✅ Profile updated successfully!');
+                                // Show success message and offer to view team directory
+                                const viewDirectory = confirm('✅ Profile updated successfully!\n\nWould you like to view the Team Directory now?');
+                                if (viewDirectory) {
+                                    setCurrentPage('teamdirectory');
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }
                             }}>
                                 <h3 style={{
                                     color: '#1e3a8a',
@@ -7053,6 +7099,65 @@ function SimpleApp() {
                                 </button>
                             </div>
                             
+                            {/* Role Switcher */}
+                            <div style={{ 
+                                marginBottom: '1rem',
+                                background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+                                padding: '1rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                maxWidth: '600px',
+                                margin: '0 auto 1rem auto'
+                            }}>
+                                <div style={{ marginBottom: '0.5rem', fontSize: '0.9rem', color: '#64748b', fontWeight: '600' }}>
+                                    👤 Current Role: <span style={{ color: '#1e3a8a', fontWeight: '700' }}>{userRole.toUpperCase()}</span>
+                                </div>
+                                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                                    <button
+                                        onClick={() => switchRole('employee')}
+                                        style={{
+                                            background: userRole === 'employee' ? '#1e3a8a' : 'transparent',
+                                            color: userRole === 'employee' ? 'white' : '#1e3a8a',
+                                            border: '2px solid #1e3a8a',
+                                            padding: '0.5rem 1rem',
+                                            borderRadius: '6px',
+                                            cursor: 'pointer',
+                                            fontSize: '0.85rem',
+                                            fontWeight: '600'
+                                        }}>
+                                        👨‍💼 Employee
+                                    </button>
+                                    <button
+                                        onClick={() => switchRole('hr')}
+                                        style={{
+                                            background: userRole === 'hr' ? '#d4af37' : 'transparent',
+                                            color: userRole === 'hr' ? '#0f172a' : '#d4af37',
+                                            border: '2px solid #d4af37',
+                                            padding: '0.5rem 1rem',
+                                            borderRadius: '6px',
+                                            cursor: 'pointer',
+                                            fontSize: '0.85rem',
+                                            fontWeight: '600'
+                                        }}>
+                                        👩‍💼 HR Manager
+                                    </button>
+                                    <button
+                                        onClick={() => switchRole('admin')}
+                                        style={{
+                                            background: userRole === 'admin' ? '#ef4444' : 'transparent',
+                                            color: userRole === 'admin' ? 'white' : '#ef4444',
+                                            border: '2px solid #ef4444',
+                                            padding: '0.5rem 1rem',
+                                            borderRadius: '6px',
+                                            cursor: 'pointer',
+                                            fontSize: '0.85rem',
+                                            fontWeight: '600'
+                                        }}>
+                                        🔧 Admin
+                                    </button>
+                                </div>
+                            </div>
+                            
                             <button 
                                 onClick={() => {
                                     setCurrentPage('employeeprofile');
@@ -7213,7 +7318,7 @@ function SimpleApp() {
                                         {isHRView && profileData.title && (
                                             <div style={{
                                                 display: 'grid',
-                                                gridTemplateColumns: '1fr',
+                                                gridTemplateColumns: (userRole === 'hr' || userRole === 'admin') ? '1fr 1fr' : '1fr',
                                                 gap: '0.5rem',
                                                 fontSize: '0.85rem'
                                             }}>
@@ -7227,6 +7332,72 @@ function SimpleApp() {
                                                 }}>
                                                     Profile Updated
                                                 </div>
+                                                {(userRole === 'hr' || userRole === 'admin') && (
+                                                    <button
+                                                        onClick={async () => {
+                                                            if (confirm(`⚠️ Deactivate ${profileData.name}?\n\nThis will:\n• Move their profile picture to Inactive-Employees folder\n• Mark their profile as inactive\n• Remove them from the active Team Directory\n\nContinue?`)) {
+                                                                try {
+                                                                    // Move profile picture to Inactive-Employees folder if it exists
+                                                                    if (profileData.profilePicture && !profileData.profilePicture.startsWith('blob:')) {
+                                                                        const url = new URL(profileData.profilePicture);
+                                                                        const sourceKey = url.pathname.substring(1); // Remove leading slash
+                                                                        
+                                                                        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/upload-to-s3`, {
+                                                                            method: 'POST',
+                                                                            headers: {
+                                                                                'Content-Type': 'application/json'
+                                                                            },
+                                                                            body: JSON.stringify({
+                                                                                action: 'move',
+                                                                                sourceKey: sourceKey,
+                                                                                destinationFolder: 'Inactive-Employees'
+                                                                            })
+                                                                        });
+                                                                        
+                                                                        if (!response.ok) {
+                                                                            throw new Error('Failed to move profile picture');
+                                                                        }
+                                                                        
+                                                                        const result = await response.json();
+                                                                        console.log('Profile picture moved:', result);
+                                                                    }
+                                                                    
+                                                                    // Clear profile data
+                                                                    setProfileData({
+                                                                        name: '',
+                                                                        email: '',
+                                                                        phone: '',
+                                                                        department: '',
+                                                                        title: '',
+                                                                        location: '',
+                                                                        emergencyContact: '',
+                                                                        emergencyPhone: '',
+                                                                        profilePicture: '',
+                                                                        salary: '',
+                                                                        startDate: '',
+                                                                        manager: '',
+                                                                        employeeId: ''
+                                                                    });
+                                                                    
+                                                                    alert('✅ Employee profile deactivated successfully!\n\nProfile picture moved to Inactive-Employees folder.');
+                                                                } catch (error) {
+                                                                    console.error('Deactivation error:', error);
+                                                                    alert('❌ Failed to deactivate employee. Please try again.');
+                                                                }
+                                                            }
+                                                        }}
+                                                        style={{
+                                                            background: '#ef4444',
+                                                            color: 'white',
+                                                            border: 'none',
+                                                            padding: '0.5rem',
+                                                            borderRadius: '6px',
+                                                            cursor: 'pointer',
+                                                            fontWeight: '600'
+                                                        }}>
+                                                        🗑️ Deactivate
+                                                    </button>
+                                                )}
                                             </div>
                                         )}
                                     </div>

@@ -80,6 +80,16 @@ Resources:
             RestApiId: !Ref CompanyApi
             Path: /api/employee/{proxy+}
             Method: ANY
+            Auth:
+              Authorizer: NONE
+        EmployeeApiOptions:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/employee/{proxy+}
+            Method: OPTIONS
+            Auth:
+              Authorizer: NONE
 
   CareerFunction:
     Type: AWS::Serverless::Function
