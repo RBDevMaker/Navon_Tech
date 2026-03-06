@@ -1,5 +1,11 @@
 import { useState, useEffect } from 'react';
 import { uploadProfilePicture, uploadDocument, canUpload, deleteFromS3 } from './services/s3Upload';
+import { Amplify } from 'aws-amplify';
+import { signIn, signOut, getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
+import awsConfig from './aws-config';
+
+// Configure Amplify
+Amplify.configure(awsConfig);
 
 function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const s3BaseUrl = "https://navon-tech-images.s3.us-east-1.amazonaws.com";
@@ -34,6 +40,10 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         forms: []
     });
     const [pendingProfilePicture, setPendingProfilePicture] = useState(null);
+    const [loginEmail, setLoginEmail] = useState('');
+    const [loginPassword, setLoginPassword] = useState('');
+    const [loginError, setLoginError] = useState('');
+    const [isAuthenticating, setIsAuthenticating] = useState(false);
 
     // Handle hash changes for navigation
     useEffect(() => {
@@ -10075,10 +10085,40 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
 
                         {/* Login Form */}
                         <div style={{ padding: '1.5rem' }}>
-                            <form onSubmit={(e) => {
+                            <form onSubmit={async (e) => {
                                 e.preventDefault();
-                                // Placeholder - would integrate with AWS Cognito
-                                alert('AWS Cognito authentication would be integrated here');
+                                setLoginError('');
+                                setIsAuthenticating(true);
+                                
+                                try {
+                                    const result = await signIn({ username: loginEmail, password: loginPassword });
+                                    
+                                    // Check if password change is required
+                                    if (result.nextStep?.signInStep === 'CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED') {
+                                        setLoginError('Password change required. Please contact administrator.');
+                                        setIsAuthenticating(false);
+                                        return;
+                                    }
+                                    
+                                    // Get user session and role
+                                    const session = await fetchAuthSession();
+                                    const groups = session.tokens?.accessToken?.payload['cognito:groups'] || [];
+                                    
+                                    // Determine role
+                                    let role = 'employee';
+                                    if (groups.includes('SuperAdmin')) role = 'superadmin';
+                                    else if (groups.includes('Admin')) role = 'admin';
+                                    else if (groups.includes('HR')) role = 'hr';
+                                    
+                                    setUserRole(role);
+                                    setCurrentPage('secureportal');
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                } catch (err) {
+                                    console.error('Sign in error:', err);
+                                    setLoginError(err.message || 'Failed to sign in. Please check your credentials.');
+                                } finally {
+                                    setIsAuthenticating(false);
+                                }
                             }}>
                                 {/* Username Field */}
                                 <div style={{ marginBottom: '1rem' }}>
@@ -10094,6 +10134,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     <input
                                         type="email"
                                         placeholder="your.email@navontech.com"
+                                        value={loginEmail}
+                                        onChange={(e) => setLoginEmail(e.target.value)}
+                                        required
                                         style={{
                                             width: '100%',
                                             padding: '0.65rem',
@@ -10124,6 +10167,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     <input
                                         type="password"
                                         placeholder="Enter your password"
+                                        value={loginPassword}
+                                        onChange={(e) => setLoginPassword(e.target.value)}
+                                        required
                                         style={{
                                             width: '100%',
                                             padding: '0.65rem',
@@ -10162,31 +10208,49 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     </a>
                                 </div>
 
+                                {/* Error Message */}
+                                {loginError && (
+                                    <div style={{
+                                        background: '#fee2e2',
+                                        border: '1px solid #ef4444',
+                                        color: '#991b1b',
+                                        padding: '0.75rem',
+                                        borderRadius: '8px',
+                                        marginBottom: '1rem',
+                                        fontSize: '0.9rem'
+                                    }}>
+                                        {loginError}
+                                    </div>
+                                )}
+
                                 {/* Sign In Button */}
                                 <button
                                     type="submit"
+                                    disabled={isAuthenticating}
                                     style={{
                                         width: '100%',
-                                        background: '#d4af37',
+                                        background: isAuthenticating ? '#94a3b8' : '#d4af37',
                                         color: '#0f172a',
                                         border: 'none',
                                         padding: '1rem',
                                         borderRadius: '8px',
                                         fontSize: '1rem',
                                         fontWeight: '700',
-                                        cursor: 'pointer',
+                                        cursor: isAuthenticating ? 'not-allowed' : 'pointer',
                                         transition: 'all 0.3s ease',
                                         marginBottom: '1rem'
                                     }}
                                     onMouseOver={(e) => {
-                                        e.target.style.transform = 'translateY(-2px)';
-                                        e.target.style.boxShadow = '0 10px 20px rgba(212, 175, 55, 0.5)';
+                                        if (!isAuthenticating) {
+                                            e.target.style.transform = 'translateY(-2px)';
+                                            e.target.style.boxShadow = '0 10px 20px rgba(212, 175, 55, 0.5)';
+                                        }
                                     }}
                                     onMouseOut={(e) => {
                                         e.target.style.transform = 'translateY(0)';
                                         e.target.style.boxShadow = 'none';
                                     }}>
-                                    Sign In
+                                    {isAuthenticating ? 'Signing In...' : 'Sign In'}
                                 </button>
                             </form>
                         </div>
