@@ -10037,19 +10037,19 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                     <div className="animate-scale-in" style={{ 
                         maxWidth: '450px', 
                         width: '100%',
-                        background: 'white',
+                        background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
                         borderRadius: '12px',
                         boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
-                        overflow: 'hidden'
+                        overflow: 'hidden',
+                        border: '2px solid rgba(212, 175, 55, 0.3)'
                     }}>
                         {/* Header */}
                         <div style={{
-                            background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
                             padding: '2rem',
                             textAlign: 'center'
                         }}>
                             <div style={{
-                                fontSize: '3rem',
+                                fontSize: '2.5rem',
                                 marginBottom: '0.5rem'
                             }}>
                                 🔐
@@ -10058,12 +10058,13 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 color: 'white',
                                 fontSize: '1.8rem',
                                 fontWeight: '700',
-                                margin: '0 0 0.5rem 0'
+                                margin: '0 0 0.3rem 0',
+                                lineHeight: '1.3'
                             }}>
-                                Employee Portal
+                                Navon Technologies<br />Employee Portal
                             </h2>
                             <p style={{
-                                color: '#cbd5e1',
+                                color: 'rgba(255, 255, 255, 0.9)',
                                 fontSize: '0.95rem',
                                 margin: 0
                             }}>
@@ -10083,26 +10084,28 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     <label style={{
                                         display: 'block',
                                         marginBottom: '0.5rem',
-                                        color: '#334155',
+                                        color: 'white',
                                         fontWeight: '600',
                                         fontSize: '0.9rem'
                                     }}>
-                                        Username or Email
+                                        Email
                                     </label>
                                     <input
-                                        type="text"
-                                        placeholder="Enter your username"
+                                        type="email"
+                                        placeholder="your.email@navontech.com"
                                         style={{
                                             width: '100%',
                                             padding: '0.75rem',
-                                            border: '2px solid #e2e8f0',
+                                            border: '2px solid rgba(255, 255, 255, 0.3)',
                                             borderRadius: '8px',
                                             fontSize: '1rem',
+                                            background: 'rgba(255, 255, 255, 0.9)',
+                                            color: '#1e293b',
                                             transition: 'all 0.3s ease',
                                             outline: 'none'
                                         }}
-                                        onFocus={(e) => e.target.style.borderColor = '#1e3a8a'}
-                                        onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                                        onFocus={(e) => e.target.style.borderColor = 'white'}
+                                        onBlur={(e) => e.target.style.borderColor = 'rgba(255, 255, 255, 0.3)'}
                                     />
                                 </div>
 
@@ -10111,7 +10114,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     <label style={{
                                         display: 'block',
                                         marginBottom: '0.5rem',
-                                        color: '#334155',
+                                        color: 'white',
                                         fontWeight: '600',
                                         fontSize: '0.9rem'
                                     }}>
@@ -10123,14 +10126,16 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         style={{
                                             width: '100%',
                                             padding: '0.75rem',
-                                            border: '2px solid #e2e8f0',
+                                            border: '2px solid rgba(255, 255, 255, 0.3)',
                                             borderRadius: '8px',
                                             fontSize: '1rem',
+                                            background: 'rgba(255, 255, 255, 0.9)',
+                                            color: '#1e293b',
                                             transition: 'all 0.3s ease',
                                             outline: 'none'
                                         }}
-                                        onFocus={(e) => e.target.style.borderColor = '#1e3a8a'}
-                                        onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                                        onFocus={(e) => e.target.style.borderColor = 'white'}
+                                        onBlur={(e) => e.target.style.borderColor = 'rgba(255, 255, 255, 0.3)'}
                                     />
                                 </div>
 
@@ -10139,8 +10144,13 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     textAlign: 'right', 
                                     marginBottom: '1.5rem' 
                                 }}>
-                                    <a href="#" style={{
-                                        color: '#1e3a8a',
+                                    <a href="#" 
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        alert('Please contact rachelle.briscoe@navontech.com to reset your password.');
+                                    }}
+                                    style={{
+                                        color: 'white',
                                         fontSize: '0.9rem',
                                         textDecoration: 'none',
                                         fontWeight: '600'
@@ -10156,7 +10166,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     type="submit"
                                     style={{
                                         width: '100%',
-                                        background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
+                                        background: '#0f172a',
                                         color: 'white',
                                         border: 'none',
                                         padding: '1rem',
@@ -10169,7 +10179,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     }}
                                     onMouseOver={(e) => {
                                         e.target.style.transform = 'translateY(-2px)';
-                                        e.target.style.boxShadow = '0 10px 20px rgba(30, 58, 138, 0.3)';
+                                        e.target.style.boxShadow = '0 10px 20px rgba(15, 23, 42, 0.5)';
                                     }}
                                     onMouseOut={(e) => {
                                         e.target.style.transform = 'translateY(0)';
@@ -10177,97 +10187,11 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     }}>
                                     Sign In
                                 </button>
-
-                                {/* Temporary Bypass Button - Remove when Cognito is ready */}
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setCurrentPage('secureportal');
-                                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                                    }}
-                                    style={{
-                                        width: '100%',
-                                        background: '#d4af37',
-                                        color: '#0f172a',
-                                        border: 'none',
-                                        padding: '1rem',
-                                        borderRadius: '8px',
-                                        fontSize: '0.9rem',
-                                        fontWeight: '700',
-                                        cursor: 'pointer',
-                                        transition: 'all 0.3s ease',
-                                        marginBottom: '1rem'
-                                    }}
-                                    onMouseOver={(e) => {
-                                        e.target.style.transform = 'translateY(-2px)';
-                                        e.target.style.boxShadow = '0 10px 20px rgba(212, 175, 55, 0.3)';
-                                    }}
-                                    onMouseOut={(e) => {
-                                        e.target.style.transform = 'translateY(0)';
-                                        e.target.style.boxShadow = 'none';
-                                    }}>
-                                    🚧 Bypass Login (Development Only)
-                                </button>
-
-                                {/* MFA Notice */}
-                                <div style={{
-                                    background: '#f1f5f9',
-                                    padding: '1rem',
-                                    borderRadius: '8px',
-                                    marginBottom: '1rem',
-                                    border: '1px solid #e2e8f0'
-                                }}>
-                                    <p style={{
-                                        margin: 0,
-                                        fontSize: '0.85rem',
-                                        color: '#64748b',
-                                        textAlign: 'center'
-                                    }}>
-                                        🔒 Multi-factor authentication required
-                                    </p>
-                                </div>
-
-                                {/* Divider */}
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    margin: '1.5rem 0',
-                                    gap: '1rem'
-                                }}>
-                                    <div style={{
-                                        flex: 1,
-                                        height: '1px',
-                                        background: '#e2e8f0'
-                                    }}></div>
-                                    <span style={{
-                                        color: '#94a3b8',
-                                        fontSize: '0.85rem'
-                                    }}>
-                                        OR
-                                    </span>
-                                    <div style={{
-                                        flex: 1,
-                                        height: '1px',
-                                        background: '#e2e8f0'
-                                    }}></div>
-                                </div>
-
-                                {/* Request Access Button */}
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        window.location.href = 'mailto:rachelle.briscoe@navontech.com?subject=I%20need%20Employee%20Portal%20Access%20Credentials%20and%20Permissions';
-                                    }}
-                                    style={{
-                                        width: '100%',
-                                        background: 'transparent',
-                                        color: '#1e3a8a',
-                                        border: '2px solid #1e3a8a',
-                                        padding: '1rem',
-                                        borderRadius: '8px',
-                                        fontSize: '1rem',
-                                        fontWeight: '700',
-                                        cursor: 'pointer',
+                            </form>
+                        </div>
+                    </div>
+                </section>
+            )}
                                         transition: 'all 0.3s ease'
                                     }}
                                     onMouseOver={(e) => {
