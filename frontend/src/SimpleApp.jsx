@@ -5980,7 +5980,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 </div>
 
                                 {/* HR-Only Section */}
-                                {(userRole === 'hr' || userRole === 'admin') && (
+                                {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
                                     <div style={{
                                         marginTop: '2rem',
                                         padding: '1.5rem',
@@ -6017,7 +6017,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             fontSize: '0.9rem',
                                             marginBottom: '1.5rem'
                                         }}>
-                                            Only HR and Admin users can view and edit these fields
+                                            Only HR, Admin, and SuperAdmin users can view and edit these fields
                                         </p>
 
                                         <div style={{
@@ -7395,7 +7395,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         {isHRView && profileData.title && (
                                             <div style={{
                                                 display: 'grid',
-                                                gridTemplateColumns: (userRole === 'hr' || userRole === 'admin') ? '1fr 1fr' : '1fr',
+                                                gridTemplateColumns: (userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') ? '1fr 1fr' : '1fr',
                                                 gap: '0.5rem',
                                                 fontSize: '0.85rem'
                                             }}>
@@ -7409,7 +7409,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                 }}>
                                                     Profile Updated
                                                 </div>
-                                                {(userRole === 'hr' || userRole === 'admin') && (
+                                                {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
                                                     <button
                                                         onClick={async () => {
                                                             if (confirm(`⚠️ Deactivate ${profileData.name}?\n\nThis will:\n• Move their profile picture to Inactive-Employees folder\n• Mark their profile as inactive\n• Remove them from the active Team Directory\n\nContinue?`)) {
