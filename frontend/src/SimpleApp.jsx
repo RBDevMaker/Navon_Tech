@@ -4592,6 +4592,42 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                     minHeight: '100vh'
                 }}>
                     <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+                        {/* Sign Out Button */}
+                        <div style={{ textAlign: 'right', marginBottom: '2rem' }}>
+                            <button
+                                onClick={async () => {
+                                    try {
+                                        await signOut();
+                                        setUserRole('employee');
+                                        setCurrentPage('home');
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    } catch (err) {
+                                        console.error('Sign out error:', err);
+                                    }
+                                }}
+                                style={{
+                                    background: '#ef4444',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '8px',
+                                    fontSize: '0.95rem',
+                                    fontWeight: '600',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.3s ease'
+                                }}
+                                onMouseOver={(e) => {
+                                    e.target.style.background = '#dc2626';
+                                    e.target.style.transform = 'translateY(-2px)';
+                                }}
+                                onMouseOut={(e) => {
+                                    e.target.style.background = '#ef4444';
+                                    e.target.style.transform = 'translateY(0)';
+                                }}>
+                                🚪 Sign Out
+                            </button>
+                        </div>
+
                         <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
                             <h2 style={{
                                 fontSize: '3rem',
@@ -10091,6 +10127,14 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 setIsAuthenticating(true);
                                 
                                 try {
+                                    // Check if there's already a signed-in user and sign them out first
+                                    try {
+                                        await getCurrentUser();
+                                        await signOut();
+                                    } catch (err) {
+                                        // No user signed in, continue
+                                    }
+                                    
                                     const result = await signIn({ username: loginEmail, password: loginPassword });
                                     
                                     // Check if password change is required
