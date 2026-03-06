@@ -149,6 +149,42 @@ Resources:
             Auth:
               Authorizer: NONE
 
+  S3UploadFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/s3-upload/
+      Handler: index.handler
+      Description: Handles S3 file uploads and deletions for profile pictures and documents
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - S3CrudPolicy:
+            BucketName: navon-tech-images
+        - Statement:
+            - Effect: Allow
+              Action:
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+              Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"
+      Events:
+        UploadToS3:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/upload-to-s3
+            Method: POST
+            Auth:
+              Authorizer: NONE
+        UploadToS3Options:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/upload-to-s3
+            Method: OPTIONS
+            Auth:
+              Authorizer: NONE
+
   # Rate Limiting Table for Job Applications
   RateLimitTable:
     Type: AWS::DynamoDB::Table
@@ -307,6 +343,12 @@ Resources:
     Properties:
       LogGroupName: !Sub "/aws/lambda/${AWS::StackName}-JobApplicationFunction"
       RetentionInDays: 90
+
+  S3UploadLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${AWS::StackName}-S3UploadFunction"
+      RetentionInDays: 30
 
 Outputs:
   ApiGatewayEndpoint:
