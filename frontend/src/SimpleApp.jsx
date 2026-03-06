@@ -27,6 +27,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         emergencyContact: '',
         emergencyPhone: '',
         profilePicture: '',
+        employeeGroup: '',
         // HR-managed fields
         salary: '',
         startDate: '',
@@ -59,12 +60,49 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         return () => window.removeEventListener('hashchange', handleHashChange);
     }, []);
 
+    // Check for existing authenticated user on mount
+    useEffect(() => {
+        const checkAuth = async () => {
+            try {
+                const user = await getCurrentUser();
+                const session = await fetchAuthSession();
+                const groups = session.tokens?.accessToken?.payload['cognito:groups'] || [];
+                
+                console.log('=== EXISTING AUTH CHECK ===');
+                console.log('User:', user.username);
+                console.log('Groups:', groups);
+                
+                // Determine role
+                let role = 'employee';
+                if (groups.includes('SuperAdmin')) role = 'superadmin';
+                else if (groups.includes('Admin')) role = 'admin';
+                else if (groups.includes('HR')) role = 'hr';
+                
+                console.log('Setting role to:', role);
+                console.log('===========================');
+                
+                setUserRole(role);
+            } catch (err) {
+                // No user signed in
+                console.log('No authenticated user found');
+            }
+        };
+        
+        checkAuth();
+    }, []);
+
     // Update userRole when authenticated role changes
     useEffect(() => {
         if (authenticatedUserRole) {
             setUserRole(authenticatedUserRole);
         }
     }, [authenticatedUserRole]);
+
+    // Update isHRView based on userRole
+    useEffect(() => {
+        // HR, Admin, and SuperAdmin should have HR view access
+        setIsHRView(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin');
+    }, [userRole]);
 
     // Handle scroll for parallax effects
     useEffect(() => {
@@ -74,13 +112,13 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     }, []);
 
     // Permission functions
-    const canDeleteHandbook = () => userRole === 'hr' || userRole === 'admin';
-    const canUploadHandbook = () => userRole === 'hr' || userRole === 'admin';
+    const canDeleteHandbook = () => userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin';
+    const canUploadHandbook = () => userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin';
     
     // Handle file upload
     const handleFileUpload = (category, files) => {
         if (!canUploadHandbook()) {
-            alert('❌ Access Denied: Only HR and Admin users can upload files to the Employee Handbook.');
+            alert('❌ Access Denied: Only HR, Admin, and SuperAdmin users can upload files to the Employee Handbook.');
             return;
         }
 
@@ -118,7 +156,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     // Handle file deletion
     const handleFileDelete = (category, fileId, fileName) => {
         if (!canDeleteHandbook()) {
-            alert(`❌ Access Denied: Only HR and Admin users can delete files from the Employee Handbook.\n\nCurrent Role: ${userRole.toUpperCase()}\nRequired Role: HR or ADMIN`);
+            alert(`❌ Access Denied: Only HR, Admin, and SuperAdmin users can delete files from the Employee Handbook.\n\nCurrent Role: ${userRole.toUpperCase()}\nRequired Role: HR, ADMIN, or SUPERADMIN`);
             return;
         }
 
@@ -10148,11 +10186,17 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     const session = await fetchAuthSession();
                                     const groups = session.tokens?.accessToken?.payload['cognito:groups'] || [];
                                     
+                                    console.log('=== AUTH DEBUG ===');
+                                    console.log('Cognito groups:', groups);
+                                    
                                     // Determine role
                                     let role = 'employee';
                                     if (groups.includes('SuperAdmin')) role = 'superadmin';
                                     else if (groups.includes('Admin')) role = 'admin';
                                     else if (groups.includes('HR')) role = 'hr';
+                                    
+                                    console.log('Determined role:', role);
+                                    console.log('==================');
                                     
                                     setUserRole(role);
                                     setCurrentPage('secureportal');
