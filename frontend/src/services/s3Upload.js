@@ -1,12 +1,10 @@
 // S3 Upload Service for Navon Technologies Employee Portal
 // Handles profile pictures and document uploads to S3
 
-const S3_BUCKET = 'navon-tech-images';
-const S3_REGION = 'us-east-1';
-const S3_BASE_URL = `https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com`;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://your-api-gateway-url';
 
 /**
- * Upload file to S3 bucket
+ * Upload file to S3 bucket via Lambda function
  * @param {File} file - The file to upload
  * @param {string} folder - The S3 folder path (e.g., 'Team-Directory', 'Documents')
  * @param {string} fileName - Optional custom file name
@@ -19,45 +17,93 @@ export async function uploadToS3(file, folder, fileName = null) {
         const sanitizedFileName = fileName || `${timestamp}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
         const s3Key = `${folder}/${sanitizedFileName}`;
         
-        // For now, return the local blob URL for immediate preview
-        // In production, this would use AWS SDK or presigned URLs
-        const localUrl = URL.createObjectURL(file);
+        console.log('Uploading to S3:', s3Key);
         
-        console.log('File would be uploaded to S3:', `${S3_BASE_URL}/${s3Key}`);
-        console.log('Using local preview URL:', localUrl);
+        // Convert file to base64
+        const base64File = await fileToBase64(file);
         
-        // Simulate upload delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Call Lambda function to upload to S3
+        const response = await fetch(`${API_BASE_URL}/upload-to-s3`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                action: 'upload',
+                fileName: sanitizedFileName,
+                folder: folder,
+                fileContent: base64File,
+                contentType: file.type
+            })
+        });
         
-        // Return local URL for preview (in production, return actual S3 URL)
-        return localUrl;
+        if (!response.ok) {
+            throw new Error(`Upload failed: ${response.statusText}`);
+        }
+        
+        const result = await response.json();
+        console.log('Upload successful:', result.url);
+        
+        return result.url;
     } catch (error) {
         console.error('Error uploading to S3:', error);
-        throw new Error('Failed to upload file to S3');
+        throw new Error('Failed to upload file to S3: ' + error.message);
     }
 }
 
 /**
- * Delete file from S3 bucket
- * @param {string} fileUrl - The S3 URL or blob URL to delete
+ * Convert file to base64 string
+ * @param {File} file - The file to convert
+ * @returns {Promise<string>} - Base64 encoded file
+ */
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+            // Remove the data:image/jpeg;base64, prefix
+            const base64 = reader.result.split(',')[1];
+            resolve(base64);
+        };
+        reader.onerror = error => reject(error);
+    });
+}
+
+/**
+ * Delete file from S3 bucket via Lambda function
+ * @param {string} fileUrl - The S3 URL to delete
  * @returns {Promise<boolean>} - Success status
  */
 export async function deleteFromS3(fileUrl) {
     try {
-        console.log('File would be deleted from S3:', fileUrl);
-        
-        // If it's a blob URL, revoke it
+        // If it's a blob URL, just revoke it (not in S3)
         if (fileUrl.startsWith('blob:')) {
             URL.revokeObjectURL(fileUrl);
+            return true;
         }
         
-        // Simulate deletion delay
-        await new Promise(resolve => setTimeout(resolve, 500));
+        console.log('Deleting from S3:', fileUrl);
         
+        // Call Lambda function to delete from S3
+        const response = await fetch(`${API_BASE_URL}/delete-from-s3`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                fileUrl: fileUrl
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Delete failed: ${response.statusText}`);
+        }
+        
+        console.log('Delete successful');
         return true;
     } catch (error) {
         console.error('Error deleting from S3:', error);
-        throw new Error('Failed to delete file from S3');
+        throw new Error('Failed to delete file from S3: ' + error.message);
     }
 }
 
