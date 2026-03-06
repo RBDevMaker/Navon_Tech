@@ -8063,6 +8063,57 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     Browse Resources
                                 </button>
                             </div>
+
+                            {/* Resumes */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.3s',
+                                display: 'flex',
+                                flexDirection: 'column'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        fontSize: '2.5rem',
+                                        marginRight: '1rem'
+                                    }}>
+                                        📄
+                                    </div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        Resumes
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem', flex: 1 }}>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Received resumes to review
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Candidate applications
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Archived resumes
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Interview notes
+                                    </p>
+                                </div>
+                                <button style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    width: '100%',
+                                    marginTop: 'auto'
+                                }}>
+                                    View Resumes
+                                </button>
+                            </div>
                         </div>
 
                         {/* Upload Section */}
