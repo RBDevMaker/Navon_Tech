@@ -8067,59 +8067,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
 
                         {/* Upload Section */}
                         <div style={{
-                            background: '#fff3cd',
-                            padding: '1.5rem',
-                            borderRadius: '12px',
-                            border: '2px solid #ffc107',
-                            marginBottom: '2rem',
-                            textAlign: 'center'
-                        }}>
-                            <h4 style={{ color: '#856404', marginBottom: '1rem' }}>🔄 Demo: Switch User Role</h4>
-                            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-                                <button 
-                                    onClick={() => switchRole('employee')}
-                                    style={{
-                                        background: userRole === 'employee' ? '#1e3a8a' : '#94a3b8',
-                                        color: 'white',
-                                        border: 'none',
-                                        padding: '0.5rem 1rem',
-                                        borderRadius: '6px',
-                                        cursor: 'pointer',
-                                        fontWeight: '600'
-                                    }}>
-                                    Employee
-                                </button>
-                                <button 
-                                    onClick={() => switchRole('hr')}
-                                    style={{
-                                        background: userRole === 'hr' ? '#1e3a8a' : '#94a3b8',
-                                        color: 'white',
-                                        border: 'none',
-                                        padding: '0.5rem 1rem',
-                                        borderRadius: '6px',
-                                        cursor: 'pointer',
-                                        fontWeight: '600'
-                                    }}>
-                                    HR Manager
-                                </button>
-                                <button 
-                                    onClick={() => switchRole('admin')}
-                                    style={{
-                                        background: userRole === 'admin' ? '#1e3a8a' : '#94a3b8',
-                                        color: 'white',
-                                        border: 'none',
-                                        padding: '0.5rem 1rem',
-                                        borderRadius: '6px',
-                                        cursor: 'pointer',
-                                        fontWeight: '600'
-                                    }}>
-                                    Admin
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Upload Section */}
-                        <div style={{
                             background: 'white',
                             padding: '2rem',
                             borderRadius: '12px',
@@ -8155,7 +8102,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 style={{ display: 'none' }}
                                 onChange={async (e) => {
                                     if (!canUpload(userRole, 'document')) {
-                                        alert('❌ Access Denied: Only HR and Admin users can upload documents.\n\nCurrent Role: ' + userRole.toUpperCase() + '\nRequired Role: HR or ADMIN');
+                                        alert('❌ Access Denied: Only HR, Admin, and SuperAdmin users can upload documents.\n\nCurrent Role: ' + userRole.toUpperCase() + '\nRequired Role: HR, ADMIN, or SUPERADMIN');
                                         e.target.value = '';
                                         return;
                                     }
