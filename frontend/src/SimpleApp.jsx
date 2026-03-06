@@ -10640,7 +10640,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                     left: 0,
                     right: 0,
                     bottom: 0,
-                    background: 'rgba(0, 0, 0, 0.75)',
+                    background: 'rgba(15, 23, 42, 0.5)',
+                    backdropFilter: 'blur(5px)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -10650,10 +10651,10 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 }}
                 onClick={() => setShowSecureModal(false)}>
                     <div style={{
-                        background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
+                        background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
                         color: 'white',
                         padding: '3rem',
-                        borderRadius: '20px',
+                        borderRadius: '16px',
                         textAlign: 'center',
                         maxWidth: '600px',
                         width: '100%',
@@ -10694,13 +10695,17 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             ×
                         </button>
                         
-                        <h3 style={{ marginBottom: '1.5rem', fontSize: '2rem', fontWeight: '800' }}>
-                            🔐 Secure Access Required
+                        <h3 style={{ marginBottom: '1rem', fontSize: '2rem', fontWeight: '800', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                            <span style={{ fontSize: '1.5rem' }}>🔐</span> Secure Access Required
                         </h3>
-                        <p style={{ marginBottom: '2rem', opacity: '0.95', fontSize: '1.1rem', lineHeight: '1.7' }}>
-                            Access to the employee portal requires multi-factor authentication and valid security clearance.
-                            All activities are logged and monitored for compliance.
-                        </p>
+                        <div style={{ marginBottom: '2rem' }}>
+                            <p style={{ opacity: '0.95', fontSize: '1rem', lineHeight: '1.6', margin: '0 0 0.5rem 0' }}>
+                                Access to the employee portal requires authorization from Administrator.
+                            </p>
+                            <p style={{ opacity: '0.95', fontSize: '1rem', lineHeight: '1.6', margin: 0 }}>
+                                All activities are logged and monitored for compliance.
+                            </p>
+                        </div>
                         <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
                             <button 
                                 onClick={() => {
@@ -10709,6 +10714,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     window.scrollTo({ top: 0, behavior: 'smooth' });
                                 }}
                                 style={{
+                                    flex: 1,
                                     background: 'white',
                                     color: '#1e3a8a',
                                     border: 'none',
@@ -10716,7 +10722,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     borderRadius: '8px',
                                     cursor: 'pointer',
                                     fontWeight: '700',
-                                    fontSize: '1rem',
+                                    fontSize: '1.1rem',
                                     transition: 'all 0.3s ease'
                                 }}
                                 onMouseOver={(e) => {
@@ -10727,7 +10733,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     e.target.style.transform = 'translateY(0)';
                                     e.target.style.boxShadow = 'none';
                                 }}>
-                                Employee Login
+                                🔑 Employee Login
                             </button>
                             <button 
                                 onClick={() => {
@@ -10735,6 +10741,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     window.location.href = 'mailto:rachelle.briscoe@navontech.com?subject=I%20need%20Employee%20Portal%20Access%20Credentials%20and%20Permissions';
                                 }}
                                 style={{
+                                    flex: 1,
                                     background: 'transparent',
                                     color: 'white',
                                     border: '2px solid white',
@@ -10742,7 +10749,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     borderRadius: '8px',
                                     cursor: 'pointer',
                                     fontWeight: '700',
-                                    fontSize: '1rem',
+                                    fontSize: '1.1rem',
                                     transition: 'all 0.3s ease'
                                 }}
                                 onMouseOver={(e) => {
@@ -10753,8 +10760,22 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     e.target.style.background = 'transparent';
                                     e.target.style.transform = 'translateY(0)';
                                 }}>
-                                Request Access
+                                📧 Request Access
                             </button>
+                        </div>
+
+                        <div style={{
+                            marginTop: '2rem',
+                            padding: '1rem',
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '8px',
+                            fontSize: '0.85rem',
+                            color: 'white',
+                            textAlign: 'center',
+                            border: '1px solid rgba(255, 255, 255, 0.2)'
+                        }}>
+                            <strong>⚠️ Authorized Personnel Only</strong><br />
+                            Unauthorized access attempts will be reported
                         </div>
                     </div>
                 </div>

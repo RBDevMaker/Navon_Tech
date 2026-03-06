@@ -133,6 +133,20 @@ export function AuthWrapper({ children }) {
         );
     }
 
+    // If not authenticated, show security warning or login
+    if (!user) {
+        if (showLogin) {
+            // Show login screen (defined below)
+        } else if (showAccessRequest) {
+            // Show access request (defined below)
+        } else {
+            // Force show security warning if no user
+            if (!showSecurityWarning) {
+                setShowSecurityWarning(true);
+            }
+        }
+    }
+
     // Security Warning Screen
     if (showSecurityWarning && !showLogin && !showAccessRequest) {
         return (
