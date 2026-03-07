@@ -3741,9 +3741,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 </div>
                             )}
 
-                            <p style={{ color: '#64748b', textAlign: 'center', marginTop: '2rem', fontSize: '0.9rem' }}>
-                                💡 Connect to DynamoDB table for resume metadata and S3 Resumes folder for file storage
-                            </p>
+
                         </div>
 
                         {/* Statistics Cards */}
