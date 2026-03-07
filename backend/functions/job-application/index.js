@@ -1,10 +1,12 @@
 const { SESClient, SendEmailCommand } = require('@aws-sdk/client-ses');
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const { DynamoDBClient, PutItemCommand, QueryCommand } = require('@aws-sdk/client-dynamodb');
+const { DynamoDBDocumentClient, PutCommand } = require('@aws-sdk/lib-dynamodb');
 
 const sesClient = new SESClient({ region: process.env.AWS_REGION || 'us-east-1' });
 const s3Client = new S3Client({ region: process.env.AWS_REGION || 'us-east-1' });
 const dynamoClient = new DynamoDBClient({ region: process.env.AWS_REGION || 'us-east-1' });
+const docClient = DynamoDBDocumentClient.from(dynamoClient);
 
 const CORS_HEADERS = {
     'Access-Control-Allow-Origin': process.env.CORS_ORIGIN || '*',
@@ -175,8 +177,9 @@ exports.handler = async (event) => {
         }
 
         let resumeUrl = null;
+        let s3Key = null;
 
-        // Upload resume to S3 if provided
+        // Upload resume to S3 if provided (optional)
         if (resumeData && resumeFileName) {
             // Security: Validate file name and extension
             if (!validateFileName(resumeFileName)) {
@@ -206,7 +209,7 @@ exports.handler = async (event) => {
 
             const timestamp = Date.now();
             const sanitizedFileName = resumeFileName.replace(/[^a-zA-Z0-9.-]/g, '_');
-            const s3Key = `resumes/${timestamp}-${sanitizedFileName}`;
+            s3Key = `Resumes/${timestamp}-${sanitizedFileName}`;
             
             const uploadParams = {
                 Bucket: process.env.S3_BUCKET || 'navon-tech-images',
@@ -223,6 +226,40 @@ exports.handler = async (event) => {
             await s3Client.send(new PutObjectCommand(uploadParams));
             resumeUrl = `https://${uploadParams.Bucket}.s3.${process.env.AWS_REGION || 'us-east-1'}.amazonaws.com/${s3Key}`;
             console.log('Resume uploaded successfully:', s3Key);
+        }
+        
+        // Save application to ResumeMetadata table (always, even without resume file)
+        try {
+            const timestamp = Date.now();
+            const resumeId = `resume-${timestamp}-${Math.random().toString(36).substr(2, 9)}`;
+            const receivedDate = new Date().toISOString();
+            
+            const resumeMetadata = {
+                resumeId,
+                receivedDate,
+                candidateName: sanitizedName,
+                email: sanitizedEmail,
+                phone: '', // Not collected in public form
+                position: sanitizedPosition,
+                department: 'General', // Default department for public applications
+                stage: 'New',
+                s3Key: s3Key || '', // Empty string if no resume uploaded
+                notes: `Applied via public career portal from IP: ${ipAddress}${resumeUrl ? '' : ' (No resume provided)'}`,
+                experience: '',
+                createdAt: receivedDate,
+                updatedAt: receivedDate
+            };
+            
+            await docClient.send(new PutCommand({
+                TableName: 'ResumeMetadata',
+                Item: resumeMetadata
+            }));
+            
+            console.log('Application saved to ResumeMetadata table:', resumeId);
+        } catch (dbError) {
+            console.error('Error saving to ResumeMetadata table:', dbError);
+            // Don't fail the application if DynamoDB save fails
+            // The resume is still in S3 (if uploaded) and email will be sent
         }
 
         // Send email to HR via SES
