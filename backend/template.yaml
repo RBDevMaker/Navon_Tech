@@ -224,6 +224,55 @@ Resources:
         - Key: Purpose
           Value: RateLimiting
 
+  # Resume Metadata Table
+  ResumeMetadataTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ResumeMetadata
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: resumeId
+          AttributeType: S
+        - AttributeName: receivedDate
+          AttributeType: S
+        - AttributeName: department
+          AttributeType: S
+        - AttributeName: stage
+          AttributeType: S
+      KeySchema:
+        - AttributeName: resumeId
+          KeyType: HASH
+        - AttributeName: receivedDate
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: DepartmentIndex
+          KeySchema:
+            - AttributeName: department
+              KeyType: HASH
+            - AttributeName: receivedDate
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: StageIndex
+          KeySchema:
+            - AttributeName: stage
+              KeyType: HASH
+            - AttributeName: receivedDate
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      SSESpecification:
+        SSEEnabled: true
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Purpose
+          Value: ResumeTracking
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+
   # DynamoDB Table with Security
   CompanyDataTable:
     Type: AWS::DynamoDB::Table
@@ -384,6 +433,12 @@ Outputs:
     Value: !Ref CompanyDataTable
     Export:
       Name: !Sub "${AWS::StackName}-DynamoDBTable"
+
+  ResumeMetadataTable:
+    Description: "Resume Metadata DynamoDB Table Name"
+    Value: !Ref ResumeMetadataTable
+    Export:
+      Name: !Sub "${AWS::StackName}-ResumeMetadataTable"
 
   Region:
     Description: "AWS Region"

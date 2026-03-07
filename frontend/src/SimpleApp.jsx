@@ -3230,6 +3230,250 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                     </div>
                 )}
 
+                {/* RESUMES PAGE */}
+            {currentPage === 'resumes' && (
+                <section style={{ 
+                    padding: '4rem 2rem', 
+                    background: '#f1f5f9',
+                    minHeight: '100vh'
+                }}>
+                    <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                            <h2 style={{
+                                fontSize: '3rem',
+                                marginBottom: '1rem',
+                                color: '#1e3a8a',
+                                fontWeight: '800'
+                            }}>
+                                📄 Resumes & Applications
+                            </h2>
+                            <p style={{
+                                fontSize: '1.2rem',
+                                color: '#475569',
+                                maxWidth: '800px',
+                                margin: '0 auto 2rem auto'
+                            }}>
+                                Review candidate resumes, applications, and interview materials
+                            </p>
+                            <button 
+                                onClick={() => {
+                                    setCurrentPage('documentmanagement');
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                style={{
+                                    background: '#d4af37',
+                                    color: '#0f172a',
+                                    border: 'none',
+                                    padding: '1rem 2rem',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: '700',
+                                    fontSize: '1rem'
+                                }}>
+                                ← Back to Document Management
+                            </button>
+                        </div>
+
+                        {/* Resumes Content */}
+                        <div style={{
+                            background: 'white',
+                            padding: '3rem',
+                            borderRadius: '12px',
+                            border: '2px solid #d4af37',
+                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                            marginBottom: '2rem'
+                        }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                                <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem' }}>
+                                    Recent Applications
+                                </h3>
+                                <div style={{ display: 'flex', gap: '1rem' }}>
+                                    <select style={{
+                                        padding: '0.5rem 1rem',
+                                        borderRadius: '6px',
+                                        border: '2px solid #d4af37',
+                                        fontSize: '0.9rem',
+                                        cursor: 'pointer'
+                                    }}>
+                                        <option>All Departments</option>
+                                        <option>Engineering</option>
+                                        <option>Sales</option>
+                                        <option>Marketing</option>
+                                        <option>HR</option>
+                                    </select>
+                                    <select style={{
+                                        padding: '0.5rem 1rem',
+                                        borderRadius: '6px',
+                                        border: '2px solid #d4af37',
+                                        fontSize: '0.9rem',
+                                        cursor: 'pointer'
+                                    }}>
+                                        <option>All Stages</option>
+                                        <option>New</option>
+                                        <option>Screening</option>
+                                        <option>Interview</option>
+                                        <option>Offer</option>
+                                        <option>Rejected</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            {/* Demo Resume Card */}
+                            <div style={{
+                                background: '#f8fafc',
+                                padding: '1.5rem',
+                                borderRadius: '8px',
+                                border: '2px solid #e2e8f0',
+                                marginBottom: '1rem'
+                            }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+                                    <div style={{ flex: 1 }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
+                                            <h4 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.2rem' }}>
+                                                John Smith
+                                            </h4>
+                                            <span style={{
+                                                background: '#dbeafe',
+                                                color: '#1e40af',
+                                                padding: '0.25rem 0.75rem',
+                                                borderRadius: '12px',
+                                                fontSize: '0.75rem',
+                                                fontWeight: '600'
+                                            }}>
+                                                New
+                                            </span>
+                                        </div>
+                                        <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
+                                            <strong>Position:</strong> Senior Software Engineer
+                                        </p>
+                                        <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
+                                            <strong>Department:</strong> Engineering
+                                        </p>
+                                        <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
+                                            <strong>Email:</strong> john.smith@email.com
+                                        </p>
+                                        <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
+                                            <strong>Received:</strong> March 6, 2026
+                                        </p>
+                                        <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.9rem', fontStyle: 'italic' }}>
+                                            10+ years experience in full-stack development, AWS certified, React/Node.js expert
+                                        </p>
+                                    </div>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                        <button style={{
+                                            background: '#1e3a8a',
+                                            color: 'white',
+                                            border: 'none',
+                                            padding: '0.5rem 1rem',
+                                            borderRadius: '6px',
+                                            cursor: 'pointer',
+                                            fontSize: '0.9rem',
+                                            fontWeight: '600',
+                                            whiteSpace: 'nowrap'
+                                        }}
+                                        onClick={() => alert('Resume viewer would open here. Connect to S3 bucket: Resumes folder')}>
+                                            📄 View Resume
+                                        </button>
+                                        <button style={{
+                                            background: '#10b981',
+                                            color: 'white',
+                                            border: 'none',
+                                            padding: '0.5rem 1rem',
+                                            borderRadius: '6px',
+                                            cursor: 'pointer',
+                                            fontSize: '0.9rem',
+                                            fontWeight: '600',
+                                            whiteSpace: 'nowrap'
+                                        }}
+                                        onClick={() => alert('Move to Interview stage')}>
+                                            ⭐ Shortlist
+                                        </button>
+                                        <button style={{
+                                            background: '#64748b',
+                                            color: 'white',
+                                            border: 'none',
+                                            padding: '0.5rem 1rem',
+                                            borderRadius: '6px',
+                                            cursor: 'pointer',
+                                            fontSize: '0.9rem',
+                                            fontWeight: '600',
+                                            whiteSpace: 'nowrap'
+                                        }}
+                                        onClick={() => alert('Archive resume')}>
+                                            📦 Archive
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p style={{ color: '#64748b', textAlign: 'center', marginTop: '2rem', fontSize: '0.9rem' }}>
+                                💡 Connect to DynamoDB table for resume metadata and S3 Resumes folder for file storage
+                            </p>
+                        </div>
+
+                        {/* Statistics Cards */}
+                        <div style={{
+                            background: 'white',
+                            padding: '3rem',
+                            borderRadius: '12px',
+                            border: '2px solid #d4af37',
+                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                        }}>
+                            <h3 style={{ color: '#1e3a8a', marginBottom: '1.5rem', fontSize: '1.5rem', textAlign: 'center' }}>
+                                Application Statistics
+                            </h3>
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                                gap: '1.5rem',
+                                marginTop: '2rem'
+                            }}>
+                                <div style={{
+                                    background: '#f8fafc',
+                                    padding: '1.5rem',
+                                    borderRadius: '8px',
+                                    border: '2px solid #e2e8f0'
+                                }}>
+                                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📥</div>
+                                    <h4 style={{ color: '#1e3a8a', marginBottom: '0.5rem' }}>New Applications</h4>
+                                    <p style={{ color: '#64748b', fontSize: '0.9rem' }}>Review recently submitted resumes</p>
+                                </div>
+                                <div style={{
+                                    background: '#f8fafc',
+                                    padding: '1.5rem',
+                                    borderRadius: '8px',
+                                    border: '2px solid #e2e8f0'
+                                }}>
+                                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>⭐</div>
+                                    <h4 style={{ color: '#1e3a8a', marginBottom: '0.5rem' }}>Shortlisted</h4>
+                                    <p style={{ color: '#64748b', fontSize: '0.9rem' }}>Candidates for interview</p>
+                                </div>
+                                <div style={{
+                                    background: '#f8fafc',
+                                    padding: '1.5rem',
+                                    borderRadius: '8px',
+                                    border: '2px solid #e2e8f0'
+                                }}>
+                                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📝</div>
+                                    <h4 style={{ color: '#1e3a8a', marginBottom: '0.5rem' }}>Interview Notes</h4>
+                                    <p style={{ color: '#64748b', fontSize: '0.9rem' }}>Feedback and evaluations</p>
+                                </div>
+                                <div style={{
+                                    background: '#f8fafc',
+                                    padding: '1.5rem',
+                                    borderRadius: '8px',
+                                    border: '2px solid #e2e8f0'
+                                }}>
+                                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📦</div>
+                                    <h4 style={{ color: '#1e3a8a', marginBottom: '0.5rem' }}>Archived</h4>
+                                    <p style={{ color: '#64748b', fontSize: '0.9rem' }}>Past applications and records</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            )}
+
                 {/* CAREERS PAGE */}
             {currentPage === 'careers' && (
                 <section style={{ 
@@ -8103,17 +8347,22 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         • Interview notes
                                     </p>
                                 </div>
-                                <button style={{
-                                    background: '#1e3a8a',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '0.75rem 1.5rem',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600',
-                                    width: '100%',
-                                    marginTop: 'auto'
-                                }}>
+                                <button 
+                                    onClick={() => {
+                                        setCurrentPage('resumes');
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }}
+                                    style={{
+                                        background: '#1e3a8a',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '0.75rem 1.5rem',
+                                        borderRadius: '6px',
+                                        cursor: 'pointer',
+                                        fontWeight: '600',
+                                        width: '100%',
+                                        marginTop: 'auto'
+                                    }}>
                                     View Resumes
                                 </button>
                             </div>
