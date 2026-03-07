@@ -195,6 +195,93 @@ Resources:
             Auth:
               Authorizer: NONE
 
+  ResumeManagementFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/resume-management/
+      Handler: index.handler
+      Description: Handles resume metadata CRUD operations in DynamoDB
+      MemorySize: 512
+      Timeout: 30
+      Environment:
+        Variables:
+          RESUME_TABLE: !Ref ResumeMetadataTable
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ResumeMetadataTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+              Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"
+      Events:
+        ListResumes:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/resumes
+            Method: GET
+            Auth:
+              Authorizer: NONE
+        GetResume:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/resume/{id}
+            Method: GET
+            Auth:
+              Authorizer: NONE
+        CreateResume:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/resume
+            Method: POST
+            Auth:
+              Authorizer: NONE
+        UpdateResume:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/resume/{id}
+            Method: PUT
+            Auth:
+              Authorizer: NONE
+        DeleteResume:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/resume/{id}
+            Method: DELETE
+            Auth:
+              Authorizer: NONE
+        ResumeIdOptions:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/resume/{id}
+            Method: OPTIONS
+            Auth:
+              Authorizer: NONE
+        ResumeOptions:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/resume
+            Method: OPTIONS
+            Auth:
+              Authorizer: NONE
+        ResumesOptions:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/resumes
+            Method: OPTIONS
+            Auth:
+              Authorizer: NONE
+
   # Rate Limiting Table for Job Applications
   RateLimitTable:
     Type: AWS::DynamoDB::Table
@@ -407,6 +494,12 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub "/aws/lambda/${AWS::StackName}-S3UploadFunction"
+      RetentionInDays: 30
+
+  ResumeManagementLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${AWS::StackName}-ResumeManagementFunction"
       RetentionInDays: 30
 
 Outputs:
