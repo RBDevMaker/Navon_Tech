@@ -21,7 +21,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     // Resume management state
     const [resumes, setResumes] = useState([]);
     const [filteredResumes, setFilteredResumes] = useState([]);
-    const [resumeFilter, setResumeFilter] = useState({ department: 'all', stage: 'all' });
+    const [resumeFilter, setResumeFilter] = useState({ department: 'all', stage: 'all', sort: 'newest' });
     const [isLoadingResumes, setIsLoadingResumes] = useState(false);
     const [showUploadModal, setShowUploadModal] = useState(false);
     
@@ -116,7 +116,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     // Fetch resumes when on resumes page
     useEffect(() => {
         if (currentPage === 'resumes' && (userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin')) {
-            fetchResumes(resumeFilter.department, resumeFilter.stage);
+            fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
         }
     }, [currentPage, userRole]);
 
@@ -549,7 +549,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     };
 
     // Resume Management Functions
-    const fetchResumes = async (department = 'all', stage = 'all') => {
+    const fetchResumes = async (department = 'all', stage = 'all', sort = 'newest') => {
         setIsLoadingResumes(true);
         try {
             const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
@@ -566,8 +566,17 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             if (!response.ok) throw new Error('Failed to fetch resumes');
             
             const data = await response.json();
-            setResumes(data.resumes || []);
-            setFilteredResumes(data.resumes || []);
+            let resumeList = data.resumes || [];
+            
+            // Sort resumes on frontend
+            if (sort === 'newest') {
+                resumeList.sort((a, b) => new Date(b.receivedDate) - new Date(a.receivedDate));
+            } else if (sort === 'oldest') {
+                resumeList.sort((a, b) => new Date(a.receivedDate) - new Date(b.receivedDate));
+            }
+            
+            setResumes(resumeList);
+            setFilteredResumes(resumeList);
         } catch (error) {
             console.error('Error fetching resumes:', error);
             alert('Failed to load resumes. Please try again.');
@@ -625,7 +634,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             alert('✅ Resume uploaded successfully!');
             
             // Refresh resume list
-            await fetchResumes(resumeFilter.department, resumeFilter.stage);
+            await fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
             setShowUploadModal(false);
             
             return metadata;
@@ -649,7 +658,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             if (!response.ok) throw new Error('Failed to update resume');
             
             alert(`✅ Resume moved to ${newStage} stage`);
-            await fetchResumes(resumeFilter.department, resumeFilter.stage);
+            await fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
         } catch (error) {
             console.error('Error updating resume:', error);
             alert('❌ Failed to update resume. Please try again.');
@@ -671,7 +680,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             if (!response.ok) throw new Error('Failed to delete resume');
             
             alert('✅ Resume deleted successfully');
-            await fetchResumes(resumeFilter.department, resumeFilter.stage);
+            await fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
         } catch (error) {
             console.error('Error deleting resume:', error);
             alert('❌ Failed to delete resume. Please try again.');
@@ -700,6 +709,44 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             admin: 'Admin - Full access to all document management features'
         };
         alert(`🔄 Role switched to: ${role.toUpperCase()}\n\n${roleDescriptions[role]}\n\n💡 Now try uploading files and testing delete permissions!`);
+    };
+
+    // Export resumes to Excel
+    const exportToExcel = () => {
+        // Create CSV content
+        const headers = ['Candidate Name', 'Email', 'Phone', 'Position', 'Department', 'Stage', 'Experience', 'Received Date', 'Notes'];
+        const csvRows = [headers.join(',')];
+        
+        // Add data rows
+        filteredResumes.forEach(resume => {
+            const row = [
+                `"${resume.candidateName || ''}"`,
+                `"${resume.email || ''}"`,
+                `"${resume.phone || ''}"`,
+                `"${resume.position || ''}"`,
+                `"${resume.department || ''}"`,
+                `"${resume.stage || ''}"`,
+                `"${resume.experience || ''}"`,
+                `"${resume.receivedDate ? new Date(resume.receivedDate).toLocaleDateString() : ''}"`,
+                `"${(resume.notes || '').replace(/"/g, '""')}"` // Escape quotes in notes
+            ];
+            csvRows.push(row.join(','));
+        });
+        
+        // Create blob and download
+        const csvContent = csvRows.join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        
+        link.setAttribute('href', url);
+        link.setAttribute('download', `resumes_export_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        alert(`✅ Exported ${filteredResumes.length} resume(s) to Excel/CSV format!`);
     };
 
     return (
@@ -3447,27 +3494,43 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 </h3>
                                 <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                                     {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
-                                        <button
-                                            onClick={() => setShowUploadModal(true)}
-                                            style={{
-                                                background: '#10b981',
-                                                color: 'white',
-                                                border: 'none',
-                                                padding: '0.5rem 1.5rem',
-                                                borderRadius: '6px',
-                                                cursor: 'pointer',
-                                                fontSize: '0.9rem',
-                                                fontWeight: '600'
-                                            }}>
-                                            📤 Upload Resume
-                                        </button>
+                                        <>
+                                            <button
+                                                onClick={() => setShowUploadModal(true)}
+                                                style={{
+                                                    background: '#10b981',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    padding: '0.5rem 1.5rem',
+                                                    borderRadius: '6px',
+                                                    cursor: 'pointer',
+                                                    fontSize: '0.9rem',
+                                                    fontWeight: '600'
+                                                }}>
+                                                📤 Upload Resume
+                                            </button>
+                                            <button
+                                                onClick={exportToExcel}
+                                                style={{
+                                                    background: '#059669',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    padding: '0.5rem 1.5rem',
+                                                    borderRadius: '6px',
+                                                    cursor: 'pointer',
+                                                    fontSize: '0.9rem',
+                                                    fontWeight: '600'
+                                                }}>
+                                                📊 Export to Excel
+                                            </button>
+                                        </>
                                     )}
                                     <select 
                                         value={resumeFilter.department}
                                         onChange={(e) => {
                                             const newFilter = { ...resumeFilter, department: e.target.value };
                                             setResumeFilter(newFilter);
-                                            fetchResumes(newFilter.department, newFilter.stage);
+                                            fetchResumes(newFilter.department, newFilter.stage, newFilter.sort);
                                         }}
                                         style={{
                                             padding: '0.5rem 1rem',
@@ -3487,7 +3550,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         onChange={(e) => {
                                             const newFilter = { ...resumeFilter, stage: e.target.value };
                                             setResumeFilter(newFilter);
-                                            fetchResumes(newFilter.department, newFilter.stage);
+                                            fetchResumes(newFilter.department, newFilter.stage, newFilter.sort);
                                         }}
                                         style={{
                                             padding: '0.5rem 1rem',
@@ -3502,6 +3565,23 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         <option value="Interview">Interview</option>
                                         <option value="Offer">Offer</option>
                                         <option value="Rejected">Rejected / Archived</option>
+                                    </select>
+                                    <select 
+                                        value={resumeFilter.sort}
+                                        onChange={(e) => {
+                                            const newFilter = { ...resumeFilter, sort: e.target.value };
+                                            setResumeFilter(newFilter);
+                                            fetchResumes(newFilter.department, newFilter.stage, newFilter.sort);
+                                        }}
+                                        style={{
+                                            padding: '0.5rem 1rem',
+                                            borderRadius: '6px',
+                                            border: '2px solid #d4af37',
+                                            fontSize: '0.9rem',
+                                            cursor: 'pointer'
+                                        }}>
+                                        <option value="newest">Newest First</option>
+                                        <option value="oldest">Oldest First</option>
                                     </select>
                                 </div>
                             </div>
@@ -3912,7 +3992,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 department: formData.get('department'),
                                 stage: 'New',
                                 notes: formData.get('notes'),
-                                experience: formData.get('experience')
+                                experience: formData.get('experience'),
+                                receivedDate: formData.get('receivedDate')
                             };
 
                             await uploadResume(resumeData, file);
@@ -4020,6 +4101,30 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         <option value="HR">HR</option>
                                     </select>
                                 </div>
+                            </div>
+
+                            <div style={{ marginBottom: '1rem' }}>
+                                <label style={{ display: 'block', marginBottom: '0.5rem', color: '#1e3a8a', fontWeight: '600' }}>
+                                    Date Received *
+                                </label>
+                                <input
+                                    type="date"
+                                    name="receivedDate"
+                                    required
+                                    defaultValue={new Date().toISOString().split('T')[0]}
+                                    max={new Date().toISOString().split('T')[0]}
+                                    style={{
+                                        width: '100%',
+                                        padding: '0.75rem',
+                                        border: '2px solid #e2e8f0',
+                                        borderRadius: '6px',
+                                        fontSize: '1rem',
+                                        boxSizing: 'border-box'
+                                    }}
+                                />
+                                <p style={{ color: '#64748b', fontSize: '0.85rem', margin: '0.5rem 0 0 0' }}>
+                                    When was this resume received? (Defaults to today)
+                                </p>
                             </div>
 
                             <div style={{ marginBottom: '1rem' }}>

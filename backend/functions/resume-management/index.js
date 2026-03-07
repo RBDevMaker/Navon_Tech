@@ -160,7 +160,15 @@ async function getResume(resumeId) {
 async function createResume(data) {
     try {
         const resumeId = `resume-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-        const receivedDate = new Date().toISOString();
+        
+        // Use provided receivedDate or default to current date
+        let receivedDate;
+        if (data.receivedDate) {
+            // Convert YYYY-MM-DD to ISO string (set to noon UTC to avoid timezone issues)
+            receivedDate = new Date(data.receivedDate + 'T12:00:00.000Z').toISOString();
+        } else {
+            receivedDate = new Date().toISOString();
+        }
 
         const resume = {
             resumeId,
@@ -174,8 +182,8 @@ async function createResume(data) {
             s3Key: data.s3Key || '',
             notes: data.notes || '',
             experience: data.experience || '',
-            createdAt: receivedDate,
-            updatedAt: receivedDate
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
         };
 
         const command = new PutCommand({
