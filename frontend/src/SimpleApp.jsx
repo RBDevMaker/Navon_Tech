@@ -7182,6 +7182,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 </div>
                             </div>
                             
+                            <br />
+                            
                             <button 
                                 onClick={() => {
                                     setCurrentPage('employeeprofile');
