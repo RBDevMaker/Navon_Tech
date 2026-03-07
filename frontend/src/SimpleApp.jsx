@@ -10225,7 +10225,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             }}
                                             title={showPassword ? "Hide password" : "Show password"}
                                         >
-                                            {showPassword ? '👁️' : '👁️‍🗨️'}
+                                            {showPassword ? 'Hide' : 'Show'}
                                         </button>
                                     </div>
                                 </div>
