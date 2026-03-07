@@ -3569,32 +3569,36 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             onClick={() => alert('📄 Demo Resume\n\nThis is a sample resume entry. Upload real resumes to view them from S3.')}>
                                                 📄 View Resume
                                             </button>
-                                            <button style={{
-                                                background: '#10b981',
-                                                color: 'white',
-                                                border: 'none',
-                                                padding: '0.5rem 1rem',
-                                                borderRadius: '6px',
-                                                cursor: 'pointer',
-                                                fontSize: '0.9rem',
-                                                fontWeight: '600',
-                                                whiteSpace: 'nowrap'
-                                            }}
-                                            onClick={() => alert('⭐ Demo Resume\n\nThis is a sample entry. Upload real resumes to use the shortlist feature.')}>
+                                            <button 
+                                                style={{
+                                                    background: '#10b981',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    padding: '0.5rem 1rem',
+                                                    borderRadius: '6px',
+                                                    cursor: 'pointer',
+                                                    fontSize: '0.9rem',
+                                                    fontWeight: '600',
+                                                    whiteSpace: 'nowrap'
+                                                }}
+                                                title="Move to Interview stage for further consideration"
+                                                onClick={() => alert('⭐ Demo Resume\n\nThis is a sample entry. Upload real resumes to use the shortlist feature.')}>
                                                 ⭐ Shortlist
                                             </button>
-                                            <button style={{
-                                                background: '#64748b',
-                                                color: 'white',
-                                                border: 'none',
-                                                padding: '0.5rem 1rem',
-                                                borderRadius: '6px',
-                                                cursor: 'pointer',
-                                                fontSize: '0.9rem',
-                                                fontWeight: '600',
-                                                whiteSpace: 'nowrap'
-                                            }}
-                                            onClick={() => alert('📦 Demo Resume\n\nThis is a sample entry. Upload real resumes to use the archive feature.')}>
+                                            <button 
+                                                style={{
+                                                    background: '#64748b',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    padding: '0.5rem 1rem',
+                                                    borderRadius: '6px',
+                                                    cursor: 'pointer',
+                                                    fontSize: '0.9rem',
+                                                    fontWeight: '600',
+                                                    whiteSpace: 'nowrap'
+                                                }}
+                                                title="Mark as Rejected - not moving forward with this candidate"
+                                                onClick={() => alert('📦 Demo Resume\n\nThis is a sample entry. Upload real resumes to use the archive feature.')}>
                                                 📦 Archive
                                             </button>
                                             <button style={{
@@ -3675,32 +3679,36 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             onClick={() => viewResume(resume.s3Key, resume.candidateName)}>
                                                 📄 View Resume
                                             </button>
-                                            <button style={{
-                                                background: '#10b981',
-                                                color: 'white',
-                                                border: 'none',
-                                                padding: '0.5rem 1rem',
-                                                borderRadius: '6px',
-                                                cursor: 'pointer',
-                                                fontSize: '0.9rem',
-                                                fontWeight: '600',
-                                                whiteSpace: 'nowrap'
-                                            }}
-                                            onClick={() => updateResumeStage(resume.resumeId, 'Interview')}>
+                                            <button 
+                                                style={{
+                                                    background: '#10b981',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    padding: '0.5rem 1rem',
+                                                    borderRadius: '6px',
+                                                    cursor: 'pointer',
+                                                    fontSize: '0.9rem',
+                                                    fontWeight: '600',
+                                                    whiteSpace: 'nowrap'
+                                                }}
+                                                title="Move to Interview stage for further consideration"
+                                                onClick={() => updateResumeStage(resume.resumeId, 'Interview')}>
                                                 ⭐ Shortlist
                                             </button>
-                                            <button style={{
-                                                background: '#64748b',
-                                                color: 'white',
-                                                border: 'none',
-                                                padding: '0.5rem 1rem',
-                                                borderRadius: '6px',
-                                                cursor: 'pointer',
-                                                fontSize: '0.9rem',
-                                                fontWeight: '600',
-                                                whiteSpace: 'nowrap'
-                                            }}
-                                            onClick={() => updateResumeStage(resume.resumeId, 'Rejected')}>
+                                            <button 
+                                                style={{
+                                                    background: '#64748b',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    padding: '0.5rem 1rem',
+                                                    borderRadius: '6px',
+                                                    cursor: 'pointer',
+                                                    fontSize: '0.9rem',
+                                                    fontWeight: '600',
+                                                    whiteSpace: 'nowrap'
+                                                }}
+                                                title="Mark as Rejected - not moving forward with this candidate"
+                                                onClick={() => updateResumeStage(resume.resumeId, 'Rejected')}>
                                                 📦 Archive
                                             </button>
                                             <button style={{
