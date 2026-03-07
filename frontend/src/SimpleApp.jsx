@@ -3577,13 +3577,14 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                     padding: '0.5rem 1rem',
                                                     borderRadius: '6px',
                                                     cursor: 'pointer',
-                                                    fontSize: '0.9rem',
+                                                    fontSize: '0.85rem',
                                                     fontWeight: '600',
-                                                    whiteSpace: 'nowrap'
+                                                    whiteSpace: 'nowrap',
+                                                    lineHeight: '1.3'
                                                 }}
-                                                title="Move to Interview stage for further consideration"
                                                 onClick={() => alert('⭐ Demo Resume\n\nThis is a sample entry. Upload real resumes to use the shortlist feature.')}>
-                                                ⭐ Shortlist
+                                                <div>⭐ Shortlist</div>
+                                                <div style={{ fontSize: '0.7rem', fontWeight: '400', opacity: 0.9 }}>Move to Interview</div>
                                             </button>
                                             <button 
                                                 style={{
@@ -3593,13 +3594,14 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                     padding: '0.5rem 1rem',
                                                     borderRadius: '6px',
                                                     cursor: 'pointer',
-                                                    fontSize: '0.9rem',
+                                                    fontSize: '0.85rem',
                                                     fontWeight: '600',
-                                                    whiteSpace: 'nowrap'
+                                                    whiteSpace: 'nowrap',
+                                                    lineHeight: '1.3'
                                                 }}
-                                                title="Mark as Rejected - not moving forward with this candidate"
                                                 onClick={() => alert('📦 Demo Resume\n\nThis is a sample entry. Upload real resumes to use the archive feature.')}>
-                                                📦 Archive
+                                                <div>📦 Archive</div>
+                                                <div style={{ fontSize: '0.7rem', fontWeight: '400', opacity: 0.9 }}>Mark as Rejected</div>
                                             </button>
                                             <button style={{
                                                 background: '#ef4444',
@@ -3687,13 +3689,14 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                     padding: '0.5rem 1rem',
                                                     borderRadius: '6px',
                                                     cursor: 'pointer',
-                                                    fontSize: '0.9rem',
+                                                    fontSize: '0.85rem',
                                                     fontWeight: '600',
-                                                    whiteSpace: 'nowrap'
+                                                    whiteSpace: 'nowrap',
+                                                    lineHeight: '1.3'
                                                 }}
-                                                title="Move to Interview stage for further consideration"
                                                 onClick={() => updateResumeStage(resume.resumeId, 'Interview')}>
-                                                ⭐ Shortlist
+                                                <div>⭐ Shortlist</div>
+                                                <div style={{ fontSize: '0.7rem', fontWeight: '400', opacity: 0.9 }}>Move to Interview</div>
                                             </button>
                                             <button 
                                                 style={{
@@ -3703,13 +3706,14 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                     padding: '0.5rem 1rem',
                                                     borderRadius: '6px',
                                                     cursor: 'pointer',
-                                                    fontSize: '0.9rem',
+                                                    fontSize: '0.85rem',
                                                     fontWeight: '600',
-                                                    whiteSpace: 'nowrap'
+                                                    whiteSpace: 'nowrap',
+                                                    lineHeight: '1.3'
                                                 }}
-                                                title="Mark as Rejected - not moving forward with this candidate"
                                                 onClick={() => updateResumeStage(resume.resumeId, 'Rejected')}>
-                                                📦 Archive
+                                                <div>📦 Archive</div>
+                                                <div style={{ fontSize: '0.7rem', fontWeight: '400', opacity: 0.9 }}>Mark as Rejected</div>
                                             </button>
                                             <button style={{
                                                 background: '#ef4444',
