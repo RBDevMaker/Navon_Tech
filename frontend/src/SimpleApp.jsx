@@ -3318,93 +3318,132 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 </div>
                             </div>
 
-                            {/* Demo Resume Card */}
-                            <div style={{
-                                background: '#f8fafc',
-                                padding: '1.5rem',
-                                borderRadius: '8px',
-                                border: '2px solid #e2e8f0',
-                                marginBottom: '1rem'
-                            }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
-                                    <div style={{ flex: 1 }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
-                                            <h4 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.2rem' }}>
-                                                John Smith
-                                            </h4>
-                                            <span style={{
-                                                background: '#dbeafe',
-                                                color: '#1e40af',
-                                                padding: '0.25rem 0.75rem',
-                                                borderRadius: '12px',
-                                                fontSize: '0.75rem',
-                                                fontWeight: '600'
-                                            }}>
-                                                New
-                                            </span>
+                            {/* Demo Resume Card - Only visible to HR, Admin, SuperAdmin */}
+                            {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
+                                <div style={{
+                                    background: '#f8fafc',
+                                    padding: '1.5rem',
+                                    borderRadius: '8px',
+                                    border: '2px solid #e2e8f0',
+                                    marginBottom: '1rem'
+                                }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+                                        <div style={{ flex: 1 }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
+                                                <h4 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.2rem' }}>
+                                                    John Smith
+                                                </h4>
+                                                <span style={{
+                                                    background: '#dbeafe',
+                                                    color: '#1e40af',
+                                                    padding: '0.25rem 0.75rem',
+                                                    borderRadius: '12px',
+                                                    fontSize: '0.75rem',
+                                                    fontWeight: '600'
+                                                }}>
+                                                    New
+                                                </span>
+                                            </div>
+                                            <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
+                                                <strong>Position:</strong> Senior Software Engineer
+                                            </p>
+                                            <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
+                                                <strong>Department:</strong> Engineering
+                                            </p>
+                                            <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
+                                                <strong>Email:</strong> john.smith@email.com
+                                            </p>
+                                            <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
+                                                <strong>Received:</strong> March 6, 2026
+                                            </p>
+                                            <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.9rem', fontStyle: 'italic' }}>
+                                                10+ years experience in full-stack development, AWS certified, React/Node.js expert
+                                            </p>
                                         </div>
-                                        <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
-                                            <strong>Position:</strong> Senior Software Engineer
-                                        </p>
-                                        <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
-                                            <strong>Department:</strong> Engineering
-                                        </p>
-                                        <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
-                                            <strong>Email:</strong> john.smith@email.com
-                                        </p>
-                                        <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
-                                            <strong>Received:</strong> March 6, 2026
-                                        </p>
-                                        <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.9rem', fontStyle: 'italic' }}>
-                                            10+ years experience in full-stack development, AWS certified, React/Node.js expert
-                                        </p>
-                                    </div>
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                        <button style={{
-                                            background: '#1e3a8a',
-                                            color: 'white',
-                                            border: 'none',
-                                            padding: '0.5rem 1rem',
-                                            borderRadius: '6px',
-                                            cursor: 'pointer',
-                                            fontSize: '0.9rem',
-                                            fontWeight: '600',
-                                            whiteSpace: 'nowrap'
-                                        }}
-                                        onClick={() => alert('Resume viewer would open here. Connect to S3 bucket: Resumes folder')}>
-                                            📄 View Resume
-                                        </button>
-                                        <button style={{
-                                            background: '#10b981',
-                                            color: 'white',
-                                            border: 'none',
-                                            padding: '0.5rem 1rem',
-                                            borderRadius: '6px',
-                                            cursor: 'pointer',
-                                            fontSize: '0.9rem',
-                                            fontWeight: '600',
-                                            whiteSpace: 'nowrap'
-                                        }}
-                                        onClick={() => alert('Move to Interview stage')}>
-                                            ⭐ Shortlist
-                                        </button>
-                                        <button style={{
-                                            background: '#64748b',
-                                            color: 'white',
-                                            border: 'none',
-                                            padding: '0.5rem 1rem',
-                                            borderRadius: '6px',
-                                            cursor: 'pointer',
-                                            fontSize: '0.9rem',
-                                            fontWeight: '600',
-                                            whiteSpace: 'nowrap'
-                                        }}
-                                        onClick={() => alert('Archive resume')}>
-                                            📦 Archive
-                                        </button>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                            <button style={{
+                                                background: '#1e3a8a',
+                                                color: 'white',
+                                                border: 'none',
+                                                padding: '0.5rem 1rem',
+                                                borderRadius: '6px',
+                                                cursor: 'pointer',
+                                                fontSize: '0.9rem',
+                                                fontWeight: '600',
+                                                whiteSpace: 'nowrap'
+                                            }}
+                                            onClick={() => alert('Resume viewer would open here. Connect to S3 bucket: Resumes folder')}>
+                                                📄 View Resume
+                                            </button>
+                                            <button style={{
+                                                background: '#10b981',
+                                                color: 'white',
+                                                border: 'none',
+                                                padding: '0.5rem 1rem',
+                                                borderRadius: '6px',
+                                                cursor: 'pointer',
+                                                fontSize: '0.9rem',
+                                                fontWeight: '600',
+                                                whiteSpace: 'nowrap'
+                                            }}
+                                            onClick={() => alert('Move to Interview stage')}>
+                                                ⭐ Shortlist
+                                            </button>
+                                            <button style={{
+                                                background: '#64748b',
+                                                color: 'white',
+                                                border: 'none',
+                                                padding: '0.5rem 1rem',
+                                                borderRadius: '6px',
+                                                cursor: 'pointer',
+                                                fontSize: '0.9rem',
+                                                fontWeight: '600',
+                                                whiteSpace: 'nowrap'
+                                            }}
+                                            onClick={() => alert('Archive resume')}>
+                                                📦 Archive
+                                            </button>
+                                            <button style={{
+                                                background: '#ef4444',
+                                                color: 'white',
+                                                border: 'none',
+                                                padding: '0.5rem 1rem',
+                                                borderRadius: '6px',
+                                                cursor: 'pointer',
+                                                fontSize: '0.9rem',
+                                                fontWeight: '600',
+                                                whiteSpace: 'nowrap'
+                                            }}
+                                            onClick={() => {
+                                                if (confirm('⚠️ Are you sure you want to delete this resume?\n\nCandidate: John Smith\nPosition: Senior Software Engineer\n\nThis action cannot be undone.')) {
+                                                    alert('✅ Resume deleted successfully');
+                                                }
+                                            }}>
+                                                🗑️ Delete
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            )}
+
+                            {/* Message for Employee role */}
+                            {userRole === 'employee' && (
+                                <div style={{
+                                    background: '#fef3c7',
+                                    border: '2px solid #f59e0b',
+                                    borderRadius: '8px',
+                                    padding: '1.5rem',
+                                    textAlign: 'center',
+                                    marginBottom: '1rem'
+                                }}>
+                                    <p style={{ color: '#92400e', margin: 0, fontSize: '1rem', fontWeight: '600' }}>
+                                        🔒 Access Restricted
+                                    </p>
+                                    <p style={{ color: '#92400e', margin: '0.5rem 0 0 0', fontSize: '0.9rem' }}>
+                                        Resume management is only available to HR, Admin, and SuperAdmin users.
+                                    </p>
+                                </div>
+                            )}
 
                             <p style={{ color: '#64748b', textAlign: 'center', marginTop: '2rem', fontSize: '0.9rem' }}>
                                 💡 Connect to DynamoDB table for resume metadata and S3 Resumes folder for file storage
