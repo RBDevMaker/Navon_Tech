@@ -43,6 +43,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [pendingProfilePicture, setPendingProfilePicture] = useState(null);
     const [loginEmail, setLoginEmail] = useState('');
     const [loginPassword, setLoginPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [loginError, setLoginError] = useState('');
     const [isAuthenticating, setIsAuthenticating] = useState(false);
 
@@ -10185,26 +10186,48 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     }}>
                                         Password
                                     </label>
-                                    <input
-                                        type="password"
-                                        placeholder="Enter your password"
-                                        value={loginPassword}
-                                        onChange={(e) => setLoginPassword(e.target.value)}
-                                        required
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.65rem',
-                                            border: '2px solid rgba(255, 255, 255, 0.3)',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem',
-                                            background: 'rgba(255, 255, 255, 0.9)',
-                                            color: '#1e293b',
-                                            transition: 'all 0.3s ease',
-                                            outline: 'none'
-                                        }}
-                                        onFocus={(e) => e.target.style.borderColor = 'white'}
-                                        onBlur={(e) => e.target.style.borderColor = 'rgba(255, 255, 255, 0.3)'}
-                                    />
+                                    <div style={{ position: 'relative' }}>
+                                        <input
+                                            type={showPassword ? "text" : "password"}
+                                            placeholder="Enter your password"
+                                            value={loginPassword}
+                                            onChange={(e) => setLoginPassword(e.target.value)}
+                                            required
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.65rem',
+                                                paddingRight: '2.5rem',
+                                                border: '2px solid rgba(255, 255, 255, 0.3)',
+                                                borderRadius: '8px',
+                                                fontSize: '0.95rem',
+                                                background: 'rgba(255, 255, 255, 0.9)',
+                                                color: '#1e293b',
+                                                transition: 'all 0.3s ease',
+                                                outline: 'none'
+                                            }}
+                                            onFocus={(e) => e.target.style.borderColor = 'white'}
+                                            onBlur={(e) => e.target.style.borderColor = 'rgba(255, 255, 255, 0.3)'}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            style={{
+                                                position: 'absolute',
+                                                right: '0.5rem',
+                                                top: '50%',
+                                                transform: 'translateY(-50%)',
+                                                background: 'transparent',
+                                                border: 'none',
+                                                cursor: 'pointer',
+                                                fontSize: '1.2rem',
+                                                padding: '0.25rem',
+                                                color: '#64748b'
+                                            }}
+                                            title={showPassword ? "Hide password" : "Show password"}
+                                        >
+                                            {showPassword ? '👁️' : '👁️‍🗨️'}
+                                        </button>
+                                    </div>
                                 </div>
 
                                 {/* Forgot Password Link */}
