@@ -3501,7 +3501,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         <option value="Screening">Screening</option>
                                         <option value="Interview">Interview</option>
                                         <option value="Offer">Offer</option>
-                                        <option value="Rejected">Rejected</option>
+                                        <option value="Rejected">Rejected / Archived</option>
                                     </select>
                                 </div>
                             </div>
@@ -3580,7 +3580,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                 fontWeight: '600',
                                                 whiteSpace: 'nowrap'
                                             }}
-                                            onClick={() => updateResumeStage('demo-resume', 'Interview')}>
+                                            onClick={() => alert('⭐ Demo Resume\n\nThis is a sample entry. Upload real resumes to use the shortlist feature.')}>
                                                 ⭐ Shortlist
                                             </button>
                                             <button style={{
@@ -3594,7 +3594,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                 fontWeight: '600',
                                                 whiteSpace: 'nowrap'
                                             }}
-                                            onClick={() => updateResumeStage('demo-resume', 'Rejected')}>
+                                            onClick={() => alert('📦 Demo Resume\n\nThis is a sample entry. Upload real resumes to use the archive feature.')}>
                                                 📦 Archive
                                             </button>
                                             <button style={{
@@ -3757,7 +3757,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             </h3>
                             <div style={{
                                 display: 'grid',
-                                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
                                 gap: '1.5rem',
                                 marginTop: '2rem'
                             }}>
@@ -3765,41 +3765,71 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     background: '#f8fafc',
                                     padding: '1.5rem',
                                     borderRadius: '8px',
-                                    border: '2px solid #e2e8f0'
+                                    border: '2px solid #e2e8f0',
+                                    textAlign: 'center'
                                 }}>
                                     <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📥</div>
-                                    <h4 style={{ color: '#1e3a8a', marginBottom: '0.5rem' }}>New Applications</h4>
-                                    <p style={{ color: '#64748b', fontSize: '0.9rem' }}>Review recently submitted resumes</p>
+                                    <div style={{ fontSize: '2.5rem', fontWeight: '800', color: '#1e3a8a', marginBottom: '0.5rem' }}>
+                                        {resumes.filter(r => r.stage === 'New').length + 1}
+                                    </div>
+                                    <h4 style={{ color: '#1e3a8a', marginBottom: '0.5rem', fontSize: '1.1rem' }}>New Applications</h4>
+                                    <p style={{ color: '#64748b', fontSize: '0.9rem', margin: 0 }}>Recently submitted</p>
                                 </div>
                                 <div style={{
                                     background: '#f8fafc',
                                     padding: '1.5rem',
                                     borderRadius: '8px',
-                                    border: '2px solid #e2e8f0'
+                                    border: '2px solid #e2e8f0',
+                                    textAlign: 'center'
                                 }}>
-                                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>⭐</div>
-                                    <h4 style={{ color: '#1e3a8a', marginBottom: '0.5rem' }}>Shortlisted</h4>
-                                    <p style={{ color: '#64748b', fontSize: '0.9rem' }}>Candidates for interview</p>
+                                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🔍</div>
+                                    <div style={{ fontSize: '2.5rem', fontWeight: '800', color: '#1e3a8a', marginBottom: '0.5rem' }}>
+                                        {resumes.filter(r => r.stage === 'Screening').length}
+                                    </div>
+                                    <h4 style={{ color: '#1e3a8a', marginBottom: '0.5rem', fontSize: '1.1rem' }}>Screening</h4>
+                                    <p style={{ color: '#64748b', fontSize: '0.9rem', margin: 0 }}>Under review</p>
                                 </div>
                                 <div style={{
                                     background: '#f8fafc',
                                     padding: '1.5rem',
                                     borderRadius: '8px',
-                                    border: '2px solid #e2e8f0'
+                                    border: '2px solid #e2e8f0',
+                                    textAlign: 'center'
                                 }}>
                                     <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📝</div>
-                                    <h4 style={{ color: '#1e3a8a', marginBottom: '0.5rem' }}>Interview Notes</h4>
-                                    <p style={{ color: '#64748b', fontSize: '0.9rem' }}>Feedback and evaluations</p>
+                                    <div style={{ fontSize: '2.5rem', fontWeight: '800', color: '#1e3a8a', marginBottom: '0.5rem' }}>
+                                        {resumes.filter(r => r.stage === 'Interview').length}
+                                    </div>
+                                    <h4 style={{ color: '#1e3a8a', marginBottom: '0.5rem', fontSize: '1.1rem' }}>Interview</h4>
+                                    <p style={{ color: '#64748b', fontSize: '0.9rem', margin: 0 }}>Active interviews</p>
                                 </div>
                                 <div style={{
                                     background: '#f8fafc',
                                     padding: '1.5rem',
                                     borderRadius: '8px',
-                                    border: '2px solid #e2e8f0'
+                                    border: '2px solid #e2e8f0',
+                                    textAlign: 'center'
                                 }}>
-                                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📦</div>
-                                    <h4 style={{ color: '#1e3a8a', marginBottom: '0.5rem' }}>Archived</h4>
-                                    <p style={{ color: '#64748b', fontSize: '0.9rem' }}>Past applications and records</p>
+                                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>✅</div>
+                                    <div style={{ fontSize: '2.5rem', fontWeight: '800', color: '#10b981', marginBottom: '0.5rem' }}>
+                                        {resumes.filter(r => r.stage === 'Offer').length}
+                                    </div>
+                                    <h4 style={{ color: '#1e3a8a', marginBottom: '0.5rem', fontSize: '1.1rem' }}>Offers</h4>
+                                    <p style={{ color: '#64748b', fontSize: '0.9rem', margin: 0 }}>Offers extended</p>
+                                </div>
+                                <div style={{
+                                    background: '#f8fafc',
+                                    padding: '1.5rem',
+                                    borderRadius: '8px',
+                                    border: '2px solid #e2e8f0',
+                                    textAlign: 'center'
+                                }}>
+                                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>❌</div>
+                                    <div style={{ fontSize: '2.5rem', fontWeight: '800', color: '#ef4444', marginBottom: '0.5rem' }}>
+                                        {resumes.filter(r => r.stage === 'Rejected').length}
+                                    </div>
+                                    <h4 style={{ color: '#1e3a8a', marginBottom: '0.5rem', fontSize: '1.1rem' }}>Rejected</h4>
+                                    <p style={{ color: '#64748b', fontSize: '0.9rem', margin: 0 }}>Not moving forward</p>
                                 </div>
                             </div>
                         </div>
