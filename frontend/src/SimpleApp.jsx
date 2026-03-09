@@ -59,6 +59,13 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [loginPassword, setLoginPassword] = useState('');
     const [loginError, setLoginError] = useState('');
     const [isAuthenticating, setIsAuthenticating] = useState(false);
+    
+    // Resume management states
+    const [resumes, setResumes] = useState([]);
+    const [filteredResumes, setFilteredResumes] = useState([]);
+    const [resumeFilter, setResumeFilter] = useState({ department: 'all', stage: 'all', sort: 'newest' });
+    const [isLoadingResumes, setIsLoadingResumes] = useState(false);
+    const [showUploadModal, setShowUploadModal] = useState(false);
 
     // Handle hash changes for navigation
     useEffect(() => {
@@ -87,10 +94,17 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+    
+    // Fetch resumes when on resumes page
+    useEffect(() => {
+        if (currentPage === 'resumes' && (userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin')) {
+            fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
+        }
+    }, [currentPage, userRole]);
 
     // Permission functions
-    const canDeleteHandbook = () => userRole === 'hr' || userRole === 'admin';
-    const canUploadHandbook = () => userRole === 'hr' || userRole === 'admin';
+    const canDeleteHandbook = () => userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin';
+    const canUploadHandbook = () => userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin';
     
     // Handle file upload
     const handleFileUpload = (category, files) => {
@@ -554,6 +568,191 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             </html>
         `);
         docWindow.document.close();
+    };
+    
+    // Resume Management Functions
+    const fetchResumes = async (department = 'all', stage = 'all', sort = 'newest') => {
+        setIsLoadingResumes(true);
+        try {
+            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+            let url = `${apiUrl}/resumes?limit=50`;
+            
+            if (department !== 'all') {
+                url += `&department=${encodeURIComponent(department)}`;
+            }
+            if (stage !== 'all') {
+                url += `&stage=${encodeURIComponent(stage)}`;
+            }
+            
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Failed to fetch resumes');
+            const data = await response.json();
+            let resumeList = data.resumes || [];
+            
+            // Sort resumes on frontend
+            if (sort === 'newest') {
+                resumeList.sort((a, b) => new Date(b.receivedDate) - new Date(a.receivedDate));
+            } else if (sort === 'oldest') {
+                resumeList.sort((a, b) => new Date(a.receivedDate) - new Date(b.receivedDate));
+            }
+            
+            setResumes(resumeList);
+            setFilteredResumes(resumeList);
+        } catch (error) {
+            console.error('Error fetching resumes:', error);
+            alert('Failed to load resumes. Please try again.');
+        } finally {
+            setIsLoadingResumes(false);
+        }
+    };
+
+    const uploadResume = async (resumeData, file) => {
+        try {
+            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+            
+            // First upload file to S3
+            const fileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+            const s3Key = `resumes/${fileName}`;
+            
+            // Convert file to base64
+            const base64File = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = error => reject(error);
+            });
+            
+            // Upload to S3
+            const s3Response = await fetch(`${apiUrl}/upload-to-s3`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'upload',
+                    fileName: fileName,
+                    folder: 'resumes',
+                    fileContent: base64File,
+                    contentType: file.type
+                })
+            });
+            
+            if (!s3Response.ok) throw new Error('Failed to upload file to S3');
+            const s3Data = await s3Response.json();
+            
+            // Create metadata entry in DynamoDB
+            const metadataResponse = await fetch(`${apiUrl}/resume`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    ...resumeData,
+                    s3Key: s3Key
+                })
+            });
+            
+            if (!metadataResponse.ok) throw new Error('Failed to create resume metadata');
+            const metadata = await metadataResponse.json();
+            alert('✅ Resume uploaded successfully!');
+            
+            // Refresh resume list
+            await fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
+            setShowUploadModal(false);
+            
+            return metadata;
+        } catch (error) {
+            console.error('Error uploading resume:', error);
+            alert('❌ Failed to upload resume. Please try again.');
+            throw error;
+        }
+    };
+
+    const updateResumeStage = async (resumeId, newStage) => {
+        try {
+            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+            
+            const response = await fetch(`${apiUrl}/resume/${resumeId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ stage: newStage })
+            });
+            
+            if (!response.ok) throw new Error('Failed to update resume');
+            alert(`✅ Resume moved to ${newStage} stage`);
+            await fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
+        } catch (error) {
+            console.error('Error updating resume:', error);
+            alert('❌ Failed to update resume. Please try again.');
+        }
+    };
+
+    const deleteResume = async (resumeId, candidateName) => {
+        if (!confirm(`⚠️ Are you sure you want to delete this resume?\n\nCandidate: ${candidateName}\n\nThis action cannot be undone.`)) {
+            return;
+        }
+        
+        try {
+            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+            
+            const response = await fetch(`${apiUrl}/resume/${resumeId}`, {
+                method: 'DELETE'
+            });
+            
+            if (!response.ok) throw new Error('Failed to delete resume');
+            alert('✅ Resume deleted successfully');
+            await fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
+        } catch (error) {
+            console.error('Error deleting resume:', error);
+            alert('❌ Failed to delete resume. Please try again.');
+        }
+    };
+
+    const viewResume = (s3Key, candidateName) => {
+        if (!s3Key) {
+            alert('Resume file not available');
+            return;
+        }
+        
+        // Construct S3 URL
+        const s3Url = `${s3BaseUrl}/${s3Key}`;
+        
+        // Open in new window
+        window.open(s3Url, '_blank');
+    };
+
+    // Export resumes to Excel/CSV
+    const exportToExcel = () => {
+        // Create CSV content
+        const headers = ['Candidate Name', 'Email', 'Phone', 'Position', 'Department', 'Stage', 'Experience', 'Received Date', 'Notes'];
+        const csvRows = [headers.join(',')];
+        
+        // Add data rows
+        filteredResumes.forEach(resume => {
+            const row = [
+                `"${resume.candidateName || ''}"`,
+                `"${resume.email || ''}"`,
+                `"${resume.phone || ''}"`,
+                `"${resume.position || ''}"`,
+                `"${resume.department || ''}"`,
+                `"${resume.stage || ''}"`,
+                `"${resume.experience || ''}"`,
+                `"${resume.receivedDate ? new Date(resume.receivedDate).toLocaleDateString() : ''}"`,
+                `"${(resume.notes || '').replace(/"/g, '""')}"` // Escape quotes in notes
+            ];
+            csvRows.push(row.join(','));
+        });
+        
+        // Create blob and download
+        const csvContent = csvRows.join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        
+        link.setAttribute('href', url);
+        link.setAttribute('download', `resumes_export_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        alert(`✅ Exported ${filteredResumes.length} resume(s) to Excel/CSV format!`);
     };
 
     // Role switcher for demo
