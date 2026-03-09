@@ -202,9 +202,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                     const profiles = await getAllProfiles();
                     console.log('Loaded profiles:', profiles);
                     
-                    // Update team members with loaded profiles
+                    // Update team members with loaded profiles (keep sample data if no profiles loaded)
                     if (profiles && profiles.length > 0) {
-                        setTeamMembers(profiles.map(profile => ({
+                        const loadedProfiles = profiles.map(profile => ({
                             id: profile.employeeId,
                             name: profile.name || `${profile.firstName || ''} ${profile.lastName || ''}`.trim(),
                             title: profile.title || '',
@@ -217,8 +217,16 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             salary: profile.salary || '',
                             startDate: profile.startDate || '',
                             manager: profile.manager || ''
-                        })));
+                        }));
+                        
+                        // Merge with existing sample data (avoid duplicates by email)
+                        setTeamMembers(prev => {
+                            const existingEmails = new Set(loadedProfiles.map(p => p.email));
+                            const sampleData = prev.filter(p => !existingEmails.has(p.email));
+                            return [...loadedProfiles, ...sampleData];
+                        });
                     }
+                    // If no profiles loaded, keep the sample data (don't clear it)
                     
                     // Load current user's profile if on myprofile page
                     if (currentPage === 'myprofile' && authenticatedUser) {
@@ -8662,6 +8670,115 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     </div>
                                 </div>
                             )}
+                            
+                            {/* Team Members from State */}
+                            {teamMembers.map((member) => (
+                                <div key={member.id} className="hover-lift animate-scale-in" style={{
+                                    background: 'white',
+                                    padding: '2rem',
+                                    borderRadius: '12px',
+                                    border: '2px solid #d4af37',
+                                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                                }}>
+                                    <div style={{ marginBottom: '1.5rem' }}>
+                                        <div style={{
+                                            background: '#f8fafc',
+                                            padding: '1.5rem',
+                                            borderRadius: '8px',
+                                            border: '1px solid #e2e8f0'
+                                        }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+                                                <div style={{
+                                                    width: '60px',
+                                                    height: '60px',
+                                                    background: member.profilePicture ? 'transparent' : '#1e3a8a',
+                                                    borderRadius: '50%',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    color: 'white',
+                                                    fontWeight: 'bold',
+                                                    fontSize: '1.5rem',
+                                                    marginRight: '1rem',
+                                                    overflow: 'hidden',
+                                                    border: '2px solid #d4af37'
+                                                }}>
+                                                    {member.profilePicture ? (
+                                                        <img 
+                                                            src={member.profilePicture} 
+                                                            alt={member.name}
+                                                            style={{
+                                                                width: '100%',
+                                                                height: '100%',
+                                                                objectFit: 'cover'
+                                                            }}
+                                                        />
+                                                    ) : (
+                                                        member.name?.split(' ').map(n => n[0]).join('').toUpperCase() || '??'
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <div style={{ fontWeight: '600', color: '#1e3a8a' }}>
+                                                        {member.name}
+                                                    </div>
+                                                    <div style={{ color: '#64748b', fontSize: '0.9rem' }}>
+                                                        {member.title}
+                                                    </div>
+                                                    {isHRView && member.id && (
+                                                        <div style={{ color: '#64748b', fontSize: '0.8rem' }}>
+                                                            Employee ID: {member.id}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div style={{ fontSize: '0.9rem', color: '#475569' }}>
+                                                <div style={{ marginBottom: '0.5rem' }}>
+                                                    📧 {member.email}
+                                                </div>
+                                                {isHRView && (
+                                                    <>
+                                                        {member.phone && (
+                                                            <div style={{ marginBottom: '0.5rem' }}>
+                                                                📱 {member.phone}
+                                                            </div>
+                                                        )}
+                                                        {member.location && (
+                                                            <div style={{ marginBottom: '0.5rem' }}>
+                                                                📍 {member.location}
+                                                            </div>
+                                                        )}
+                                                        {member.department && (
+                                                            <div style={{ marginBottom: '0.5rem' }}>
+                                                                🏢 {member.department}
+                                                            </div>
+                                                        )}
+                                                        {member.emergencyContact && (
+                                                            <div style={{ marginBottom: '0.5rem' }}>
+                                                                🚨 Emergency: {member.emergencyContact}
+                                                            </div>
+                                                        )}
+                                                        {member.manager && (
+                                                            <div style={{ marginBottom: '0.5rem' }}>
+                                                                👤 Manager: {member.manager}
+                                                            </div>
+                                                        )}
+                                                        {member.startDate && (
+                                                            <div style={{ marginBottom: '0.5rem' }}>
+                                                                📅 Start Date: {new Date(member.startDate).toLocaleDateString()}
+                                                            </div>
+                                                        )}
+                                                        {member.salary && (
+                                                            <div style={{ marginBottom: '0.5rem', fontWeight: '600', color: '#16a34a' }}>
+                                                                💰 Salary: {member.salary}
+                                                            </div>
+                                                        )}
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
                             
                             {/* John Doe Card - Conditional View Based on HR Access */}
                             <div className="hover-lift animate-scale-in" style={{
