@@ -4,6 +4,7 @@ import { saveProfile, getProfile, getAllProfiles } from './services/profileServi
 import { Amplify } from 'aws-amplify';
 import { signIn, signOut, getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
 import awsConfig from './aws-config';
+import * as XLSX from 'xlsx';
 
 // Configure Amplify
 Amplify.configure(awsConfig);
@@ -243,6 +244,63 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 [category]: prev[category].filter(f => f.id !== fileId)
             }));
             alert(`✅ File "${fileName}" has been deleted successfully.`);
+        }
+    };
+
+    // Export Team Directory to Excel
+    const exportDirectoryToExcel = () => {
+        try {
+            // Prepare data based on user role
+            let exportData;
+            
+            if (userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') {
+                // HR/Admin view - export all fields
+                exportData = teamMembers.map(member => ({
+                    'Employee ID': member.id || '',
+                    'Name': member.name || '',
+                    'Title': member.title || '',
+                    'Department': member.department || '',
+                    'Email': member.email || '',
+                    'Phone': member.phone || '',
+                    'Location': member.location || '',
+                    'Emergency Contact': member.emergencyContact || '',
+                    'Manager': member.manager || '',
+                    'Start Date': member.startDate || '',
+                    'Salary': member.salary || ''
+                }));
+            } else {
+                // Employee view - export limited fields only
+                exportData = teamMembers.map(member => ({
+                    'Name': member.name || '',
+                    'Title': member.title || '',
+                    'Email': member.email || ''
+                }));
+            }
+
+            // Create worksheet
+            const worksheet = XLSX.utils.json_to_sheet(exportData);
+            
+            // Set column widths
+            const columnWidths = Object.keys(exportData[0] || {}).map(key => ({
+                wch: Math.max(key.length, 20)
+            }));
+            worksheet['!cols'] = columnWidths;
+
+            // Create workbook
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Team Directory');
+
+            // Generate filename with timestamp
+            const timestamp = new Date().toISOString().split('T')[0];
+            const filename = `Team_Directory_${timestamp}.xlsx`;
+
+            // Download file
+            XLSX.writeFile(workbook, filename);
+
+            console.log(`✅ Exported ${exportData.length} employees to ${filename}`);
+        } catch (error) {
+            console.error('Error exporting to Excel:', error);
+            alert('❌ Failed to export to Excel. Please try again.');
         }
     };
 
@@ -773,6 +831,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     };
 
     // Export resumes to Excel
+    // Export Resumes to CSV
     const exportToExcel = () => {
         // Create CSV content
         const headers = ['Candidate Name', 'Email', 'Phone', 'Position', 'Department', 'Stage', 'Experience', 'Received Date', 'Notes'];
@@ -807,7 +866,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         link.click();
         document.body.removeChild(link);
         
-        alert(`✅ Exported ${filteredResumes.length} resume(s) to Excel/CSV format!`);
+        alert(`✅ Exported ${filteredResumes.length} resume(s) to CSV format!`);
     };
 
     return (
@@ -8227,23 +8286,61 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             
                             <br />
                             
-                            <button 
-                                onClick={() => {
-                                    setCurrentPage('employeeprofile');
-                                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                                }}
-                                style={{
-                                    background: '#d4af37',
-                                    color: '#0f172a',
-                                    border: 'none',
-                                    padding: '1rem 2rem',
-                                    borderRadius: '8px',
-                                    cursor: 'pointer',
-                                    fontWeight: '700',
-                                    fontSize: '1rem'
-                                }}>
-                                ← Back to Profile & Directory
-                            </button>
+                            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                                <button 
+                                    onClick={() => {
+                                        setCurrentPage('employeeprofile');
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }}
+                                    style={{
+                                        background: '#d4af37',
+                                        color: '#0f172a',
+                                        border: 'none',
+                                        padding: '1rem 2rem',
+                                        borderRadius: '8px',
+                                        cursor: 'pointer',
+                                        fontWeight: '700',
+                                        fontSize: '1rem',
+                                        transition: 'all 0.3s ease'
+                                    }}
+                                    onMouseOver={(e) => {
+                                        e.target.style.transform = 'translateY(-2px)';
+                                        e.target.style.boxShadow = '0 4px 12px rgba(212, 175, 55, 0.4)';
+                                    }}
+                                    onMouseOut={(e) => {
+                                        e.target.style.transform = 'translateY(0)';
+                                        e.target.style.boxShadow = 'none';
+                                    }}>
+                                    ← Back to Profile & Directory
+                                </button>
+                                
+                                <button 
+                                    onClick={exportDirectoryToExcel}
+                                    style={{
+                                        background: '#16a34a',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '1rem 2rem',
+                                        borderRadius: '8px',
+                                        cursor: 'pointer',
+                                        fontWeight: '700',
+                                        fontSize: '1rem',
+                                        transition: 'all 0.3s ease',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.5rem'
+                                    }}
+                                    onMouseOver={(e) => {
+                                        e.target.style.transform = 'translateY(-2px)';
+                                        e.target.style.boxShadow = '0 4px 12px rgba(22, 163, 74, 0.4)';
+                                    }}
+                                    onMouseOut={(e) => {
+                                        e.target.style.transform = 'translateY(0)';
+                                        e.target.style.boxShadow = 'none';
+                                    }}>
+                                    📊 Export to Excel
+                                </button>
+                            </div>
                         </div>
 
                         {/* Search Bar */}
