@@ -3672,6 +3672,27 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     const result = await response.json();
 
                                     if (response.ok) {
+                                        // Also upload resume to Resume Portal if resume was provided
+                                        if (resume && resume.size > 0) {
+                                            try {
+                                                const resumePortalData = {
+                                                    candidateName: name,
+                                                    email: email,
+                                                    phone: formData.get('phone') || '',
+                                                    position: position,
+                                                    department: 'Engineering', // Default, can be updated later
+                                                    experience: '',
+                                                    stage: 'New',
+                                                    receivedDate: new Date().toISOString(),
+                                                    notes: `Applied via Careers page for ${position}`
+                                                };
+                                                await uploadResume(resumePortalData, resume);
+                                            } catch (resumeError) {
+                                                console.error('Resume upload to portal failed:', resumeError);
+                                                // Don't fail the whole application if resume portal upload fails
+                                            }
+                                        }
+                                        
                                         alert('✅ Application submitted successfully! We will review your application and get back to you soon.');
                                         e.target.reset();
                                         // Reset file upload display
@@ -8442,7 +8463,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 color: '#1e3a8a',
                                 fontWeight: '800'
                             }}>
-                                📄 Resumes & Applications
+                                📄 Resumes
                             </h2>
                             <p style={{
                                 fontSize: '1.2rem',
@@ -8450,7 +8471,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 maxWidth: '800px',
                                 margin: '0 auto 2rem auto'
                             }}>
-                                Review candidate resumes, applications, and interview materials
+                                Review candidate resumes and interview materials
                             </p>
                             <button 
                                 onClick={() => {
@@ -9732,6 +9753,27 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         const result = await response.json();
 
                                         if (response.ok) {
+                                            // Also upload resume to Resume Portal if resume was provided
+                                            if (resume && resume.size > 0) {
+                                                try {
+                                                    const resumePortalData = {
+                                                        candidateName: candidateName,
+                                                        email: candidateEmail,
+                                                        phone: candidatePhone,
+                                                        position: position,
+                                                        department: 'Engineering', // Default, can be updated later
+                                                        experience: '',
+                                                        stage: 'New',
+                                                        receivedDate: new Date().toISOString(),
+                                                        notes: `Employee Referral from ${referrerName} (${referrerEmail}). Relationship: ${relationship}. ${notes || ''}`
+                                                    };
+                                                    await uploadResume(resumePortalData, resume);
+                                                } catch (resumeError) {
+                                                    console.error('Resume upload to portal failed:', resumeError);
+                                                    // Don't fail the whole referral if resume portal upload fails
+                                                }
+                                            }
+                                            
                                             alert('✅ Referral submitted successfully! HR will review the candidate and you will receive updates via email.');
                                             e.target.reset();
                                             setShowReferralForm(false);
@@ -11787,7 +11829,7 @@ Please review and approve this request.
                                 department: formData.get('department'),
                                 experience: formData.get('experience'),
                                 stage: 'New',
-                                receivedDate: new Date().toISOString(),
+                                receivedDate: formData.get('receivedDate') ? new Date(formData.get('receivedDate')).toISOString() : new Date().toISOString(),
                                 notes: formData.get('notes') || ''
                             };
                             
@@ -11958,6 +12000,35 @@ Please review and approve this request.
                                             resize: 'vertical'
                                         }}
                                     />
+                                </div>
+
+                                {/* Received Date */}
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <label style={{
+                                        display: 'block',
+                                        marginBottom: '0.5rem',
+                                        color: '#374151',
+                                        fontWeight: '600',
+                                        fontSize: '0.9rem'
+                                    }}>
+                                        Received Date
+                                    </label>
+                                    <input
+                                        name="receivedDate"
+                                        type="date"
+                                        defaultValue={new Date().toISOString().split('T')[0]}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '1rem',
+                                            outline: 'none'
+                                        }}
+                                    />
+                                    <p style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.5rem' }}>
+                                        Defaults to today's date
+                                    </p>
                                 </div>
 
                                 {/* Notes */}
