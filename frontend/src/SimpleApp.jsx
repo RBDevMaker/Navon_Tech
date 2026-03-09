@@ -8219,6 +8219,64 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     Browse Resources
                                 </button>
                             </div>
+                            
+                            {/* Resumes & Applications - HR/Admin/SuperAdmin Only */}
+                            {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
+                                <div className="hover-lift animate-scale-in" style={{
+                                    background: 'white',
+                                    padding: '2rem',
+                                    borderRadius: '12px',
+                                    border: '2px solid #d4af37',
+                                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                    animationDelay: '0.3s',
+                                    display: 'flex',
+                                    flexDirection: 'column'
+                                }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                        <div style={{
+                                            fontSize: '2.5rem',
+                                            marginRight: '1rem'
+                                        }}>
+                                            📄
+                                        </div>
+                                        <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                            Resumes
+                                        </h3>
+                                    </div>
+                                    <div style={{ marginBottom: '1rem', flex: 1 }}>
+                                        <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                            • Candidate resumes
+                                        </p>
+                                        <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                            • Job applications
+                                        </p>
+                                        <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                            • Interview materials
+                                        </p>
+                                        <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                            • Archived applications
+                                        </p>
+                                    </div>
+                                    <button 
+                                        onClick={() => {
+                                            setCurrentPage('resumes');
+                                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                                        }}
+                                        style={{
+                                            background: '#1e3a8a',
+                                            color: 'white',
+                                            border: 'none',
+                                            padding: '0.75rem 1.5rem',
+                                            borderRadius: '6px',
+                                            cursor: 'pointer',
+                                            fontWeight: '600',
+                                            width: '100%',
+                                            marginTop: 'auto'
+                                        }}>
+                                        View Resumes
+                                    </button>
+                                </div>
+                            )}
                         </div>
 
                         {/* Upload Section */}
@@ -8364,6 +8422,464 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 Current Role: <strong>{userRole.toUpperCase()}</strong> | 
                                 Upload Access: <strong>{canUpload(userRole, 'document') ? '✅ Granted' : '❌ Denied'}</strong>
                             </p>
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {/* RESUMES & APPLICATIONS PAGE */}
+            {currentPage === 'resumes' && (
+                <section style={{ 
+                    padding: '4rem 2rem', 
+                    background: '#f1f5f9',
+                    minHeight: '100vh'
+                }}>
+                    <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                            <h2 style={{
+                                fontSize: '3rem',
+                                marginBottom: '1rem',
+                                color: '#1e3a8a',
+                                fontWeight: '800'
+                            }}>
+                                📄 Resumes & Applications
+                            </h2>
+                            <p style={{
+                                fontSize: '1.2rem',
+                                color: '#475569',
+                                maxWidth: '800px',
+                                margin: '0 auto 2rem auto'
+                            }}>
+                                Review candidate resumes, applications, and interview materials
+                            </p>
+                            <button 
+                                onClick={() => {
+                                    setCurrentPage('documentmanagement');
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                style={{
+                                    background: '#d4af37',
+                                    color: '#0f172a',
+                                    border: 'none',
+                                    padding: '1rem 2rem',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: '700',
+                                    fontSize: '1rem'
+                                }}>
+                                ← Back to Document Management
+                            </button>
+                        </div>
+
+                        {/* Resumes Content */}
+                        <div style={{
+                            background: 'white',
+                            padding: '3rem',
+                            borderRadius: '12px',
+                            border: '2px solid #d4af37',
+                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                            marginBottom: '2rem'
+                        }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
+                                <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem' }}>
+                                    Resumes ({filteredResumes.length + 1})
+                                </h3>
+                                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                                    {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
+                                        <>
+                                            <button
+                                                onClick={() => setShowUploadModal(true)}
+                                                style={{
+                                                    background: '#10b981',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    padding: '0.5rem 1.5rem',
+                                                    borderRadius: '6px',
+                                                    cursor: 'pointer',
+                                                    fontSize: '0.9rem',
+                                                    fontWeight: '600'
+                                                }}>
+                                                📤 Upload Resume
+                                            </button>
+                                            <button
+                                                onClick={exportToExcel}
+                                                style={{
+                                                    background: '#059669',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    padding: '0.5rem 1.5rem',
+                                                    borderRadius: '6px',
+                                                    cursor: 'pointer',
+                                                    fontSize: '0.9rem',
+                                                    fontWeight: '600'
+                                                }}>
+                                                📊 Export to Excel
+                                            </button>
+                                        </>
+                                    )}
+                                    <select
+                                        value={resumeFilter.department}
+                                        onChange={(e) => {
+                                            const newFilter = { ...resumeFilter, department: e.target.value };
+                                            setResumeFilter(newFilter);
+                                            fetchResumes(newFilter.department, newFilter.stage, newFilter.sort);
+                                        }}
+                                        style={{
+                                            padding: '0.5rem 1rem',
+                                            borderRadius: '6px',
+                                            border: '2px solid #d4af37',
+                                            fontSize: '0.9rem',
+                                            cursor: 'pointer'
+                                        }}>
+                                        <option value="all">All Departments</option>
+                                        <option value="Engineering">Engineering</option>
+                                        <option value="Sales">Sales</option>
+                                        <option value="Marketing">Marketing</option>
+                                        <option value="HR">HR</option>
+                                    </select>
+                                    <select
+                                        value={resumeFilter.stage}
+                                        onChange={(e) => {
+                                            const newFilter = { ...resumeFilter, stage: e.target.value };
+                                            setResumeFilter(newFilter);
+                                            fetchResumes(newFilter.department, newFilter.stage, newFilter.sort);
+                                        }}
+                                        style={{
+                                            padding: '0.5rem 1rem',
+                                            borderRadius: '6px',
+                                            border: '2px solid #d4af37',
+                                            fontSize: '0.9rem',
+                                            cursor: 'pointer'
+                                        }}>
+                                        <option value="all">All Stages</option>
+                                        <option value="New">New</option>
+                                        <option value="Screening">Screening</option>
+                                        <option value="Interview">Interview</option>
+                                        <option value="Offer">Offer</option>
+                                        <option value="Rejected">Rejected / Archived</option>
+                                    </select>
+                                    <select
+                                        value={resumeFilter.sort}
+                                        onChange={(e) => {
+                                            const newFilter = { ...resumeFilter, sort: e.target.value };
+                                            setResumeFilter(newFilter);
+                                            fetchResumes(newFilter.department, newFilter.stage, newFilter.sort);
+                                        }}
+                                        style={{
+                                            padding: '0.5rem 1rem',
+                                            borderRadius: '6px',
+                                            border: '2px solid #d4af37',
+                                            fontSize: '0.9rem',
+                                            cursor: 'pointer'
+                                        }}>
+                                        <option value="newest">Newest First</option>
+                                        <option value="oldest">Oldest First</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            {isLoadingResumes && (
+                                <div style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                                    Loading resumes...
+                                </div>
+                            )}
+
+                            {/* Sample Resume Card - Always visible */}
+                            {!isLoadingResumes && (
+                                <div style={{
+                                    background: '#f8fafc',
+                                    padding: '1.5rem',
+                                    borderRadius: '8px',
+                                    border: '2px solid #e2e8f0',
+                                    marginBottom: '1rem'
+                                }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', flexWrap: 'wrap', gap: '1rem' }}>
+                                        <div style={{ flex: 1, minWidth: '250px' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
+                                                <h4 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.2rem' }}>
+                                                    Sarah Johnson
+                                                </h4>
+                                                <span style={{
+                                                    background: '#dbeafe',
+                                                    color: '#1e40af',
+                                                    padding: '0.25rem 0.75rem',
+                                                    borderRadius: '12px',
+                                                    fontSize: '0.75rem',
+                                                    fontWeight: '600'
+                                                }}>
+                                                    New
+                                                </span>
+                                            </div>
+                                            <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
+                                                <strong>Position:</strong> Senior Software Engineer
+                                            </p>
+                                            <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
+                                                <strong>Department:</strong> Engineering
+                                            </p>
+                                            <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
+                                                <strong>Email:</strong> sarah.johnson@email.com
+                                            </p>
+                                            <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
+                                                <strong>Phone:</strong> (555) 234-5678
+                                            </p>
+                                            <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
+                                                <strong>Received:</strong> March 9, 2026
+                                            </p>
+                                            <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.9rem', fontStyle: 'italic' }}>
+                                                10+ years experience in full-stack development, AWS certified, React/Node.js expert
+                                            </p>
+                                        </div>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', minWidth: '150px' }}>
+                                            <button 
+                                                onClick={() => alert('📄 Sample Resume\n\nThis is a demo resume. Once you deploy the backend, real resumes will be stored in S3 and accessible here.')}
+                                                style={{
+                                                    background: '#1e3a8a',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    padding: '0.5rem 1rem',
+                                                    borderRadius: '6px',
+                                                    cursor: 'pointer',
+                                                    fontSize: '0.85rem',
+                                                    fontWeight: '600'
+                                                }}>
+                                                📄 View Resume
+                                            </button>
+                                            {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
+                                                <>
+                                                    <select
+                                                        value="New"
+                                                        onChange={(e) => alert(`Stage changed to: ${e.target.value}\n\nThis is a demo resume. Deploy the backend to enable full functionality.`)}
+                                                        style={{
+                                                            padding: '0.5rem',
+                                                            borderRadius: '6px',
+                                                            border: '2px solid #d4af37',
+                                                            fontSize: '0.85rem',
+                                                            cursor: 'pointer'
+                                                        }}>
+                                                        <option value="New">New</option>
+                                                        <option value="Screening">Screening</option>
+                                                        <option value="Interview">Interview</option>
+                                                        <option value="Offer">Offer</option>
+                                                        <option value="Rejected">Rejected / Archived</option>
+                                                    </select>
+                                                    <button
+                                                        onClick={() => alert('🗑️ Delete Resume\n\nThis is a demo resume and cannot be deleted. Deploy the backend to enable full functionality.')}
+                                                        style={{
+                                                            background: '#ef4444',
+                                                            color: 'white',
+                                                            border: 'none',
+                                                            padding: '0.5rem 1rem',
+                                                            borderRadius: '6px',
+                                                            cursor: 'pointer',
+                                                            fontSize: '0.85rem',
+                                                            fontWeight: '600'
+                                                        }}>
+                                                        🗑️ Delete
+                                                    </button>
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Resume Cards */}
+                            {!isLoadingResumes && filteredResumes.map((resume, index) => (
+                                <div key={resume.resumeId || index} style={{
+                                    background: '#f8fafc',
+                                    padding: '1.5rem',
+                                    borderRadius: '8px',
+                                    border: '2px solid #e2e8f0',
+                                    marginBottom: '1rem'
+                                }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', flexWrap: 'wrap', gap: '1rem' }}>
+                                        <div style={{ flex: 1, minWidth: '250px' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
+                                                <h4 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.2rem' }}>
+                                                    {resume.candidateName || 'Unknown Candidate'}
+                                                </h4>
+                                                <span style={{
+                                                    background: resume.stage === 'New' ? '#dbeafe' : 
+                                                               resume.stage === 'Screening' ? '#fef3c7' :
+                                                               resume.stage === 'Interview' ? '#ddd6fe' :
+                                                               resume.stage === 'Offer' ? '#dcfce7' : '#fee2e2',
+                                                    color: resume.stage === 'New' ? '#1e40af' :
+                                                          resume.stage === 'Screening' ? '#92400e' :
+                                                          resume.stage === 'Interview' ? '#5b21b6' :
+                                                          resume.stage === 'Offer' ? '#166534' : '#991b1b',
+                                                    padding: '0.25rem 0.75rem',
+                                                    borderRadius: '12px',
+                                                    fontSize: '0.75rem',
+                                                    fontWeight: '600'
+                                                }}>
+                                                    {resume.stage || 'New'}
+                                                </span>
+                                            </div>
+                                            <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
+                                                <strong>Position:</strong> {resume.position || 'Not specified'}
+                                            </p>
+                                            <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
+                                                <strong>Department:</strong> {resume.department || 'Not specified'}
+                                            </p>
+                                            <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
+                                                <strong>Email:</strong> {resume.email || 'Not provided'}
+                                            </p>
+                                            {resume.phone && (
+                                                <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
+                                                    <strong>Phone:</strong> {resume.phone}
+                                                </p>
+                                            )}
+                                            <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
+                                                <strong>Received:</strong> {resume.receivedDate ? new Date(resume.receivedDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Unknown'}
+                                            </p>
+                                            {resume.experience && (
+                                                <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.9rem', fontStyle: 'italic' }}>
+                                                    {resume.experience}
+                                                </p>
+                                            )}
+                                        </div>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', minWidth: '150px' }}>
+                                            <button 
+                                                onClick={() => viewResume(resume.s3Key, resume.candidateName)}
+                                                style={{
+                                                    background: '#1e3a8a',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    padding: '0.5rem 1rem',
+                                                    borderRadius: '6px',
+                                                    cursor: 'pointer',
+                                                    fontSize: '0.85rem',
+                                                    fontWeight: '600'
+                                                }}>
+                                                📄 View Resume
+                                            </button>
+                                            {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
+                                                <>
+                                                    <select
+                                                        value={resume.stage || 'New'}
+                                                        onChange={(e) => updateResumeStage(resume.resumeId, e.target.value)}
+                                                        style={{
+                                                            padding: '0.5rem',
+                                                            borderRadius: '6px',
+                                                            border: '2px solid #d4af37',
+                                                            fontSize: '0.85rem',
+                                                            cursor: 'pointer'
+                                                        }}>
+                                                        <option value="New">New</option>
+                                                        <option value="Screening">Screening</option>
+                                                        <option value="Interview">Interview</option>
+                                                        <option value="Offer">Offer</option>
+                                                        <option value="Rejected">Rejected / Archived</option>
+                                                    </select>
+                                                    <button
+                                                        onClick={() => deleteResume(resume.resumeId, resume.candidateName)}
+                                                        style={{
+                                                            background: '#ef4444',
+                                                            color: 'white',
+                                                            border: 'none',
+                                                            padding: '0.5rem 1rem',
+                                                            borderRadius: '6px',
+                                                            cursor: 'pointer',
+                                                            fontSize: '0.85rem',
+                                                            fontWeight: '600'
+                                                        }}>
+                                                        🗑️ Delete
+                                                    </button>
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Resume Statistics - Bottom of Page */}
+                        <div style={{
+                            background: 'white',
+                            padding: '2rem',
+                            borderRadius: '12px',
+                            border: '2px solid #d4af37',
+                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                        }}>
+                            <h3 style={{ color: '#1e3a8a', marginBottom: '1.5rem', fontSize: '1.3rem', textAlign: 'center' }}>
+                                📊 Resume Statistics
+                            </h3>
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+                                gap: '1rem'
+                            }}>
+                                <div style={{
+                                    background: 'white',
+                                    padding: '1.5rem',
+                                    borderRadius: '8px',
+                                    border: '2px solid #e2e8f0',
+                                    textAlign: 'center'
+                                }}>
+                                    <div style={{ fontSize: '2rem', fontWeight: '700', color: '#1e3a8a' }}>
+                                        {filteredResumes.filter(r => r.stage === 'New').length + 1}
+                                    </div>
+                                    <div style={{ fontSize: '0.9rem', color: '#64748b', marginTop: '0.5rem', fontWeight: '600' }}>
+                                        New
+                                    </div>
+                                </div>
+                                <div style={{
+                                    background: 'white',
+                                    padding: '1.5rem',
+                                    borderRadius: '8px',
+                                    border: '2px solid #e2e8f0',
+                                    textAlign: 'center'
+                                }}>
+                                    <div style={{ fontSize: '2rem', fontWeight: '700', color: '#1e3a8a' }}>
+                                        {filteredResumes.filter(r => r.stage === 'Screening').length}
+                                    </div>
+                                    <div style={{ fontSize: '0.9rem', color: '#64748b', marginTop: '0.5rem', fontWeight: '600' }}>
+                                        Screening
+                                    </div>
+                                </div>
+                                <div style={{
+                                    background: 'white',
+                                    padding: '1.5rem',
+                                    borderRadius: '8px',
+                                    border: '2px solid #e2e8f0',
+                                    textAlign: 'center'
+                                }}>
+                                    <div style={{ fontSize: '2rem', fontWeight: '700', color: '#1e3a8a' }}>
+                                        {filteredResumes.filter(r => r.stage === 'Interview').length}
+                                    </div>
+                                    <div style={{ fontSize: '0.9rem', color: '#64748b', marginTop: '0.5rem', fontWeight: '600' }}>
+                                        Interview
+                                    </div>
+                                </div>
+                                <div style={{
+                                    background: 'white',
+                                    padding: '1.5rem',
+                                    borderRadius: '8px',
+                                    border: '2px solid #e2e8f0',
+                                    textAlign: 'center'
+                                }}>
+                                    <div style={{ fontSize: '2rem', fontWeight: '700', color: '#10b981' }}>
+                                        {filteredResumes.filter(r => r.stage === 'Offer').length}
+                                    </div>
+                                    <div style={{ fontSize: '0.9rem', color: '#64748b', marginTop: '0.5rem', fontWeight: '600' }}>
+                                        Offer
+                                    </div>
+                                </div>
+                                <div style={{
+                                    background: 'white',
+                                    padding: '1.5rem',
+                                    borderRadius: '8px',
+                                    border: '2px solid #e2e8f0',
+                                    textAlign: 'center'
+                                }}>
+                                    <div style={{ fontSize: '2rem', fontWeight: '700', color: '#ef4444' }}>
+                                        {filteredResumes.filter(r => r.stage === 'Rejected').length}
+                                    </div>
+                                    <div style={{ fontSize: '0.9rem', color: '#64748b', marginTop: '0.5rem', fontWeight: '600' }}>
+                                        Archived
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -11208,6 +11724,335 @@ Please review and approve this request.
                                         e.target.style.transform = 'translateY(0)';
                                     }}>
                                     Submit Request
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+            
+            {/* Upload Resume Modal */}
+            {showUploadModal && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(0,0,0,0.5)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 1000,
+                    padding: '1rem'
+                }}>
+                    <div style={{
+                        background: 'white',
+                        borderRadius: '12px',
+                        maxWidth: '600px',
+                        width: '100%',
+                        maxHeight: '90vh',
+                        overflow: 'auto',
+                        boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)'
+                    }}>
+                        <div style={{
+                            padding: '2rem',
+                            borderBottom: '2px solid #e2e8f0'
+                        }}>
+                            <h3 style={{
+                                margin: 0,
+                                color: '#1e3a8a',
+                                fontSize: '1.5rem',
+                                fontWeight: '700'
+                            }}>
+                                📤 Upload Resume
+                            </h3>
+                        </div>
+                        
+                        <form onSubmit={async (e) => {
+                            e.preventDefault();
+                            const formData = new FormData(e.target);
+                            const file = formData.get('resumeFile');
+                            
+                            if (!file || file.size === 0) {
+                                alert('Please select a resume file');
+                                return;
+                            }
+                            
+                            const resumeData = {
+                                candidateName: formData.get('candidateName'),
+                                email: formData.get('email'),
+                                phone: formData.get('phone'),
+                                position: formData.get('position'),
+                                department: formData.get('department'),
+                                experience: formData.get('experience'),
+                                stage: 'New',
+                                receivedDate: new Date().toISOString(),
+                                notes: formData.get('notes') || ''
+                            };
+                            
+                            await uploadResume(resumeData, file);
+                        }}>
+                            <div style={{ padding: '2rem' }}>
+                                {/* Candidate Name */}
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <label style={{
+                                        display: 'block',
+                                        marginBottom: '0.5rem',
+                                        color: '#374151',
+                                        fontWeight: '600',
+                                        fontSize: '0.9rem'
+                                    }}>
+                                        Candidate Name *
+                                    </label>
+                                    <input
+                                        name="candidateName"
+                                        type="text"
+                                        required
+                                        placeholder="John Smith"
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '1rem',
+                                            outline: 'none'
+                                        }}
+                                    />
+                                </div>
+
+                                {/* Email */}
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <label style={{
+                                        display: 'block',
+                                        marginBottom: '0.5rem',
+                                        color: '#374151',
+                                        fontWeight: '600',
+                                        fontSize: '0.9rem'
+                                    }}>
+                                        Email *
+                                    </label>
+                                    <input
+                                        name="email"
+                                        type="email"
+                                        required
+                                        placeholder="john.smith@email.com"
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '1rem',
+                                            outline: 'none'
+                                        }}
+                                    />
+                                </div>
+
+                                {/* Phone */}
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <label style={{
+                                        display: 'block',
+                                        marginBottom: '0.5rem',
+                                        color: '#374151',
+                                        fontWeight: '600',
+                                        fontSize: '0.9rem'
+                                    }}>
+                                        Phone
+                                    </label>
+                                    <input
+                                        name="phone"
+                                        type="tel"
+                                        placeholder="(555) 123-4567"
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '1rem',
+                                            outline: 'none'
+                                        }}
+                                    />
+                                </div>
+
+                                {/* Position */}
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <label style={{
+                                        display: 'block',
+                                        marginBottom: '0.5rem',
+                                        color: '#374151',
+                                        fontWeight: '600',
+                                        fontSize: '0.9rem'
+                                    }}>
+                                        Position *
+                                    </label>
+                                    <input
+                                        name="position"
+                                        type="text"
+                                        required
+                                        placeholder="Senior Software Engineer"
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '1rem',
+                                            outline: 'none'
+                                        }}
+                                    />
+                                </div>
+
+                                {/* Department */}
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <label style={{
+                                        display: 'block',
+                                        marginBottom: '0.5rem',
+                                        color: '#374151',
+                                        fontWeight: '600',
+                                        fontSize: '0.9rem'
+                                    }}>
+                                        Department *
+                                    </label>
+                                    <select
+                                        name="department"
+                                        required
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '1rem',
+                                            outline: 'none',
+                                            cursor: 'pointer'
+                                        }}>
+                                        <option value="">Select Department</option>
+                                        <option value="Engineering">Engineering</option>
+                                        <option value="Sales">Sales</option>
+                                        <option value="Marketing">Marketing</option>
+                                        <option value="HR">HR</option>
+                                        <option value="Operations">Operations</option>
+                                    </select>
+                                </div>
+
+                                {/* Experience */}
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <label style={{
+                                        display: 'block',
+                                        marginBottom: '0.5rem',
+                                        color: '#374151',
+                                        fontWeight: '600',
+                                        fontSize: '0.9rem'
+                                    }}>
+                                        Experience Summary
+                                    </label>
+                                    <textarea
+                                        name="experience"
+                                        rows="3"
+                                        placeholder="Brief summary of candidate's experience..."
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '1rem',
+                                            outline: 'none',
+                                            resize: 'vertical'
+                                        }}
+                                    />
+                                </div>
+
+                                {/* Notes */}
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <label style={{
+                                        display: 'block',
+                                        marginBottom: '0.5rem',
+                                        color: '#374151',
+                                        fontWeight: '600',
+                                        fontSize: '0.9rem'
+                                    }}>
+                                        Notes
+                                    </label>
+                                    <textarea
+                                        name="notes"
+                                        rows="2"
+                                        placeholder="Additional notes..."
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '1rem',
+                                            outline: 'none',
+                                            resize: 'vertical'
+                                        }}
+                                    />
+                                </div>
+
+                                {/* Resume File */}
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <label style={{
+                                        display: 'block',
+                                        marginBottom: '0.5rem',
+                                        color: '#374151',
+                                        fontWeight: '600',
+                                        fontSize: '0.9rem'
+                                    }}>
+                                        Resume File *
+                                    </label>
+                                    <input
+                                        name="resumeFile"
+                                        type="file"
+                                        accept=".pdf,.doc,.docx"
+                                        required
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '1rem',
+                                            outline: 'none'
+                                        }}
+                                    />
+                                    <p style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.5rem' }}>
+                                        Accepted formats: PDF, DOC, DOCX
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div style={{
+                                padding: '1.5rem 2rem',
+                                borderTop: '2px solid #e2e8f0',
+                                display: 'flex',
+                                gap: '1rem',
+                                justifyContent: 'flex-end'
+                            }}>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowUploadModal(false)}
+                                    style={{
+                                        background: '#e5e7eb',
+                                        color: '#374151',
+                                        border: 'none',
+                                        padding: '0.75rem 1.5rem',
+                                        borderRadius: '8px',
+                                        cursor: 'pointer',
+                                        fontWeight: '600',
+                                        fontSize: '1rem'
+                                    }}>
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    style={{
+                                        background: '#1e3a8a',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '0.75rem 1.5rem',
+                                        borderRadius: '8px',
+                                        cursor: 'pointer',
+                                        fontWeight: '600',
+                                        fontSize: '1rem'
+                                    }}>
+                                    Upload Resume
                                 </button>
                             </div>
                         </form>
