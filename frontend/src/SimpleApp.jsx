@@ -13,7 +13,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [currentPage, setCurrentPage] = useState('home');
     const [scrollY, setScrollY] = useState(0);
     const [showSecureModal, setShowSecureModal] = useState(false);
-    const [isHRView, setIsHRView] = useState(false);
     const [showTimeOffModal, setShowTimeOffModal] = useState(false);
     const [userRole, setUserRole] = useState(authenticatedUserRole || 'employee'); // Use authenticated role
     const [selectedJob, setSelectedJob] = useState(''); // For prefilling job application
@@ -7148,7 +7147,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 border: '2px solid #0ea5e9',
                                 borderRadius: '8px',
                                 padding: '1rem',
-                                margin: '0 auto 1rem auto',
+                                margin: '0 auto 2rem auto',
                                 maxWidth: '600px'
                             }}>
                                 <p style={{
@@ -7156,86 +7155,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     fontSize: '0.9rem',
                                     color: '#0369a1'
                                 }}>
-                                    ℹ️ <strong>{isHRView ? 'HR View:' : 'Employee View:'}</strong> {isHRView ? 'Full directory access with all employee information.' : 'You can see Name, Title, and Email only. HR team members have access to full directory information.'}
+                                    ℹ️ <strong>Your Role: {userRole.toUpperCase()}</strong> - {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') ? 'You have full directory access with all employee information.' : 'You can see Name, Title, and Email only.'}
                                 </p>
-                            </div>
-                            
-                            {/* Development HR View Toggle */}
-                            <div style={{ marginBottom: '1rem' }}>
-                                <button 
-                                    onClick={() => setIsHRView(!isHRView)}
-                                    style={{
-                                        background: isHRView ? '#10b981' : '#f59e0b',
-                                        color: 'white',
-                                        border: 'none',
-                                        padding: '0.75rem 1.5rem',
-                                        borderRadius: '8px',
-                                        cursor: 'pointer',
-                                        fontWeight: '700',
-                                        fontSize: '0.9rem',
-                                        marginBottom: '0.5rem'
-                                    }}>
-                                    🚧 {isHRView ? 'Switch to Employee View' : 'Switch to HR View'} (Development)
-                                </button>
-                            </div>
-                            
-                            {/* Role Switcher */}
-                            <div style={{ 
-                                marginBottom: '1rem',
-                                background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-                                padding: '1rem',
-                                borderRadius: '12px',
-                                border: '2px solid #d4af37',
-                                maxWidth: '600px',
-                                margin: '0 auto 1rem auto'
-                            }}>
-                                <div style={{ marginBottom: '0.5rem', fontSize: '0.9rem', color: '#64748b', fontWeight: '600' }}>
-                                    👤 Current Role: <span style={{ color: '#1e3a8a', fontWeight: '700' }}>{userRole.toUpperCase()}</span>
-                                </div>
-                                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-                                    <button
-                                        onClick={() => switchRole('employee')}
-                                        style={{
-                                            background: userRole === 'employee' ? '#1e3a8a' : 'transparent',
-                                            color: userRole === 'employee' ? 'white' : '#1e3a8a',
-                                            border: '2px solid #1e3a8a',
-                                            padding: '0.5rem 1rem',
-                                            borderRadius: '6px',
-                                            cursor: 'pointer',
-                                            fontSize: '0.85rem',
-                                            fontWeight: '600'
-                                        }}>
-                                        👨‍💼 Employee
-                                    </button>
-                                    <button
-                                        onClick={() => switchRole('hr')}
-                                        style={{
-                                            background: userRole === 'hr' ? '#d4af37' : 'transparent',
-                                            color: userRole === 'hr' ? '#0f172a' : '#d4af37',
-                                            border: '2px solid #d4af37',
-                                            padding: '0.5rem 1rem',
-                                            borderRadius: '6px',
-                                            cursor: 'pointer',
-                                            fontSize: '0.85rem',
-                                            fontWeight: '600'
-                                        }}>
-                                        👩‍💼 HR Manager
-                                    </button>
-                                    <button
-                                        onClick={() => switchRole('admin')}
-                                        style={{
-                                            background: userRole === 'admin' ? '#ef4444' : 'transparent',
-                                            color: userRole === 'admin' ? 'white' : '#ef4444',
-                                            border: '2px solid #ef4444',
-                                            padding: '0.5rem 1rem',
-                                            borderRadius: '6px',
-                                            cursor: 'pointer',
-                                            fontSize: '0.85rem',
-                                            fontWeight: '600'
-                                        }}>
-                                        🔧 Admin
-                                    </button>
-                                </div>
                             </div>
                             
                             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -7329,7 +7250,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             padding: '1.5rem',
                                             borderRadius: '8px',
                                             border: '1px solid #e2e8f0',
-                                            marginBottom: isHRView ? '1rem' : '0'
+                                            marginBottom: (userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') ? '1rem' : '0'
                                         }}>
                                             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
                                                 <div style={{
@@ -7378,7 +7299,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                     <div style={{ color: '#64748b', fontSize: '0.9rem' }}>
                                                         {profileData.title || 'Your Title'}
                                                     </div>
-                                                    {isHRView && (
+                                                    {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
                                                         <div style={{ color: '#64748b', fontSize: '0.8rem' }}>
                                                             Employee ID: {profileData.email?.split('@')[0].toUpperCase() || 'N/A'}
                                                         </div>
@@ -7389,7 +7310,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                 <div style={{ marginBottom: '0.5rem' }}>
                                                     📧 {profileData.email || 'your.email@navontech.com'}
                                                 </div>
-                                                {isHRView && (
+                                                {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
                                                     <>
                                                         {profileData.phone && (
                                                             <div style={{ marginBottom: '0.5rem' }}>
@@ -7430,7 +7351,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                 )}
                                             </div>
                                         </div>
-                                        {isHRView && profileData.title && (
+                                        {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && profileData.title && (
                                             <div style={{
                                                 display: 'grid',
                                                 gridTemplateColumns: (userRole === 'hr' || userRole === 'admin') ? '1fr 1fr' : '1fr',
@@ -7533,7 +7454,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         padding: '1.5rem',
                                         borderRadius: '8px',
                                         border: '1px solid #e2e8f0',
-                                        marginBottom: isHRView ? '1rem' : '0'
+                                        marginBottom: (userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') ? '1rem' : '0'
                                     }}>
                                         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
                                             <div style={{
@@ -7554,14 +7475,14 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             <div>
                                                 <div style={{ fontWeight: '600', color: '#1e3a8a' }}>John Doe</div>
                                                 <div style={{ color: '#64748b', fontSize: '0.9rem' }}>Senior Cloud Engineer</div>
-                                                {isHRView && (
+                                                {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
                                                     <div style={{ color: '#64748b', fontSize: '0.8rem' }}>Employee ID: EMP-2024-001</div>
                                                 )}
                                             </div>
                                         </div>
                                         <div style={{ fontSize: '0.9rem', color: '#475569' }}>
                                             <div style={{ marginBottom: '0.5rem' }}>📧 john.doe@navontech.com</div>
-                                            {isHRView && (
+                                            {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
                                                 <>
                                                     <div style={{ marginBottom: '0.5rem' }}>📱 +1 (555) 123-4567</div>
                                                     <div style={{ marginBottom: '0.5rem' }}>🏢 Remote - DC Metro Area</div>
@@ -7573,7 +7494,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             )}
                                         </div>
                                     </div>
-                                    {isHRView && (
+                                    {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
                                         <div style={{
                                             display: 'grid',
                                             gridTemplateColumns: '1fr 1fr',
@@ -10189,6 +10110,16 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 setIsAuthenticating(true);
                                 
                                 try {
+                                    // First, check if there's already a signed-in user and sign them out
+                                    try {
+                                        await getCurrentUser();
+                                        // If we get here, there's a signed-in user, so sign them out first
+                                        await signOut();
+                                    } catch (err) {
+                                        // No user signed in, which is fine - continue with sign in
+                                    }
+                                    
+                                    // Now sign in with the provided credentials
                                     const result = await signIn({ username: loginEmail, password: loginPassword });
                                     
                                     // Check if password change is required
