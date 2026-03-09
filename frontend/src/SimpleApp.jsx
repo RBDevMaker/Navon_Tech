@@ -3558,14 +3558,14 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 {/* RESUMES PAGE */}
             {currentPage === 'resumes' && (
                 <section style={{ 
-                    padding: '4rem 2rem', 
+                    padding: 'clamp(2rem, 5vw, 4rem) clamp(1rem, 3vw, 2rem)', 
                     background: '#f1f5f9',
                     minHeight: '100vh'
                 }}>
                     <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
                         <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
                             <h2 style={{
-                                fontSize: '3rem',
+                                fontSize: 'clamp(2rem, 5vw, 3rem)',
                                 marginBottom: '1rem',
                                 color: '#1e3a8a',
                                 fontWeight: '800'
@@ -3573,10 +3573,11 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 📄 Resumes & Applications
                             </h2>
                             <p style={{
-                                fontSize: '1.2rem',
+                                fontSize: 'clamp(1rem, 3vw, 1.2rem)',
                                 color: '#475569',
                                 maxWidth: '800px',
-                                margin: '0 auto 2rem auto'
+                                margin: '0 auto 2rem auto',
+                                padding: '0 1rem'
                             }}>
                                 Review candidate resumes, applications, and interview materials
                             </p>
@@ -3593,7 +3594,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     borderRadius: '8px',
                                     cursor: 'pointer',
                                     fontWeight: '700',
-                                    fontSize: '1rem'
+                                    fontSize: 'clamp(0.9rem, 2.5vw, 1rem)'
                                 }}>
                                 ← Back to Document Management
                             </button>
@@ -3602,17 +3603,17 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                         {/* Resumes Content */}
                         <div style={{
                             background: 'white',
-                            padding: '3rem',
+                            padding: 'clamp(1rem, 3vw, 3rem)',
                             borderRadius: '12px',
                             border: '2px solid #d4af37',
                             boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
                             marginBottom: '2rem'
                         }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
-                                <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem' }}>
+                                <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: 'clamp(1.2rem, 3vw, 1.5rem)' }}>
                                     Recent Applications ({filteredResumes.length + 1})
                                 </h3>
-                                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', width: '100%', justifyContent: 'flex-start' }}>
                                     {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
                                         <>
                                             <button
@@ -3621,13 +3622,15 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                     background: '#10b981',
                                                     color: 'white',
                                                     border: 'none',
-                                                    padding: '0.5rem 1.5rem',
+                                                    padding: '0.5rem 1rem',
                                                     borderRadius: '6px',
                                                     cursor: 'pointer',
-                                                    fontSize: '0.9rem',
-                                                    fontWeight: '600'
+                                                    fontSize: 'clamp(0.8rem, 2vw, 0.9rem)',
+                                                    fontWeight: '600',
+                                                    flex: '1 1 auto',
+                                                    minWidth: '120px'
                                                 }}>
-                                                📤 Upload Resume
+                                                📤 Upload
                                             </button>
                                             <button
                                                 onClick={exportToExcel}
@@ -3635,13 +3638,15 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                     background: '#059669',
                                                     color: 'white',
                                                     border: 'none',
-                                                    padding: '0.5rem 1.5rem',
+                                                    padding: '0.5rem 1rem',
                                                     borderRadius: '6px',
                                                     cursor: 'pointer',
-                                                    fontSize: '0.9rem',
-                                                    fontWeight: '600'
+                                                    fontSize: 'clamp(0.8rem, 2vw, 0.9rem)',
+                                                    fontWeight: '600',
+                                                    flex: '1 1 auto',
+                                                    minWidth: '120px'
                                                 }}>
-                                                📊 Export to Excel
+                                                📊 Export
                                             </button>
                                         </>
                                     )}
@@ -7093,7 +7098,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         <div style={{
                                             display: 'flex',
                                             alignItems: 'center',
-                                            marginBottom: '1rem'
+                                            marginBottom: '1rem',
+                                            flexWrap: 'wrap',
+                                            gap: '0.5rem'
                                         }}>
                                             <h4 style={{
                                                 color: '#92400e',
@@ -7108,8 +7115,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                 padding: '0.25rem 0.75rem',
                                                 borderRadius: '12px',
                                                 fontSize: '0.75rem',
-                                                fontWeight: '700',
-                                                marginLeft: '1rem'
+                                                fontWeight: '700'
                                             }}>
                                                 RESTRICTED ACCESS
                                             </span>
