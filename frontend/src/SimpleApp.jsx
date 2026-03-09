@@ -6546,58 +6546,16 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             
                             {/* Role Switcher for Demo */}
                             <div style={{
-                                background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+                                background: userRole === 'superadmin' ? 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)' : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
                                 padding: '1rem',
                                 borderRadius: '12px',
                                 marginBottom: '1rem',
-                                border: '2px solid #d4af37'
+                                border: userRole === 'superadmin' ? '2px solid #d4af37' : '2px solid #cbd5e1'
                             }}>
-                                <div style={{ marginBottom: '0.5rem', fontSize: '0.9rem', color: '#64748b', fontWeight: '600' }}>
-                                    👤 Current Role: <span style={{ color: '#1e3a8a', fontWeight: '700' }}>{userRole.toUpperCase()}</span>
-                                </div>
-                                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-                                    <button
-                                        onClick={() => switchRole('employee')}
-                                        style={{
-                                            background: userRole === 'employee' ? '#1e3a8a' : 'transparent',
-                                            color: userRole === 'employee' ? 'white' : '#1e3a8a',
-                                            border: '2px solid #1e3a8a',
-                                            padding: '0.5rem 1rem',
-                                            borderRadius: '6px',
-                                            cursor: 'pointer',
-                                            fontSize: '0.85rem',
-                                            fontWeight: '600'
-                                        }}>
-                                        👨‍💼 Employee
-                                    </button>
-                                    <button
-                                        onClick={() => switchRole('hr')}
-                                        style={{
-                                            background: userRole === 'hr' ? '#d4af37' : 'transparent',
-                                            color: userRole === 'hr' ? '#0f172a' : '#d4af37',
-                                            border: '2px solid #d4af37',
-                                            padding: '0.5rem 1rem',
-                                            borderRadius: '6px',
-                                            cursor: 'pointer',
-                                            fontSize: '0.85rem',
-                                            fontWeight: '600'
-                                        }}>
-                                        👩‍💼 HR Manager
-                                    </button>
-                                    <button
-                                        onClick={() => switchRole('admin')}
-                                        style={{
-                                            background: userRole === 'admin' ? '#ef4444' : 'transparent',
-                                            color: userRole === 'admin' ? 'white' : '#ef4444',
-                                            border: '2px solid #ef4444',
-                                            padding: '0.5rem 1rem',
-                                            borderRadius: '6px',
-                                            cursor: 'pointer',
-                                            fontSize: '0.85rem',
-                                            fontWeight: '600'
-                                        }}>
-                                        🔧 Admin
-                                    </button>
+                                <div style={{ fontSize: '1rem', color: userRole === 'superadmin' ? '#92400e' : '#1e3a8a', fontWeight: '700', textAlign: 'center' }}>
+                                    {userRole === 'superadmin' && '⭐ '}
+                                    Current Role: {userRole.toUpperCase()}
+                                    {userRole === 'superadmin' && ' ⭐'}
                                 </div>
                             </div>
                             
@@ -6610,13 +6568,12 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 marginBottom: '1rem'
                             }}>
                                 <div style={{ fontSize: '1rem', fontWeight: '700', color: '#92400e', marginBottom: '0.5rem' }}>
-                                    🧪 Test Permission System:
+                                    � Document Management:
                                 </div>
                                 <div style={{ fontSize: '0.9rem', color: '#78350f', lineHeight: '1.5' }}>
-                                    <strong>1.</strong> Use the role switcher above to switch between Employee/HR/Admin<br/>
-                                    <strong>2.</strong> Switch to <strong>HR/Admin</strong> role and upload files to Employee Handbook<br/>
-                                    <strong>3.</strong> Switch to <strong>Employee</strong> role and try to delete files (click 🔒 button)<br/>
-                                    <strong>4.</strong> Click "� View Document" to see the document viewer
+                                    <strong>Upload:</strong> {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') ? '✅ You can upload documents' : '❌ Only HR/Admin/SuperAdmin can upload'}<br/>
+                                    <strong>Delete:</strong> {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') ? '✅ You can delete documents' : '❌ Only HR/Admin/SuperAdmin can delete'}<br/>
+                                    <strong>View:</strong> ✅ All users can view documents
                                 </div>
                             </div>
                             
