@@ -47,73 +47,17 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [teamMembers, setTeamMembers] = useState([
         {
             id: 'EMP-2024-001',
-            name: 'Sarah Johnson',
-            title: 'Chief Technology Officer',
-            email: 'sarah.johnson@navontech.com',
+            name: 'John Doe',
+            title: 'Senior Cloud Engineer',
+            email: 'john.doe@navontech.com',
             phone: '(555) 123-4567',
-            location: 'San Francisco, CA',
+            location: 'Remote - DC Metro Area',
             department: 'Engineering',
-            emergencyContact: '(555) 987-6543',
-            profilePicture: '',
-            salary: '$185,000',
-            startDate: '2020-03-15',
-            manager: 'CEO'
-        },
-        {
-            id: 'EMP-2024-002',
-            name: 'Michael Chen',
-            title: 'Senior Software Engineer',
-            email: 'michael.chen@navontech.com',
-            phone: '(555) 234-5678',
-            location: 'Seattle, WA',
-            department: 'Engineering',
-            emergencyContact: '(555) 876-5432',
-            profilePicture: '',
-            salary: '$145,000',
-            startDate: '2021-06-01',
-            manager: 'Sarah Johnson'
-        },
-        {
-            id: 'EMP-2024-003',
-            name: 'Emily Rodriguez',
-            title: 'HR Manager',
-            email: 'emily.rodriguez@navontech.com',
-            phone: '(555) 345-6789',
-            location: 'Austin, TX',
-            department: 'Human Resources',
-            emergencyContact: '(555) 765-4321',
+            emergencyContact: 'Jane Doe - (555) 987-6543',
             profilePicture: '',
             salary: '$95,000',
-            startDate: '2019-09-10',
-            manager: 'COO'
-        },
-        {
-            id: 'EMP-2024-004',
-            name: 'David Park',
-            title: 'Product Manager',
-            email: 'david.park@navontech.com',
-            phone: '(555) 456-7890',
-            location: 'New York, NY',
-            department: 'Product',
-            emergencyContact: '(555) 654-3210',
-            profilePicture: '',
-            salary: '$125,000',
-            startDate: '2022-01-20',
-            manager: 'CPO'
-        },
-        {
-            id: 'EMP-2024-005',
-            name: 'Jessica Williams',
-            title: 'UX Designer',
-            email: 'jessica.williams@navontech.com',
-            phone: '(555) 567-8901',
-            location: 'Los Angeles, CA',
-            department: 'Design',
-            emergencyContact: '(555) 543-2109',
-            profilePicture: '',
-            salary: '$105,000',
-            startDate: '2021-11-05',
-            manager: 'David Park'
+            startDate: '2024-01-15',
+            manager: 'Sarah Johnson'
         }
     ]);
     const [uploadedFiles, setUploadedFiles] = useState({
@@ -8777,94 +8721,57 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
-                            
-                            {/* John Doe Card - Conditional View Based on HR Access */}
-                            <div className="hover-lift animate-scale-in" style={{
-                                background: 'white',
-                                padding: '2rem',
-                                borderRadius: '12px',
-                                border: '2px solid #d4af37',
-                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-                            }}>
-                                <div style={{ marginBottom: '1.5rem' }}>
-                                    <div style={{
-                                        background: '#f8fafc',
-                                        padding: '1.5rem',
-                                        borderRadius: '8px',
-                                        border: '1px solid #e2e8f0',
-                                        marginBottom: isHRView ? '1rem' : '0'
-                                    }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
-                                            <div style={{
-                                                width: '60px',
-                                                height: '60px',
-                                                background: '#1e3a8a',
-                                                borderRadius: '50%',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
+                                    
+                                    {/* Delete Button for HR/Admin */}
+                                    {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
+                                        <button
+                                            onClick={async () => {
+                                                if (confirm(`⚠️ Delete ${member.name}'s profile?\n\nThis will:\n• Remove their profile from the Team Directory\n• Delete their profile picture from S3\n• Remove all their data from the database\n\nThis action cannot be undone. Continue?`)) {
+                                                    try {
+                                                        // Delete profile picture from S3 if exists
+                                                        if (member.profilePicture && !member.profilePicture.startsWith('blob:')) {
+                                                            await deleteFromS3(member.profilePicture);
+                                                        }
+                                                        
+                                                        // Delete from database
+                                                        const { deleteProfile } = await import('./services/profileService');
+                                                        await deleteProfile(member.id || member.email);
+                                                        
+                                                        // Remove from local state
+                                                        setTeamMembers(prev => prev.filter(m => m.id !== member.id && m.email !== member.email));
+                                                        
+                                                        alert(`✅ ${member.name}'s profile has been deleted successfully!`);
+                                                    } catch (error) {
+                                                        console.error('Delete error:', error);
+                                                        alert('❌ Failed to delete profile. Please try again.');
+                                                    }
+                                                }
+                                            }}
+                                            style={{
+                                                background: '#ef4444',
                                                 color: 'white',
-                                                fontWeight: 'bold',
-                                                fontSize: '1.5rem',
-                                                marginRight: '1rem'
+                                                border: 'none',
+                                                padding: '0.75rem 1.5rem',
+                                                borderRadius: '8px',
+                                                cursor: 'pointer',
+                                                fontWeight: '600',
+                                                width: '100%',
+                                                marginTop: '1rem',
+                                                transition: 'all 0.3s ease'
+                                            }}
+                                            onMouseOver={(e) => {
+                                                e.target.style.transform = 'translateY(-2px)';
+                                                e.target.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.4)';
+                                            }}
+                                            onMouseOut={(e) => {
+                                                e.target.style.transform = 'translateY(0)';
+                                                e.target.style.boxShadow = 'none';
                                             }}>
-                                                JD
-                                            </div>
-                                            <div>
-                                                <div style={{ fontWeight: '600', color: '#1e3a8a' }}>John Doe</div>
-                                                <div style={{ color: '#64748b', fontSize: '0.9rem' }}>Senior Cloud Engineer</div>
-                                                {isHRView && (
-                                                    <div style={{ color: '#64748b', fontSize: '0.8rem' }}>Employee ID: EMP-2024-001</div>
-                                                )}
-                                            </div>
-                                        </div>
-                                        <div style={{ fontSize: '0.9rem', color: '#475569' }}>
-                                            <div style={{ marginBottom: '0.5rem' }}>📧 john.doe@navontech.com</div>
-                                            {isHRView && (
-                                                <>
-                                                    <div style={{ marginBottom: '0.5rem' }}>📱 +1 (555) 123-4567</div>
-                                                    <div style={{ marginBottom: '0.5rem' }}>🏢 Remote - DC Metro Area</div>
-                                                    <div style={{ marginBottom: '0.5rem' }}>📅 Start Date: January 15, 2024</div>
-                                                    <div style={{ marginBottom: '0.5rem' }}>💰 Salary: $95,000</div>
-                                                    <div style={{ marginBottom: '0.5rem' }}>👤 Manager: Sarah Johnson</div>
-                                                    <div>🚨 Emergency Contact: Jane Doe - (555) 987-6543</div>
-                                                </>
-                                            )}
-                                        </div>
-                                    </div>
-                                    {isHRView && (
-                                        <div style={{
-                                            display: 'grid',
-                                            gridTemplateColumns: '1fr 1fr',
-                                            gap: '0.5rem',
-                                            fontSize: '0.85rem'
-                                        }}>
-                                            <div style={{
-                                                background: '#fef3c7',
-                                                color: '#92400e',
-                                                padding: '0.5rem',
-                                                borderRadius: '6px',
-                                                textAlign: 'center',
-                                                fontWeight: '600'
-                                            }}>
-                                                AWS Certified
-                                            </div>
-                                            <div style={{
-                                                background: '#dcfce7',
-                                                color: '#166534',
-                                                padding: '0.5rem',
-                                                borderRadius: '6px',
-                                                textAlign: 'center',
-                                                fontWeight: '600'
-                                            }}>
-                                                Security+ Cert
-                                            </div>
-                                        </div>
+                                            🗑️ Delete Profile
+                                        </button>
                                     )}
                                 </div>
-                            </div>
+                            ))}
                         </div>
                     </div>
                 </section>
