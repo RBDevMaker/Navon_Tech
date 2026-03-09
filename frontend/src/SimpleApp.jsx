@@ -8448,8 +8448,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 </section>
             )}
 
-            {/* RESUMES & APPLICATIONS PAGE */}
-            {currentPage === 'resumes' && (
+            {/* RESUMES & APPLICATIONS PAGE - HR/Admin/SuperAdmin Only */}
+            {currentPage === 'resumes' && (userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
                 <section style={{ 
                     padding: '4rem 2rem', 
                     background: '#f1f5f9',
@@ -8667,6 +8667,14 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             </button>
                                             {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
                                                 <>
+                                                    <label style={{
+                                                        fontSize: '0.8rem',
+                                                        fontWeight: '600',
+                                                        color: '#374151',
+                                                        marginBottom: '0.25rem'
+                                                    }}>
+                                                        Current Status:
+                                                    </label>
                                                     <select
                                                         value="New"
                                                         onChange={(e) => alert(`Stage changed to: ${e.target.value}\n\nThis is a demo resume. Deploy the backend to enable full functionality.`)}
@@ -8776,6 +8784,14 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             </button>
                                             {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
                                                 <>
+                                                    <label style={{
+                                                        fontSize: '0.8rem',
+                                                        fontWeight: '600',
+                                                        color: '#374151',
+                                                        marginBottom: '0.25rem'
+                                                    }}>
+                                                        Current Status:
+                                                    </label>
                                                     <select
                                                         value={resume.stage || 'New'}
                                                         onChange={(e) => updateResumeStage(resume.resumeId, e.target.value)}
