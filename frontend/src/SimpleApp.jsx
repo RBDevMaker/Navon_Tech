@@ -44,7 +44,78 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         manager: '',
         employeeId: ''
     });
-    const [teamMembers, setTeamMembers] = useState([]);
+    const [teamMembers, setTeamMembers] = useState([
+        {
+            id: 'EMP-2024-001',
+            name: 'Sarah Johnson',
+            title: 'Chief Technology Officer',
+            email: 'sarah.johnson@navontech.com',
+            phone: '(555) 123-4567',
+            location: 'San Francisco, CA',
+            department: 'Engineering',
+            emergencyContact: '(555) 987-6543',
+            profilePicture: '',
+            salary: '$185,000',
+            startDate: '2020-03-15',
+            manager: 'CEO'
+        },
+        {
+            id: 'EMP-2024-002',
+            name: 'Michael Chen',
+            title: 'Senior Software Engineer',
+            email: 'michael.chen@navontech.com',
+            phone: '(555) 234-5678',
+            location: 'Seattle, WA',
+            department: 'Engineering',
+            emergencyContact: '(555) 876-5432',
+            profilePicture: '',
+            salary: '$145,000',
+            startDate: '2021-06-01',
+            manager: 'Sarah Johnson'
+        },
+        {
+            id: 'EMP-2024-003',
+            name: 'Emily Rodriguez',
+            title: 'HR Manager',
+            email: 'emily.rodriguez@navontech.com',
+            phone: '(555) 345-6789',
+            location: 'Austin, TX',
+            department: 'Human Resources',
+            emergencyContact: '(555) 765-4321',
+            profilePicture: '',
+            salary: '$95,000',
+            startDate: '2019-09-10',
+            manager: 'COO'
+        },
+        {
+            id: 'EMP-2024-004',
+            name: 'David Park',
+            title: 'Product Manager',
+            email: 'david.park@navontech.com',
+            phone: '(555) 456-7890',
+            location: 'New York, NY',
+            department: 'Product',
+            emergencyContact: '(555) 654-3210',
+            profilePicture: '',
+            salary: '$125,000',
+            startDate: '2022-01-20',
+            manager: 'CPO'
+        },
+        {
+            id: 'EMP-2024-005',
+            name: 'Jessica Williams',
+            title: 'UX Designer',
+            email: 'jessica.williams@navontech.com',
+            phone: '(555) 567-8901',
+            location: 'Los Angeles, CA',
+            department: 'Design',
+            emergencyContact: '(555) 543-2109',
+            profilePicture: '',
+            salary: '$105,000',
+            startDate: '2021-11-05',
+            manager: 'David Park'
+        }
+    ]);
     const [uploadedFiles, setUploadedFiles] = useState({
         employeeHandbook: [],
         benefits: [],
@@ -831,42 +902,58 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     };
 
     // Export resumes to Excel
-    // Export Resumes to CSV
+    // Export Resumes to Excel
     const exportToExcel = () => {
-        // Create CSV content
-        const headers = ['Candidate Name', 'Email', 'Phone', 'Position', 'Department', 'Stage', 'Experience', 'Received Date', 'Notes'];
-        const csvRows = [headers.join(',')];
-        
-        // Add data rows
-        filteredResumes.forEach(resume => {
-            const row = [
-                `"${resume.candidateName || ''}"`,
-                `"${resume.email || ''}"`,
-                `"${resume.phone || ''}"`,
-                `"${resume.position || ''}"`,
-                `"${resume.department || ''}"`,
-                `"${resume.stage || ''}"`,
-                `"${resume.experience || ''}"`,
-                `"${resume.receivedDate ? new Date(resume.receivedDate).toLocaleDateString() : ''}"`,
-                `"${(resume.notes || '').replace(/"/g, '""')}"` // Escape quotes in notes
+        try {
+            // Prepare resume data for export
+            const exportData = filteredResumes.map(resume => ({
+                'Candidate Name': resume.candidateName || '',
+                'Email': resume.email || '',
+                'Phone': resume.phone || '',
+                'Position': resume.position || '',
+                'Department': resume.department || '',
+                'Stage': resume.stage || '',
+                'Experience': resume.experience || '',
+                'Received Date': resume.receivedDate ? new Date(resume.receivedDate).toLocaleDateString() : '',
+                'Notes': resume.notes || '',
+                'Resume URL': resume.resumeUrl || ''
+            }));
+
+            // Create worksheet
+            const worksheet = XLSX.utils.json_to_sheet(exportData);
+            
+            // Set column widths
+            const columnWidths = [
+                { wch: 20 }, // Candidate Name
+                { wch: 25 }, // Email
+                { wch: 15 }, // Phone
+                { wch: 20 }, // Position
+                { wch: 15 }, // Department
+                { wch: 15 }, // Stage
+                { wch: 15 }, // Experience
+                { wch: 15 }, // Received Date
+                { wch: 30 }, // Notes
+                { wch: 40 }  // Resume URL
             ];
-            csvRows.push(row.join(','));
-        });
-        
-        // Create blob and download
-        const csvContent = csvRows.join('\n');
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        
-        link.setAttribute('href', url);
-        link.setAttribute('download', `resumes_export_${new Date().toISOString().split('T')[0]}.csv`);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        alert(`✅ Exported ${filteredResumes.length} resume(s) to CSV format!`);
+            worksheet['!cols'] = columnWidths;
+
+            // Create workbook
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Resumes');
+
+            // Generate filename with timestamp
+            const timestamp = new Date().toISOString().split('T')[0];
+            const filename = `Resumes_Export_${timestamp}.xlsx`;
+
+            // Download file
+            XLSX.writeFile(workbook, filename);
+
+            alert(`✅ Exported ${filteredResumes.length} resume(s) to Excel format!`);
+            console.log(`✅ Exported ${filteredResumes.length} resumes to ${filename}`);
+        } catch (error) {
+            console.error('Error exporting resumes to Excel:', error);
+            alert('❌ Failed to export resumes to Excel. Please try again.');
+        }
     };
 
     return (
