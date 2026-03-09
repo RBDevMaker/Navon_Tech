@@ -11346,11 +11346,11 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         fontWeight: '600',
                                         fontSize: '0.85rem'
                                     }}>
-                                        Email
+                                        Username
                                     </label>
                                     <input
                                         type="email"
-                                        placeholder="your.email@navontech.com"
+                                        placeholder="your.username@navontech.com"
                                         value={loginEmail}
                                         onChange={(e) => setLoginEmail(e.target.value)}
                                         required
@@ -11864,7 +11864,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     window.scrollTo({ top: 0, behavior: 'smooth' });
                                 }}
                                 style={{
-                                    flex: 1,
+                                    width: '100%',
                                     background: 'white',
                                     color: '#1e3a8a',
                                     border: 'none',
@@ -11884,33 +11884,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     e.target.style.boxShadow = 'none';
                                 }}>
                                 🔑 Employee Login
-                            </button>
-                            <button 
-                                onClick={() => {
-                                    setShowSecureModal(false);
-                                    window.location.href = 'mailto:rachelle.briscoe@navontech.com?subject=I%20need%20Employee%20Portal%20Access%20Credentials%20and%20Permissions';
-                                }}
-                                style={{
-                                    flex: 1,
-                                    background: 'transparent',
-                                    color: 'white',
-                                    border: '2px solid white',
-                                    padding: '1rem 2rem',
-                                    borderRadius: '8px',
-                                    cursor: 'pointer',
-                                    fontWeight: '700',
-                                    fontSize: '1.1rem',
-                                    transition: 'all 0.3s ease'
-                                }}
-                                onMouseOver={(e) => {
-                                    e.target.style.background = 'rgba(255, 255, 255, 0.1)';
-                                    e.target.style.transform = 'translateY(-2px)';
-                                }}
-                                onMouseOut={(e) => {
-                                    e.target.style.background = 'transparent';
-                                    e.target.style.transform = 'translateY(0)';
-                                }}>
-                                📧 Request Access
                             </button>
                         </div>
 

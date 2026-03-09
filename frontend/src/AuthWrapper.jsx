@@ -486,7 +486,7 @@ export function AuthWrapper({ children }) {
                                     background: 'rgba(255, 255, 255, 0.9)',
                                     color: '#1e293b'
                                 }}
-                                placeholder="your.email@navontech.com"
+                                placeholder="your.username@navontech.com"
                             />
                         </div>
 
@@ -575,7 +575,7 @@ export function AuthWrapper({ children }) {
                         border: '1px solid rgba(255, 255, 255, 0.2)'
                     }}>
                         <strong>Demo Credentials:</strong><br />
-                        Email: rachelle.briscoe@navontech.com<br />
+                        Username: rachelle.briscoe@navontech.com<br />
                         Password: TempPass123!
                     </div>
                 </div>
