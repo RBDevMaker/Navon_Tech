@@ -1,13 +1,5 @@
 import { useState, useEffect } from 'react';
 import { uploadProfilePicture, uploadDocument, canUpload, deleteFromS3 } from './services/s3Upload';
-import { saveProfile, getProfile, getAllProfiles } from './services/profileService';
-import { Amplify } from 'aws-amplify';
-import { signIn, signOut, getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
-import awsConfig from './aws-config';
-import * as XLSX from 'xlsx';
-
-// Configure Amplify
-Amplify.configure(awsConfig);
 
 function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const s3BaseUrl = "https://navon-tech-images.s3.us-east-1.amazonaws.com";
@@ -19,14 +11,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [userRole, setUserRole] = useState(authenticatedUserRole || 'employee'); // Use authenticated role
     const [selectedJob, setSelectedJob] = useState(''); // For prefilling job application
     const [showReferralForm, setShowReferralForm] = useState(false); // For referral form modal
-    
-    // Resume management state
-    const [resumes, setResumes] = useState([]);
-    const [filteredResumes, setFilteredResumes] = useState([]);
-    const [resumeFilter, setResumeFilter] = useState({ department: 'all', stage: 'all', sort: 'newest' });
-    const [isLoadingResumes, setIsLoadingResumes] = useState(false);
-    const [showUploadModal, setShowUploadModal] = useState(false);
-    
     const [profileData, setProfileData] = useState({
         name: '',
         email: '',
@@ -37,40 +21,19 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         emergencyContact: '',
         emergencyPhone: '',
         profilePicture: '',
-        employeeGroup: '',
         // HR-managed fields
         salary: '',
         startDate: '',
         manager: '',
         employeeId: ''
     });
-    const [teamMembers, setTeamMembers] = useState([
-        {
-            id: 'EMP-2024-001',
-            name: 'John Doe',
-            title: 'Senior Cloud Engineer',
-            email: 'john.doe@navontech.com',
-            phone: '(555) 123-4567',
-            location: 'Remote - DC Metro Area',
-            department: 'Engineering',
-            emergencyContact: 'Jane Doe - (555) 987-6543',
-            profilePicture: '',
-            salary: '$95,000',
-            startDate: '2024-01-15',
-            manager: 'Sarah Johnson'
-        }
-    ]);
+    const [teamMembers, setTeamMembers] = useState([]);
     const [uploadedFiles, setUploadedFiles] = useState({
         employeeHandbook: [],
         benefits: [],
         forms: []
     });
     const [pendingProfilePicture, setPendingProfilePicture] = useState(null);
-    const [loginEmail, setLoginEmail] = useState('');
-    const [loginPassword, setLoginPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
-    const [loginError, setLoginError] = useState('');
-    const [isAuthenticating, setIsAuthenticating] = useState(false);
 
     // Handle hash changes for navigation
     useEffect(() => {
@@ -86,124 +49,12 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         return () => window.removeEventListener('hashchange', handleHashChange);
     }, []);
 
-    // Check for existing authenticated user on mount
-    useEffect(() => {
-        const checkAuth = async () => {
-            try {
-                const user = await getCurrentUser();
-                const session = await fetchAuthSession();
-                const groups = session.tokens?.accessToken?.payload['cognito:groups'] || [];
-                
-                console.log('=== EXISTING AUTH CHECK ===');
-                console.log('User:', user.username);
-                console.log('Groups:', groups);
-                
-                // Determine role
-                let role = 'employee';
-                if (groups.includes('SuperAdmin')) role = 'superadmin';
-                else if (groups.includes('Admin')) role = 'admin';
-                else if (groups.includes('HR')) role = 'hr';
-                
-                console.log('Setting role to:', role);
-                console.log('===========================');
-                
-                setUserRole(role);
-            } catch (err) {
-                // No user signed in
-                console.log('No authenticated user found');
-            }
-        };
-        
-        checkAuth();
-    }, []);
-
     // Update userRole when authenticated role changes
     useEffect(() => {
         if (authenticatedUserRole) {
             setUserRole(authenticatedUserRole);
         }
     }, [authenticatedUserRole]);
-
-    // Update isHRView based on userRole
-    useEffect(() => {
-        // HR, Admin, and SuperAdmin should have HR view access
-        setIsHRView(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin');
-    }, [userRole]);
-
-    // Fetch resumes when on resumes page
-    useEffect(() => {
-        if (currentPage === 'resumes' && (userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin')) {
-            fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
-        }
-    }, [currentPage, userRole]);
-
-    // Load profiles from database when viewing team directory
-    useEffect(() => {
-        const loadProfiles = async () => {
-            if (currentPage === 'teamdirectory' || currentPage === 'myprofile') {
-                try {
-                    console.log('Loading profiles from database...');
-                    const profiles = await getAllProfiles();
-                    console.log('Loaded profiles:', profiles);
-                    
-                    // Update team members with loaded profiles (keep sample data if no profiles loaded)
-                    if (profiles && profiles.length > 0) {
-                        const loadedProfiles = profiles.map(profile => ({
-                            id: profile.employeeId,
-                            name: profile.name || `${profile.firstName || ''} ${profile.lastName || ''}`.trim(),
-                            title: profile.title || '',
-                            email: profile.email || '',
-                            phone: profile.phone || '',
-                            location: profile.location || '',
-                            department: profile.department || '',
-                            emergencyContact: profile.emergencyContact || '',
-                            profilePicture: profile.profilePicture || '',
-                            salary: profile.salary || '',
-                            startDate: profile.startDate || '',
-                            manager: profile.manager || ''
-                        }));
-                        
-                        // Merge with existing sample data (avoid duplicates by email)
-                        setTeamMembers(prev => {
-                            const existingEmails = new Set(loadedProfiles.map(p => p.email));
-                            const sampleData = prev.filter(p => !existingEmails.has(p.email));
-                            return [...loadedProfiles, ...sampleData];
-                        });
-                    }
-                    // If no profiles loaded, keep the sample data (don't clear it)
-                    
-                    // Load current user's profile if on myprofile page
-                    if (currentPage === 'myprofile' && authenticatedUser) {
-                        const userProfile = await getProfile(authenticatedUser.username || authenticatedUser.email);
-                        if (userProfile) {
-                            console.log('Loaded user profile:', userProfile);
-                            setProfileData({
-                                name: userProfile.name || '',
-                                email: userProfile.email || '',
-                                phone: userProfile.phone || '',
-                                department: userProfile.department || '',
-                                title: userProfile.title || '',
-                                location: userProfile.location || '',
-                                emergencyContact: userProfile.emergencyContact || '',
-                                emergencyPhone: userProfile.emergencyPhone || '',
-                                profilePicture: userProfile.profilePicture || '',
-                                employeeGroup: userProfile.employeeGroup || '',
-                                salary: userProfile.salary || '',
-                                startDate: userProfile.startDate || '',
-                                manager: userProfile.manager || '',
-                                employeeId: userProfile.employeeId || ''
-                            });
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error loading profiles:', error);
-                    // Don't show error to user, just log it
-                }
-            }
-        };
-        
-        loadProfiles();
-    }, [currentPage, authenticatedUser]);
 
     // Handle scroll for parallax effects
     useEffect(() => {
@@ -213,13 +64,13 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     }, []);
 
     // Permission functions
-    const canDeleteHandbook = () => userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin';
-    const canUploadHandbook = () => userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin';
+    const canDeleteHandbook = () => userRole === 'hr' || userRole === 'admin';
+    const canUploadHandbook = () => userRole === 'hr' || userRole === 'admin';
     
     // Handle file upload
     const handleFileUpload = (category, files) => {
         if (!canUploadHandbook()) {
-            alert('❌ Access Denied: Only HR, Admin, and SuperAdmin users can upload files to the Employee Handbook.');
+            alert('❌ Access Denied: Only HR and Admin users can upload files to the Employee Handbook.');
             return;
         }
 
@@ -257,7 +108,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     // Handle file deletion
     const handleFileDelete = (category, fileId, fileName) => {
         if (!canDeleteHandbook()) {
-            alert(`❌ Access Denied: Only HR, Admin, and SuperAdmin users can delete files from the Employee Handbook.\n\nCurrent Role: ${userRole.toUpperCase()}\nRequired Role: HR, ADMIN, or SUPERADMIN`);
+            alert(`❌ Access Denied: Only HR and Admin users can delete files from the Employee Handbook.\n\nCurrent Role: ${userRole.toUpperCase()}\nRequired Role: HR or ADMIN`);
             return;
         }
 
@@ -267,63 +118,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 [category]: prev[category].filter(f => f.id !== fileId)
             }));
             alert(`✅ File "${fileName}" has been deleted successfully.`);
-        }
-    };
-
-    // Export Team Directory to Excel
-    const exportDirectoryToExcel = () => {
-        try {
-            // Prepare data based on user role
-            let exportData;
-            
-            if (userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') {
-                // HR/Admin view - export all fields
-                exportData = teamMembers.map(member => ({
-                    'Employee ID': member.id || '',
-                    'Name': member.name || '',
-                    'Title': member.title || '',
-                    'Department': member.department || '',
-                    'Email': member.email || '',
-                    'Phone': member.phone || '',
-                    'Location': member.location || '',
-                    'Emergency Contact': member.emergencyContact || '',
-                    'Manager': member.manager || '',
-                    'Start Date': member.startDate || '',
-                    'Salary': member.salary || ''
-                }));
-            } else {
-                // Employee view - export limited fields only
-                exportData = teamMembers.map(member => ({
-                    'Name': member.name || '',
-                    'Title': member.title || '',
-                    'Email': member.email || ''
-                }));
-            }
-
-            // Create worksheet
-            const worksheet = XLSX.utils.json_to_sheet(exportData);
-            
-            // Set column widths
-            const columnWidths = Object.keys(exportData[0] || {}).map(key => ({
-                wch: Math.max(key.length, 20)
-            }));
-            worksheet['!cols'] = columnWidths;
-
-            // Create workbook
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, 'Team Directory');
-
-            // Generate filename with timestamp
-            const timestamp = new Date().toISOString().split('T')[0];
-            const filename = `Team_Directory_${timestamp}.xlsx`;
-
-            // Download file
-            XLSX.writeFile(workbook, filename);
-
-            console.log(`✅ Exported ${exportData.length} employees to ${filename}`);
-        } catch (error) {
-            console.error('Error exporting to Excel:', error);
-            alert('❌ Failed to export to Excel. Please try again.');
         }
     };
 
@@ -690,158 +484,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         docWindow.document.close();
     };
 
-    // Resume Management Functions
-    const fetchResumes = async (department = 'all', stage = 'all', sort = 'newest') => {
-        setIsLoadingResumes(true);
-        try {
-            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
-            let url = `${apiUrl}/resumes?limit=50`;
-            
-            if (department !== 'all') {
-                url += `&department=${encodeURIComponent(department)}`;
-            }
-            if (stage !== 'all') {
-                url += `&stage=${encodeURIComponent(stage)}`;
-            }
-            
-            const response = await fetch(url);
-            if (!response.ok) throw new Error('Failed to fetch resumes');
-            
-            const data = await response.json();
-            let resumeList = data.resumes || [];
-            
-            // Sort resumes on frontend
-            if (sort === 'newest') {
-                resumeList.sort((a, b) => new Date(b.receivedDate) - new Date(a.receivedDate));
-            } else if (sort === 'oldest') {
-                resumeList.sort((a, b) => new Date(a.receivedDate) - new Date(b.receivedDate));
-            }
-            
-            setResumes(resumeList);
-            setFilteredResumes(resumeList);
-        } catch (error) {
-            console.error('Error fetching resumes:', error);
-            alert('Failed to load resumes. Please try again.');
-        } finally {
-            setIsLoadingResumes(false);
-        }
-    };
-
-    const uploadResume = async (resumeData, file) => {
-        try {
-            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
-            
-            // First upload file to S3
-            const fileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-            const s3Key = `Resumes/${fileName}`;
-            
-            // Convert file to base64
-            const base64File = await new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result.split(',')[1]);
-                reader.onerror = error => reject(error);
-            });
-            
-            // Upload to S3
-            const s3Response = await fetch(`${apiUrl}/upload-to-s3`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    action: 'upload',
-                    fileName: fileName,
-                    folder: 'Resumes',
-                    fileContent: base64File,
-                    contentType: file.type
-                })
-            });
-            
-            if (!s3Response.ok) throw new Error('Failed to upload file to S3');
-            
-            const s3Data = await s3Response.json();
-            
-            // Create metadata entry in DynamoDB
-            const metadataResponse = await fetch(`${apiUrl}/resume`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    ...resumeData,
-                    s3Key: s3Key
-                })
-            });
-            
-            if (!metadataResponse.ok) throw new Error('Failed to create resume metadata');
-            
-            const metadata = await metadataResponse.json();
-            alert('✅ Resume uploaded successfully!');
-            
-            // Refresh resume list
-            await fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
-            setShowUploadModal(false);
-            
-            return metadata;
-        } catch (error) {
-            console.error('Error uploading resume:', error);
-            alert('❌ Failed to upload resume. Please try again.');
-            throw error;
-        }
-    };
-
-    const updateResumeStage = async (resumeId, newStage) => {
-        try {
-            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
-            
-            const response = await fetch(`${apiUrl}/resume/${resumeId}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ stage: newStage })
-            });
-            
-            if (!response.ok) throw new Error('Failed to update resume');
-            
-            alert(`✅ Resume moved to ${newStage} stage`);
-            await fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
-        } catch (error) {
-            console.error('Error updating resume:', error);
-            alert('❌ Failed to update resume. Please try again.');
-        }
-    };
-
-    const deleteResume = async (resumeId, candidateName) => {
-        if (!confirm(`⚠️ Are you sure you want to delete this resume?\n\nCandidate: ${candidateName}\n\nThis action cannot be undone.`)) {
-            return;
-        }
-        
-        try {
-            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
-            
-            const response = await fetch(`${apiUrl}/resume/${resumeId}`, {
-                method: 'DELETE'
-            });
-            
-            if (!response.ok) throw new Error('Failed to delete resume');
-            
-            alert('✅ Resume deleted successfully');
-            await fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
-        } catch (error) {
-            console.error('Error deleting resume:', error);
-            alert('❌ Failed to delete resume. Please try again.');
-        }
-    };
-
-    const viewResume = (s3Key, candidateName) => {
-        if (!s3Key) {
-            alert('Resume file not available');
-            return;
-        }
-        
-        // Construct S3 URL
-        const s3Url = `${s3BaseUrl}/${s3Key}`;
-        
-        // Open in new window
-        window.open(s3Url, '_blank');
-    };
-
     // Role switcher for demo
     const switchRole = (role) => {
         setUserRole(role);
@@ -851,61 +493,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             admin: 'Admin - Full access to all document management features'
         };
         alert(`🔄 Role switched to: ${role.toUpperCase()}\n\n${roleDescriptions[role]}\n\n💡 Now try uploading files and testing delete permissions!`);
-    };
-
-    // Export resumes to Excel
-    // Export Resumes to Excel
-    const exportToExcel = () => {
-        try {
-            // Prepare resume data for export
-            const exportData = filteredResumes.map(resume => ({
-                'Candidate Name': resume.candidateName || '',
-                'Email': resume.email || '',
-                'Phone': resume.phone || '',
-                'Position': resume.position || '',
-                'Department': resume.department || '',
-                'Stage': resume.stage || '',
-                'Experience': resume.experience || '',
-                'Received Date': resume.receivedDate ? new Date(resume.receivedDate).toLocaleDateString() : '',
-                'Notes': resume.notes || '',
-                'Resume URL': resume.resumeUrl || ''
-            }));
-
-            // Create worksheet
-            const worksheet = XLSX.utils.json_to_sheet(exportData);
-            
-            // Set column widths
-            const columnWidths = [
-                { wch: 20 }, // Candidate Name
-                { wch: 25 }, // Email
-                { wch: 15 }, // Phone
-                { wch: 20 }, // Position
-                { wch: 15 }, // Department
-                { wch: 15 }, // Stage
-                { wch: 15 }, // Experience
-                { wch: 15 }, // Received Date
-                { wch: 30 }, // Notes
-                { wch: 40 }  // Resume URL
-            ];
-            worksheet['!cols'] = columnWidths;
-
-            // Create workbook
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, 'Resumes');
-
-            // Generate filename with timestamp
-            const timestamp = new Date().toISOString().split('T')[0];
-            const filename = `Resumes_Export_${timestamp}.xlsx`;
-
-            // Download file
-            XLSX.writeFile(workbook, filename);
-
-            alert(`✅ Exported ${filteredResumes.length} resume(s) to Excel format!`);
-            console.log(`✅ Exported ${filteredResumes.length} resumes to ${filename}`);
-        } catch (error) {
-            console.error('Error exporting resumes to Excel:', error);
-            alert('❌ Failed to export resumes to Excel. Please try again.');
-        }
     };
 
     return (
@@ -3594,802 +3181,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                     </div>
                 )}
 
-                {/* RESUMES PAGE */}
-            {currentPage === 'resumes' && (
-                <section style={{ 
-                    padding: 'clamp(2rem, 5vw, 4rem) clamp(1rem, 3vw, 2rem)', 
-                    background: '#f1f5f9',
-                    minHeight: '100vh'
-                }}>
-                    <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-                        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-                            <h2 style={{
-                                fontSize: 'clamp(2rem, 5vw, 3rem)',
-                                marginBottom: '1rem',
-                                color: '#1e3a8a',
-                                fontWeight: '800'
-                            }}>
-                                📄 Resumes & Applications
-                            </h2>
-                            <p style={{
-                                fontSize: 'clamp(1rem, 3vw, 1.2rem)',
-                                color: '#475569',
-                                maxWidth: '800px',
-                                margin: '0 auto 2rem auto',
-                                padding: '0 1rem'
-                            }}>
-                                Review candidate resumes, applications, and interview materials
-                            </p>
-                            <button 
-                                onClick={() => {
-                                    setCurrentPage('documentmanagement');
-                                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                                }}
-                                style={{
-                                    background: '#d4af37',
-                                    color: '#0f172a',
-                                    border: 'none',
-                                    padding: '1rem 2rem',
-                                    borderRadius: '8px',
-                                    cursor: 'pointer',
-                                    fontWeight: '700',
-                                    fontSize: 'clamp(0.9rem, 2.5vw, 1rem)'
-                                }}>
-                                ← Back to Document Management
-                            </button>
-                        </div>
-
-                        {/* Resumes Content */}
-                        <div style={{
-                            background: 'white',
-                            padding: 'clamp(1rem, 3vw, 3rem)',
-                            borderRadius: '12px',
-                            border: '2px solid #d4af37',
-                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                            marginBottom: '2rem'
-                        }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
-                                <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: 'clamp(1.2rem, 3vw, 1.5rem)' }}>
-                                    Recent Applications ({filteredResumes.length + 1})
-                                </h3>
-                                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', width: '100%', justifyContent: 'flex-start' }}>
-                                    {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
-                                        <>
-                                            <button
-                                                onClick={() => setShowUploadModal(true)}
-                                                style={{
-                                                    background: '#10b981',
-                                                    color: 'white',
-                                                    border: 'none',
-                                                    padding: '0.5rem 1rem',
-                                                    borderRadius: '6px',
-                                                    cursor: 'pointer',
-                                                    fontSize: 'clamp(0.8rem, 2vw, 0.9rem)',
-                                                    fontWeight: '600',
-                                                    flex: '1 1 auto',
-                                                    minWidth: '120px'
-                                                }}>
-                                                📤 Upload
-                                            </button>
-                                            <button
-                                                onClick={exportToExcel}
-                                                style={{
-                                                    background: '#059669',
-                                                    color: 'white',
-                                                    border: 'none',
-                                                    padding: '0.5rem 1rem',
-                                                    borderRadius: '6px',
-                                                    cursor: 'pointer',
-                                                    fontSize: 'clamp(0.8rem, 2vw, 0.9rem)',
-                                                    fontWeight: '600',
-                                                    flex: '1 1 auto',
-                                                    minWidth: '120px'
-                                                }}>
-                                                📊 Export
-                                            </button>
-                                        </>
-                                    )}
-                                    <select 
-                                        value={resumeFilter.department}
-                                        onChange={(e) => {
-                                            const newFilter = { ...resumeFilter, department: e.target.value };
-                                            setResumeFilter(newFilter);
-                                            fetchResumes(newFilter.department, newFilter.stage, newFilter.sort);
-                                        }}
-                                        style={{
-                                            padding: '0.5rem 1rem',
-                                            borderRadius: '6px',
-                                            border: '2px solid #d4af37',
-                                            fontSize: '0.9rem',
-                                            cursor: 'pointer'
-                                        }}>
-                                        <option value="all">All Departments</option>
-                                        <option value="Engineering">Engineering</option>
-                                        <option value="Sales">Sales</option>
-                                        <option value="Marketing">Marketing</option>
-                                        <option value="HR">HR</option>
-                                    </select>
-                                    <select 
-                                        value={resumeFilter.stage}
-                                        onChange={(e) => {
-                                            const newFilter = { ...resumeFilter, stage: e.target.value };
-                                            setResumeFilter(newFilter);
-                                            fetchResumes(newFilter.department, newFilter.stage, newFilter.sort);
-                                        }}
-                                        style={{
-                                            padding: '0.5rem 1rem',
-                                            borderRadius: '6px',
-                                            border: '2px solid #d4af37',
-                                            fontSize: '0.9rem',
-                                            cursor: 'pointer'
-                                        }}>
-                                        <option value="all">All Stages</option>
-                                        <option value="New">New</option>
-                                        <option value="Screening">Screening</option>
-                                        <option value="Interview">Interview</option>
-                                        <option value="Offer">Offer</option>
-                                        <option value="Rejected">Rejected / Archived</option>
-                                    </select>
-                                    <select 
-                                        value={resumeFilter.sort}
-                                        onChange={(e) => {
-                                            const newFilter = { ...resumeFilter, sort: e.target.value };
-                                            setResumeFilter(newFilter);
-                                            fetchResumes(newFilter.department, newFilter.stage, newFilter.sort);
-                                        }}
-                                        style={{
-                                            padding: '0.5rem 1rem',
-                                            borderRadius: '6px',
-                                            border: '2px solid #d4af37',
-                                            fontSize: '0.9rem',
-                                            cursor: 'pointer'
-                                        }}>
-                                        <option value="newest">Newest First</option>
-                                        <option value="oldest">Oldest First</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            {isLoadingResumes && (
-                                <div style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                                    Loading resumes...
-                                </div>
-                            )}
-
-                            {/* Demo Resume Card - Only visible to HR, Admin, SuperAdmin */}
-                            {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
-                                <div style={{
-                                    background: '#f8fafc',
-                                    padding: '1.5rem',
-                                    borderRadius: '8px',
-                                    border: '2px solid #e2e8f0',
-                                    marginBottom: '1rem'
-                                }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
-                                        <div style={{ flex: 1 }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
-                                                <h4 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.2rem' }}>
-                                                    John Smith
-                                                </h4>
-                                                <span style={{
-                                                    background: '#dbeafe',
-                                                    color: '#1e40af',
-                                                    padding: '0.25rem 0.75rem',
-                                                    borderRadius: '12px',
-                                                    fontSize: '0.75rem',
-                                                    fontWeight: '600'
-                                                }}>
-                                                    New
-                                                </span>
-                                            </div>
-                                            <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
-                                                <strong>Position:</strong> Senior Software Engineer
-                                            </p>
-                                            <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
-                                                <strong>Department:</strong> Engineering
-                                            </p>
-                                            <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
-                                                <strong>Email:</strong> john.smith@email.com
-                                            </p>
-                                            <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
-                                                <strong>Received:</strong> March 6, 2026
-                                            </p>
-                                            <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.9rem', fontStyle: 'italic' }}>
-                                                10+ years experience in full-stack development, AWS certified, React/Node.js expert
-                                            </p>
-                                        </div>
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                            <button style={{
-                                                background: '#1e3a8a',
-                                                color: 'white',
-                                                border: 'none',
-                                                padding: '0.5rem 1rem',
-                                                borderRadius: '6px',
-                                                cursor: 'pointer',
-                                                fontSize: '0.9rem',
-                                                fontWeight: '600',
-                                                whiteSpace: 'nowrap'
-                                            }}
-                                            onClick={() => alert('📄 Demo Resume\n\nThis is a sample resume entry. Upload real resumes to view them from S3.')}>
-                                                📄 View Resume
-                                            </button>
-                                            <button 
-                                                style={{
-                                                    background: '#10b981',
-                                                    color: 'white',
-                                                    border: 'none',
-                                                    padding: '0.5rem 1rem',
-                                                    borderRadius: '6px',
-                                                    cursor: 'pointer',
-                                                    fontSize: '0.85rem',
-                                                    fontWeight: '600',
-                                                    whiteSpace: 'nowrap',
-                                                    lineHeight: '1.3'
-                                                }}
-                                                onClick={() => alert('⭐ Demo Resume\n\nThis is a sample entry. Upload real resumes to use the shortlist feature.')}>
-                                                <div>⭐ Shortlist</div>
-                                                <div style={{ fontSize: '0.7rem', fontWeight: '400', opacity: 0.9 }}>Move to Interview</div>
-                                            </button>
-                                            <button 
-                                                style={{
-                                                    background: '#64748b',
-                                                    color: 'white',
-                                                    border: 'none',
-                                                    padding: '0.5rem 1rem',
-                                                    borderRadius: '6px',
-                                                    cursor: 'pointer',
-                                                    fontSize: '0.85rem',
-                                                    fontWeight: '600',
-                                                    whiteSpace: 'nowrap',
-                                                    lineHeight: '1.3'
-                                                }}
-                                                onClick={() => alert('📦 Demo Resume\n\nThis is a sample entry. Upload real resumes to use the archive feature.')}>
-                                                <div>📦 Archive</div>
-                                                <div style={{ fontSize: '0.7rem', fontWeight: '400', opacity: 0.9 }}>Mark as Rejected</div>
-                                            </button>
-                                            <button style={{
-                                                background: '#ef4444',
-                                                color: 'white',
-                                                border: 'none',
-                                                padding: '0.5rem 1rem',
-                                                borderRadius: '6px',
-                                                cursor: 'pointer',
-                                                fontSize: '0.9rem',
-                                                fontWeight: '600',
-                                                whiteSpace: 'nowrap'
-                                            }}
-                                            onClick={() => deleteResume('demo-resume', 'John Smith')}>
-                                                🗑️ Delete
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Real Resumes from API */}
-                            {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && filteredResumes.map((resume) => (
-                                <div key={resume.resumeId} style={{
-                                    background: '#f8fafc',
-                                    padding: '1.5rem',
-                                    borderRadius: '8px',
-                                    border: '2px solid #e2e8f0',
-                                    marginBottom: '1rem'
-                                }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
-                                        <div style={{ flex: 1 }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
-                                                <h4 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.2rem' }}>
-                                                    {resume.candidateName}
-                                                </h4>
-                                                <span style={{
-                                                    background: resume.stage === 'New' ? '#dbeafe' : resume.stage === 'Interview' ? '#fef3c7' : resume.stage === 'Offer' ? '#dcfce7' : '#fee2e2',
-                                                    color: resume.stage === 'New' ? '#1e40af' : resume.stage === 'Interview' ? '#92400e' : resume.stage === 'Offer' ? '#166534' : '#991b1b',
-                                                    padding: '0.25rem 0.75rem',
-                                                    borderRadius: '12px',
-                                                    fontSize: '0.75rem',
-                                                    fontWeight: '600'
-                                                }}>
-                                                    {resume.stage}
-                                                </span>
-                                            </div>
-                                            <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
-                                                <strong>Position:</strong> {resume.position}
-                                            </p>
-                                            <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
-                                                <strong>Department:</strong> {resume.department}
-                                            </p>
-                                            <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
-                                                <strong>Email:</strong> {resume.email}
-                                            </p>
-                                            <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.95rem' }}>
-                                                <strong>Received:</strong> {new Date(resume.receivedDate).toLocaleDateString()}
-                                            </p>
-                                            {resume.notes && (
-                                                <p style={{ color: '#64748b', margin: '0.5rem 0', fontSize: '0.9rem', fontStyle: 'italic' }}>
-                                                    {resume.notes}
-                                                </p>
-                                            )}
-                                        </div>
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                            <button style={{
-                                                background: '#1e3a8a',
-                                                color: 'white',
-                                                border: 'none',
-                                                padding: '0.5rem 1rem',
-                                                borderRadius: '6px',
-                                                cursor: 'pointer',
-                                                fontSize: '0.9rem',
-                                                fontWeight: '600',
-                                                whiteSpace: 'nowrap'
-                                            }}
-                                            onClick={() => viewResume(resume.s3Key, resume.candidateName)}>
-                                                📄 View Resume
-                                            </button>
-                                            <button 
-                                                style={{
-                                                    background: '#10b981',
-                                                    color: 'white',
-                                                    border: 'none',
-                                                    padding: '0.5rem 1rem',
-                                                    borderRadius: '6px',
-                                                    cursor: 'pointer',
-                                                    fontSize: '0.85rem',
-                                                    fontWeight: '600',
-                                                    whiteSpace: 'nowrap',
-                                                    lineHeight: '1.3'
-                                                }}
-                                                onClick={() => updateResumeStage(resume.resumeId, 'Interview')}>
-                                                <div>⭐ Shortlist</div>
-                                                <div style={{ fontSize: '0.7rem', fontWeight: '400', opacity: 0.9 }}>Move to Interview</div>
-                                            </button>
-                                            <button 
-                                                style={{
-                                                    background: '#64748b',
-                                                    color: 'white',
-                                                    border: 'none',
-                                                    padding: '0.5rem 1rem',
-                                                    borderRadius: '6px',
-                                                    cursor: 'pointer',
-                                                    fontSize: '0.85rem',
-                                                    fontWeight: '600',
-                                                    whiteSpace: 'nowrap',
-                                                    lineHeight: '1.3'
-                                                }}
-                                                onClick={() => updateResumeStage(resume.resumeId, 'Rejected')}>
-                                                <div>📦 Archive</div>
-                                                <div style={{ fontSize: '0.7rem', fontWeight: '400', opacity: 0.9 }}>Mark as Rejected</div>
-                                            </button>
-                                            <button style={{
-                                                background: '#ef4444',
-                                                color: 'white',
-                                                border: 'none',
-                                                padding: '0.5rem 1rem',
-                                                borderRadius: '6px',
-                                                cursor: 'pointer',
-                                                fontSize: '0.9rem',
-                                                fontWeight: '600',
-                                                whiteSpace: 'nowrap'
-                                            }}
-                                            onClick={() => deleteResume(resume.resumeId, resume.candidateName)}>
-                                                🗑️ Delete
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-
-                            {/* Message for Employee role */}
-                            {userRole === 'employee' && (
-                                <div style={{
-                                    background: '#fef3c7',
-                                    border: '2px solid #f59e0b',
-                                    borderRadius: '8px',
-                                    padding: '1.5rem',
-                                    textAlign: 'center',
-                                    marginBottom: '1rem'
-                                }}>
-                                    <p style={{ color: '#92400e', margin: 0, fontSize: '1rem', fontWeight: '600' }}>
-                                        🔒 Access Restricted
-                                    </p>
-                                    <p style={{ color: '#92400e', margin: '0.5rem 0 0 0', fontSize: '0.9rem' }}>
-                                        Resume management is only available to HR, Admin, and SuperAdmin users.
-                                    </p>
-                                </div>
-                            )}
-
-
-                        </div>
-
-                        {/* Statistics Cards */}
-                        <div style={{
-                            background: 'white',
-                            padding: '3rem',
-                            borderRadius: '12px',
-                            border: '2px solid #d4af37',
-                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-                        }}>
-                            <h3 style={{ color: '#1e3a8a', marginBottom: '1.5rem', fontSize: '1.5rem', textAlign: 'center' }}>
-                                Application Statistics
-                            </h3>
-                            <div style={{
-                                display: 'grid',
-                                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                                gap: '1.5rem',
-                                marginTop: '2rem'
-                            }}>
-                                <div style={{
-                                    background: '#f8fafc',
-                                    padding: '1.5rem',
-                                    borderRadius: '8px',
-                                    border: '2px solid #e2e8f0',
-                                    textAlign: 'center'
-                                }}>
-                                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📥</div>
-                                    <div style={{ fontSize: '2.5rem', fontWeight: '800', color: '#1e3a8a', marginBottom: '0.5rem' }}>
-                                        {resumes.filter(r => r.stage === 'New').length + 1}
-                                    </div>
-                                    <h4 style={{ color: '#1e3a8a', marginBottom: '0.5rem', fontSize: '1.1rem' }}>New Applications</h4>
-                                    <p style={{ color: '#64748b', fontSize: '0.9rem', margin: 0 }}>Recently submitted</p>
-                                </div>
-                                <div style={{
-                                    background: '#f8fafc',
-                                    padding: '1.5rem',
-                                    borderRadius: '8px',
-                                    border: '2px solid #e2e8f0',
-                                    textAlign: 'center'
-                                }}>
-                                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🔍</div>
-                                    <div style={{ fontSize: '2.5rem', fontWeight: '800', color: '#1e3a8a', marginBottom: '0.5rem' }}>
-                                        {resumes.filter(r => r.stage === 'Screening').length}
-                                    </div>
-                                    <h4 style={{ color: '#1e3a8a', marginBottom: '0.5rem', fontSize: '1.1rem' }}>Screening</h4>
-                                    <p style={{ color: '#64748b', fontSize: '0.9rem', margin: 0 }}>Under review</p>
-                                </div>
-                                <div style={{
-                                    background: '#f8fafc',
-                                    padding: '1.5rem',
-                                    borderRadius: '8px',
-                                    border: '2px solid #e2e8f0',
-                                    textAlign: 'center'
-                                }}>
-                                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📝</div>
-                                    <div style={{ fontSize: '2.5rem', fontWeight: '800', color: '#1e3a8a', marginBottom: '0.5rem' }}>
-                                        {resumes.filter(r => r.stage === 'Interview').length}
-                                    </div>
-                                    <h4 style={{ color: '#1e3a8a', marginBottom: '0.5rem', fontSize: '1.1rem' }}>Interview</h4>
-                                    <p style={{ color: '#64748b', fontSize: '0.9rem', margin: 0 }}>Active interviews</p>
-                                </div>
-                                <div style={{
-                                    background: '#f8fafc',
-                                    padding: '1.5rem',
-                                    borderRadius: '8px',
-                                    border: '2px solid #e2e8f0',
-                                    textAlign: 'center'
-                                }}>
-                                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>✅</div>
-                                    <div style={{ fontSize: '2.5rem', fontWeight: '800', color: '#10b981', marginBottom: '0.5rem' }}>
-                                        {resumes.filter(r => r.stage === 'Offer').length}
-                                    </div>
-                                    <h4 style={{ color: '#1e3a8a', marginBottom: '0.5rem', fontSize: '1.1rem' }}>Offers</h4>
-                                    <p style={{ color: '#64748b', fontSize: '0.9rem', margin: 0 }}>Offers extended</p>
-                                </div>
-                                <div style={{
-                                    background: '#f8fafc',
-                                    padding: '1.5rem',
-                                    borderRadius: '8px',
-                                    border: '2px solid #e2e8f0',
-                                    textAlign: 'center'
-                                }}>
-                                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>❌</div>
-                                    <div style={{ fontSize: '2.5rem', fontWeight: '800', color: '#ef4444', marginBottom: '0.5rem' }}>
-                                        {resumes.filter(r => r.stage === 'Rejected').length}
-                                    </div>
-                                    <h4 style={{ color: '#1e3a8a', marginBottom: '0.5rem', fontSize: '1.1rem' }}>Rejected</h4>
-                                    <p style={{ color: '#64748b', fontSize: '0.9rem', margin: 0 }}>Not moving forward</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            )}
-
-            {/* RESUME UPLOAD MODAL */}
-            {showUploadModal && (
-                <div style={{
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    background: 'rgba(0, 0, 0, 0.7)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    zIndex: 1000,
-                    padding: '1rem'
-                }}
-                onClick={() => setShowUploadModal(false)}>
-                    <div style={{
-                        background: 'white',
-                        borderRadius: '12px',
-                        padding: '2rem',
-                        maxWidth: '600px',
-                        width: '100%',
-                        maxHeight: '90vh',
-                        overflowY: 'auto',
-                        boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
-                    }}
-                    onClick={(e) => e.stopPropagation()}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                            <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem' }}>
-                                📤 Upload Resume
-                            </h3>
-                            <button
-                                onClick={() => setShowUploadModal(false)}
-                                style={{
-                                    background: 'transparent',
-                                    border: 'none',
-                                    fontSize: '1.5rem',
-                                    cursor: 'pointer',
-                                    color: '#64748b',
-                                    padding: '0.25rem 0.5rem'
-                                }}>
-                                ✕
-                            </button>
-                        </div>
-
-                        <form onSubmit={async (e) => {
-                            e.preventDefault();
-                            const formData = new FormData(e.target);
-                            const file = formData.get('resumeFile');
-                            
-                            if (!file || file.size === 0) {
-                                alert('Please select a resume file');
-                                return;
-                            }
-
-                            const resumeData = {
-                                candidateName: formData.get('candidateName'),
-                                email: formData.get('email'),
-                                phone: formData.get('phone'),
-                                position: formData.get('position'),
-                                department: formData.get('department'),
-                                stage: 'New',
-                                notes: formData.get('notes'),
-                                experience: formData.get('experience'),
-                                receivedDate: formData.get('receivedDate')
-                            };
-
-                            await uploadResume(resumeData, file);
-                        }}>
-                            <div style={{ marginBottom: '1rem' }}>
-                                <label style={{ display: 'block', marginBottom: '0.5rem', color: '#1e3a8a', fontWeight: '600' }}>
-                                    Candidate Name *
-                                </label>
-                                <input
-                                    type="text"
-                                    name="candidateName"
-                                    required
-                                    style={{
-                                        width: '100%',
-                                        padding: '0.75rem',
-                                        border: '2px solid #e2e8f0',
-                                        borderRadius: '6px',
-                                        fontSize: '1rem',
-                                        boxSizing: 'border-box'
-                                    }}
-                                    placeholder="John Smith"
-                                />
-                            </div>
-
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', color: '#1e3a8a', fontWeight: '600' }}>
-                                        Email *
-                                    </label>
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        required
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            border: '2px solid #e2e8f0',
-                                            borderRadius: '6px',
-                                            fontSize: '1rem',
-                                            boxSizing: 'border-box'
-                                        }}
-                                        placeholder="john@email.com"
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', color: '#1e3a8a', fontWeight: '600' }}>
-                                        Phone
-                                    </label>
-                                    <input
-                                        type="tel"
-                                        name="phone"
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            border: '2px solid #e2e8f0',
-                                            borderRadius: '6px',
-                                            fontSize: '1rem',
-                                            boxSizing: 'border-box'
-                                        }}
-                                        placeholder="(555) 123-4567"
-                                    />
-                                </div>
-                            </div>
-
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', color: '#1e3a8a', fontWeight: '600' }}>
-                                        Position *
-                                    </label>
-                                    <input
-                                        type="text"
-                                        name="position"
-                                        required
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            border: '2px solid #e2e8f0',
-                                            borderRadius: '6px',
-                                            fontSize: '1rem',
-                                            boxSizing: 'border-box'
-                                        }}
-                                        placeholder="Software Engineer"
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', color: '#1e3a8a', fontWeight: '600' }}>
-                                        Department *
-                                    </label>
-                                    <select
-                                        name="department"
-                                        required
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            border: '2px solid #e2e8f0',
-                                            borderRadius: '6px',
-                                            fontSize: '1rem',
-                                            boxSizing: 'border-box',
-                                            cursor: 'pointer'
-                                        }}>
-                                        <option value="">Select Department</option>
-                                        <option value="Engineering">Engineering</option>
-                                        <option value="Sales">Sales</option>
-                                        <option value="Marketing">Marketing</option>
-                                        <option value="HR">HR</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div style={{ marginBottom: '1rem' }}>
-                                <label style={{ display: 'block', marginBottom: '0.5rem', color: '#1e3a8a', fontWeight: '600' }}>
-                                    Date Received *
-                                </label>
-                                <input
-                                    type="date"
-                                    name="receivedDate"
-                                    required
-                                    defaultValue={new Date().toISOString().split('T')[0]}
-                                    max={new Date().toISOString().split('T')[0]}
-                                    style={{
-                                        width: '100%',
-                                        padding: '0.75rem',
-                                        border: '2px solid #e2e8f0',
-                                        borderRadius: '6px',
-                                        fontSize: '1rem',
-                                        boxSizing: 'border-box'
-                                    }}
-                                />
-                                <p style={{ color: '#64748b', fontSize: '0.85rem', margin: '0.5rem 0 0 0' }}>
-                                    When was this resume received? (Defaults to today)
-                                </p>
-                            </div>
-
-                            <div style={{ marginBottom: '1rem' }}>
-                                <label style={{ display: 'block', marginBottom: '0.5rem', color: '#1e3a8a', fontWeight: '600' }}>
-                                    Experience Summary
-                                </label>
-                                <input
-                                    type="text"
-                                    name="experience"
-                                    style={{
-                                        width: '100%',
-                                        padding: '0.75rem',
-                                        border: '2px solid #e2e8f0',
-                                        borderRadius: '6px',
-                                        fontSize: '1rem',
-                                        boxSizing: 'border-box'
-                                    }}
-                                    placeholder="5 years in React, Node.js, AWS"
-                                />
-                            </div>
-
-                            <div style={{ marginBottom: '1rem' }}>
-                                <label style={{ display: 'block', marginBottom: '0.5rem', color: '#1e3a8a', fontWeight: '600' }}>
-                                    Notes
-                                </label>
-                                <textarea
-                                    name="notes"
-                                    rows="3"
-                                    style={{
-                                        width: '100%',
-                                        padding: '0.75rem',
-                                        border: '2px solid #e2e8f0',
-                                        borderRadius: '6px',
-                                        fontSize: '1rem',
-                                        boxSizing: 'border-box',
-                                        resize: 'vertical'
-                                    }}
-                                    placeholder="Additional notes about the candidate..."
-                                />
-                            </div>
-
-                            <div style={{ marginBottom: '1.5rem' }}>
-                                <label style={{ display: 'block', marginBottom: '0.5rem', color: '#1e3a8a', fontWeight: '600' }}>
-                                    Resume File (PDF/DOC) *
-                                </label>
-                                <input
-                                    type="file"
-                                    name="resumeFile"
-                                    accept=".pdf,.doc,.docx"
-                                    required
-                                    style={{
-                                        width: '100%',
-                                        padding: '0.75rem',
-                                        border: '2px solid #e2e8f0',
-                                        borderRadius: '6px',
-                                        fontSize: '1rem',
-                                        boxSizing: 'border-box',
-                                        cursor: 'pointer'
-                                    }}
-                                />
-                                <p style={{ color: '#64748b', fontSize: '0.85rem', margin: '0.5rem 0 0 0' }}>
-                                    Accepted formats: PDF, DOC, DOCX (Max 10MB)
-                                </p>
-                            </div>
-
-                            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
-                                <button
-                                    type="button"
-                                    onClick={() => setShowUploadModal(false)}
-                                    style={{
-                                        background: '#e2e8f0',
-                                        color: '#475569',
-                                        border: 'none',
-                                        padding: '0.75rem 1.5rem',
-                                        borderRadius: '6px',
-                                        cursor: 'pointer',
-                                        fontSize: '1rem',
-                                        fontWeight: '600'
-                                    }}>
-                                    Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    style={{
-                                        background: '#10b981',
-                                        color: 'white',
-                                        border: 'none',
-                                        padding: '0.75rem 1.5rem',
-                                        borderRadius: '6px',
-                                        cursor: 'pointer',
-                                        fontSize: '1rem',
-                                        fontWeight: '600'
-                                    }}>
-                                    📤 Upload Resume
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
-
                 {/* CAREERS PAGE */}
             {currentPage === 'careers' && (
                 <section style={{ 
@@ -5791,42 +4582,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                     minHeight: '100vh'
                 }}>
                     <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-                        {/* Sign Out Button */}
-                        <div style={{ textAlign: 'right', marginBottom: '2rem' }}>
-                            <button
-                                onClick={async () => {
-                                    try {
-                                        await signOut();
-                                        setUserRole('employee');
-                                        setCurrentPage('home');
-                                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                                    } catch (err) {
-                                        console.error('Sign out error:', err);
-                                    }
-                                }}
-                                style={{
-                                    background: '#ef4444',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '0.75rem 1.5rem',
-                                    borderRadius: '8px',
-                                    fontSize: '0.95rem',
-                                    fontWeight: '600',
-                                    cursor: 'pointer',
-                                    transition: 'all 0.3s ease'
-                                }}
-                                onMouseOver={(e) => {
-                                    e.target.style.background = '#dc2626';
-                                    e.target.style.transform = 'translateY(-2px)';
-                                }}
-                                onMouseOut={(e) => {
-                                    e.target.style.background = '#ef4444';
-                                    e.target.style.transform = 'translateY(0)';
-                                }}>
-                                🚪 Sign Out
-                            </button>
-                        </div>
-
                         <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
                             <h2 style={{
                                 fontSize: '3rem',
@@ -6436,28 +5191,33 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 Update your personal information and profile settings
                             </p>
                             
-                            {/* View Indicator */}
+                            {/* Role Switcher for Testing */}
                             <div style={{
-                                background: userRole === 'employee' ? '#dbeafe' : '#fef3c7',
-                                padding: '1rem 1.5rem',
+                                background: 'white',
+                                padding: '1rem',
                                 borderRadius: '8px',
-                                border: `2px solid ${userRole === 'employee' ? '#3b82f6' : '#d4af37'}`,
+                                border: '2px solid #d4af37',
                                 marginBottom: '1.5rem',
-                                display: 'inline-block',
-                                textAlign: 'left'
+                                display: 'inline-block'
                             }}>
-                                <div style={{ fontWeight: '700', color: '#1e3a8a', marginBottom: '0.5rem', fontSize: '1.1rem' }}>
-                                    {userRole === 'superadmin' && '⭐ Super Admin View'}
-                                    {userRole === 'admin' && '🔧 Admin View'}
-                                    {userRole === 'hr' && '👥 HR View'}
-                                    {userRole === 'employee' && '👤 Employee View'}
-                                </div>
-                                <div style={{ color: '#475569', fontSize: '0.9rem' }}>
-                                    {userRole === 'superadmin' && 'Full system access with all HR and Admin permissions'}
-                                    {userRole === 'admin' && 'Full administrative access to all features'}
-                                    {userRole === 'hr' && 'Access to employee management and HR features'}
-                                    {userRole === 'employee' && 'Standard employee access to personal information'}
-                                </div>
+                                <label style={{ marginRight: '1rem', fontWeight: '600', color: '#1e3a8a' }}>
+                                    Current Role:
+                                </label>
+                                <select 
+                                    value={userRole} 
+                                    onChange={(e) => setUserRole(e.target.value)}
+                                    style={{
+                                        padding: '0.5rem 1rem',
+                                        borderRadius: '6px',
+                                        border: '2px solid #1e3a8a',
+                                        fontWeight: '600',
+                                        cursor: 'pointer',
+                                        background: 'white'
+                                    }}>
+                                    <option value="employee">Employee</option>
+                                    <option value="hr">HR</option>
+                                    <option value="admin">Admin</option>
+                                </select>
                             </div>
                             
                             <br />
@@ -6720,18 +5480,33 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     
                                     const profilePayload = {
                                         ...updatedProfile,
-                                        employeeId: employeeIdToSave,  // Override with the correct employeeId
-                                        name: `${updatedProfile.firstName} ${updatedProfile.lastName}`,
-                                        profilePicture: updatedProfile.profilePicture || profileData.profilePicture
+                                        employeeId: employeeIdToSave  // Override with the correct employeeId
                                     };
                                     
-                                    console.log('Saving profile to database:', JSON.stringify(profilePayload, null, 2));
+                                    console.log('Payload being sent:', JSON.stringify(profilePayload, null, 2));
                                     
-                                    // Use the profile service to save
-                                    const savedProfile = await saveProfile(profilePayload);
-                                    console.log('Profile saved successfully:', savedProfile);
+                                    const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/employee/profile`;
+                                    console.log('API URL:', apiUrl);
+                                    console.log('========================');
                                     
-                                    alert('✅ Profile saved successfully to database!');
+                                    const response = await fetch(apiUrl, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        },
+                                        body: JSON.stringify(profilePayload)
+                                    });
+                                    
+                                    console.log('Response status:', response.status);
+                                    const responseText = await response.text();
+                                    console.log('Response body:', responseText);
+                                    
+                                    if (!response.ok) {
+                                        throw new Error(`Failed to save profile: ${response.status} - ${responseText}`);
+                                    }
+                                    
+                                    const result = JSON.parse(responseText);
+                                    console.log('Profile saved to database:', result);
                                 } catch (error) {
                                     console.error('Error saving profile:', error);
                                     alert(`⚠️ Failed to save profile to database: ${error.message}`);
@@ -6893,68 +5668,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             onFocus={(e) => e.target.style.borderColor = '#1e3a8a'}
                                             onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
                                         />
-                                    </div>
-
-                                    {/* Employee Group */}
-                                    <div>
-                                        <label style={{
-                                            display: 'block',
-                                            marginBottom: '0.5rem',
-                                            color: '#334155',
-                                            fontWeight: '600',
-                                            fontSize: '0.9rem'
-                                        }}>
-                                            Employee Group
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="employeeGroup"
-                                            value={profileData.employeeGroup || ''}
-                                            onChange={(e) => setProfileData(prev => ({ ...prev, employeeGroup: e.target.value }))}
-                                            placeholder="Enter employee group (e.g., Engineering, Sales)"
-                                            style={{
-                                                width: '100%',
-                                                padding: '0.75rem',
-                                                border: '2px solid #e2e8f0',
-                                                borderRadius: '8px',
-                                                fontSize: '1rem',
-                                                outline: 'none'
-                                            }}
-                                            onFocus={(e) => e.target.style.borderColor = '#1e3a8a'}
-                                            onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
-                                        />
-                                    </div>
-
-                                    {/* Group (Access Level) - Read Only */}
-                                    <div>
-                                        <label style={{
-                                            display: 'block',
-                                            marginBottom: '0.5rem',
-                                            color: '#334155',
-                                            fontWeight: '600',
-                                            fontSize: '0.9rem'
-                                        }}>
-                                            Group (Access Level)
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={userRole === 'superadmin' ? 'SuperAdmin' : userRole === 'admin' ? 'Admin' : userRole === 'hr' ? 'HR' : 'Employee'}
-                                            readOnly
-                                            style={{
-                                                width: '100%',
-                                                padding: '0.75rem',
-                                                border: '2px solid #e2e8f0',
-                                                borderRadius: '8px',
-                                                fontSize: '1rem',
-                                                outline: 'none',
-                                                background: '#f8fafc',
-                                                color: '#64748b',
-                                                cursor: 'not-allowed'
-                                            }}
-                                        />
-                                        <p style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.25rem' }}>
-                                            This is determined by your Cognito group membership
-                                        </p>
                                     </div>
 
                                     {/* Email */}
@@ -7126,7 +5839,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 </div>
 
                                 {/* HR-Only Section */}
-                                {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
+                                {(userRole === 'hr' || userRole === 'admin') && (
                                     <div style={{
                                         marginTop: '2rem',
                                         padding: '1.5rem',
@@ -7137,9 +5850,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         <div style={{
                                             display: 'flex',
                                             alignItems: 'center',
-                                            marginBottom: '1rem',
-                                            flexWrap: 'wrap',
-                                            gap: '0.5rem'
+                                            marginBottom: '1rem'
                                         }}>
                                             <h4 style={{
                                                 color: '#92400e',
@@ -7154,7 +5865,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                 padding: '0.25rem 0.75rem',
                                                 borderRadius: '12px',
                                                 fontSize: '0.75rem',
-                                                fontWeight: '700'
+                                                fontWeight: '700',
+                                                marginLeft: '1rem'
                                             }}>
                                                 RESTRICTED ACCESS
                                             </span>
@@ -7164,7 +5876,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             fontSize: '0.9rem',
                                             marginBottom: '1.5rem'
                                         }}>
-                                            Only HR, Admin, and SuperAdmin users can view and edit these fields
+                                            Only HR and Admin users can view and edit these fields
                                         </p>
 
                                         <div style={{
@@ -7760,26 +6472,79 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 📋 HR Documents
                             </h2>
                             
-                            {/* View Indicator */}
+                            {/* Role Switcher for Demo */}
                             <div style={{
-                                background: userRole === 'employee' ? '#dbeafe' : '#fef3c7',
-                                padding: '1rem 1.5rem',
-                                borderRadius: '8px',
-                                border: `2px solid ${userRole === 'employee' ? '#3b82f6' : '#d4af37'}`,
-                                marginBottom: '1.5rem',
-                                display: 'inline-block',
-                                textAlign: 'left',
-                                maxWidth: '600px'
+                                background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+                                padding: '1rem',
+                                borderRadius: '12px',
+                                marginBottom: '1rem',
+                                border: '2px solid #d4af37'
                             }}>
-                                <div style={{ fontWeight: '700', color: '#1e3a8a', marginBottom: '0.5rem', fontSize: '1.1rem' }}>
-                                    {userRole === 'superadmin' && '⭐ Super Admin View'}
-                                    {userRole === 'admin' && '🔧 Admin View'}
-                                    {userRole === 'hr' && '👥 HR View'}
-                                    {userRole === 'employee' && '👤 Employee View'}
+                                <div style={{ marginBottom: '0.5rem', fontSize: '0.9rem', color: '#64748b', fontWeight: '600' }}>
+                                    👤 Current Role: <span style={{ color: '#1e3a8a', fontWeight: '700' }}>{userRole.toUpperCase()}</span>
                                 </div>
-                                <div style={{ color: '#475569', fontSize: '0.9rem' }}>
-                                    {(userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') && 'Full access to upload and delete HR documents'}
-                                    {userRole === 'employee' && 'View-only access to HR documents. Contact HR to request changes.'}
+                                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                                    <button
+                                        onClick={() => switchRole('employee')}
+                                        style={{
+                                            background: userRole === 'employee' ? '#1e3a8a' : 'transparent',
+                                            color: userRole === 'employee' ? 'white' : '#1e3a8a',
+                                            border: '2px solid #1e3a8a',
+                                            padding: '0.5rem 1rem',
+                                            borderRadius: '6px',
+                                            cursor: 'pointer',
+                                            fontSize: '0.85rem',
+                                            fontWeight: '600'
+                                        }}>
+                                        👨‍💼 Employee
+                                    </button>
+                                    <button
+                                        onClick={() => switchRole('hr')}
+                                        style={{
+                                            background: userRole === 'hr' ? '#d4af37' : 'transparent',
+                                            color: userRole === 'hr' ? '#0f172a' : '#d4af37',
+                                            border: '2px solid #d4af37',
+                                            padding: '0.5rem 1rem',
+                                            borderRadius: '6px',
+                                            cursor: 'pointer',
+                                            fontSize: '0.85rem',
+                                            fontWeight: '600'
+                                        }}>
+                                        👩‍💼 HR Manager
+                                    </button>
+                                    <button
+                                        onClick={() => switchRole('admin')}
+                                        style={{
+                                            background: userRole === 'admin' ? '#ef4444' : 'transparent',
+                                            color: userRole === 'admin' ? 'white' : '#ef4444',
+                                            border: '2px solid #ef4444',
+                                            padding: '0.5rem 1rem',
+                                            borderRadius: '6px',
+                                            cursor: 'pointer',
+                                            fontSize: '0.85rem',
+                                            fontWeight: '600'
+                                        }}>
+                                        🔧 Admin
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            {/* Permission Testing Instructions */}
+                            <div style={{
+                                background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+                                border: '2px solid #f59e0b',
+                                borderRadius: '12px',
+                                padding: '1rem',
+                                marginBottom: '1rem'
+                            }}>
+                                <div style={{ fontSize: '1rem', fontWeight: '700', color: '#92400e', marginBottom: '0.5rem' }}>
+                                    🧪 Test Permission System:
+                                </div>
+                                <div style={{ fontSize: '0.9rem', color: '#78350f', lineHeight: '1.5' }}>
+                                    <strong>1.</strong> Use the role switcher above to switch between Employee/HR/Admin<br/>
+                                    <strong>2.</strong> Switch to <strong>HR/Admin</strong> role and upload files to Employee Handbook<br/>
+                                    <strong>3.</strong> Switch to <strong>Employee</strong> role and try to delete files (click 🔒 button)<br/>
+                                    <strong>4.</strong> Click "� View Document" to see the document viewer
                                 </div>
                             </div>
                             
@@ -8305,87 +7070,118 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             }}>
                                 Search and connect with team members across the organization
                             </p>
-                            
-                            {/* View Indicator */}
                             <div style={{
-                                background: userRole === 'employee' ? '#dbeafe' : '#fef3c7',
-                                padding: '1rem 1.5rem',
+                                background: '#f0f9ff',
+                                border: '2px solid #0ea5e9',
                                 borderRadius: '8px',
-                                border: `2px solid ${userRole === 'employee' ? '#3b82f6' : '#d4af37'}`,
-                                marginBottom: '1.5rem',
-                                display: 'inline-block',
-                                textAlign: 'left',
+                                padding: '1rem',
+                                margin: '0 auto 1rem auto',
                                 maxWidth: '600px'
                             }}>
-                                <div style={{ fontWeight: '700', color: '#1e3a8a', marginBottom: '0.5rem', fontSize: '1.1rem' }}>
-                                    {userRole === 'superadmin' && '⭐ Super Admin View'}
-                                    {userRole === 'admin' && '🔧 Admin View'}
-                                    {userRole === 'hr' && '👥 HR View'}
-                                    {userRole === 'employee' && '👤 Employee View'}
-                                </div>
-                                <div style={{ color: '#475569', fontSize: '0.9rem' }}>
-                                    {(userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') && 'Full directory access with all employee information and management capabilities'}
-                                    {userRole === 'employee' && 'You can see Name, Title, and Email only. Contact HR for additional information.'}
-                                </div>
+                                <p style={{
+                                    margin: 0,
+                                    fontSize: '0.9rem',
+                                    color: '#0369a1'
+                                }}>
+                                    ℹ️ <strong>{isHRView ? 'HR View:' : 'Employee View:'}</strong> {isHRView ? 'Full directory access with all employee information.' : 'You can see Name, Title, and Email only. HR team members have access to full directory information.'}
+                                </p>
                             </div>
                             
-                            <br />
-                            
-                            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                            {/* Development HR View Toggle */}
+                            <div style={{ marginBottom: '1rem' }}>
                                 <button 
-                                    onClick={() => {
-                                        setCurrentPage('employeeprofile');
-                                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                                    }}
+                                    onClick={() => setIsHRView(!isHRView)}
                                     style={{
-                                        background: '#d4af37',
-                                        color: '#0f172a',
-                                        border: 'none',
-                                        padding: '1rem 2rem',
-                                        borderRadius: '8px',
-                                        cursor: 'pointer',
-                                        fontWeight: '700',
-                                        fontSize: '1rem',
-                                        transition: 'all 0.3s ease'
-                                    }}
-                                    onMouseOver={(e) => {
-                                        e.target.style.transform = 'translateY(-2px)';
-                                        e.target.style.boxShadow = '0 4px 12px rgba(212, 175, 55, 0.4)';
-                                    }}
-                                    onMouseOut={(e) => {
-                                        e.target.style.transform = 'translateY(0)';
-                                        e.target.style.boxShadow = 'none';
-                                    }}>
-                                    ← Back to Profile & Directory
-                                </button>
-                                
-                                <button 
-                                    onClick={exportDirectoryToExcel}
-                                    style={{
-                                        background: '#16a34a',
+                                        background: isHRView ? '#10b981' : '#f59e0b',
                                         color: 'white',
                                         border: 'none',
-                                        padding: '1rem 2rem',
+                                        padding: '0.75rem 1.5rem',
                                         borderRadius: '8px',
                                         cursor: 'pointer',
                                         fontWeight: '700',
-                                        fontSize: '1rem',
-                                        transition: 'all 0.3s ease',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '0.5rem'
-                                    }}
-                                    onMouseOver={(e) => {
-                                        e.target.style.transform = 'translateY(-2px)';
-                                        e.target.style.boxShadow = '0 4px 12px rgba(22, 163, 74, 0.4)';
-                                    }}
-                                    onMouseOut={(e) => {
-                                        e.target.style.transform = 'translateY(0)';
-                                        e.target.style.boxShadow = 'none';
+                                        fontSize: '0.9rem',
+                                        marginBottom: '0.5rem'
                                     }}>
-                                    📊 Export to Excel
+                                    🚧 {isHRView ? 'Switch to Employee View' : 'Switch to HR View'} (Development)
                                 </button>
                             </div>
+                            
+                            {/* Role Switcher */}
+                            <div style={{ 
+                                marginBottom: '1rem',
+                                background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+                                padding: '1rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                maxWidth: '600px',
+                                margin: '0 auto 1rem auto'
+                            }}>
+                                <div style={{ marginBottom: '0.5rem', fontSize: '0.9rem', color: '#64748b', fontWeight: '600' }}>
+                                    👤 Current Role: <span style={{ color: '#1e3a8a', fontWeight: '700' }}>{userRole.toUpperCase()}</span>
+                                </div>
+                                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                                    <button
+                                        onClick={() => switchRole('employee')}
+                                        style={{
+                                            background: userRole === 'employee' ? '#1e3a8a' : 'transparent',
+                                            color: userRole === 'employee' ? 'white' : '#1e3a8a',
+                                            border: '2px solid #1e3a8a',
+                                            padding: '0.5rem 1rem',
+                                            borderRadius: '6px',
+                                            cursor: 'pointer',
+                                            fontSize: '0.85rem',
+                                            fontWeight: '600'
+                                        }}>
+                                        👨‍💼 Employee
+                                    </button>
+                                    <button
+                                        onClick={() => switchRole('hr')}
+                                        style={{
+                                            background: userRole === 'hr' ? '#d4af37' : 'transparent',
+                                            color: userRole === 'hr' ? '#0f172a' : '#d4af37',
+                                            border: '2px solid #d4af37',
+                                            padding: '0.5rem 1rem',
+                                            borderRadius: '6px',
+                                            cursor: 'pointer',
+                                            fontSize: '0.85rem',
+                                            fontWeight: '600'
+                                        }}>
+                                        👩‍💼 HR Manager
+                                    </button>
+                                    <button
+                                        onClick={() => switchRole('admin')}
+                                        style={{
+                                            background: userRole === 'admin' ? '#ef4444' : 'transparent',
+                                            color: userRole === 'admin' ? 'white' : '#ef4444',
+                                            border: '2px solid #ef4444',
+                                            padding: '0.5rem 1rem',
+                                            borderRadius: '6px',
+                                            cursor: 'pointer',
+                                            fontSize: '0.85rem',
+                                            fontWeight: '600'
+                                        }}>
+                                        🔧 Admin
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <button 
+                                onClick={() => {
+                                    setCurrentPage('employeeprofile');
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                style={{
+                                    background: '#d4af37',
+                                    color: '#0f172a',
+                                    border: 'none',
+                                    padding: '1rem 2rem',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: '700',
+                                    fontSize: '1rem'
+                                }}>
+                                ← Back to Profile & Directory
+                            </button>
                         </div>
 
                         {/* Search Bar */}
@@ -8529,7 +7325,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         {isHRView && profileData.title && (
                                             <div style={{
                                                 display: 'grid',
-                                                gridTemplateColumns: (userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') ? '1fr 1fr' : '1fr',
+                                                gridTemplateColumns: (userRole === 'hr' || userRole === 'admin') ? '1fr 1fr' : '1fr',
                                                 gap: '0.5rem',
                                                 fontSize: '0.85rem'
                                             }}>
@@ -8543,7 +7339,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                 }}>
                                                     Profile Updated
                                                 </div>
-                                                {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
+                                                {(userRole === 'hr' || userRole === 'admin') && (
                                                     <button
                                                         onClick={async () => {
                                                             if (confirm(`⚠️ Deactivate ${profileData.name}?\n\nThis will:\n• Move their profile picture to Inactive-Employees folder\n• Mark their profile as inactive\n• Remove them from the active Team Directory\n\nContinue?`)) {
@@ -8615,163 +7411,91 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 </div>
                             )}
                             
-                            {/* Team Members from State */}
-                            {teamMembers.map((member) => (
-                                <div key={member.id} className="hover-lift animate-scale-in" style={{
-                                    background: 'white',
-                                    padding: '2rem',
-                                    borderRadius: '12px',
-                                    border: '2px solid #d4af37',
-                                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-                                }}>
-                                    <div style={{ marginBottom: '1.5rem' }}>
-                                        <div style={{
-                                            background: '#f8fafc',
-                                            padding: '1.5rem',
-                                            borderRadius: '8px',
-                                            border: '1px solid #e2e8f0'
-                                        }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
-                                                <div style={{
-                                                    width: '60px',
-                                                    height: '60px',
-                                                    background: member.profilePicture ? 'transparent' : '#1e3a8a',
-                                                    borderRadius: '50%',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    color: 'white',
-                                                    fontWeight: 'bold',
-                                                    fontSize: '1.5rem',
-                                                    marginRight: '1rem',
-                                                    overflow: 'hidden',
-                                                    border: '2px solid #d4af37'
-                                                }}>
-                                                    {member.profilePicture ? (
-                                                        <img 
-                                                            src={member.profilePicture} 
-                                                            alt={member.name}
-                                                            style={{
-                                                                width: '100%',
-                                                                height: '100%',
-                                                                objectFit: 'cover'
-                                                            }}
-                                                        />
-                                                    ) : (
-                                                        member.name?.split(' ').map(n => n[0]).join('').toUpperCase() || '??'
-                                                    )}
-                                                </div>
-                                                <div>
-                                                    <div style={{ fontWeight: '600', color: '#1e3a8a' }}>
-                                                        {member.name}
-                                                    </div>
-                                                    <div style={{ color: '#64748b', fontSize: '0.9rem' }}>
-                                                        {member.title}
-                                                    </div>
-                                                    {isHRView && member.id && (
-                                                        <div style={{ color: '#64748b', fontSize: '0.8rem' }}>
-                                                            Employee ID: {member.id}
-                                                        </div>
-                                                    )}
-                                                </div>
+                            {/* John Doe Card - Conditional View Based on HR Access */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                            }}>
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        background: '#f8fafc',
+                                        padding: '1.5rem',
+                                        borderRadius: '8px',
+                                        border: '1px solid #e2e8f0',
+                                        marginBottom: isHRView ? '1rem' : '0'
+                                    }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+                                            <div style={{
+                                                width: '60px',
+                                                height: '60px',
+                                                background: '#1e3a8a',
+                                                borderRadius: '50%',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                color: 'white',
+                                                fontWeight: 'bold',
+                                                fontSize: '1.5rem',
+                                                marginRight: '1rem'
+                                            }}>
+                                                JD
                                             </div>
-                                            <div style={{ fontSize: '0.9rem', color: '#475569' }}>
-                                                <div style={{ marginBottom: '0.5rem' }}>
-                                                    📧 {member.email}
-                                                </div>
+                                            <div>
+                                                <div style={{ fontWeight: '600', color: '#1e3a8a' }}>John Doe</div>
+                                                <div style={{ color: '#64748b', fontSize: '0.9rem' }}>Senior Cloud Engineer</div>
                                                 {isHRView && (
-                                                    <>
-                                                        {member.phone && (
-                                                            <div style={{ marginBottom: '0.5rem' }}>
-                                                                📱 {member.phone}
-                                                            </div>
-                                                        )}
-                                                        {member.location && (
-                                                            <div style={{ marginBottom: '0.5rem' }}>
-                                                                📍 {member.location}
-                                                            </div>
-                                                        )}
-                                                        {member.department && (
-                                                            <div style={{ marginBottom: '0.5rem' }}>
-                                                                🏢 {member.department}
-                                                            </div>
-                                                        )}
-                                                        {member.emergencyContact && (
-                                                            <div style={{ marginBottom: '0.5rem' }}>
-                                                                🚨 Emergency: {member.emergencyContact}
-                                                            </div>
-                                                        )}
-                                                        {member.manager && (
-                                                            <div style={{ marginBottom: '0.5rem' }}>
-                                                                👤 Manager: {member.manager}
-                                                            </div>
-                                                        )}
-                                                        {member.startDate && (
-                                                            <div style={{ marginBottom: '0.5rem' }}>
-                                                                📅 Start Date: {new Date(member.startDate).toLocaleDateString()}
-                                                            </div>
-                                                        )}
-                                                        {member.salary && (
-                                                            <div style={{ marginBottom: '0.5rem', fontWeight: '600', color: '#16a34a' }}>
-                                                                💰 Salary: {member.salary}
-                                                            </div>
-                                                        )}
-                                                    </>
+                                                    <div style={{ color: '#64748b', fontSize: '0.8rem' }}>Employee ID: EMP-2024-001</div>
                                                 )}
                                             </div>
                                         </div>
+                                        <div style={{ fontSize: '0.9rem', color: '#475569' }}>
+                                            <div style={{ marginBottom: '0.5rem' }}>📧 john.doe@navontech.com</div>
+                                            {isHRView && (
+                                                <>
+                                                    <div style={{ marginBottom: '0.5rem' }}>📱 +1 (555) 123-4567</div>
+                                                    <div style={{ marginBottom: '0.5rem' }}>🏢 Remote - DC Metro Area</div>
+                                                    <div style={{ marginBottom: '0.5rem' }}>📅 Start Date: January 15, 2024</div>
+                                                    <div style={{ marginBottom: '0.5rem' }}>💰 Salary: $95,000</div>
+                                                    <div style={{ marginBottom: '0.5rem' }}>👤 Manager: Sarah Johnson</div>
+                                                    <div>🚨 Emergency Contact: Jane Doe - (555) 987-6543</div>
+                                                </>
+                                            )}
+                                        </div>
                                     </div>
-                                    
-                                    {/* Delete Button for HR/Admin */}
-                                    {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
-                                        <button
-                                            onClick={async () => {
-                                                if (confirm(`⚠️ Delete ${member.name}'s profile?\n\nThis will:\n• Remove their profile from the Team Directory\n• Delete their profile picture from S3\n• Remove all their data from the database\n\nThis action cannot be undone. Continue?`)) {
-                                                    try {
-                                                        // Delete profile picture from S3 if exists
-                                                        if (member.profilePicture && !member.profilePicture.startsWith('blob:')) {
-                                                            await deleteFromS3(member.profilePicture);
-                                                        }
-                                                        
-                                                        // Delete from database
-                                                        const { deleteProfile } = await import('./services/profileService');
-                                                        await deleteProfile(member.id || member.email);
-                                                        
-                                                        // Remove from local state
-                                                        setTeamMembers(prev => prev.filter(m => m.id !== member.id && m.email !== member.email));
-                                                        
-                                                        alert(`✅ ${member.name}'s profile has been deleted successfully!`);
-                                                    } catch (error) {
-                                                        console.error('Delete error:', error);
-                                                        alert('❌ Failed to delete profile. Please try again.');
-                                                    }
-                                                }
-                                            }}
-                                            style={{
-                                                background: '#ef4444',
-                                                color: 'white',
-                                                border: 'none',
-                                                padding: '0.75rem 1.5rem',
-                                                borderRadius: '8px',
-                                                cursor: 'pointer',
-                                                fontWeight: '600',
-                                                width: '100%',
-                                                marginTop: '1rem',
-                                                transition: 'all 0.3s ease'
-                                            }}
-                                            onMouseOver={(e) => {
-                                                e.target.style.transform = 'translateY(-2px)';
-                                                e.target.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.4)';
-                                            }}
-                                            onMouseOut={(e) => {
-                                                e.target.style.transform = 'translateY(0)';
-                                                e.target.style.boxShadow = 'none';
+                                    {isHRView && (
+                                        <div style={{
+                                            display: 'grid',
+                                            gridTemplateColumns: '1fr 1fr',
+                                            gap: '0.5rem',
+                                            fontSize: '0.85rem'
+                                        }}>
+                                            <div style={{
+                                                background: '#fef3c7',
+                                                color: '#92400e',
+                                                padding: '0.5rem',
+                                                borderRadius: '6px',
+                                                textAlign: 'center',
+                                                fontWeight: '600'
                                             }}>
-                                            🗑️ Delete Profile
-                                        </button>
+                                                AWS Certified
+                                            </div>
+                                            <div style={{
+                                                background: '#dcfce7',
+                                                color: '#166534',
+                                                padding: '0.5rem',
+                                                borderRadius: '6px',
+                                                textAlign: 'center',
+                                                fontWeight: '600'
+                                            }}>
+                                                Security+ Cert
+                                            </div>
+                                        </div>
                                     )}
                                 </div>
-                            ))}
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -9322,60 +8046,57 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     Browse Resources
                                 </button>
                             </div>
+                        </div>
 
-                            {/* Resumes */}
-                            <div className="hover-lift animate-scale-in" style={{
-                                background: 'white',
-                                padding: '2rem',
-                                borderRadius: '12px',
-                                border: '2px solid #d4af37',
-                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                animationDelay: '0.3s',
-                                display: 'flex',
-                                flexDirection: 'column'
-                            }}>
-                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
-                                    <div style={{
-                                        fontSize: '2.5rem',
-                                        marginRight: '1rem'
-                                    }}>
-                                        📄
-                                    </div>
-                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
-                                        Resumes
-                                    </h3>
-                                </div>
-                                <div style={{ marginBottom: '1rem', flex: 1 }}>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Received resumes to review
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Candidate applications
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Archived resumes
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Interview notes
-                                    </p>
-                                </div>
+                        {/* Upload Section */}
+                        <div style={{
+                            background: '#fff3cd',
+                            padding: '1.5rem',
+                            borderRadius: '12px',
+                            border: '2px solid #ffc107',
+                            marginBottom: '2rem',
+                            textAlign: 'center'
+                        }}>
+                            <h4 style={{ color: '#856404', marginBottom: '1rem' }}>🔄 Demo: Switch User Role</h4>
+                            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
                                 <button 
-                                    onClick={() => {
-                                        setCurrentPage('resumes');
-                                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                                    }}
+                                    onClick={() => switchRole('employee')}
                                     style={{
-                                        background: '#1e3a8a',
+                                        background: userRole === 'employee' ? '#1e3a8a' : '#94a3b8',
                                         color: 'white',
                                         border: 'none',
-                                        padding: '0.75rem 1.5rem',
+                                        padding: '0.5rem 1rem',
                                         borderRadius: '6px',
                                         cursor: 'pointer',
-                                        fontWeight: '600',
-                                        width: '100%',
-                                        marginTop: 'auto'
+                                        fontWeight: '600'
                                     }}>
-                                    View Resumes
+                                    Employee
+                                </button>
+                                <button 
+                                    onClick={() => switchRole('hr')}
+                                    style={{
+                                        background: userRole === 'hr' ? '#1e3a8a' : '#94a3b8',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '0.5rem 1rem',
+                                        borderRadius: '6px',
+                                        cursor: 'pointer',
+                                        fontWeight: '600'
+                                    }}>
+                                    HR Manager
+                                </button>
+                                <button 
+                                    onClick={() => switchRole('admin')}
+                                    style={{
+                                        background: userRole === 'admin' ? '#1e3a8a' : '#94a3b8',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '0.5rem 1rem',
+                                        borderRadius: '6px',
+                                        cursor: 'pointer',
+                                        fontWeight: '600'
+                                    }}>
+                                    Admin
                                 </button>
                             </div>
                         </div>
@@ -9417,7 +8138,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 style={{ display: 'none' }}
                                 onChange={async (e) => {
                                     if (!canUpload(userRole, 'document')) {
-                                        alert('❌ Access Denied: Only HR, Admin, and SuperAdmin users can upload documents.\n\nCurrent Role: ' + userRole.toUpperCase() + '\nRequired Role: HR, ADMIN, or SUPERADMIN');
+                                        alert('❌ Access Denied: Only HR and Admin users can upload documents.\n\nCurrent Role: ' + userRole.toUpperCase() + '\nRequired Role: HR or ADMIN');
                                         e.target.value = '';
                                         return;
                                     }
@@ -11354,54 +10075,10 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
 
                         {/* Login Form */}
                         <div style={{ padding: '1.5rem' }}>
-                            <form onSubmit={async (e) => {
+                            <form onSubmit={(e) => {
                                 e.preventDefault();
-                                setLoginError('');
-                                setIsAuthenticating(true);
-                                
-                                try {
-                                    // Check if there's already a signed-in user and sign them out first
-                                    try {
-                                        await getCurrentUser();
-                                        await signOut();
-                                    } catch (err) {
-                                        // No user signed in, continue
-                                    }
-                                    
-                                    const result = await signIn({ username: loginEmail, password: loginPassword });
-                                    
-                                    // Check if password change is required
-                                    if (result.nextStep?.signInStep === 'CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED') {
-                                        setLoginError('Password change required. Please contact administrator.');
-                                        setIsAuthenticating(false);
-                                        return;
-                                    }
-                                    
-                                    // Get user session and role
-                                    const session = await fetchAuthSession();
-                                    const groups = session.tokens?.accessToken?.payload['cognito:groups'] || [];
-                                    
-                                    console.log('=== AUTH DEBUG ===');
-                                    console.log('Cognito groups:', groups);
-                                    
-                                    // Determine role
-                                    let role = 'employee';
-                                    if (groups.includes('SuperAdmin')) role = 'superadmin';
-                                    else if (groups.includes('Admin')) role = 'admin';
-                                    else if (groups.includes('HR')) role = 'hr';
-                                    
-                                    console.log('Determined role:', role);
-                                    console.log('==================');
-                                    
-                                    setUserRole(role);
-                                    setCurrentPage('secureportal');
-                                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                                } catch (err) {
-                                    console.error('Sign in error:', err);
-                                    setLoginError(err.message || 'Failed to sign in. Please check your credentials.');
-                                } finally {
-                                    setIsAuthenticating(false);
-                                }
+                                // Placeholder - would integrate with AWS Cognito
+                                alert('AWS Cognito authentication would be integrated here');
                             }}>
                                 {/* Username Field */}
                                 <div style={{ marginBottom: '1rem' }}>
@@ -11417,9 +10094,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     <input
                                         type="email"
                                         placeholder="your.email@navontech.com"
-                                        value={loginEmail}
-                                        onChange={(e) => setLoginEmail(e.target.value)}
-                                        required
                                         style={{
                                             width: '100%',
                                             padding: '0.65rem',
@@ -11447,48 +10121,23 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     }}>
                                         Password
                                     </label>
-                                    <div style={{ position: 'relative' }}>
-                                        <input
-                                            type={showPassword ? "text" : "password"}
-                                            placeholder="Enter your password"
-                                            value={loginPassword}
-                                            onChange={(e) => setLoginPassword(e.target.value)}
-                                            required
-                                            style={{
-                                                width: '100%',
-                                                padding: '0.65rem',
-                                                paddingRight: '2.5rem',
-                                                border: '2px solid rgba(255, 255, 255, 0.3)',
-                                                borderRadius: '8px',
-                                                fontSize: '0.95rem',
-                                                background: 'rgba(255, 255, 255, 0.9)',
-                                                color: '#1e293b',
-                                                transition: 'all 0.3s ease',
-                                                outline: 'none'
-                                            }}
-                                            onFocus={(e) => e.target.style.borderColor = 'white'}
-                                            onBlur={(e) => e.target.style.borderColor = 'rgba(255, 255, 255, 0.3)'}
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowPassword(!showPassword)}
-                                            style={{
-                                                position: 'absolute',
-                                                right: '0.5rem',
-                                                top: '50%',
-                                                transform: 'translateY(-50%)',
-                                                background: 'transparent',
-                                                border: 'none',
-                                                cursor: 'pointer',
-                                                fontSize: '1.2rem',
-                                                padding: '0.25rem',
-                                                color: '#64748b'
-                                            }}
-                                            title={showPassword ? "Hide password" : "Show password"}
-                                        >
-                                            {showPassword ? 'Hide' : 'Show'}
-                                        </button>
-                                    </div>
+                                    <input
+                                        type="password"
+                                        placeholder="Enter your password"
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.65rem',
+                                            border: '2px solid rgba(255, 255, 255, 0.3)',
+                                            borderRadius: '8px',
+                                            fontSize: '0.95rem',
+                                            background: 'rgba(255, 255, 255, 0.9)',
+                                            color: '#1e293b',
+                                            transition: 'all 0.3s ease',
+                                            outline: 'none'
+                                        }}
+                                        onFocus={(e) => e.target.style.borderColor = 'white'}
+                                        onBlur={(e) => e.target.style.borderColor = 'rgba(255, 255, 255, 0.3)'}
+                                    />
                                 </div>
 
                                 {/* Forgot Password Link */}
@@ -11513,49 +10162,31 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     </a>
                                 </div>
 
-                                {/* Error Message */}
-                                {loginError && (
-                                    <div style={{
-                                        background: '#fee2e2',
-                                        border: '1px solid #ef4444',
-                                        color: '#991b1b',
-                                        padding: '0.75rem',
-                                        borderRadius: '8px',
-                                        marginBottom: '1rem',
-                                        fontSize: '0.9rem'
-                                    }}>
-                                        {loginError}
-                                    </div>
-                                )}
-
                                 {/* Sign In Button */}
                                 <button
                                     type="submit"
-                                    disabled={isAuthenticating}
                                     style={{
                                         width: '100%',
-                                        background: isAuthenticating ? '#94a3b8' : '#d4af37',
+                                        background: '#d4af37',
                                         color: '#0f172a',
                                         border: 'none',
                                         padding: '1rem',
                                         borderRadius: '8px',
                                         fontSize: '1rem',
                                         fontWeight: '700',
-                                        cursor: isAuthenticating ? 'not-allowed' : 'pointer',
+                                        cursor: 'pointer',
                                         transition: 'all 0.3s ease',
                                         marginBottom: '1rem'
                                     }}
                                     onMouseOver={(e) => {
-                                        if (!isAuthenticating) {
-                                            e.target.style.transform = 'translateY(-2px)';
-                                            e.target.style.boxShadow = '0 10px 20px rgba(212, 175, 55, 0.5)';
-                                        }
+                                        e.target.style.transform = 'translateY(-2px)';
+                                        e.target.style.boxShadow = '0 10px 20px rgba(212, 175, 55, 0.5)';
                                     }}
                                     onMouseOut={(e) => {
                                         e.target.style.transform = 'translateY(0)';
                                         e.target.style.boxShadow = 'none';
                                     }}>
-                                    {isAuthenticating ? 'Signing In...' : 'Sign In'}
+                                    Sign In
                                 </button>
                             </form>
                         </div>
