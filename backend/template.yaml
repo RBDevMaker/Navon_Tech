@@ -195,6 +195,74 @@ Resources:
             Auth:
               Authorizer: NONE
 
+  EmployeeProfileFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/employee-profile/
+      Handler: index.handler
+      Description: Handles employee profile CRUD operations with DynamoDB persistence
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref CompanyDataTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+              Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"
+      Events:
+        GetAllProfiles:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/profiles
+            Method: GET
+            Auth:
+              Authorizer: NONE
+        GetProfile:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/profiles/{employeeId}
+            Method: GET
+            Auth:
+              Authorizer: NONE
+        CreateProfile:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/profiles
+            Method: POST
+            Auth:
+              Authorizer: NONE
+        UpdateProfile:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/profiles/{employeeId}
+            Method: PUT
+            Auth:
+              Authorizer: NONE
+        DeleteProfile:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/profiles/{employeeId}
+            Method: DELETE
+            Auth:
+              Authorizer: NONE
+        ProfileOptions:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/profiles/{proxy+}
+            Method: OPTIONS
+            Auth:
+              Authorizer: NONE
+
   ResumeManagementFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -494,6 +562,12 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub "/aws/lambda/${AWS::StackName}-S3UploadFunction"
+      RetentionInDays: 30
+
+  EmployeeProfileLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${AWS::StackName}-EmployeeProfileFunction"
       RetentionInDays: 30
 
   ResumeManagementLogGroup:

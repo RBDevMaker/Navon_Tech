@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { uploadProfilePicture, uploadDocument, canUpload, deleteFromS3 } from './services/s3Upload';
+import { saveProfile, getProfile, getAllProfiles } from './services/profileService';
 import { Amplify } from 'aws-amplify';
 import { signIn, signOut, getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
 import awsConfig from './aws-config';
@@ -119,6 +120,66 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
         }
     }, [currentPage, userRole]);
+
+    // Load profiles from database when viewing team directory
+    useEffect(() => {
+        const loadProfiles = async () => {
+            if (currentPage === 'teamdirectory' || currentPage === 'myprofile') {
+                try {
+                    console.log('Loading profiles from database...');
+                    const profiles = await getAllProfiles();
+                    console.log('Loaded profiles:', profiles);
+                    
+                    // Update team members with loaded profiles
+                    if (profiles && profiles.length > 0) {
+                        setTeamMembers(profiles.map(profile => ({
+                            id: profile.employeeId,
+                            name: profile.name || `${profile.firstName || ''} ${profile.lastName || ''}`.trim(),
+                            title: profile.title || '',
+                            email: profile.email || '',
+                            phone: profile.phone || '',
+                            location: profile.location || '',
+                            department: profile.department || '',
+                            emergencyContact: profile.emergencyContact || '',
+                            profilePicture: profile.profilePicture || '',
+                            salary: profile.salary || '',
+                            startDate: profile.startDate || '',
+                            manager: profile.manager || ''
+                        })));
+                    }
+                    
+                    // Load current user's profile if on myprofile page
+                    if (currentPage === 'myprofile' && authenticatedUser) {
+                        const userProfile = await getProfile(authenticatedUser.username || authenticatedUser.email);
+                        if (userProfile) {
+                            console.log('Loaded user profile:', userProfile);
+                            setProfileData({
+                                name: userProfile.name || '',
+                                email: userProfile.email || '',
+                                phone: userProfile.phone || '',
+                                department: userProfile.department || '',
+                                title: userProfile.title || '',
+                                location: userProfile.location || '',
+                                emergencyContact: userProfile.emergencyContact || '',
+                                emergencyPhone: userProfile.emergencyPhone || '',
+                                profilePicture: userProfile.profilePicture || '',
+                                employeeGroup: userProfile.employeeGroup || '',
+                                salary: userProfile.salary || '',
+                                startDate: userProfile.startDate || '',
+                                manager: userProfile.manager || '',
+                                employeeId: userProfile.employeeId || ''
+                            });
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading profiles:', error);
+                    // Don't show error to user, just log it
+                }
+            }
+        };
+        
+        loadProfiles();
+    }, [currentPage, authenticatedUser]);
 
     // Handle scroll for parallax effects
     useEffect(() => {
@@ -6556,33 +6617,18 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     
                                     const profilePayload = {
                                         ...updatedProfile,
-                                        employeeId: employeeIdToSave  // Override with the correct employeeId
+                                        employeeId: employeeIdToSave,  // Override with the correct employeeId
+                                        name: `${updatedProfile.firstName} ${updatedProfile.lastName}`,
+                                        profilePicture: updatedProfile.profilePicture || profileData.profilePicture
                                     };
                                     
-                                    console.log('Payload being sent:', JSON.stringify(profilePayload, null, 2));
+                                    console.log('Saving profile to database:', JSON.stringify(profilePayload, null, 2));
                                     
-                                    const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/employee/profile`;
-                                    console.log('API URL:', apiUrl);
-                                    console.log('========================');
+                                    // Use the profile service to save
+                                    const savedProfile = await saveProfile(profilePayload);
+                                    console.log('Profile saved successfully:', savedProfile);
                                     
-                                    const response = await fetch(apiUrl, {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json'
-                                        },
-                                        body: JSON.stringify(profilePayload)
-                                    });
-                                    
-                                    console.log('Response status:', response.status);
-                                    const responseText = await response.text();
-                                    console.log('Response body:', responseText);
-                                    
-                                    if (!response.ok) {
-                                        throw new Error(`Failed to save profile: ${response.status} - ${responseText}`);
-                                    }
-                                    
-                                    const result = JSON.parse(responseText);
-                                    console.log('Profile saved to database:', result);
+                                    alert('✅ Profile saved successfully to database!');
                                 } catch (error) {
                                     console.error('Error saving profile:', error);
                                     alert(`⚠️ Failed to save profile to database: ${error.message}`);
