@@ -5272,24 +5272,11 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 marginBottom: '1.5rem',
                                 display: 'inline-block'
                             }}>
-                                <label style={{ marginRight: '1rem', fontWeight: '600', color: '#1e3a8a' }}>
-                                    Current Role:
-                                </label>
-                                <select 
-                                    value={userRole} 
-                                    onChange={(e) => setUserRole(e.target.value)}
-                                    style={{
-                                        padding: '0.5rem 1rem',
-                                        borderRadius: '6px',
-                                        border: '2px solid #1e3a8a',
-                                        fontWeight: '600',
-                                        cursor: 'pointer',
-                                        background: 'white'
-                                    }}>
-                                    <option value="employee">Employee</option>
-                                    <option value="hr">HR</option>
-                                    <option value="admin">Admin</option>
-                                </select>
+                                <div style={{ fontWeight: '700', color: userRole === 'superadmin' ? '#92400e' : '#1e3a8a', fontSize: '1rem', padding: '0.5rem 1rem' }}>
+                                    {userRole === 'superadmin' && '⭐ '}
+                                    Current Role: {userRole.toUpperCase()}
+                                    {userRole === 'superadmin' && ' ⭐'}
+                                </div>
                             </div>
                             
                             <br />
@@ -5911,7 +5898,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 </div>
 
                                 {/* HR-Only Section */}
-                                {(userRole === 'hr' || userRole === 'admin') && (
+                                {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
                                     <div style={{
                                         marginTop: '2rem',
                                         padding: '1.5rem',
@@ -5948,7 +5935,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             fontSize: '0.9rem',
                                             marginBottom: '1.5rem'
                                         }}>
-                                            Only HR and Admin users can view and edit these fields
+                                            Only HR, Admin, and SuperAdmin users can view and edit these fields
                                         </p>
 
                                         <div style={{
@@ -7100,8 +7087,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 Search and connect with team members across the organization
                             </p>
                             <div style={{
-                                background: '#f0f9ff',
-                                border: '2px solid #0ea5e9',
+                                background: userRole === 'superadmin' ? 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)' : '#f0f9ff',
+                                border: userRole === 'superadmin' ? '2px solid #d4af37' : '2px solid #0ea5e9',
                                 borderRadius: '8px',
                                 padding: '1rem',
                                 margin: '0 auto 2rem auto',
@@ -7110,9 +7097,10 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 <p style={{
                                     margin: 0,
                                     fontSize: '0.9rem',
-                                    color: '#0369a1'
+                                    color: userRole === 'superadmin' ? '#92400e' : '#0369a1',
+                                    fontWeight: userRole === 'superadmin' ? '700' : '400'
                                 }}>
-                                    ℹ️ <strong>Your Role: {userRole.toUpperCase()}</strong> - {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') ? 'You have full directory access with all employee information.' : 'You can see Name, Title, and Email only.'}
+                                    {userRole === 'superadmin' ? '⭐ ' : 'ℹ️ '}<strong>Your Role: {userRole.toUpperCase()}</strong>{userRole === 'superadmin' ? ' ⭐' : ''} - {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') ? 'You have full directory access with all employee information.' : 'You can see Name, Title, and Email only.'}
                                 </p>
                             </div>
                             
