@@ -165,7 +165,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         try {
             let exportData;
             
-            if (userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') {
+            if (userRole === 'hr' || userRole === 'superadmin') {
+                // HR and SuperAdmin see everything including salary
                 exportData = teamMembers.map(member => ({
                     'Employee ID': member.id || '',
                     'Name': member.name || '',
@@ -179,7 +180,22 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                     'Start Date': member.startDate || '',
                     'Salary': member.salary || ''
                 }));
+            } else if (userRole === 'admin') {
+                // Admin sees everything EXCEPT salary
+                exportData = teamMembers.map(member => ({
+                    'Employee ID': member.id || '',
+                    'Name': member.name || '',
+                    'Title': member.title || '',
+                    'Department': member.department || '',
+                    'Email': member.email || '',
+                    'Phone': member.phone || '',
+                    'Location': member.location || '',
+                    'Emergency Contact': member.emergencyContact || '',
+                    'Manager': member.manager || '',
+                    'Start Date': member.startDate || ''
+                }));
             } else {
+                // Employees see limited info
                 exportData = teamMembers.map(member => ({
                     'Name': member.name || '',
                     'Title': member.title || '',
@@ -4834,7 +4850,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 🔐 Secure Access Required
                             </h3>
                             <p style={{ marginBottom: '1.5rem', opacity: '0.9' }}>
-                                Access to the employee portal requires multi-factor authentication and valid security clearance.
+                                Access to the employee portal requires valid security clearance.
                                 All activities are logged and monitored for compliance.
                             </p>
                             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -4848,17 +4864,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     fontWeight: '600'
                                 }}>
                                     Employee Login
-                                </button>
-                                <button style={{
-                                    background: 'transparent',
-                                    color: 'white',
-                                    border: '2px solid white',
-                                    padding: '1rem 2rem',
-                                    borderRadius: '8px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600'
-                                }}>
-                                    Request Access
                                 </button>
                             </div>
                         </div>
@@ -4889,7 +4894,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 maxWidth: '800px',
                                 margin: '0 auto'
                             }}>
-                                Access your secure workspace with multi-factor authentication and role-based permissions
+                                Access your secure workspace with role-based permissions
                             </p>
                         </div>
 
@@ -5228,6 +5233,517 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 }}>
                                     Enter
                                 </div>
+                            </div>
+                            
+                            {/* Card 6: User Management - SuperAdmin and HR Only */}
+                            {(userRole === 'superadmin' || userRole === 'hr') && (
+                                <div 
+                                    className="hover-lift animate-scale-in" 
+                                    onClick={() => {
+                                        setCurrentPage('usermanagement');
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }}
+                                    style={{
+                                        background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+                                        padding: '3rem 2rem',
+                                        borderRadius: '20px',
+                                        textAlign: 'center',
+                                        cursor: 'pointer',
+                                        border: '3px solid #d4af37',
+                                        boxShadow: '0 10px 30px rgba(212, 175, 55, 0.4)',
+                                        transition: 'all 0.4s ease',
+                                        position: 'relative',
+                                        overflow: 'hidden',
+                                        animationDelay: '0.4s',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        justifyContent: 'space-between'
+                                    }}>
+                                    <div>
+                                        <div style={{
+                                            fontSize: '4rem',
+                                            marginBottom: '1.5rem',
+                                            filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))'
+                                        }}>
+                                            ⭐👥
+                                        </div>
+                                        <h3 style={{
+                                            color: '#0f172a',
+                                            fontSize: '1.5rem',
+                                            fontWeight: '700',
+                                            marginBottom: '1rem'
+                                        }}>
+                                            User Management
+                                        </h3>
+                                        <p style={{
+                                            color: '#78350f',
+                                            fontSize: '1rem',
+                                            lineHeight: '1.6',
+                                            marginBottom: '2rem',
+                                            fontWeight: '600'
+                                        }}>
+                                            Create, modify, and delete users. Assign roles and view audit logs. {userRole === 'superadmin' ? 'SuperAdmin' : 'HR'} access.
+                                        </p>
+                                    </div>
+                                    <div style={{
+                                        background: 'rgba(212, 175, 55, 0.3)',
+                                        border: '2px solid #d4af37',
+                                        borderRadius: '8px',
+                                        padding: '0.75rem 1.5rem',
+                                        color: '#0f172a',
+                                        fontWeight: '700',
+                                        fontSize: '1rem',
+                                        textAlign: 'center',
+                                        transition: 'all 0.3s ease'
+                                    }}>
+                                        ⭐ Enter
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {/* USER MANAGEMENT PAGE - SuperAdmin and HR Only */}
+            {currentPage === 'usermanagement' && (userRole === 'superadmin' || userRole === 'hr') && (
+                <section style={{ 
+                    padding: '4rem 2rem', 
+                    background: '#f1f5f9',
+                    minHeight: '100vh'
+                }}>
+                    <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                            <h2 style={{
+                                fontSize: '3rem',
+                                marginBottom: '1rem',
+                                background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                backgroundClip: 'text',
+                                fontWeight: '800'
+                            }}>
+                                ⭐ User Management
+                            </h2>
+                            <p style={{
+                                fontSize: '1.2rem',
+                                color: '#475569',
+                                maxWidth: '800px',
+                                margin: '0 auto 1rem auto'
+                            }}>
+                                Create, modify, and delete user accounts. Assign roles and view audit logs.
+                            </p>
+                            {userRole === 'hr' && (
+                                <p style={{
+                                    fontSize: '0.95rem',
+                                    color: '#92400e',
+                                    maxWidth: '800px',
+                                    margin: '0 auto 2rem auto',
+                                    background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+                                    padding: '0.75rem',
+                                    borderRadius: '8px',
+                                    border: '2px solid #d4af37',
+                                    fontWeight: '600'
+                                }}>
+                                    ⚠️ HR Restriction: You cannot add or delete SuperAdmin accounts
+                                </p>
+                            )}
+                            <button 
+                                onClick={() => {
+                                    setCurrentPage('secureportal');
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                style={{
+                                    background: '#d4af37',
+                                    color: '#0f172a',
+                                    border: 'none',
+                                    padding: '1rem 2rem',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: '700',
+                                    fontSize: '1rem'
+                                }}>
+                                ← Back to Portal
+                            </button>
+                        </div>
+
+                        {/* User Management Grid */}
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                            gap: '2rem',
+                            marginBottom: '3rem'
+                        }}>
+                            {/* Create New User */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                display: 'flex',
+                                flexDirection: 'column'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        fontSize: '2.5rem',
+                                        marginRight: '1rem'
+                                    }}>
+                                        ➕
+                                    </div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        Create New User
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem', flex: 1 }}>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Add new employee accounts
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Assign initial roles
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Set permissions
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Configure access levels
+                                    </p>
+                                </div>
+                                <button 
+                                    onClick={() => alert('🚧 Create User Feature\n\nThis feature will integrate with AWS Cognito to create new user accounts.\n\nComing soon after backend deployment!')}
+                                    style={{
+                                        background: '#10b981',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '0.75rem 1.5rem',
+                                        borderRadius: '6px',
+                                        cursor: 'pointer',
+                                        fontWeight: '600',
+                                        width: '100%',
+                                        marginTop: 'auto'
+                                    }}>
+                                    Create User
+                                </button>
+                            </div>
+
+                            {/* Manage Users & Roles */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.1s',
+                                display: 'flex',
+                                flexDirection: 'column'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        fontSize: '2.5rem',
+                                        marginRight: '1rem'
+                                    }}>
+                                        ⚙️
+                                    </div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        Manage Users & Roles
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem', flex: 1 }}>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Modify user information
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Change user roles (Employee/HR/Admin)
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Promote or demote users
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Update permissions
+                                    </p>
+                                </div>
+                                <button 
+                                    onClick={() => alert('🚧 Manage Users Feature\n\nThis feature will allow you to:\n• View all users\n• Edit user details\n• Change roles (Employee → HR → Admin)\n• Promote/demote any user\n\nComing soon after backend deployment!')}
+                                    style={{
+                                        background: '#1e3a8a',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '0.75rem 1.5rem',
+                                        borderRadius: '6px',
+                                        cursor: 'pointer',
+                                        fontWeight: '600',
+                                        width: '100%',
+                                        marginTop: 'auto'
+                                    }}>
+                                    Manage Users
+                                </button>
+                            </div>
+
+                            {/* Delete Users */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.2s',
+                                display: 'flex',
+                                flexDirection: 'column'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        fontSize: '2.5rem',
+                                        marginRight: '1rem'
+                                    }}>
+                                        🗑️
+                                    </div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        Delete Users
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem', flex: 1 }}>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Remove user accounts
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Delete Admins and HR users
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Archive user data
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Revoke all access
+                                    </p>
+                                </div>
+                                <button 
+                                    onClick={() => alert('🚧 Delete User Feature\n\nThis feature will allow you to:\n• Delete any user account\n• Remove Admins and HR users\n• Archive user data\n• Revoke all access\n\n⚠️ This action requires confirmation.\n\nComing soon after backend deployment!')}
+                                    style={{
+                                        background: '#ef4444',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '0.75rem 1.5rem',
+                                        borderRadius: '6px',
+                                        cursor: 'pointer',
+                                        fontWeight: '600',
+                                        width: '100%',
+                                        marginTop: 'auto'
+                                    }}>
+                                    Delete Users
+                                </button>
+                            </div>
+
+                            {/* Audit Logs */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.3s',
+                                display: 'flex',
+                                flexDirection: 'column'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{
+                                        fontSize: '2.5rem',
+                                        marginRight: '1rem'
+                                    }}>
+                                        📊
+                                    </div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        Audit Logs
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem', flex: 1 }}>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • View all user activity
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Track login history
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Monitor role changes
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Export audit reports
+                                    </p>
+                                </div>
+                                <button 
+                                    onClick={() => alert('🚧 Audit Logs Feature\n\nThis feature will show:\n• All user login/logout events\n• Role changes and promotions\n• User creation/deletion\n• Permission modifications\n• Document access logs\n• Export to CSV/Excel\n\nComing soon after backend deployment!')}
+                                    style={{
+                                        background: '#1e3a8a',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '0.75rem 1.5rem',
+                                        borderRadius: '6px',
+                                        cursor: 'pointer',
+                                        fontWeight: '600',
+                                        width: '100%',
+                                        marginTop: 'auto'
+                                    }}>
+                                    View Audit Logs
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Current Users Overview */}
+                        <div style={{
+                            background: 'white',
+                            padding: '2rem',
+                            borderRadius: '12px',
+                            border: '2px solid #d4af37',
+                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                            marginBottom: '2rem'
+                        }}>
+                            <h3 style={{ color: '#1e3a8a', marginBottom: '1.5rem', fontSize: '1.5rem', textAlign: 'center' }}>
+                                👥 Current Users Overview
+                            </h3>
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                                gap: '1.5rem'
+                            }}>
+                                <div style={{
+                                    background: '#f8fafc',
+                                    padding: '1.5rem',
+                                    borderRadius: '8px',
+                                    border: '2px solid #e2e8f0',
+                                    textAlign: 'center'
+                                }}>
+                                    <div style={{ fontSize: '2rem', fontWeight: '700', color: '#1e3a8a' }}>
+                                        {teamMembers.length}
+                                    </div>
+                                    <div style={{ fontSize: '0.9rem', color: '#64748b', marginTop: '0.5rem', fontWeight: '600' }}>
+                                        Total Users
+                                    </div>
+                                </div>
+                                <div style={{
+                                    background: '#fef3c7',
+                                    padding: '1.5rem',
+                                    borderRadius: '8px',
+                                    border: '2px solid #d4af37',
+                                    textAlign: 'center'
+                                }}>
+                                    <div style={{ fontSize: '2rem', fontWeight: '700', color: '#d4af37' }}>
+                                        1
+                                    </div>
+                                    <div style={{ fontSize: '0.9rem', color: '#78350f', marginTop: '0.5rem', fontWeight: '600' }}>
+                                        ⭐ SuperAdmin
+                                    </div>
+                                </div>
+                                <div style={{
+                                    background: '#f8fafc',
+                                    padding: '1.5rem',
+                                    borderRadius: '8px',
+                                    border: '2px solid #e2e8f0',
+                                    textAlign: 'center'
+                                }}>
+                                    <div style={{ fontSize: '2rem', fontWeight: '700', color: '#1e3a8a' }}>
+                                        0
+                                    </div>
+                                    <div style={{ fontSize: '0.9rem', color: '#64748b', marginTop: '0.5rem', fontWeight: '600' }}>
+                                        Admins
+                                    </div>
+                                </div>
+                                <div style={{
+                                    background: '#f8fafc',
+                                    padding: '1.5rem',
+                                    borderRadius: '8px',
+                                    border: '2px solid #e2e8f0',
+                                    textAlign: 'center'
+                                }}>
+                                    <div style={{ fontSize: '2rem', fontWeight: '700', color: '#1e3a8a' }}>
+                                        0
+                                    </div>
+                                    <div style={{ fontSize: '0.9rem', color: '#64748b', marginTop: '0.5rem', fontWeight: '600' }}>
+                                        HR Managers
+                                    </div>
+                                </div>
+                                <div style={{
+                                    background: '#f8fafc',
+                                    padding: '1.5rem',
+                                    borderRadius: '8px',
+                                    border: '2px solid #e2e8f0',
+                                    textAlign: 'center'
+                                }}>
+                                    <div style={{ fontSize: '2rem', fontWeight: '700', color: '#1e3a8a' }}>
+                                        {teamMembers.length - 1}
+                                    </div>
+                                    <div style={{ fontSize: '0.9rem', color: '#64748b', marginTop: '0.5rem', fontWeight: '600' }}>
+                                        Employees
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Role Capabilities Info */}
+                        <div style={{
+                            background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+                            padding: '2rem',
+                            borderRadius: '12px',
+                            border: '2px solid #d4af37',
+                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                        }}>
+                            <h3 style={{ color: '#78350f', marginBottom: '1rem', fontSize: '1.3rem', textAlign: 'center' }}>
+                                ⭐ {userRole === 'superadmin' ? 'SuperAdmin' : 'HR'} Capabilities
+                            </h3>
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                                gap: '1rem'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'start', gap: '0.5rem' }}>
+                                    <span style={{ fontSize: '1.2rem' }}>✅</span>
+                                    <p style={{ color: '#78350f', margin: 0, fontSize: '0.95rem' }}>
+                                        Create, modify, and delete user accounts
+                                    </p>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'start', gap: '0.5rem' }}>
+                                    <span style={{ fontSize: '1.2rem' }}>✅</span>
+                                    <p style={{ color: '#78350f', margin: 0, fontSize: '0.95rem' }}>
+                                        Assign and change user roles
+                                    </p>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'start', gap: '0.5rem' }}>
+                                    <span style={{ fontSize: '1.2rem' }}>✅</span>
+                                    <p style={{ color: '#78350f', margin: 0, fontSize: '0.95rem' }}>
+                                        Promote Employees to HR or Admin
+                                    </p>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'start', gap: '0.5rem' }}>
+                                    <span style={{ fontSize: '1.2rem' }}>✅</span>
+                                    <p style={{ color: '#78350f', margin: 0, fontSize: '0.95rem' }}>
+                                        Demote Admins and HR to Employee
+                                    </p>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'start', gap: '0.5rem' }}>
+                                    <span style={{ fontSize: '1.2rem' }}>✅</span>
+                                    <p style={{ color: '#78350f', margin: 0, fontSize: '0.95rem' }}>
+                                        Full audit logs of all user activity
+                                    </p>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'start', gap: '0.5rem' }}>
+                                    <span style={{ fontSize: '1.2rem' }}>✅</span>
+                                    <p style={{ color: '#78350f', margin: 0, fontSize: '0.95rem' }}>
+                                        Delete Admins and HR users
+                                    </p>
+                                </div>
+                                {userRole === 'hr' && (
+                                    <div style={{ display: 'flex', alignItems: 'start', gap: '0.5rem' }}>
+                                        <span style={{ fontSize: '1.2rem' }}>❌</span>
+                                        <p style={{ color: '#dc2626', margin: 0, fontSize: '0.95rem', fontWeight: '600' }}>
+                                            Cannot add or delete SuperAdmin accounts
+                                        </p>
+                                    </div>
+                                )}
+                                {userRole === 'superadmin' && (
+                                    <div style={{ display: 'flex', alignItems: 'start', gap: '0.5rem' }}>
+                                        <span style={{ fontSize: '1.2rem' }}>✅</span>
+                                        <p style={{ color: '#78350f', margin: 0, fontSize: '0.95rem' }}>
+                                            Manage SuperAdmin accounts
+                                        </p>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -6122,9 +6638,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     <div style={{
                                         marginTop: '2rem',
                                         padding: '1.5rem',
-                                        background: '#fef3c7',
+                                        background: (userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') ? 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)' : '#fef3c7',
                                         borderRadius: '8px',
-                                        border: '2px solid #f59e0b'
+                                        border: '2px solid #d4af37'
                                     }}>
                                         <div style={{
                                             display: 'flex',
@@ -6136,11 +6652,11 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                 fontSize: '1.2rem',
                                                 margin: 0
                                             }}>
-                                                🔐 HR-Only Information
+                                                {(userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') && '⭐ '}🔐 HR-Only Information{(userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') && ' ⭐'}
                                             </h4>
                                             <span style={{
-                                                background: '#dc2626',
-                                                color: 'white',
+                                                background: '#d4af37',
+                                                color: '#0f172a',
                                                 padding: '0.25rem 0.75rem',
                                                 borderRadius: '12px',
                                                 fontSize: '0.75rem',
@@ -6153,7 +6669,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         <p style={{
                                             color: '#92400e',
                                             fontSize: '0.9rem',
-                                            marginBottom: '1.5rem'
+                                            marginBottom: '1.5rem',
+                                            fontWeight: '600'
                                         }}>
                                             Only HR, Admin, and SuperAdmin users can view and edit these fields
                                         </p>
@@ -6753,16 +7270,16 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             
                             {/* Role Switcher for Demo */}
                             <div style={{
-                                background: userRole === 'superadmin' ? 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)' : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+                                background: (userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') ? 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)' : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
                                 padding: '1rem',
                                 borderRadius: '12px',
                                 marginBottom: '1rem',
-                                border: userRole === 'superadmin' ? '2px solid #d4af37' : '2px solid #cbd5e1'
+                                border: (userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') ? '2px solid #d4af37' : '2px solid #cbd5e1'
                             }}>
-                                <div style={{ fontSize: '1rem', color: userRole === 'superadmin' ? '#92400e' : '#1e3a8a', fontWeight: '700', textAlign: 'center' }}>
-                                    {userRole === 'superadmin' && '⭐ '}
+                                <div style={{ fontSize: '1rem', color: (userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') ? '#92400e' : '#1e3a8a', fontWeight: '700', textAlign: 'center' }}>
+                                    {(userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') && '⭐ '}
                                     Current Role: {userRole.toUpperCase()}
-                                    {userRole === 'superadmin' && ' ⭐'}
+                                    {(userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') && ' ⭐'}
                                 </div>
                             </div>
                             
@@ -7307,8 +7824,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 Search and connect with team members across the organization
                             </p>
                             <div style={{
-                                background: userRole === 'superadmin' ? 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)' : '#f0f9ff',
-                                border: userRole === 'superadmin' ? '2px solid #d4af37' : '2px solid #0ea5e9',
+                                background: (userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') ? 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)' : '#f0f9ff',
+                                border: (userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') ? '2px solid #d4af37' : '2px solid #0ea5e9',
                                 borderRadius: '8px',
                                 padding: '1rem',
                                 margin: '0 auto 2rem auto',
@@ -7317,10 +7834,14 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 <p style={{
                                     margin: 0,
                                     fontSize: '0.9rem',
-                                    color: userRole === 'superadmin' ? '#92400e' : '#0369a1',
-                                    fontWeight: userRole === 'superadmin' ? '700' : '400'
+                                    color: (userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') ? '#92400e' : '#0369a1',
+                                    fontWeight: (userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') ? '700' : '400'
                                 }}>
-                                    {userRole === 'superadmin' ? '⭐ ' : 'ℹ️ '}<strong>Your Role: {userRole.toUpperCase()}</strong>{userRole === 'superadmin' ? ' ⭐' : ''} - {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') ? 'You have full directory access with all employee information.' : 'You can see Name, Title, and Email only.'}
+                                    {(userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') ? '⭐ ' : 'ℹ️ '}<strong>Your Role: {userRole.toUpperCase()}</strong>{(userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') ? ' ⭐' : ''} - {
+                                        userRole === 'hr' || userRole === 'superadmin' ? 'You have full directory access with all employee information including salaries.' :
+                                        userRole === 'admin' ? 'You have full directory access except salary information (HR/SuperAdmin only).' :
+                                        'You can see Name, Title, and Email only.'
+                                    }
                                 </p>
                             </div>
                             
@@ -7497,7 +8018,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                                 📅 Start Date: {new Date(profileData.startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                                                             </div>
                                                         )}
-                                                        {profileData.salary && (
+                                                        {profileData.salary && (userRole === 'hr' || userRole === 'superadmin') && (
                                                             <div style={{ marginBottom: '0.5rem' }}>
                                                                 💰 Salary: {profileData.salary}
                                                             </div>
@@ -7652,7 +8173,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                     <div style={{ marginBottom: '0.5rem' }}>📱 +1 (555) 123-4567</div>
                                                     <div style={{ marginBottom: '0.5rem' }}>🏢 Remote - DC Metro Area</div>
                                                     <div style={{ marginBottom: '0.5rem' }}>📅 Start Date: January 15, 2024</div>
-                                                    <div style={{ marginBottom: '0.5rem' }}>💰 Salary: $95,000</div>
+                                                    {(userRole === 'hr' || userRole === 'superadmin') && (
+                                                        <div style={{ marginBottom: '0.5rem' }}>� Salary: $95,000</div>
+                                                    )}
                                                     <div style={{ marginBottom: '0.5rem' }}>👤 Manager: Sarah Johnson</div>
                                                     <div>🚨 Emergency Contact: Jane Doe - (555) 987-6543</div>
                                                 </>
@@ -8298,59 +8821,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     </button>
                                 </div>
                             )}
-                        </div>
-
-                        {/* Upload Section */}
-                        <div style={{
-                            background: '#fff3cd',
-                            padding: '1.5rem',
-                            borderRadius: '12px',
-                            border: '2px solid #ffc107',
-                            marginBottom: '2rem',
-                            textAlign: 'center'
-                        }}>
-                            <h4 style={{ color: '#856404', marginBottom: '1rem' }}>🔄 Demo: Switch User Role</h4>
-                            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-                                <button 
-                                    onClick={() => switchRole('employee')}
-                                    style={{
-                                        background: userRole === 'employee' ? '#1e3a8a' : '#94a3b8',
-                                        color: 'white',
-                                        border: 'none',
-                                        padding: '0.5rem 1rem',
-                                        borderRadius: '6px',
-                                        cursor: 'pointer',
-                                        fontWeight: '600'
-                                    }}>
-                                    Employee
-                                </button>
-                                <button 
-                                    onClick={() => switchRole('hr')}
-                                    style={{
-                                        background: userRole === 'hr' ? '#1e3a8a' : '#94a3b8',
-                                        color: 'white',
-                                        border: 'none',
-                                        padding: '0.5rem 1rem',
-                                        borderRadius: '6px',
-                                        cursor: 'pointer',
-                                        fontWeight: '600'
-                                    }}>
-                                    HR Manager
-                                </button>
-                                <button 
-                                    onClick={() => switchRole('admin')}
-                                    style={{
-                                        background: userRole === 'admin' ? '#1e3a8a' : '#94a3b8',
-                                        color: 'white',
-                                        border: 'none',
-                                        padding: '0.5rem 1rem',
-                                        borderRadius: '6px',
-                                        cursor: 'pointer',
-                                        fontWeight: '600'
-                                    }}>
-                                    Admin
-                                </button>
-                            </div>
                         </div>
 
                         {/* Upload Section */}

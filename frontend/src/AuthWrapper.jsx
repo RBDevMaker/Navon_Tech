@@ -191,7 +191,6 @@ export function AuthWrapper({ children }) {
                                 setShowLogin(true);
                             }}
                             style={{
-                                flex: 1,
                                 background: 'white',
                                 color: '#1e3a8a',
                                 padding: '1rem 2rem',
@@ -200,29 +199,10 @@ export function AuthWrapper({ children }) {
                                 fontSize: '1.1rem',
                                 fontWeight: '700',
                                 cursor: 'pointer',
-                                transition: 'all 0.3s'
+                                transition: 'all 0.3s',
+                                width: '100%'
                             }}>
                             🔑 Employee Login
-                        </button>
-
-                        <button
-                            onClick={() => {
-                                setShowSecurityWarning(false);
-                                setShowAccessRequest(true);
-                            }}
-                            style={{
-                                flex: 1,
-                                background: 'transparent',
-                                color: 'white',
-                                padding: '1rem 2rem',
-                                border: '2px solid white',
-                                borderRadius: '8px',
-                                fontSize: '1.1rem',
-                                fontWeight: '700',
-                                cursor: 'pointer',
-                                transition: 'all 0.3s'
-                            }}>
-                            📧 Request Access
                         </button>
                     </div>
 
@@ -490,7 +470,7 @@ export function AuthWrapper({ children }) {
                                 color: 'white',
                                 fontWeight: '600'
                             }}>
-                                Email
+                                Username
                             </label>
                             <input
                                 type="email"
