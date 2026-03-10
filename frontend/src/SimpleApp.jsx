@@ -8189,6 +8189,93 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 </div>
                             )}
                             
+                            {/* Other Team Members from Database */}
+                            {teamMembers.filter(member => member.email !== loginEmail).map((member) => (
+                                <div key={member.id} className="hover-lift animate-scale-in" style={{
+                                    background: 'white',
+                                    padding: '2rem',
+                                    borderRadius: '12px',
+                                    border: '2px solid #d4af37',
+                                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                                }}>
+                                    <div style={{ marginBottom: '1.5rem' }}>
+                                        <div style={{
+                                            background: '#f8fafc',
+                                            padding: '1.5rem',
+                                            borderRadius: '8px',
+                                            border: '1px solid #e2e8f0',
+                                            marginBottom: (userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') ? '1rem' : '0'
+                                        }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+                                                <div style={{
+                                                    width: '60px',
+                                                    height: '60px',
+                                                    background: member.profilePicture ? 'transparent' : '#1e3a8a',
+                                                    borderRadius: '50%',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    color: 'white',
+                                                    fontWeight: 'bold',
+                                                    fontSize: '1.5rem',
+                                                    marginRight: '1rem',
+                                                    overflow: 'hidden'
+                                                }}>
+                                                    {member.profilePicture ? (
+                                                        <img 
+                                                            src={member.profilePicture} 
+                                                            alt={member.name}
+                                                            style={{
+                                                                width: '100%',
+                                                                height: '100%',
+                                                                objectFit: 'cover'
+                                                            }}
+                                                        />
+                                                    ) : (
+                                                        member.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <div style={{ fontWeight: '600', color: '#1e3a8a' }}>{member.name || member.email}</div>
+                                                    <div style={{ color: '#64748b', fontSize: '0.9rem' }}>{member.title || 'Employee'}</div>
+                                                    {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
+                                                        <div style={{ color: '#64748b', fontSize: '0.8rem' }}>Employee ID: {member.id}</div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div style={{ fontSize: '0.9rem', color: '#475569' }}>
+                                                <div style={{ marginBottom: '0.5rem' }}>📧 {member.email}</div>
+                                                {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
+                                                    <>
+                                                        {member.phone && (
+                                                            <div style={{ marginBottom: '0.5rem' }}>📱 {member.phone}</div>
+                                                        )}
+                                                        {member.location && (
+                                                            <div style={{ marginBottom: '0.5rem' }}>🏢 {member.location}</div>
+                                                        )}
+                                                        {member.department && (
+                                                            <div style={{ marginBottom: '0.5rem' }}>🏷️ Department: {member.department}</div>
+                                                        )}
+                                                        {member.startDate && (
+                                                            <div style={{ marginBottom: '0.5rem' }}>📅 Start Date: {new Date(member.startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                                                        )}
+                                                        {member.salary && (userRole === 'hr' || userRole === 'superadmin') && (
+                                                            <div style={{ marginBottom: '0.5rem' }}>💰 Salary: {member.salary}</div>
+                                                        )}
+                                                        {member.manager && (
+                                                            <div style={{ marginBottom: '0.5rem' }}>👤 Manager: {member.manager}</div>
+                                                        )}
+                                                        {member.emergencyContact && (
+                                                            <div>🚨 Emergency Contact: {member.emergencyContact}</div>
+                                                        )}
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                            
                             {/* John Doe Card - Hidden (now loading real profiles from database) */}
                             <div className="hover-lift animate-scale-in" style={{
                                 display: 'none',
