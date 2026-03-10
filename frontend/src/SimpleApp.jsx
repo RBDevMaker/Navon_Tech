@@ -9317,73 +9317,93 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 gap: '1rem'
                             }}>
                                 <div style={{
-                                    background: 'white',
+                                    background: 'linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%)',
                                     padding: '1.5rem',
                                     borderRadius: '8px',
-                                    border: '2px solid #e2e8f0',
+                                    border: '2px solid #3b82f6',
                                     textAlign: 'center'
                                 }}>
-                                    <div style={{ fontSize: '2rem', fontWeight: '700', color: '#1e3a8a' }}>
+                                    <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>📥</div>
+                                    <div style={{ fontSize: '2rem', fontWeight: '700', color: '#1e40af' }}>
                                         {filteredResumes.filter(r => r.stage === 'New').length + 1}
                                     </div>
-                                    <div style={{ fontSize: '0.9rem', color: '#64748b', marginTop: '0.5rem', fontWeight: '600' }}>
-                                        New
+                                    <div style={{ fontSize: '0.9rem', color: '#1e40af', marginTop: '0.5rem', fontWeight: '600' }}>
+                                        New Applications
+                                    </div>
+                                    <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.25rem' }}>
+                                        Recently submitted
                                     </div>
                                 </div>
                                 <div style={{
-                                    background: 'white',
+                                    background: 'linear-gradient(135deg, #fef3c7 0%, #fefce8 100%)',
                                     padding: '1.5rem',
                                     borderRadius: '8px',
-                                    border: '2px solid #e2e8f0',
+                                    border: '2px solid #f59e0b',
                                     textAlign: 'center'
                                 }}>
-                                    <div style={{ fontSize: '2rem', fontWeight: '700', color: '#1e3a8a' }}>
+                                    <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>🔍</div>
+                                    <div style={{ fontSize: '2rem', fontWeight: '700', color: '#92400e' }}>
                                         {filteredResumes.filter(r => r.stage === 'Screening').length}
                                     </div>
-                                    <div style={{ fontSize: '0.9rem', color: '#64748b', marginTop: '0.5rem', fontWeight: '600' }}>
+                                    <div style={{ fontSize: '0.9rem', color: '#92400e', marginTop: '0.5rem', fontWeight: '600' }}>
                                         Screening
                                     </div>
+                                    <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.25rem' }}>
+                                        Under review
+                                    </div>
                                 </div>
                                 <div style={{
-                                    background: 'white',
+                                    background: 'linear-gradient(135deg, #ddd6fe 0%, #ede9fe 100%)',
                                     padding: '1.5rem',
                                     borderRadius: '8px',
-                                    border: '2px solid #e2e8f0',
+                                    border: '2px solid #8b5cf6',
                                     textAlign: 'center'
                                 }}>
-                                    <div style={{ fontSize: '2rem', fontWeight: '700', color: '#1e3a8a' }}>
+                                    <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>📝</div>
+                                    <div style={{ fontSize: '2rem', fontWeight: '700', color: '#5b21b6' }}>
                                         {filteredResumes.filter(r => r.stage === 'Interview').length}
                                     </div>
-                                    <div style={{ fontSize: '0.9rem', color: '#64748b', marginTop: '0.5rem', fontWeight: '600' }}>
+                                    <div style={{ fontSize: '0.9rem', color: '#5b21b6', marginTop: '0.5rem', fontWeight: '600' }}>
                                         Interview
                                     </div>
+                                    <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.25rem' }}>
+                                        Active interviews
+                                    </div>
                                 </div>
                                 <div style={{
-                                    background: 'white',
+                                    background: 'linear-gradient(135deg, #dcfce7 0%, #f0fdf4 100%)',
                                     padding: '1.5rem',
                                     borderRadius: '8px',
-                                    border: '2px solid #e2e8f0',
+                                    border: '2px solid #10b981',
                                     textAlign: 'center'
                                 }}>
-                                    <div style={{ fontSize: '2rem', fontWeight: '700', color: '#10b981' }}>
+                                    <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>✅</div>
+                                    <div style={{ fontSize: '2rem', fontWeight: '700', color: '#166534' }}>
                                         {filteredResumes.filter(r => r.stage === 'Offer').length}
                                     </div>
-                                    <div style={{ fontSize: '0.9rem', color: '#64748b', marginTop: '0.5rem', fontWeight: '600' }}>
-                                        Offer
+                                    <div style={{ fontSize: '0.9rem', color: '#166534', marginTop: '0.5rem', fontWeight: '600' }}>
+                                        Offers
+                                    </div>
+                                    <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.25rem' }}>
+                                        Offers extended
                                     </div>
                                 </div>
                                 <div style={{
-                                    background: 'white',
+                                    background: 'linear-gradient(135deg, #fee2e2 0%, #fef2f2 100%)',
                                     padding: '1.5rem',
                                     borderRadius: '8px',
-                                    border: '2px solid #e2e8f0',
+                                    border: '2px solid #ef4444',
                                     textAlign: 'center'
                                 }}>
-                                    <div style={{ fontSize: '2rem', fontWeight: '700', color: '#ef4444' }}>
+                                    <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>❌</div>
+                                    <div style={{ fontSize: '2rem', fontWeight: '700', color: '#991b1b' }}>
                                         {filteredResumes.filter(r => r.stage === 'Rejected').length}
                                     </div>
-                                    <div style={{ fontSize: '0.9rem', color: '#64748b', marginTop: '0.5rem', fontWeight: '600' }}>
-                                        Archived
+                                    <div style={{ fontSize: '0.9rem', color: '#991b1b', marginTop: '0.5rem', fontWeight: '600' }}>
+                                        Rejected
+                                    </div>
+                                    <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.25rem' }}>
+                                        Not moving forward
                                     </div>
                                 </div>
                             </div>
@@ -12234,7 +12254,7 @@ Please review and approve this request.
             
             {/* Upload Resume Modal */}
             {showUploadModal && (
-                <div style={{
+                <div onClick={() => setShowUploadModal(false)} style={{
                     position: 'fixed',
                     top: 0,
                     left: 0,
@@ -12247,7 +12267,7 @@ Please review and approve this request.
                     zIndex: 1000,
                     padding: '1rem'
                 }}>
-                    <div style={{
+                    <div onClick={(e) => e.stopPropagation()} style={{
                         background: 'white',
                         borderRadius: '12px',
                         maxWidth: '600px',
@@ -12257,8 +12277,11 @@ Please review and approve this request.
                         boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)'
                     }}>
                         <div style={{
-                            padding: '2rem',
-                            borderBottom: '2px solid #e2e8f0'
+                            padding: '1.5rem 2rem',
+                            borderBottom: '2px solid #e2e8f0',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
                         }}>
                             <h3 style={{
                                 margin: 0,
@@ -12268,6 +12291,19 @@ Please review and approve this request.
                             }}>
                                 📤 Upload Resume
                             </h3>
+                            <button
+                                onClick={() => setShowUploadModal(false)}
+                                style={{
+                                    background: 'transparent',
+                                    border: 'none',
+                                    fontSize: '1.5rem',
+                                    cursor: 'pointer',
+                                    color: '#64748b',
+                                    padding: '0.25rem 0.5rem',
+                                    lineHeight: 1
+                                }}>
+                                ✕
+                            </button>
                         </div>
                         
                         <form onSubmit={async (e) => {
@@ -12288,19 +12324,19 @@ Please review and approve this request.
                                 department: formData.get('department'),
                                 experience: formData.get('experience'),
                                 stage: 'New',
-                                receivedDate: formData.get('receivedDate') ? new Date(formData.get('receivedDate')).toISOString() : new Date().toISOString(),
+                                receivedDate: formData.get('receivedDate'),
                                 notes: formData.get('notes') || ''
                             };
                             
                             await uploadResume(resumeData, file);
                         }}>
                             <div style={{ padding: '2rem' }}>
-                                {/* Candidate Name */}
+                                {/* Row 1: Candidate Name */}
                                 <div style={{ marginBottom: '1.5rem' }}>
                                     <label style={{
                                         display: 'block',
                                         marginBottom: '0.5rem',
-                                        color: '#374151',
+                                        color: '#1e40af',
                                         fontWeight: '600',
                                         fontSize: '0.9rem'
                                     }}>
@@ -12310,112 +12346,6 @@ Please review and approve this request.
                                         name="candidateName"
                                         type="text"
                                         required
-                                        placeholder="John Smith"
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            border: '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '1rem',
-                                            outline: 'none'
-                                        }}
-                                    />
-                                </div>
-
-                                {/* Email */}
-                                <div style={{ marginBottom: '1.5rem' }}>
-                                    <label style={{
-                                        display: 'block',
-                                        marginBottom: '0.5rem',
-                                        color: '#374151',
-                                        fontWeight: '600',
-                                        fontSize: '0.9rem'
-                                    }}>
-                                        Email *
-                                    </label>
-                                    <input
-                                        name="email"
-                                        type="email"
-                                        required
-                                        placeholder="john.smith@email.com"
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            border: '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '1rem',
-                                            outline: 'none'
-                                        }}
-                                    />
-                                </div>
-
-                                {/* Phone */}
-                                <div style={{ marginBottom: '1.5rem' }}>
-                                    <label style={{
-                                        display: 'block',
-                                        marginBottom: '0.5rem',
-                                        color: '#374151',
-                                        fontWeight: '600',
-                                        fontSize: '0.9rem'
-                                    }}>
-                                        Phone
-                                    </label>
-                                    <input
-                                        name="phone"
-                                        type="tel"
-                                        placeholder="(555) 123-4567"
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            border: '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '1rem',
-                                            outline: 'none'
-                                        }}
-                                    />
-                                </div>
-
-                                {/* Position */}
-                                <div style={{ marginBottom: '1.5rem' }}>
-                                    <label style={{
-                                        display: 'block',
-                                        marginBottom: '0.5rem',
-                                        color: '#374151',
-                                        fontWeight: '600',
-                                        fontSize: '0.9rem'
-                                    }}>
-                                        Position *
-                                    </label>
-                                    <input
-                                        name="position"
-                                        type="text"
-                                        required
-                                        placeholder="Senior Software Engineer"
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            border: '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '1rem',
-                                            outline: 'none'
-                                        }}
-                                    />
-                                </div>
-
-                                {/* Department */}
-                                <div style={{ marginBottom: '1.5rem' }}>
-                                    <label style={{
-                                        display: 'block',
-                                        marginBottom: '0.5rem',
-                                        color: '#374151',
-                                        fontWeight: '600',
-                                        fontSize: '0.9rem'
-                                    }}>
-                                        Department *
-                                    </label>
-                                    <select
-                                        name="department"
-                                        required
                                         style={{
                                             width: '100%',
                                             padding: '0.75rem',
@@ -12423,23 +12353,168 @@ Please review and approve this request.
                                             borderRadius: '8px',
                                             fontSize: '1rem',
                                             outline: 'none',
-                                            cursor: 'pointer'
-                                        }}>
-                                        <option value="">Select Department</option>
-                                        <option value="Engineering">Engineering</option>
-                                        <option value="Sales">Sales</option>
-                                        <option value="Marketing">Marketing</option>
-                                        <option value="HR">HR</option>
-                                        <option value="Operations">Operations</option>
-                                    </select>
+                                            boxSizing: 'border-box',
+                                            background: '#eff6ff'
+                                        }}
+                                    />
                                 </div>
 
-                                {/* Experience */}
+                                {/* Row 2: Email and Phone */}
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+                                    <div>
+                                        <label style={{
+                                            display: 'block',
+                                            marginBottom: '0.5rem',
+                                            color: '#1e40af',
+                                            fontWeight: '600',
+                                            fontSize: '0.9rem'
+                                        }}>
+                                            Email *
+                                        </label>
+                                        <input
+                                            name="email"
+                                            type="email"
+                                            required
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                border: '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '1rem',
+                                                outline: 'none',
+                                                boxSizing: 'border-box',
+                                                background: '#eff6ff'
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{
+                                            display: 'block',
+                                            marginBottom: '0.5rem',
+                                            color: '#1e40af',
+                                            fontWeight: '600',
+                                            fontSize: '0.9rem'
+                                        }}>
+                                            Phone
+                                        </label>
+                                        <input
+                                            name="phone"
+                                            type="tel"
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                border: '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '1rem',
+                                                outline: 'none',
+                                                boxSizing: 'border-box',
+                                                background: '#eff6ff'
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Row 3: Position and Department */}
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+                                    <div>
+                                        <label style={{
+                                            display: 'block',
+                                            marginBottom: '0.5rem',
+                                            color: '#1e40af',
+                                            fontWeight: '600',
+                                            fontSize: '0.9rem'
+                                        }}>
+                                            Position *
+                                        </label>
+                                        <input
+                                            name="position"
+                                            type="text"
+                                            required
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                border: '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '1rem',
+                                                outline: 'none',
+                                                boxSizing: 'border-box',
+                                                background: '#eff6ff'
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{
+                                            display: 'block',
+                                            marginBottom: '0.5rem',
+                                            color: '#1e40af',
+                                            fontWeight: '600',
+                                            fontSize: '0.9rem'
+                                        }}>
+                                            Department *
+                                        </label>
+                                        <select
+                                            name="department"
+                                            required
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                border: '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '1rem',
+                                                outline: 'none',
+                                                cursor: 'pointer',
+                                                boxSizing: 'border-box',
+                                                background: '#eff6ff'
+                                            }}>
+                                            <option value="">Select</option>
+                                            <option value="Engineering">Engineering</option>
+                                            <option value="Sales">Sales</option>
+                                            <option value="Marketing">Marketing</option>
+                                            <option value="HR">HR</option>
+                                            <option value="Operations">Operations</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {/* Row 4: Date Received */}
                                 <div style={{ marginBottom: '1.5rem' }}>
                                     <label style={{
                                         display: 'block',
                                         marginBottom: '0.5rem',
-                                        color: '#374151',
+                                        color: '#1e40af',
+                                        fontWeight: '600',
+                                        fontSize: '0.9rem'
+                                    }}>
+                                        Date Received *
+                                    </label>
+                                    <input
+                                        name="receivedDate"
+                                        type="date"
+                                        required
+                                        defaultValue={new Date().toISOString().split('T')[0]}
+                                        max={new Date().toISOString().split('T')[0]}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '1rem',
+                                            outline: 'none',
+                                            boxSizing: 'border-box',
+                                            background: '#eff6ff'
+                                        }}
+                                    />
+                                    <p style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.5rem', margin: '0.5rem 0 0 0' }}>
+                                        When was this resume received? (Defaults to today)
+                                    </p>
+                                </div>
+
+                                {/* Row 5: Experience Summary */}
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <label style={{
+                                        display: 'block',
+                                        marginBottom: '0.5rem',
+                                        color: '#1e40af',
                                         fontWeight: '600',
                                         fontSize: '0.9rem'
                                     }}>
@@ -12448,7 +12523,7 @@ Please review and approve this request.
                                     <textarea
                                         name="experience"
                                         rows="3"
-                                        placeholder="Brief summary of candidate's experience..."
+                                        placeholder="Brief summary of candidate's experience…"
                                         style={{
                                             width: '100%',
                                             padding: '0.75rem',
@@ -12456,46 +12531,19 @@ Please review and approve this request.
                                             borderRadius: '8px',
                                             fontSize: '1rem',
                                             outline: 'none',
-                                            resize: 'vertical'
+                                            resize: 'vertical',
+                                            boxSizing: 'border-box',
+                                            background: '#eff6ff'
                                         }}
                                     />
                                 </div>
 
-                                {/* Received Date */}
+                                {/* Row 6: Notes */}
                                 <div style={{ marginBottom: '1.5rem' }}>
                                     <label style={{
                                         display: 'block',
                                         marginBottom: '0.5rem',
-                                        color: '#374151',
-                                        fontWeight: '600',
-                                        fontSize: '0.9rem'
-                                    }}>
-                                        Received Date
-                                    </label>
-                                    <input
-                                        name="receivedDate"
-                                        type="date"
-                                        defaultValue={new Date().toISOString().split('T')[0]}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            border: '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '1rem',
-                                            outline: 'none'
-                                        }}
-                                    />
-                                    <p style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.5rem' }}>
-                                        Defaults to today's date
-                                    </p>
-                                </div>
-
-                                {/* Notes */}
-                                <div style={{ marginBottom: '1.5rem' }}>
-                                    <label style={{
-                                        display: 'block',
-                                        marginBottom: '0.5rem',
-                                        color: '#374151',
+                                        color: '#1e40af',
                                         fontWeight: '600',
                                         fontSize: '0.9rem'
                                     }}>
@@ -12504,7 +12552,7 @@ Please review and approve this request.
                                     <textarea
                                         name="notes"
                                         rows="2"
-                                        placeholder="Additional notes..."
+                                        placeholder="Additional Notes"
                                         style={{
                                             width: '100%',
                                             padding: '0.75rem',
@@ -12512,21 +12560,23 @@ Please review and approve this request.
                                             borderRadius: '8px',
                                             fontSize: '1rem',
                                             outline: 'none',
-                                            resize: 'vertical'
+                                            resize: 'vertical',
+                                            boxSizing: 'border-box',
+                                            background: '#eff6ff'
                                         }}
                                     />
                                 </div>
 
-                                {/* Resume File */}
+                                {/* Row 7: Resume File */}
                                 <div style={{ marginBottom: '1.5rem' }}>
                                     <label style={{
                                         display: 'block',
                                         marginBottom: '0.5rem',
-                                        color: '#374151',
+                                        color: '#1e40af',
                                         fontWeight: '600',
                                         fontSize: '0.9rem'
                                     }}>
-                                        Resume File *
+                                        Resume File (PDF/DOC) *
                                     </label>
                                     <input
                                         name="resumeFile"
@@ -12539,51 +12589,55 @@ Please review and approve this request.
                                             border: '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '1rem',
-                                            outline: 'none'
+                                            outline: 'none',
+                                            cursor: 'pointer',
+                                            boxSizing: 'border-box',
+                                            background: '#eff6ff'
                                         }}
                                     />
-                                    <p style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.5rem' }}>
-                                        Accepted formats: PDF, DOC, DOCX
+                                    <p style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.5rem', margin: '0.5rem 0 0 0' }}>
+                                        Accepted formats: PDF, DOC, DOCX (Max 10MB)
                                     </p>
                                 </div>
-                            </div>
 
-                            <div style={{
-                                padding: '1.5rem 2rem',
-                                borderTop: '2px solid #e2e8f0',
-                                display: 'flex',
-                                gap: '1rem',
-                                justifyContent: 'flex-end'
-                            }}>
-                                <button
-                                    type="button"
-                                    onClick={() => setShowUploadModal(false)}
-                                    style={{
-                                        background: '#e5e7eb',
-                                        color: '#374151',
-                                        border: 'none',
-                                        padding: '0.75rem 1.5rem',
-                                        borderRadius: '8px',
-                                        cursor: 'pointer',
-                                        fontWeight: '600',
-                                        fontSize: '1rem'
-                                    }}>
-                                    Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    style={{
-                                        background: '#1e3a8a',
-                                        color: 'white',
-                                        border: 'none',
-                                        padding: '0.75rem 1.5rem',
-                                        borderRadius: '8px',
-                                        cursor: 'pointer',
-                                        fontWeight: '600',
-                                        fontSize: '1rem'
-                                    }}>
-                                    Upload Resume
-                                </button>
+                                {/* Buttons */}
+                                <div style={{
+                                    display: 'flex',
+                                    gap: '1rem',
+                                    justifyContent: 'flex-end',
+                                    paddingTop: '1rem',
+                                    borderTop: '2px solid #e2e8f0'
+                                }}>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowUploadModal(false)}
+                                        style={{
+                                            background: '#e5e7eb',
+                                            color: '#374151',
+                                            border: 'none',
+                                            padding: '0.75rem 1.5rem',
+                                            borderRadius: '8px',
+                                            cursor: 'pointer',
+                                            fontSize: '1rem',
+                                            fontWeight: '600'
+                                        }}>
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        style={{
+                                            background: '#10b981',
+                                            color: 'white',
+                                            border: 'none',
+                                            padding: '0.75rem 1.5rem',
+                                            borderRadius: '8px',
+                                            cursor: 'pointer',
+                                            fontSize: '1rem',
+                                            fontWeight: '600'
+                                        }}>
+                                        📤 Upload Resume
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </div>
