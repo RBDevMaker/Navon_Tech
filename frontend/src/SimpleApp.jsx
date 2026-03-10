@@ -8189,8 +8189,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 </div>
                             )}
                             
-                            {/* John Doe Card - Conditional View Based on HR Access */}
+                            {/* John Doe Card - Hidden (now loading real profiles from database) */}
                             <div className="hover-lift animate-scale-in" style={{
+                                display: 'none',
                                 background: 'white',
                                 padding: '2rem',
                                 borderRadius: '12px',
