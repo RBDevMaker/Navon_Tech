@@ -7937,8 +7937,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 <div style={{ marginBottom: '1.5rem' }}>
                                     <p style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: '1.6' }}>
                                         Complete guide to company policies, procedures, code of conduct, 
-                                        and workplace guidelines. Updated for 2026 with new remote work policies 
-                                        and security protocols.
+                                        and workplace guidelines. Updated for 2026 work policies.
                                     </p>
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
