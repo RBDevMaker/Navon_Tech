@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { uploadProfilePicture, uploadDocument, canUpload, deleteFromS3 } from './services/s3Upload';
+import { uploadProfilePicture, uploadDocument, canUpload, deleteFromS3, uploadToS3, listS3Contents } from './services/s3Upload';
 import { Amplify } from 'aws-amplify';
 import { signIn, signOut, getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
 import awsConfig from './aws-config';
@@ -137,6 +137,70 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         }
     }, [currentPage, userRole]);
 
+    // Fetch HR documents from S3 when on HR documents page
+    useEffect(() => {
+        if (currentPage === 'hrdocuments') {
+            fetchHRDocuments();
+        }
+    }, [currentPage]);
+
+    // Fetch HR documents from S3
+    const fetchHRDocuments = async () => {
+        try {
+            console.log('Fetching HR documents from S3...');
+            
+            // Fetch files from each category folder
+            const [handbookFiles, benefitsFiles, hrFormsFiles] = await Promise.all([
+                listS3Contents('Documents/EmployeeHandbook/'),
+                listS3Contents('Documents/Benefits/'),
+                listS3Contents('Documents/HRForms/')
+            ]);
+            
+            // Process handbook files
+            const handbookData = handbookFiles.files?.map(file => ({
+                id: file.Key,
+                name: file.Key.split('/').pop(),
+                size: file.Size,
+                type: file.Key.split('.').pop(),
+                uploadDate: file.LastModified,
+                uploadedBy: 'SYSTEM',
+                s3Url: `https://navon-tech-images.s3.us-east-1.amazonaws.com/${file.Key}`
+            })) || [];
+            
+            // Process benefits files
+            const benefitsData = benefitsFiles.files?.map(file => ({
+                id: file.Key,
+                name: file.Key.split('/').pop(),
+                size: file.Size,
+                type: file.Key.split('.').pop(),
+                uploadDate: file.LastModified,
+                uploadedBy: 'SYSTEM',
+                s3Url: `https://navon-tech-images.s3.us-east-1.amazonaws.com/${file.Key}`
+            })) || [];
+            
+            // Process HR forms files
+            const hrFormsData = hrFormsFiles.files?.map(file => ({
+                id: file.Key,
+                name: file.Key.split('/').pop(),
+                size: file.Size,
+                type: file.Key.split('.').pop(),
+                uploadDate: file.LastModified,
+                uploadedBy: 'SYSTEM',
+                s3Url: `https://navon-tech-images.s3.us-east-1.amazonaws.com/${file.Key}`
+            })) || [];
+            
+            setUploadedFiles({
+                employeeHandbook: handbookData,
+                benefits: benefitsData,
+                hrForms: hrFormsData
+            });
+            
+            console.log('HR documents loaded:', { handbookData, benefitsData, hrFormsData });
+        } catch (error) {
+            console.error('Error fetching HR documents:', error);
+        }
+    };
+
     // Fetch team members from API
     const fetchTeamMembers = async () => {
         try {
@@ -184,56 +248,88 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const canUploadHandbook = () => userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin';
     
     // Handle file upload
-    const handleFileUpload = (category, files) => {
+    const handleFileUpload = async (category, files) => {
         if (!canUploadHandbook()) {
             alert('❌ Access Denied: Only HR and Admin users can upload files to the Employee Handbook.');
             return;
         }
 
         const fileArray = Array.from(files);
-        const processedFiles = fileArray.map(file => {
-            console.log('Processing file:', file.name, 'Type:', file.type); // Debug log
-            return {
-                id: Date.now() + Math.random(),
-                name: file.name,
-                size: file.size,
-                type: file.type,
-                uploadDate: new Date().toISOString(),
-                uploadedBy: userRole.toUpperCase(),
-                file: file
-            };
-        });
-
-        setUploadedFiles(prev => {
-            const newState = {
-                ...prev,
-                [category]: [...prev[category], ...processedFiles]
-            };
-            console.log('Updated files state:', newState); // Debug log
-            return newState;
-        });
-
-        alert(`✅ Successfully uploaded ${fileArray.length} file(s) to Employee Handbook!`);
         
-        // Force a small delay to ensure state update
-        setTimeout(() => {
-            console.log('Current uploaded files:', uploadedFiles);
-        }, 100);
+        try {
+            // Show uploading message
+            alert(`📤 Uploading ${fileArray.length} file(s)...`);
+            
+            // Upload each file to S3
+            const uploadPromises = fileArray.map(async (file) => {
+                console.log('Uploading file to S3:', file.name);
+                
+                // Determine S3 folder based on category
+                let folderName = '';
+                if (category === 'employeeHandbook') folderName = 'EmployeeHandbook';
+                else if (category === 'benefits') folderName = 'Benefits';
+                else if (category === 'hrForms') folderName = 'HRForms';
+                
+                // Upload to S3
+                const s3Url = await uploadToS3(file, `Documents/${folderName}`, file.name);
+                
+                return {
+                    id: Date.now() + Math.random(),
+                    name: file.name,
+                    size: file.size,
+                    type: file.type,
+                    uploadDate: new Date().toISOString(),
+                    uploadedBy: userRole.toUpperCase(),
+                    s3Url: s3Url
+                };
+            });
+            
+            const uploadedFilesData = await Promise.all(uploadPromises);
+            
+            setUploadedFiles(prev => {
+                const newState = {
+                    ...prev,
+                    [category]: [...prev[category], ...uploadedFilesData]
+                };
+                console.log('Updated files state:', newState);
+                return newState;
+            });
+
+            alert(`✅ Successfully uploaded ${fileArray.length} file(s)!`);
+        } catch (error) {
+            console.error('Upload error:', error);
+            alert(`❌ Upload failed: ${error.message}`);
+        }
     };
 
     // Handle file deletion
-    const handleFileDelete = (category, fileId, fileName) => {
+    const handleFileDelete = async (category, fileId, fileName) => {
         if (!canDeleteHandbook()) {
             alert(`❌ Access Denied: Only HR and Admin users can delete files from the Employee Handbook.\n\nCurrent Role: ${userRole.toUpperCase()}\nRequired Role: HR or ADMIN`);
             return;
         }
 
         if (confirm(`🗑️ Are you sure you want to delete "${fileName}"?\n\nThis action cannot be undone.`)) {
-            setUploadedFiles(prev => ({
-                ...prev,
-                [category]: prev[category].filter(f => f.id !== fileId)
-            }));
-            alert(`✅ File "${fileName}" has been deleted successfully.`);
+            try {
+                // Find the file to get its S3 URL
+                const fileToDelete = uploadedFiles[category].find(f => f.id === fileId);
+                
+                if (fileToDelete && fileToDelete.s3Url) {
+                    // Delete from S3
+                    await deleteFromS3(fileToDelete.s3Url);
+                }
+                
+                // Remove from state
+                setUploadedFiles(prev => ({
+                    ...prev,
+                    [category]: prev[category].filter(f => f.id !== fileId)
+                }));
+                
+                alert(`✅ File "${fileName}" has been deleted successfully.`);
+            } catch (error) {
+                console.error('Delete error:', error);
+                alert(`❌ Delete failed: ${error.message}`);
+            }
         }
     };
 
@@ -554,8 +650,35 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     
     // Handle document viewing
     const handleViewDocument = (docName, file = null) => {
-        if (file && file.file) {
-            // Handle uploaded files with real content
+        if (file && file.s3Url) {
+            // Handle files from S3
+            const fileName = file.name;
+            const extension = fileName.split('.').pop().toLowerCase();
+            const s3Url = file.s3Url;
+            
+            if (extension === 'txt') {
+                // Fetch and display text files
+                fetch(s3Url)
+                    .then(response => response.text())
+                    .then(content => {
+                        showDocumentWindow(fileName, content, 'text', s3Url);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching text file:', error);
+                        alert('❌ Error loading file. Please try again.');
+                    });
+            } else if (extension === 'pdf') {
+                // Handle PDF files - open S3 URL directly
+                showDocumentWindow(fileName, s3Url, 'pdf', s3Url);
+            } else if (extension === 'docx' || extension === 'doc') {
+                // Handle Word documents - show download option
+                showDocumentWindow(fileName, null, 'word', s3Url);
+            } else {
+                // Handle other file types - show download option
+                showDocumentWindow(fileName, null, 'other', s3Url);
+            }
+        } else if (file && file.file) {
+            // Handle uploaded files with real content (legacy support)
             const fileObj = file.file;
             const fileType = fileObj.type;
             const fileName = fileObj.name;
