@@ -6278,11 +6278,15 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     console.log(`  ${key}: ${value}`);
                                 }
                                 
+                                // Extract first and last name from form or profileData
+                                const firstName = formData.get('firstName') || profileData.name?.split(' ')[0] || '';
+                                const lastName = formData.get('lastName') || profileData.name?.split(' ').slice(1).join(' ') || '';
+                                
                                 // Collect form data
                                 const updatedProfile = {
-                                    firstName: formData.get('firstName'),
-                                    lastName: formData.get('lastName'),
-                                    name: `${formData.get('firstName')} ${formData.get('lastName')}`.trim(),
+                                    firstName,
+                                    lastName,
+                                    name: `${firstName} ${lastName}`.trim(),
                                     title: formData.get('title'),
                                     department: formData.get('department'),
                                     email: formData.get('email'),
