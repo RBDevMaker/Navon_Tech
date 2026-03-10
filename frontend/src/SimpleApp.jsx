@@ -5932,10 +5932,46 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 fontSize: '1.2rem',
                                 color: '#475569',
                                 maxWidth: '800px',
-                                margin: '0 auto 2rem auto'
+                                margin: '0 auto 1rem auto'
                             }}>
                                 Manage your profile, view team directory, and update contact information
                             </p>
+                            
+                            {/* Admin Controls */}
+                            {(userRole === 'superadmin' || userRole === 'hr' || userRole === 'admin') && (
+                                <div style={{
+                                    display: 'flex',
+                                    gap: '1rem',
+                                    justifyContent: 'center',
+                                    marginBottom: '1rem',
+                                    flexWrap: 'wrap'
+                                }}>
+                                    <button
+                                        onClick={() => setShowManageUsersModal(true)}
+                                        style={{
+                                            background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
+                                            color: 'white',
+                                            border: '2px solid #d4af37',
+                                            padding: '0.75rem 1.5rem',
+                                            borderRadius: '8px',
+                                            cursor: 'pointer',
+                                            fontWeight: '600',
+                                            fontSize: '1rem',
+                                            transition: 'all 0.3s ease'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.target.style.transform = 'translateY(-2px)';
+                                            e.target.style.boxShadow = '0 4px 12px rgba(30, 58, 138, 0.3)';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.target.style.transform = 'translateY(0)';
+                                            e.target.style.boxShadow = 'none';
+                                        }}>
+                                        ⚙️ Manage Users & Roles
+                                    </button>
+                                </div>
+                            )}
+                            
                             <button 
                                 onClick={() => {
                                     setCurrentPage('secureportal');
