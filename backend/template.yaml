@@ -254,11 +254,19 @@ Resources:
             Method: DELETE
             Auth:
               Authorizer: NONE
-        ProfileOptions:
+        ProfileOptionsRoot:
           Type: Api
           Properties:
             RestApiId: !Ref CompanyApi
-            Path: /api/profiles/{proxy+}
+            Path: /api/profiles
+            Method: OPTIONS
+            Auth:
+              Authorizer: NONE
+        ProfileOptionsId:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/profiles/{employeeId}
             Method: OPTIONS
             Auth:
               Authorizer: NONE
