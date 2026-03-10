@@ -7808,11 +7808,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                     ? uploadedFiles.employeeHandbook[0].name.split('.').pop().toUpperCase()
                                                     : 'PDF'}
                                             </span>
-                                            <span style={{ color: '#64748b', fontSize: '0.9rem' }}>
-                                                {uploadedFiles.employeeHandbook.length > 0 
-                                                    ? `${(uploadedFiles.employeeHandbook[0].size / (1024 * 1024)).toFixed(2)} MB`
-                                                    : '1.8 MB'}
-                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -7840,12 +7835,12 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             transition: 'all 0.3s ease'
                                         }}
                                         onMouseOver={(e) => {
-                                            e.target.style.background = '#b8941f';
-                                            e.target.style.transform = 'translateY(-2px)';
+                                            e.currentTarget.style.background = '#b8941f';
+                                            e.currentTarget.style.transform = 'translateY(-2px)';
                                         }}
                                         onMouseOut={(e) => {
-                                            e.target.style.background = '#d4af37';
-                                            e.target.style.transform = 'translateY(0)';
+                                            e.currentTarget.style.background = '#d4af37';
+                                            e.currentTarget.style.transform = 'translateY(0)';
                                         }}>
                                             📤 Upload
                                             <input
@@ -8040,9 +8035,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             }}>
                                                 PDF
                                             </span>
-                                            <span style={{ color: '#64748b', fontSize: '0.9rem' }}>
-                                                2.1 MB
-                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -8053,32 +8045,185 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         employee benefits for 2026.
                                     </p>
                                 </div>
-                                <div style={{
-                                    background: '#f8fafc',
-                                    padding: '1rem',
-                                    borderRadius: '8px',
-                                    marginBottom: '1.5rem',
-                                    border: '1px solid #e2e8f0'
-                                }}>
-                                    <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
-                                        <div style={{ marginBottom: '0.25rem' }}>📅 Last Updated: December 15, 2025</div>
-                                        <div style={{ marginBottom: '0.25rem' }}>👤 Version: 2026.1</div>
-                                        <div>🔒 Classification: Internal Use</div>
-                                    </div>
+                                <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+                                    {canUploadHandbook() ? (
+                                        <label style={{
+                                            background: '#d4af37',
+                                            color: '#0f172a',
+                                            border: 'none',
+                                            padding: '0.75rem 1.5rem',
+                                            borderRadius: '6px',
+                                            cursor: 'pointer',
+                                            fontWeight: '600',
+                                            fontSize: '1rem',
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            transition: 'all 0.3s ease'
+                                        }}
+                                        onMouseOver={(e) => {
+                                            e.currentTarget.style.background = '#b8941f';
+                                            e.currentTarget.style.transform = 'translateY(-2px)';
+                                        }}
+                                        onMouseOut={(e) => {
+                                            e.currentTarget.style.background = '#d4af37';
+                                            e.currentTarget.style.transform = 'translateY(0)';
+                                        }}>
+                                            📤 Upload
+                                            <input
+                                                type="file"
+                                                multiple
+                                                accept=".pdf,.doc,.docx,.txt"
+                                                style={{ display: 'none' }}
+                                                onChange={(e) => handleFileUpload('benefits', e.target.files)}
+                                            />
+                                        </label>
+                                    ) : (
+                                        <div style={{
+                                            background: '#f3f4f6',
+                                            color: '#6b7280',
+                                            border: '2px solid #e5e7eb',
+                                            padding: '0.75rem 1.5rem',
+                                            borderRadius: '6px',
+                                            fontSize: '1rem',
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center'
+                                        }}>
+                                            🔒 HR Only
+                                        </div>
+                                    )}
                                 </div>
-                                <button style={{
-                                    background: '#1e3a8a',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '0.75rem 1.5rem',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600',
-                                    width: '100%',
-                                    fontSize: '1rem'
-                                }}>
-                                    📄 View Document
-                                </button>
+                                
+                                {/* Display uploaded files */}
+                                {uploadedFiles.benefits.length > 0 && (
+                                    <div style={{
+                                        background: '#f0f9ff',
+                                        padding: '1rem',
+                                        borderRadius: '8px',
+                                        border: '1px solid #bae6fd',
+                                        marginTop: '1rem'
+                                    }}>
+                                        <h4 style={{ 
+                                            color: '#0369a1', 
+                                            margin: '0 0 0.75rem 0', 
+                                            fontSize: '0.9rem',
+                                            fontWeight: '600'
+                                        }}>
+                                            📁 Uploaded Files ({uploadedFiles.benefits.length})
+                                        </h4>
+                                        <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                                            {uploadedFiles.benefits.map((file) => {
+                                                const badge = getFileTypeBadge(file.name);
+                                                return (
+                                                    <div key={file.id} style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'space-between',
+                                                        padding: '0.75rem',
+                                                        background: 'white',
+                                                        borderRadius: '6px',
+                                                        marginBottom: '0.5rem',
+                                                        border: '1px solid #e2e8f0',
+                                                        boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                                                    }}>
+                                                        <div style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                                                            <span style={{
+                                                                background: badge.color,
+                                                                color: 'white',
+                                                                padding: '0.25rem 0.5rem',
+                                                                borderRadius: '4px',
+                                                                fontSize: '0.7rem',
+                                                                fontWeight: '600',
+                                                                marginRight: '0.75rem'
+                                                            }}>
+                                                                {badge.label}
+                                                            </span>
+                                                            <div style={{ flex: 1 }}>
+                                                                <div style={{ 
+                                                                    fontSize: '0.9rem', 
+                                                                    fontWeight: '500',
+                                                                    color: '#374151',
+                                                                    marginBottom: '0.25rem'
+                                                                }}>
+                                                                    {file.name.length > 30 ? file.name.substring(0, 30) + '...' : file.name}
+                                                                </div>
+                                                                <div style={{ 
+                                                                    fontSize: '0.75rem', 
+                                                                    color: '#6b7280',
+                                                                    marginBottom: '0.5rem'
+                                                                }}>
+                                                                    {formatFileSize(file.size)} • {new Date(file.uploadDate).toLocaleDateString()} • by {file.uploadedBy}
+                                                                    <br/>
+                                                                    <span style={{ fontSize: '0.7rem', color: '#9ca3af' }}>
+                                                                        Type: {file.type || 'unknown'} | Ext: {file.name.split('.').pop().toLowerCase()}
+                                                                    </span>
+                                                                </div>
+                                                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                                                    <button
+                                                                        onClick={() => handleViewDocument(file.name, file)}
+                                                                        style={{
+                                                                            background: '#1e3a8a',
+                                                                            border: 'none',
+                                                                            color: 'white',
+                                                                            cursor: 'pointer',
+                                                                            padding: '0.4rem 0.75rem',
+                                                                            borderRadius: '4px',
+                                                                            fontSize: '0.75rem',
+                                                                            fontWeight: '600',
+                                                                            flex: 1
+                                                                        }}
+                                                                        title="View document content"
+                                                                    >
+                                                                        View Document
+                                                                    </button>
+                                                                    {canDeleteHandbook() && (
+                                                                        <button
+                                                                            onClick={() => handleFileDelete('benefits', file.id, file.name)}
+                                                                            style={{
+                                                                                background: '#ef4444',
+                                                                                border: 'none',
+                                                                                color: 'white',
+                                                                                cursor: 'pointer',
+                                                                                padding: '0.4rem 0.75rem',
+                                                                                borderRadius: '4px',
+                                                                                fontSize: '0.75rem',
+                                                                                fontWeight: '600',
+                                                                                flex: 1
+                                                                            }}
+                                                                            title="Delete file (HR/Admin only)"
+                                                                        >
+                                                                            Delete
+                                                                        </button>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                        
+                                        {/* File Type Support Info */}
+                                        <div style={{
+                                            background: 'rgba(34, 197, 94, 0.1)',
+                                            border: '1px solid rgba(34, 197, 94, 0.3)',
+                                            borderRadius: '6px',
+                                            padding: '0.75rem',
+                                            marginTop: '0.75rem'
+                                        }}>
+                                            <div style={{ fontSize: '0.8rem', color: '#166534', fontWeight: '600', marginBottom: '0.25rem' }}>
+                                                📄 File Viewing Support:
+                                            </div>
+                                            <div style={{ fontSize: '0.75rem', color: '#15803d' }}>
+                                                • <strong>TXT files:</strong> Full content displayed in viewer<br/>
+                                                • <strong>PDF files:</strong> Embedded PDF viewer<br/>
+                                                • <strong>Word docs (.docx/.doc):</strong> Download to view (browser limitation)<br/>
+                                                • <strong>Other files:</strong> Download option provided
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
                             {/* Annual Review Survey */}
@@ -8126,9 +8271,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             }}>
                                                 PDF
                                             </span>
-                                            <span style={{ color: '#64748b', fontSize: '0.9rem' }}>
-                                                0.9 MB
-                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -8139,32 +8281,185 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         with your manager.
                                     </p>
                                 </div>
-                                <div style={{
-                                    background: '#fef3c7',
-                                    padding: '1rem',
-                                    borderRadius: '8px',
-                                    marginBottom: '1.5rem',
-                                    border: '1px solid #f59e0b'
-                                }}>
-                                    <div style={{ fontSize: '0.85rem', color: '#92400e' }}>
-                                        <div style={{ marginBottom: '0.25rem' }}>⚠️ Due Date: March 15, 2026</div>
-                                        <div style={{ marginBottom: '0.25rem' }}>📅 Review Period: 2025</div>
-                                        <div>🔒 Classification: Confidential</div>
-                                    </div>
+                                <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+                                    {canUploadHandbook() ? (
+                                        <label style={{
+                                            background: '#d4af37',
+                                            color: '#0f172a',
+                                            border: 'none',
+                                            padding: '0.75rem 1.5rem',
+                                            borderRadius: '6px',
+                                            cursor: 'pointer',
+                                            fontWeight: '600',
+                                            fontSize: '1rem',
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            transition: 'all 0.3s ease'
+                                        }}
+                                        onMouseOver={(e) => {
+                                            e.currentTarget.style.background = '#b8941f';
+                                            e.currentTarget.style.transform = 'translateY(-2px)';
+                                        }}
+                                        onMouseOut={(e) => {
+                                            e.currentTarget.style.background = '#d4af37';
+                                            e.currentTarget.style.transform = 'translateY(0)';
+                                        }}>
+                                            📤 Upload
+                                            <input
+                                                type="file"
+                                                multiple
+                                                accept=".pdf,.doc,.docx,.txt"
+                                                style={{ display: 'none' }}
+                                                onChange={(e) => handleFileUpload('hrForms', e.target.files)}
+                                            />
+                                        </label>
+                                    ) : (
+                                        <div style={{
+                                            background: '#f3f4f6',
+                                            color: '#6b7280',
+                                            border: '2px solid #e5e7eb',
+                                            padding: '0.75rem 1.5rem',
+                                            borderRadius: '6px',
+                                            fontSize: '1rem',
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center'
+                                        }}>
+                                            🔒 HR Only
+                                        </div>
+                                    )}
                                 </div>
-                                <button style={{
-                                    background: '#1e3a8a',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '0.75rem 1.5rem',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600',
-                                    width: '100%',
-                                    fontSize: '1rem'
-                                }}>
-                                    📄 View Document
-                                </button>
+                                
+                                {/* Display uploaded files */}
+                                {uploadedFiles.hrForms.length > 0 && (
+                                    <div style={{
+                                        background: '#f0f9ff',
+                                        padding: '1rem',
+                                        borderRadius: '8px',
+                                        border: '1px solid #bae6fd',
+                                        marginTop: '1rem'
+                                    }}>
+                                        <h4 style={{ 
+                                            color: '#0369a1', 
+                                            margin: '0 0 0.75rem 0', 
+                                            fontSize: '0.9rem',
+                                            fontWeight: '600'
+                                        }}>
+                                            📁 Uploaded Files ({uploadedFiles.hrForms.length})
+                                        </h4>
+                                        <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                                            {uploadedFiles.hrForms.map((file) => {
+                                                const badge = getFileTypeBadge(file.name);
+                                                return (
+                                                    <div key={file.id} style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'space-between',
+                                                        padding: '0.75rem',
+                                                        background: 'white',
+                                                        borderRadius: '6px',
+                                                        marginBottom: '0.5rem',
+                                                        border: '1px solid #e2e8f0',
+                                                        boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                                                    }}>
+                                                        <div style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                                                            <span style={{
+                                                                background: badge.color,
+                                                                color: 'white',
+                                                                padding: '0.25rem 0.5rem',
+                                                                borderRadius: '4px',
+                                                                fontSize: '0.7rem',
+                                                                fontWeight: '600',
+                                                                marginRight: '0.75rem'
+                                                            }}>
+                                                                {badge.label}
+                                                            </span>
+                                                            <div style={{ flex: 1 }}>
+                                                                <div style={{ 
+                                                                    fontSize: '0.9rem', 
+                                                                    fontWeight: '500',
+                                                                    color: '#374151',
+                                                                    marginBottom: '0.25rem'
+                                                                }}>
+                                                                    {file.name.length > 30 ? file.name.substring(0, 30) + '...' : file.name}
+                                                                </div>
+                                                                <div style={{ 
+                                                                    fontSize: '0.75rem', 
+                                                                    color: '#6b7280',
+                                                                    marginBottom: '0.5rem'
+                                                                }}>
+                                                                    {formatFileSize(file.size)} • {new Date(file.uploadDate).toLocaleDateString()} • by {file.uploadedBy}
+                                                                    <br/>
+                                                                    <span style={{ fontSize: '0.7rem', color: '#9ca3af' }}>
+                                                                        Type: {file.type || 'unknown'} | Ext: {file.name.split('.').pop().toLowerCase()}
+                                                                    </span>
+                                                                </div>
+                                                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                                                    <button
+                                                                        onClick={() => handleViewDocument(file.name, file)}
+                                                                        style={{
+                                                                            background: '#1e3a8a',
+                                                                            border: 'none',
+                                                                            color: 'white',
+                                                                            cursor: 'pointer',
+                                                                            padding: '0.4rem 0.75rem',
+                                                                            borderRadius: '4px',
+                                                                            fontSize: '0.75rem',
+                                                                            fontWeight: '600',
+                                                                            flex: 1
+                                                                        }}
+                                                                        title="View document content"
+                                                                    >
+                                                                        View Document
+                                                                    </button>
+                                                                    {canDeleteHandbook() && (
+                                                                        <button
+                                                                            onClick={() => handleFileDelete('hrForms', file.id, file.name)}
+                                                                            style={{
+                                                                                background: '#ef4444',
+                                                                                border: 'none',
+                                                                                color: 'white',
+                                                                                cursor: 'pointer',
+                                                                                padding: '0.4rem 0.75rem',
+                                                                                borderRadius: '4px',
+                                                                                fontSize: '0.75rem',
+                                                                                fontWeight: '600',
+                                                                                flex: 1
+                                                                            }}
+                                                                            title="Delete file (HR/Admin only)"
+                                                                        >
+                                                                            Delete
+                                                                        </button>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                        
+                                        {/* File Type Support Info */}
+                                        <div style={{
+                                            background: 'rgba(34, 197, 94, 0.1)',
+                                            border: '1px solid rgba(34, 197, 94, 0.3)',
+                                            borderRadius: '6px',
+                                            padding: '0.75rem',
+                                            marginTop: '0.75rem'
+                                        }}>
+                                            <div style={{ fontSize: '0.8rem', color: '#166534', fontWeight: '600', marginBottom: '0.25rem' }}>
+                                                📄 File Viewing Support:
+                                            </div>
+                                            <div style={{ fontSize: '0.75rem', color: '#15803d' }}>
+                                                • <strong>TXT files:</strong> Full content displayed in viewer<br/>
+                                                • <strong>PDF files:</strong> Embedded PDF viewer<br/>
+                                                • <strong>Word docs (.docx/.doc):</strong> Download to view (browser limitation)<br/>
+                                                • <strong>Other files:</strong> Download option provided
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
