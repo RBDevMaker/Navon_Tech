@@ -1,4 +1,4 @@
-const { CognitoIdentityProviderClient, ListUsersCommand, AdminGetUserCommand, AdminAddUserToGroupCommand, AdminRemoveUserFromGroupCommand, AdminUpdateUserAttributesCommand, AdminDeleteUserCommand } = require('@aws-sdk/client-cognito-identity-provider');
+const { CognitoIdentityProviderClient, ListUsersCommand, AdminGetUserCommand, AdminListGroupsForUserCommand, AdminAddUserToGroupCommand, AdminRemoveUserFromGroupCommand, AdminUpdateUserAttributesCommand, AdminDeleteUserCommand } = require('@aws-sdk/client-cognito-identity-provider');
 
 const cognitoClient = new CognitoIdentityProviderClient({ region: process.env.AWS_REGION || 'us-east-1' });
 const USER_POOL_ID = process.env.USER_POOL_ID;
@@ -34,8 +34,11 @@ exports.handler = async (event) => {
         const path = event.path || event.rawPath || '';
         const method = event.httpMethod || event.requestContext?.http?.method;
         
+        console.log('Processing request:', { path, method });
+        
         // Get requester's role from Cognito groups
         const requesterRole = await getRequesterRole(event);
+        console.log('Requester role:', requesterRole);
         
         // Extract username from path
         const pathParts = path.split('/');
@@ -69,12 +72,14 @@ exports.handler = async (event) => {
         }
     } catch (error) {
         console.error('Error:', error);
+        console.error('Error stack:', error.stack);
         return {
             statusCode: 500,
             headers: CORS_HEADERS,
             body: JSON.stringify({
                 error: 'Internal server error',
-                message: error.message
+                message: error.message,
+                details: error.stack
             })
         };
     }
@@ -83,27 +88,74 @@ exports.handler = async (event) => {
 async function getRequesterRole(event) {
     // Extract role from Cognito authorizer claims
     const claims = event.requestContext?.authorizer?.claims;
+    console.log('Full event.requestContext:', JSON.stringify(event.requestContext, null, 2));
+    console.log('Claims:', JSON.stringify(claims, null, 2));
+    
     if (!claims) {
         throw new Error('No authorization claims found');
     }
     
-    const groups = claims['cognito:groups'] ? claims['cognito:groups'].split(',') : [];
+    // Get username from claims
+    const username = claims['cognito:username'] || claims.username || claims.sub;
+    console.log('Username from claims:', username);
+    
+    // Cognito groups can be passed as array or comma-separated string
+    let groups = [];
+    const cognitoGroups = claims['cognito:groups'];
+    console.log('cognito:groups raw value:', cognitoGroups, 'type:', typeof cognitoGroups);
+    
+    if (Array.isArray(cognitoGroups)) {
+        groups = cognitoGroups;
+    } else if (typeof cognitoGroups === 'string') {
+        groups = cognitoGroups.split(',').map(g => g.trim());
+    }
+    
+    console.log('Parsed groups from claims:', groups);
+    
+    // If no groups found in claims, fetch from Cognito directly
+    if (groups.length === 0 && username) {
+        console.log('No groups in claims, fetching from Cognito for user:', username);
+        try {
+            const groupsCommand = new AdminListGroupsForUserCommand({
+                UserPoolId: USER_POOL_ID,
+                Username: username
+            });
+            const groupsResponse = await cognitoClient.send(groupsCommand);
+            const userGroups = groupsResponse.Groups || [];
+            groups = userGroups.map(g => g.GroupName);
+            console.log('Groups fetched from Cognito:', groups);
+        } catch (error) {
+            console.error('Error fetching user groups from Cognito:', error);
+            // Continue with empty groups array
+        }
+    }
+    
+    // Normalize groups to lowercase for comparison
+    const normalizedGroups = groups.map(g => g.toLowerCase());
+    console.log('Normalized groups:', normalizedGroups);
     
     // Return highest role
-    if (groups.includes('superadmin')) return 'superadmin';
-    if (groups.includes('hr')) return 'hr';
-    if (groups.includes('admin')) return 'admin';
+    if (normalizedGroups.includes('superadmin')) return 'superadmin';
+    if (normalizedGroups.includes('hr')) return 'hr';
+    if (normalizedGroups.includes('admin')) return 'admin';
     return 'employee';
 }
 
 async function getAllUsers(requesterRole) {
     try {
+        console.log('getAllUsers called with requesterRole:', requesterRole);
+        
         // Only superadmin, hr, and admin can list users
         if (!['superadmin', 'hr', 'admin'].includes(requesterRole)) {
+            console.log('Permission denied for role:', requesterRole);
             return {
                 statusCode: 403,
                 headers: CORS_HEADERS,
-                body: JSON.stringify({ error: 'Insufficient permissions' })
+                body: JSON.stringify({ 
+                    error: 'Insufficient permissions',
+                    requesterRole: requesterRole,
+                    allowedRoles: ['superadmin', 'hr', 'admin']
+                })
             };
         }
 
@@ -173,12 +225,22 @@ async function getUserDetails(username) {
         attributes[attr.Name] = attr.Value;
     });
 
-    // Determine role from groups
-    const groups = response.UserGroups || [];
+    // Fetch user groups separately
+    const groupsCommand = new AdminListGroupsForUserCommand({
+        UserPoolId: USER_POOL_ID,
+        Username: username
+    });
+    
+    const groupsResponse = await cognitoClient.send(groupsCommand);
+    const groups = groupsResponse.Groups || [];
+    const groupNames = groups.map(g => g.GroupName);
+    const normalizedGroups = groupNames.map(g => g.toLowerCase());
+    
+    // Determine role from groups (normalize to lowercase)
     let role = 'employee';
-    if (groups.some(g => g.GroupName === 'superadmin')) role = 'superadmin';
-    else if (groups.some(g => g.GroupName === 'hr')) role = 'hr';
-    else if (groups.some(g => g.GroupName === 'admin')) role = 'admin';
+    if (normalizedGroups.includes('superadmin')) role = 'superadmin';
+    else if (normalizedGroups.includes('hr')) role = 'hr';
+    else if (normalizedGroups.includes('admin')) role = 'admin';
 
     return {
         username: response.Username,
@@ -189,7 +251,7 @@ async function getUserDetails(username) {
         created: response.UserCreateDate,
         modified: response.UserLastModifiedDate,
         role: role,
-        groups: groups.map(g => g.GroupName),
+        groups: groupNames,
         attributes: attributes
     };
 }
@@ -246,22 +308,36 @@ async function updateUser(username, updateData, requesterRole) {
                 };
             }
 
+            // Map lowercase role names to actual Cognito group names
+            const roleToGroupName = {
+                'employee': null,
+                'admin': 'Admin',
+                'hr': 'HR',
+                'superadmin': 'SuperAdmin'
+            };
+
             // Remove from old group
             if (targetRole !== 'employee') {
-                await cognitoClient.send(new AdminRemoveUserFromGroupCommand({
-                    UserPoolId: USER_POOL_ID,
-                    Username: username,
-                    GroupName: targetRole
-                }));
+                const oldGroupName = roleToGroupName[targetRole];
+                if (oldGroupName) {
+                    await cognitoClient.send(new AdminRemoveUserFromGroupCommand({
+                        UserPoolId: USER_POOL_ID,
+                        Username: username,
+                        GroupName: oldGroupName
+                    }));
+                }
             }
 
             // Add to new group
             if (updateData.newRole !== 'employee') {
-                await cognitoClient.send(new AdminAddUserToGroupCommand({
-                    UserPoolId: USER_POOL_ID,
-                    Username: username,
-                    GroupName: updateData.newRole
-                }));
+                const newGroupName = roleToGroupName[updateData.newRole];
+                if (newGroupName) {
+                    await cognitoClient.send(new AdminAddUserToGroupCommand({
+                        UserPoolId: USER_POOL_ID,
+                        Username: username,
+                        GroupName: newGroupName
+                    }));
+                }
             }
         }
 

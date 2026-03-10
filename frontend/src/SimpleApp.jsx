@@ -45,6 +45,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [showPassword, setShowPassword] = useState(false);
     const [loginError, setLoginError] = useState('');
     const [isAuthenticating, setIsAuthenticating] = useState(false);
+    const [isAddingEmployee, setIsAddingEmployee] = useState(false); // Toggle for My Profile vs Add Employee
     
     // Resume management states
     const [resumes, setResumes] = useState([]);
@@ -79,6 +80,28 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             setUserRole(authenticatedUserRole);
         }
     }, [authenticatedUserRole]);
+    
+    // Clear form when switching to Add Employee mode
+    useEffect(() => {
+        if (isAddingEmployee) {
+            setProfileData({
+                name: '',
+                email: '',
+                phone: '',
+                department: '',
+                title: '',
+                location: '',
+                emergencyContact: '',
+                emergencyPhone: '',
+                profilePicture: '',
+                salary: '',
+                startDate: '',
+                manager: '',
+                employeeId: ''
+            });
+            setPendingProfilePicture(null);
+        }
+    }, [isAddingEmployee]);
 
     // Handle scroll for parallax effects
     useEffect(() => {
@@ -281,6 +304,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             const session = await fetchAuthSession();
             const token = session.tokens?.idToken?.toString();
             
+            console.log('Fetching users from:', `${apiUrl}/users`);
+            console.log('Token available:', !!token);
+            
             if (!token) {
                 throw new Error('No authentication token found');
             }
@@ -292,16 +318,20 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 }
             });
             
+            console.log('Response status:', response.status);
+            
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.message || `Failed to fetch users: ${response.status}`);
+                console.error('Error response:', errorData);
+                throw new Error(errorData.message || errorData.error || `Failed to fetch users: ${response.status}`);
             }
             
             const data = await response.json();
+            console.log('Users data:', data);
             setUsers(data.users || []);
         } catch (error) {
             console.error('Error fetching users:', error);
-            alert('Failed to load users. Please try again.');
+            alert(`Failed to load users: ${error.message}`);
         } finally {
             setIsLoadingUsers(false);
         }
@@ -6190,9 +6220,58 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 <section style={{ 
                     padding: '4rem 2rem', 
                     background: '#f1f5f9',
-                    minHeight: '100vh'
+                    minHeight: '100vh',
+                    position: 'relative'
                 }}>
-                    <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+                    {/* Toggle Button - Upper Right Corner */}
+                    {(userRole === 'admin' || userRole === 'hr' || userRole === 'superadmin') && (
+                        <div style={{
+                            position: 'absolute',
+                            top: '1rem',
+                            right: '1rem',
+                            background: 'white',
+                            padding: '0.15rem',
+                            borderRadius: '6px',
+                            border: '1px solid #d4af37',
+                            display: 'flex',
+                            gap: '0.15rem',
+                            boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
+                            zIndex: 10
+                        }}>
+                            <button
+                                onClick={() => setIsAddingEmployee(false)}
+                                style={{
+                                    background: !isAddingEmployee ? '#1e3a8a' : 'transparent',
+                                    color: !isAddingEmployee ? 'white' : '#64748b',
+                                    border: 'none',
+                                    padding: '0.35rem 0.75rem',
+                                    borderRadius: '4px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    fontSize: '0.75rem',
+                                    transition: 'all 0.3s ease'
+                                }}>
+                                👤 My Profile
+                            </button>
+                            <button
+                                onClick={() => setIsAddingEmployee(true)}
+                                style={{
+                                    background: isAddingEmployee ? '#1e3a8a' : 'transparent',
+                                    color: isAddingEmployee ? 'white' : '#64748b',
+                                    border: 'none',
+                                    padding: '0.35rem 0.75rem',
+                                    borderRadius: '4px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    fontSize: '0.75rem',
+                                    transition: 'all 0.3s ease'
+                                }}>
+                                ➕ Add Employee
+                            </button>
+                        </div>
+                    )}
+                    
+                    <div style={{ maxWidth: '1000px', margin: '0 auto', paddingTop: '2rem' }}>
                         <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
                             <h2 style={{
                                 fontSize: '3rem',
@@ -6200,7 +6279,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 color: '#1e3a8a',
                                 fontWeight: '800'
                             }}>
-                                👤 My Profile
+                                {isAddingEmployee ? '➕ Add Employee Profile' : '👤 My Profile'}
                             </h2>
                             <p style={{
                                 fontSize: '1.2rem',
@@ -6208,19 +6287,21 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 maxWidth: '800px',
                                 margin: '0 auto 2rem auto'
                             }}>
-                                Update your personal information and profile settings
+                                {isAddingEmployee 
+                                    ? 'Create a new employee profile for the directory' 
+                                    : 'Update your personal information and profile settings'}
                             </p>
                             
-                            {/* Role Switcher for Testing */}
+                            {/* Role Indicator */}
                             <div style={{
                                 background: 'white',
-                                padding: '1rem',
+                                padding: '0.5rem 1rem',
                                 borderRadius: '8px',
                                 border: '2px solid #d4af37',
                                 marginBottom: '1.5rem',
                                 display: 'inline-block'
                             }}>
-                                <div style={{ fontWeight: '700', color: userRole === 'superadmin' ? '#92400e' : '#1e3a8a', fontSize: '1rem', padding: '0.5rem 1rem' }}>
+                                <div style={{ fontWeight: '700', color: userRole === 'superadmin' ? '#92400e' : '#1e3a8a', fontSize: '0.9rem' }}>
                                     {userRole === 'superadmin' && '⭐ '}
                                     Current Role: {userRole.toUpperCase()}
                                     {userRole === 'superadmin' && ' ⭐'}
@@ -6232,6 +6313,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             <button 
                                 onClick={() => {
                                     setCurrentPage('employeeprofile');
+                                    setIsAddingEmployee(false);
                                     window.scrollTo({ top: 0, behavior: 'smooth' });
                                 }}
                                 style={{
@@ -7044,13 +7126,34 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             e.target.style.transform = 'translateY(0)';
                                             e.target.style.boxShadow = 'none';
                                         }}>
-                                        💾 Save Changes
+                                        {isAddingEmployee ? '➕ Create Employee Profile' : '💾 Save Changes'}
                                     </button>
                                     <button
                                         type="button"
                                         onClick={() => {
-                                            setCurrentPage('employeeprofile');
-                                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                                            if (isAddingEmployee) {
+                                                // Clear form when canceling add employee
+                                                setProfileData({
+                                                    name: '',
+                                                    email: '',
+                                                    phone: '',
+                                                    department: '',
+                                                    title: '',
+                                                    location: '',
+                                                    emergencyContact: '',
+                                                    emergencyPhone: '',
+                                                    profilePicture: '',
+                                                    salary: '',
+                                                    startDate: '',
+                                                    manager: '',
+                                                    employeeId: ''
+                                                });
+                                                setPendingProfilePicture(null);
+                                                setIsAddingEmployee(false);
+                                            } else {
+                                                setCurrentPage('employeeprofile');
+                                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                                            }
                                         }}
                                         style={{
                                             background: 'transparent',
@@ -7069,7 +7172,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         onMouseOut={(e) => {
                                             e.target.style.borderColor = '#e2e8f0';
                                         }}>
-                                        Cancel
+                                        {isAddingEmployee ? 'Clear Form' : 'Cancel'}
                                     </button>
                                 </div>
                             </form>
