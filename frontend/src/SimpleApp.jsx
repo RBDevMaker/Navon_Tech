@@ -4879,6 +4879,34 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                     minHeight: '100vh'
                 }}>
                     <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+                        {/* Welcome Message */}
+                        {authenticatedUser && (
+                            <div style={{
+                                background: 'linear-gradient(135deg, #d4af37 0%, #f4e5a1 100%)',
+                                padding: '1.5rem 2rem',
+                                borderRadius: '12px',
+                                marginBottom: '2rem',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.3)',
+                                color: '#0f172a',
+                                border: '2px solid #b8941f'
+                            }}>
+                                <h3 style={{
+                                    margin: 0,
+                                    fontSize: '1.8rem',
+                                    fontWeight: '700'
+                                }}>
+                                    Welcome, {authenticatedUser.split('@')[0].split('.')[0].charAt(0).toUpperCase() + authenticatedUser.split('@')[0].split('.')[0].slice(1)}! 👋
+                                </h3>
+                                <p style={{
+                                    margin: '0.5rem 0 0 0',
+                                    fontSize: '1rem',
+                                    opacity: 0.9
+                                }}>
+                                    Access your secure workspace below
+                                </p>
+                            </div>
+                        )}
+                        
                         <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
                             <h2 style={{
                                 fontSize: '3rem',
@@ -9420,6 +9448,33 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                     minHeight: '100vh'
                 }}>
                     <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+                        {/* Welcome Message */}
+                        {authenticatedUser && (
+                            <div style={{
+                                background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
+                                padding: '1.5rem 2rem',
+                                borderRadius: '12px',
+                                marginBottom: '2rem',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                color: 'white'
+                            }}>
+                                <h3 style={{
+                                    margin: 0,
+                                    fontSize: '1.8rem',
+                                    fontWeight: '700'
+                                }}>
+                                    Welcome, {authenticatedUser.split('@')[0].split('.')[0].charAt(0).toUpperCase() + authenticatedUser.split('@')[0].split('.')[0].slice(1)}! 👋
+                                </h3>
+                                <p style={{
+                                    margin: '0.5rem 0 0 0',
+                                    fontSize: '1rem',
+                                    opacity: 0.9
+                                }}>
+                                    Access your tools and resources below
+                                </p>
+                            </div>
+                        )}
+                        
                         <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
                             <h2 style={{
                                 fontSize: '3rem',

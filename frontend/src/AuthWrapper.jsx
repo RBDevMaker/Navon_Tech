@@ -14,6 +14,7 @@ export function AuthWrapper({ children }) {
     const [showLogin, setShowLogin] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const [showAccessRequest, setShowAccessRequest] = useState(false);
     const [requestName, setRequestName] = useState('');
@@ -499,22 +500,45 @@ export function AuthWrapper({ children }) {
                             }}>
                                 Password
                             </label>
-                            <input
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                                style={{
-                                    width: '100%',
-                                    padding: '0.75rem',
-                                    border: '2px solid rgba(255, 255, 255, 0.3)',
-                                    borderRadius: '8px',
-                                    fontSize: '1rem',
-                                    background: 'rgba(255, 255, 255, 0.9)',
-                                    color: '#1e293b'
-                                }}
-                                placeholder="Enter your password"
-                            />
+                            <div style={{ position: 'relative' }}>
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                    style={{
+                                        width: '100%',
+                                        padding: '0.75rem',
+                                        paddingRight: '3rem',
+                                        border: '2px solid rgba(255, 255, 255, 0.3)',
+                                        borderRadius: '8px',
+                                        fontSize: '1rem',
+                                        background: 'rgba(255, 255, 255, 0.9)',
+                                        color: '#1e293b'
+                                    }}
+                                    placeholder="Enter your password"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    style={{
+                                        position: 'absolute',
+                                        right: '0.75rem',
+                                        top: '50%',
+                                        transform: 'translateY(-50%)',
+                                        background: 'transparent',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        fontSize: '0.9rem',
+                                        padding: '0.25rem 0.5rem',
+                                        color: '#1e3a8a',
+                                        fontWeight: '600'
+                                    }}
+                                    title={showPassword ? "Hide password" : "Show password"}
+                                >
+                                    {showPassword ? 'Hide' : 'Show'}
+                                </button>
+                            </div>
                         </div>
 
                         {error && (
