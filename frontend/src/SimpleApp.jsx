@@ -8190,7 +8190,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             )}
                             
                             {/* Other Team Members from Database */}
-                            {teamMembers.filter(member => member.email !== loginEmail).map((member) => (
+                            {teamMembers.map((member) => (
                                 <div key={member.id} className="hover-lift animate-scale-in" style={{
                                     background: 'white',
                                     padding: '2rem',
