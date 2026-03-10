@@ -37,7 +37,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [uploadedFiles, setUploadedFiles] = useState({
         employeeHandbook: [],
         benefits: [],
-        forms: []
+        hrForms: []
     });
     const [pendingProfilePicture, setPendingProfilePicture] = useState(null);
     const [loginEmail, setLoginEmail] = useState('');
