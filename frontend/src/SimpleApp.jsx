@@ -156,37 +156,39 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 listS3Contents('Documents/HRForms/')
             ]);
             
+            console.log('Fetched files:', { handbookFiles, benefitsFiles, hrFormsFiles });
+            
             // Process handbook files
             const handbookData = handbookFiles.files?.map(file => ({
-                id: file.Key,
-                name: file.Key.split('/').pop(),
-                size: file.Size,
-                type: file.Key.split('.').pop(),
-                uploadDate: file.LastModified,
+                id: file.key,
+                name: file.name,
+                size: file.size,
+                type: file.name.split('.').pop(),
+                uploadDate: file.lastModified,
                 uploadedBy: 'SYSTEM',
-                s3Url: `https://navon-tech-images.s3.us-east-1.amazonaws.com/${file.Key}`
+                s3Url: file.url
             })) || [];
             
             // Process benefits files
             const benefitsData = benefitsFiles.files?.map(file => ({
-                id: file.Key,
-                name: file.Key.split('/').pop(),
-                size: file.Size,
-                type: file.Key.split('.').pop(),
-                uploadDate: file.LastModified,
+                id: file.key,
+                name: file.name,
+                size: file.size,
+                type: file.name.split('.').pop(),
+                uploadDate: file.lastModified,
                 uploadedBy: 'SYSTEM',
-                s3Url: `https://navon-tech-images.s3.us-east-1.amazonaws.com/${file.Key}`
+                s3Url: file.url
             })) || [];
             
             // Process HR forms files
             const hrFormsData = hrFormsFiles.files?.map(file => ({
-                id: file.Key,
-                name: file.Key.split('/').pop(),
-                size: file.Size,
-                type: file.Key.split('.').pop(),
-                uploadDate: file.LastModified,
+                id: file.key,
+                name: file.name,
+                size: file.size,
+                type: file.name.split('.').pop(),
+                uploadDate: file.lastModified,
                 uploadedBy: 'SYSTEM',
-                s3Url: `https://navon-tech-images.s3.us-east-1.amazonaws.com/${file.Key}`
+                s3Url: file.url
             })) || [];
             
             setUploadedFiles({
