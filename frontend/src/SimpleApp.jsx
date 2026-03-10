@@ -5293,8 +5293,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 </div>
                             </div>
                             
-                            {/* Card 6: User Management - SuperAdmin and HR Only */}
-                            {(userRole === 'superadmin' || userRole === 'hr') && (
+                            {/* Card 6: User Management - SuperAdmin, HR, and Admin */}
+                            {(userRole === 'superadmin' || userRole === 'hr' || userRole === 'admin') && (
                                 <div 
                                     className="hover-lift animate-scale-in" 
                                     onClick={() => {
@@ -5362,8 +5362,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 </section>
             )}
 
-            {/* USER MANAGEMENT PAGE - SuperAdmin and HR Only */}
-            {currentPage === 'usermanagement' && (userRole === 'superadmin' || userRole === 'hr') && (
+            {/* USER MANAGEMENT PAGE - SuperAdmin, HR, and Admin */}
+            {currentPage === 'usermanagement' && (userRole === 'superadmin' || userRole === 'hr' || userRole === 'admin') && (
                 <section style={{ 
                     padding: '4rem 2rem', 
                     background: '#f1f5f9',
