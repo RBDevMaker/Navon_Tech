@@ -1,5 +1,5 @@
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
-const { DynamoDBDocumentClient, PutCommand, GetCommand, QueryCommand, UpdateCommand } = require('@aws-sdk/lib-dynamodb');
+const { DynamoDBDocumentClient, PutCommand, GetCommand, ScanCommand, UpdateCommand } = require('@aws-sdk/lib-dynamodb');
 
 const client = new DynamoDBClient({ region: process.env.AWS_REGION || 'us-east-1' });
 const docClient = DynamoDBDocumentClient.from(client);
@@ -110,14 +110,15 @@ async function getAllProfiles() {
     try {
         const params = {
             TableName: TABLE_NAME,
-            FilterExpression: 'begins_with(PK, :pk) AND SK = :sk',
+            FilterExpression: 'begins_with(PK, :pk) AND SK = :sk AND active = :active',
             ExpressionAttributeValues: {
                 ':pk': 'EMPLOYEE#',
-                ':sk': 'PROFILE'
+                ':sk': 'PROFILE',
+                ':active': true
             }
         };
 
-        const result = await docClient.send(new QueryCommand(params));
+        const result = await docClient.send(new ScanCommand(params));
 
         return {
             statusCode: 200,

@@ -33,22 +33,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         manager: '',
         employeeId: ''
     });
-    const [teamMembers, setTeamMembers] = useState([
-        {
-            id: 'EMP-2024-001',
-            name: 'John Doe',
-            title: 'Senior Cloud Engineer',
-            email: 'john.doe@navontech.com',
-            phone: '(555) 123-4567',
-            location: 'Remote - DC Metro Area',
-            department: 'Engineering',
-            emergencyContact: 'Jane Doe - (555) 987-6543',
-            profilePicture: '',
-            salary: '$95,000',
-            startDate: '2024-01-15',
-            manager: 'Sarah Johnson'
-        }
-    ]);
+    const [teamMembers, setTeamMembers] = useState([]);
     const [uploadedFiles, setUploadedFiles] = useState({
         employeeHandbook: [],
         benefits: [],
@@ -102,6 +87,55 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
         }
     }, [currentPage, userRole]);
+
+    // Fetch team members when on team directory page
+    useEffect(() => {
+        if (currentPage === 'teamdirectory') {
+            fetchTeamMembers();
+        }
+    }, [currentPage]);
+
+    // Fetch team members from API
+    const fetchTeamMembers = async () => {
+        try {
+            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+            console.log('Fetching profiles from:', `${apiUrl}/profiles`);
+            const response = await fetch(`${apiUrl}/profiles`);
+            
+            if (!response.ok) {
+                throw new Error(`Failed to fetch profiles: ${response.status} ${response.statusText}`);
+            }
+            
+            const data = await response.json();
+            console.log('Fetched profiles data:', data);
+            
+            // Map the profiles to match the expected format
+            const profiles = data.profiles || [];
+            console.log(`Found ${profiles.length} profiles`);
+            
+            const formattedProfiles = profiles.map(profile => ({
+                id: profile.employeeId || '',
+                name: profile.name || '',
+                title: profile.title || '',
+                email: profile.email || '',
+                phone: profile.phone || '',
+                location: profile.location || '',
+                department: profile.department || '',
+                emergencyContact: profile.emergencyContact || '',
+                emergencyPhone: profile.emergencyPhone || '',
+                profilePicture: profile.profilePicture || '',
+                salary: profile.salary || '',
+                startDate: profile.startDate || '',
+                manager: profile.manager || ''
+            }));
+            
+            setTeamMembers(formattedProfiles);
+            console.log('Team members updated:', formattedProfiles);
+        } catch (error) {
+            console.error('Error fetching team members:', error);
+            alert(`Failed to load team directory: ${error.message}`);
+        }
+    };
 
     // Permission functions
     const canDeleteHandbook = () => userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin';
@@ -164,6 +198,14 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     // Export Team Directory to Excel
     const exportDirectoryToExcel = () => {
         try {
+            console.log('Exporting team members:', teamMembers);
+            console.log('Team members count:', teamMembers.length);
+            
+            if (teamMembers.length === 0) {
+                alert('⚠️ No employee profiles to export. Please add employee profiles first.');
+                return;
+            }
+            
             let exportData;
             
             if (userRole === 'hr' || userRole === 'superadmin') {
@@ -218,6 +260,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
 
             XLSX.writeFile(workbook, filename);
             console.log(`✅ Exported ${exportData.length} employees to ${filename}`);
+            alert(`✅ Successfully exported ${exportData.length} employee(s) to ${filename}`);
         } catch (error) {
             console.error('Error exporting to Excel:', error);
             alert('❌ Failed to export to Excel. Please try again.');
@@ -5259,13 +5302,13 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         window.scrollTo({ top: 0, behavior: 'smooth' });
                                     }}
                                     style={{
-                                        background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+                                        background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
                                         padding: '3rem 2rem',
                                         borderRadius: '20px',
                                         textAlign: 'center',
                                         cursor: 'pointer',
                                         border: '3px solid #d4af37',
-                                        boxShadow: '0 10px 30px rgba(212, 175, 55, 0.4)',
+                                        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
                                         transition: 'all 0.4s ease',
                                         position: 'relative',
                                         overflow: 'hidden',
@@ -5283,7 +5326,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             ⭐👥
                                         </div>
                                         <h3 style={{
-                                            color: '#0f172a',
+                                            color: 'white',
                                             fontSize: '1.5rem',
                                             fontWeight: '700',
                                             marginBottom: '1rem'
@@ -5291,18 +5334,17 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             User Management
                                         </h3>
                                         <p style={{
-                                            color: '#78350f',
+                                            color: '#cbd5e1',
                                             fontSize: '1rem',
                                             lineHeight: '1.6',
-                                            marginBottom: '2rem',
-                                            fontWeight: '600'
+                                            marginBottom: '2rem'
                                         }}>
                                             Create, modify, and delete users. Assign roles and view audit logs. {userRole === 'superadmin' ? 'SuperAdmin' : 'HR'} access.
                                         </p>
                                     </div>
                                     <div style={{
-                                        background: 'rgba(212, 175, 55, 0.3)',
-                                        border: '2px solid #d4af37',
+                                        background: 'linear-gradient(135deg, #d4af37 0%, #f4e5a1 100%)',
+                                        border: '2px solid #b8941f',
                                         borderRadius: '8px',
                                         padding: '0.75rem 1.5rem',
                                         color: '#0f172a',
@@ -6295,11 +6337,12 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     
                                     console.log('Payload being sent:', JSON.stringify(profilePayload, null, 2));
                                     
-                                    const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/employee/profile`;
-                                    console.log('API URL:', apiUrl);
+                                    const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                                    const endpoint = `${apiUrl}/profiles`;
+                                    console.log('API URL:', endpoint);
                                     console.log('========================');
                                     
-                                    const response = await fetch(apiUrl, {
+                                    const response = await fetch(endpoint, {
                                         method: 'POST',
                                         headers: {
                                             'Content-Type': 'application/json'
