@@ -5510,17 +5510,22 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         • Modify user information
                                     </p>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Change user roles (Employee/HR/Admin)
+                                        • Change user roles (Employee/Admin/HR{userRole === 'superadmin' ? '/SuperAdmin' : ''})
                                     </p>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Promote or demote users
+                                        • Promote or demote users{userRole === 'hr' ? ' (cannot modify SuperAdmins)' : ''}
                                     </p>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
                                         • Update permissions
                                     </p>
                                 </div>
                                 <button 
-                                    onClick={() => alert('🚧 Manage Users Feature\n\nThis feature will allow you to:\n• View all users\n• Edit user details\n• Change roles (Employee → HR → Admin)\n• Promote/demote any user\n\nComing soon after backend deployment!')}
+                                    onClick={() => {
+                                        const message = userRole === 'hr'
+                                            ? '🚧 Manage Users Feature\n\nThis feature will allow you to:\n• View all users\n• Edit user details\n• Change roles (Employee → Admin → HR)\n• Promote/demote users\n\n⚠️ HR cannot modify SuperAdmin accounts.\n\nComing soon after backend deployment!'
+                                            : '🚧 Manage Users Feature\n\nThis feature will allow you to:\n• View all users\n• Edit user details\n• Change roles (Employee → Admin → HR → SuperAdmin)\n• Promote/demote any user\n\nComing soon after backend deployment!';
+                                        alert(message);
+                                    }}
                                     style={{
                                         background: '#1e3a8a',
                                         color: 'white',
