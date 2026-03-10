@@ -7757,7 +7757,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                         {/* HR Documents Grid */}
                         <div style={{
                             display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))',
                             gap: '2rem'
                         }}>
                             {/* Employee Handbook 2026 */}
@@ -8017,7 +8017,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     </div>
                                     <div>
                                         <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.3rem', fontWeight: '700' }}>
-                                            Benefits Overview 2026
+                                            {uploadedFiles.benefits.length > 0 
+                                                ? uploadedFiles.benefits[0].name 
+                                                : 'Benefits Overview 2026'}
                                         </h3>
                                         <div style={{ 
                                             display: 'flex', 
@@ -8033,7 +8035,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                 fontSize: '0.75rem',
                                                 fontWeight: '600'
                                             }}>
-                                                PDF
+                                                {uploadedFiles.benefits.length > 0 
+                                                    ? uploadedFiles.benefits[0].name.split('.').pop().toUpperCase()
+                                                    : 'PDF'}
                                             </span>
                                         </div>
                                     </div>
@@ -8253,7 +8257,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     </div>
                                     <div>
                                         <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.3rem', fontWeight: '700' }}>
-                                            Annual Review Survey
+                                            {uploadedFiles.hrForms.length > 0 
+                                                ? uploadedFiles.hrForms[0].name 
+                                                : 'Annual Review Survey'}
                                         </h3>
                                         <div style={{ 
                                             display: 'flex', 
@@ -8269,7 +8275,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                 fontSize: '0.75rem',
                                                 fontWeight: '600'
                                             }}>
-                                                PDF
+                                                {uploadedFiles.hrForms.length > 0 
+                                                    ? uploadedFiles.hrForms[0].name.split('.').pop().toUpperCase()
+                                                    : 'PDF'}
                                             </span>
                                         </div>
                                     </div>
