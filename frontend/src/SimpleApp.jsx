@@ -130,6 +130,13 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         }
     }, [currentPage]);
 
+    // Fetch users when on user management page
+    useEffect(() => {
+        if (currentPage === 'usermanagement' && (userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin')) {
+            fetchUsers();
+        }
+    }, [currentPage, userRole]);
+
     // Fetch team members from API
     const fetchTeamMembers = async () => {
         try {
@@ -5201,7 +5208,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                         {/* 5 Large Portal Cards */}
                         <div style={{
                             display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                            gridTemplateColumns: 'repeat(3, 1fr)',
                             gap: '2rem',
                             marginBottom: '3rem'
                         }}>
@@ -5581,7 +5588,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             lineHeight: '1.6',
                                             marginBottom: '2rem'
                                         }}>
-                                            Create, modify, and delete users. Assign roles and view audit logs. {userRole === 'superadmin' ? 'SuperAdmin' : 'HR'} access.
+                                            Create, modify, and delete users. Assign roles and view audit logs. {userRole === 'superadmin' ? 'SuperAdmin' : userRole === 'hr' ? 'HR' : 'Admin'} access.
                                         </p>
                                     </div>
                                     <div style={{
@@ -5597,63 +5604,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     }}>
                                         ⭐ Enter
                                     </div>
-                                </div>
-                            )}
-                            
-                            {/* Card 7: Audit Logs - SuperAdmin and HR */}
-                            {(userRole === 'superadmin' || userRole === 'hr') && (
-                                <div className="hover-lift animate-scale-in" style={{
-                                    background: 'white',
-                                    padding: '3rem 2rem',
-                                    borderRadius: '20px',
-                                    textAlign: 'center',
-                                    border: '3px solid #d4af37',
-                                    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.15)',
-                                    transition: 'all 0.4s ease',
-                                    animationDelay: '0.5s',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    justifyContent: 'space-between'
-                                }}>
-                                    <div>
-                                        <div style={{
-                                            fontSize: '4rem',
-                                            marginBottom: '1.5rem'
-                                        }}>
-                                            📊
-                                        </div>
-                                        <h3 style={{
-                                            color: '#1e3a8a',
-                                            fontSize: '1.5rem',
-                                            fontWeight: '700',
-                                            marginBottom: '1rem'
-                                        }}>
-                                            Audit Logs
-                                        </h3>
-                                        <p style={{
-                                            color: '#64748b',
-                                            fontSize: '1rem',
-                                            lineHeight: '1.6',
-                                            marginBottom: '2rem'
-                                        }}>
-                                            View all user activity, track login history, monitor role changes, and export audit reports.
-                                        </p>
-                                    </div>
-                                    <button 
-                                        onClick={() => setShowAuditLogsModal(true)}
-                                        style={{
-                                            background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
-                                            border: '2px solid #d4af37',
-                                            borderRadius: '8px',
-                                            padding: '0.75rem 1.5rem',
-                                            color: 'white',
-                                            fontWeight: '700',
-                                            fontSize: '1rem',
-                                            cursor: 'pointer',
-                                            transition: 'all 0.3s ease'
-                                        }}>
-                                        📊 View Logs
-                                    </button>
                                 </div>
                             )}
                         </div>
@@ -5930,7 +5880,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     </p>
                                 </div>
                                 <button 
-                                    onClick={() => alert('🚧 Audit Logs Feature\n\nThis feature will show:\n• All user login/logout events\n• Role changes and promotions\n• User creation/deletion\n• Permission modifications\n• Document access logs\n• Export to CSV/Excel\n\nComing soon after backend deployment!')}
+                                    onClick={() => setShowAuditLogsModal(true)}
                                     style={{
                                         background: '#1e3a8a',
                                         color: 'white',
@@ -5972,7 +5922,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     textAlign: 'center'
                                 }}>
                                     <div style={{ fontSize: '2rem', fontWeight: '700', color: '#1e3a8a' }}>
-                                        {teamMembers.length}
+                                        {users.length}
                                     </div>
                                     <div style={{ fontSize: '0.9rem', color: '#64748b', marginTop: '0.5rem', fontWeight: '600' }}>
                                         Total Users
@@ -5986,7 +5936,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     textAlign: 'center'
                                 }}>
                                     <div style={{ fontSize: '2rem', fontWeight: '700', color: '#d4af37' }}>
-                                        1
+                                        {users.filter(u => u.role === 'superadmin').length}
                                     </div>
                                     <div style={{ fontSize: '0.9rem', color: '#78350f', marginTop: '0.5rem', fontWeight: '600' }}>
                                         ⭐ SuperAdmin
@@ -6000,7 +5950,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     textAlign: 'center'
                                 }}>
                                     <div style={{ fontSize: '2rem', fontWeight: '700', color: '#1e3a8a' }}>
-                                        0
+                                        {users.filter(u => u.role === 'admin').length}
                                     </div>
                                     <div style={{ fontSize: '0.9rem', color: '#64748b', marginTop: '0.5rem', fontWeight: '600' }}>
                                         Admins
@@ -6014,7 +5964,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     textAlign: 'center'
                                 }}>
                                     <div style={{ fontSize: '2rem', fontWeight: '700', color: '#1e3a8a' }}>
-                                        0
+                                        {users.filter(u => u.role === 'hr').length}
                                     </div>
                                     <div style={{ fontSize: '0.9rem', color: '#64748b', marginTop: '0.5rem', fontWeight: '600' }}>
                                         HR Managers
@@ -6028,7 +5978,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     textAlign: 'center'
                                 }}>
                                     <div style={{ fontSize: '2rem', fontWeight: '700', color: '#1e3a8a' }}>
-                                        {teamMembers.length - 1}
+                                        {users.filter(u => u.role === 'employee').length}
                                     </div>
                                     <div style={{ fontSize: '0.9rem', color: '#64748b', marginTop: '0.5rem', fontWeight: '600' }}>
                                         Employees
@@ -6137,41 +6087,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 Manage your profile, view team directory, and update contact information
                             </p>
                             
-                            {/* Admin Controls */}
-                            {(userRole === 'superadmin' || userRole === 'hr' || userRole === 'admin') && (
-                                <div style={{
-                                    display: 'flex',
-                                    gap: '1rem',
-                                    justifyContent: 'center',
-                                    marginBottom: '1rem',
-                                    flexWrap: 'wrap'
-                                }}>
-                                    <button
-                                        onClick={() => setShowManageUsersModal(true)}
-                                        style={{
-                                            background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
-                                            color: 'white',
-                                            border: '2px solid #d4af37',
-                                            padding: '0.75rem 1.5rem',
-                                            borderRadius: '8px',
-                                            cursor: 'pointer',
-                                            fontWeight: '600',
-                                            fontSize: '1rem',
-                                            transition: 'all 0.3s ease'
-                                        }}
-                                        onMouseEnter={(e) => {
-                                            e.target.style.transform = 'translateY(-2px)';
-                                            e.target.style.boxShadow = '0 4px 12px rgba(30, 58, 138, 0.3)';
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            e.target.style.transform = 'translateY(0)';
-                                            e.target.style.boxShadow = 'none';
-                                        }}>
-                                        ⚙️ Manage Users & Roles
-                                    </button>
-                                </div>
-                            )}
-                            
                             <button 
                                 onClick={() => {
                                     setCurrentPage('secureportal');
@@ -6194,7 +6109,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                         {/* Profile Management Grid */}
                         <div style={{
                             display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                            gridTemplateColumns: 'repeat(2, 1fr)',
                             gap: '2rem',
                             marginBottom: '3rem'
                         }}>
@@ -6313,6 +6228,58 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 </button>
                             </div>
 
+                            {/* Manage Users & Roles Card - Admin, HR, SuperAdmin only */}
+                            {(userRole === 'admin' || userRole === 'hr' || userRole === 'superadmin') && (
+                                <div className="hover-lift animate-scale-in" style={{
+                                    background: 'white',
+                                    padding: '2rem',
+                                    borderRadius: '12px',
+                                    border: '2px solid #d4af37',
+                                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                    animationDelay: '0.2s'
+                                }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                        <div style={{
+                                            fontSize: '2.5rem',
+                                            marginRight: '1rem'
+                                        }}>
+                                            ⚙️
+                                        </div>
+                                        <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                            Manage Users & Roles
+                                        </h3>
+                                    </div>
+                                    <div style={{ marginBottom: '1rem' }}>
+                                        <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                            • Modify user information
+                                        </p>
+                                        <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                            • Change user roles
+                                        </p>
+                                        <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                            • Promote or demote users
+                                        </p>
+                                        <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                            • Delete user accounts
+                                        </p>
+                                    </div>
+                                    <button 
+                                        onClick={() => setShowManageUsersModal(true)}
+                                        style={{
+                                            background: '#1e3a8a',
+                                            color: 'white',
+                                            border: 'none',
+                                            padding: '0.75rem 1.5rem',
+                                            borderRadius: '6px',
+                                            cursor: 'pointer',
+                                            fontWeight: '600',
+                                            width: '100%'
+                                        }}>
+                                        Manage Users
+                                    </button>
+                                </div>
+                            )}
+
                             {/* Security Settings Card */}
                             <div className="hover-lift animate-scale-in" style={{
                                 background: 'white',
@@ -6320,7 +6287,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 borderRadius: '12px',
                                 border: '2px solid #d4af37',
                                 boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                animationDelay: '0.2s'
+                                animationDelay: '0.3s'
                             }}>
                                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
                                     <div style={{
