@@ -5563,7 +5563,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         • Remove user accounts
                                     </p>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Delete Admins and HR users
+                                        • Delete Admins {userRole === 'superadmin' ? 'and HR users' : '(HR cannot delete SuperAdmins)'}
                                     </p>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
                                         • Archive user data
@@ -5573,7 +5573,12 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     </p>
                                 </div>
                                 <button 
-                                    onClick={() => alert('🚧 Delete User Feature\n\nThis feature will allow you to:\n• Delete any user account\n• Remove Admins and HR users\n• Archive user data\n• Revoke all access\n\n⚠️ This action requires confirmation.\n\nComing soon after backend deployment!')}
+                                    onClick={() => {
+                                        const message = userRole === 'hr' 
+                                            ? '🚧 Delete User Feature\n\nThis feature will allow you to:\n• Delete Employee and Admin accounts\n• Archive user data\n• Revoke access\n\n⚠️ HR cannot delete SuperAdmin accounts.\n⚠️ This action requires confirmation.\n\nComing soon after backend deployment!'
+                                            : '🚧 Delete User Feature\n\nThis feature will allow you to:\n• Delete any user account\n• Remove Admins and HR users\n• Archive user data\n• Revoke all access\n\n⚠️ This action requires confirmation.\n\nComing soon after backend deployment!';
+                                        alert(message);
+                                    }}
                                     style={{
                                         background: '#ef4444',
                                         color: 'white',
