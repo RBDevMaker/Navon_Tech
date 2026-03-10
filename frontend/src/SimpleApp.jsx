@@ -57,6 +57,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [pendingProfilePicture, setPendingProfilePicture] = useState(null);
     const [loginEmail, setLoginEmail] = useState('');
     const [loginPassword, setLoginPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [loginError, setLoginError] = useState('');
     const [isAuthenticating, setIsAuthenticating] = useState(false);
     
@@ -4879,34 +4880,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                     minHeight: '100vh'
                 }}>
                     <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-                        {/* Welcome Message */}
-                        {authenticatedUser && (
-                            <div style={{
-                                background: 'linear-gradient(135deg, #d4af37 0%, #f4e5a1 100%)',
-                                padding: '1.5rem 2rem',
-                                borderRadius: '12px',
-                                marginBottom: '2rem',
-                                boxShadow: '0 4px 6px rgba(0,0,0,0.3)',
-                                color: '#0f172a',
-                                border: '2px solid #b8941f'
-                            }}>
-                                <h3 style={{
-                                    margin: 0,
-                                    fontSize: '1.8rem',
-                                    fontWeight: '700'
-                                }}>
-                                    Welcome, {authenticatedUser.split('@')[0].split('.')[0].charAt(0).toUpperCase() + authenticatedUser.split('@')[0].split('.')[0].slice(1)}! 👋
-                                </h3>
-                                <p style={{
-                                    margin: '0.5rem 0 0 0',
-                                    fontSize: '1rem',
-                                    opacity: 0.9
-                                }}>
-                                    Access your secure workspace below
-                                </p>
-                            </div>
-                        )}
-                        
                         <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
                             <h2 style={{
                                 fontSize: '3rem',
@@ -4924,6 +4897,20 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             }}>
                                 Access your secure workspace with role-based permissions
                             </p>
+                            
+                            {/* Welcome Message */}
+                            {loginEmail && (
+                                <h3 style={{
+                                    margin: '1.5rem 0 0 0',
+                                    fontSize: '1.8rem',
+                                    fontWeight: '700',
+                                    color: '#d4af37',
+                                    textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                                    textAlign: 'left'
+                                }}>
+                                    Welcome, {loginEmail.split('@')[0].split('.')[0].charAt(0).toUpperCase() + loginEmail.split('@')[0].split('.')[0].slice(1)}! 👋
+                                </h3>
+                            )}
                         </div>
 
                         {/* 5 Large Portal Cards */}
@@ -9449,7 +9436,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 }}>
                     <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
                         {/* Welcome Message */}
-                        {authenticatedUser && (
+                        {loginEmail && (
                             <div style={{
                                 background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
                                 padding: '1.5rem 2rem',
@@ -9463,7 +9450,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     fontSize: '1.8rem',
                                     fontWeight: '700'
                                 }}>
-                                    Welcome, {authenticatedUser.split('@')[0].split('.')[0].charAt(0).toUpperCase() + authenticatedUser.split('@')[0].split('.')[0].slice(1)}! 👋
+                                    Welcome, {loginEmail.split('@')[0].split('.')[0].charAt(0).toUpperCase() + loginEmail.split('@')[0].split('.')[0].slice(1)}! 👋
                                 </h3>
                                 <p style={{
                                     margin: '0.5rem 0 0 0',
@@ -11456,26 +11443,48 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     }}>
                                         Password
                                     </label>
-                                    <input
-                                        type="password"
-                                        placeholder="Enter your password"
-                                        value={loginPassword}
-                                        onChange={(e) => setLoginPassword(e.target.value)}
-                                        required
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.65rem',
-                                            border: '2px solid rgba(255, 255, 255, 0.3)',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem',
-                                            background: 'rgba(255, 255, 255, 0.9)',
-                                            color: '#1e293b',
-                                            transition: 'all 0.3s ease',
-                                            outline: 'none'
-                                        }}
-                                        onFocus={(e) => e.target.style.borderColor = 'white'}
-                                        onBlur={(e) => e.target.style.borderColor = 'rgba(255, 255, 255, 0.3)'}
-                                    />
+                                    <div style={{ position: 'relative' }}>
+                                        <input
+                                            type={showPassword ? "text" : "password"}
+                                            placeholder="Enter your password"
+                                            value={loginPassword}
+                                            onChange={(e) => setLoginPassword(e.target.value)}
+                                            required
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.65rem',
+                                                paddingRight: '3.5rem',
+                                                border: '2px solid rgba(255, 255, 255, 0.3)',
+                                                borderRadius: '8px',
+                                                fontSize: '0.95rem',
+                                                background: 'rgba(255, 255, 255, 0.9)',
+                                                color: '#1e293b',
+                                                transition: 'all 0.3s ease',
+                                                outline: 'none'
+                                            }}
+                                            onFocus={(e) => e.target.style.borderColor = 'white'}
+                                            onBlur={(e) => e.target.style.borderColor = 'rgba(255, 255, 255, 0.3)'}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            style={{
+                                                position: 'absolute',
+                                                right: '0.75rem',
+                                                top: '50%',
+                                                transform: 'translateY(-50%)',
+                                                background: 'transparent',
+                                                border: 'none',
+                                                cursor: 'pointer',
+                                                fontSize: '0.85rem',
+                                                padding: '0.25rem 0.5rem',
+                                                color: '#1e3a8a',
+                                                fontWeight: '600'
+                                            }}
+                                        >
+                                            {showPassword ? 'Hide' : 'Show'}
+                                        </button>
+                                    </div>
                                 </div>
 
                                 {/* Forgot Password Link */}
