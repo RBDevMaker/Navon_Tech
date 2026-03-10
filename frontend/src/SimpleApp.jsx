@@ -52,6 +52,12 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [resumeFilter, setResumeFilter] = useState({ department: 'all', stage: 'all', sort: 'newest' });
     const [isLoadingResumes, setIsLoadingResumes] = useState(false);
     const [showUploadModal, setShowUploadModal] = useState(false);
+    
+    // User management states
+    const [showManageUsersModal, setShowManageUsersModal] = useState(false);
+    const [users, setUsers] = useState([]);
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [isLoadingUsers, setIsLoadingUsers] = useState(false);
 
     // Handle hash changes for navigation
     useEffect(() => {
@@ -264,6 +270,99 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         } catch (error) {
             console.error('Error exporting to Excel:', error);
             alert('❌ Failed to export to Excel. Please try again.');
+        }
+    };
+    
+    // User Management Functions
+    const fetchUsers = async () => {
+        setIsLoadingUsers(true);
+        try {
+            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+            const session = await fetchAuthSession();
+            const token = session.tokens?.idToken?.toString();
+            
+            const response = await fetch(`${apiUrl}/users`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch users');
+            }
+            
+            const data = await response.json();
+            setUsers(data.users || []);
+        } catch (error) {
+            console.error('Error fetching users:', error);
+            alert('Failed to load users. Please try again.');
+        } finally {
+            setIsLoadingUsers(false);
+        }
+    };
+    
+    const updateUserRole = async (username, newRole) => {
+        try {
+            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+            const session = await fetchAuthSession();
+            const token = session.tokens?.idToken?.toString();
+            
+            const response = await fetch(`${apiUrl}/users/${username}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': token,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ newRole })
+            });
+            
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to update user role');
+            }
+            
+            const data = await response.json();
+            alert(`✅ Successfully updated ${username} to ${newRole} role`);
+            
+            // Refresh users list
+            await fetchUsers();
+            setSelectedUser(null);
+        } catch (error) {
+            console.error('Error updating user role:', error);
+            alert(`❌ ${error.message}`);
+        }
+    };
+    
+    const deleteUserAccount = async (username) => {
+        if (!confirm(`⚠️ Are you sure you want to delete ${username}?\n\nThis action cannot be undone.`)) {
+            return;
+        }
+        
+        try {
+            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+            const session = await fetchAuthSession();
+            const token = session.tokens?.idToken?.toString();
+            
+            const response = await fetch(`${apiUrl}/users/${username}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': token
+                }
+            });
+            
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to delete user');
+            }
+            
+            alert(`✅ Successfully deleted ${username}`);
+            
+            // Refresh users list
+            await fetchUsers();
+            setSelectedUser(null);
+        } catch (error) {
+            console.error('Error deleting user:', error);
+            alert(`❌ ${error.message}`);
         }
     };
 
@@ -5520,12 +5619,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     </p>
                                 </div>
                                 <button 
-                                    onClick={() => {
-                                        const message = userRole === 'hr'
-                                            ? '🚧 Manage Users Feature\n\nThis feature will allow you to:\n• View all users\n• Edit user details\n• Change roles (Employee → Admin → HR)\n• Promote/demote users\n\n⚠️ HR cannot modify SuperAdmin accounts.\n\nComing soon after backend deployment!'
-                                            : '🚧 Manage Users Feature\n\nThis feature will allow you to:\n• View all users\n• Edit user details\n• Change roles (Employee → Admin → HR → SuperAdmin)\n• Promote/demote any user\n\nComing soon after backend deployment!';
-                                        alert(message);
-                                    }}
+                                    onClick={() => setShowManageUsersModal(true)}
                                     style={{
                                         background: '#1e3a8a',
                                         color: 'white',
@@ -12870,6 +12964,197 @@ Please review and approve this request.
                     }
                 }
             `}</style>
+            
+            {/* Manage Users Modal */}
+            {showManageUsersModal && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(0, 0, 0, 0.7)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 10000,
+                    padding: '2rem'
+                }} onClick={() => setShowManageUsersModal(false)}>
+                    <div style={{
+                        background: 'white',
+                        borderRadius: '12px',
+                        maxWidth: '1200px',
+                        width: '100%',
+                        maxHeight: '90vh',
+                        overflow: 'auto',
+                        position: 'relative'
+                    }} onClick={(e) => e.stopPropagation()}>
+                        <div style={{
+                            padding: '2rem',
+                            borderBottom: '2px solid #e2e8f0',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            position: 'sticky',
+                            top: 0,
+                            background: 'white',
+                            zIndex: 1
+                        }}>
+                            <h2 style={{ color: '#1e3a8a', margin: 0 }}>👥 Manage Users & Roles</h2>
+                            <button
+                                onClick={() => {
+                                    setShowManageUsersModal(false);
+                                    setSelectedUser(null);
+                                }}
+                                style={{
+                                    background: 'none',
+                                    border: 'none',
+                                    fontSize: '2rem',
+                                    cursor: 'pointer',
+                                    color: '#64748b',
+                                    padding: '0',
+                                    width: '40px',
+                                    height: '40px'
+                                }}>
+                                ✕
+                            </button>
+                        </div>
+                        
+                        <div style={{ padding: '2rem' }}>
+                            {!users.length && !isLoadingUsers && (
+                                <div style={{ textAlign: 'center', padding: '2rem' }}>
+                                    <button
+                                        onClick={fetchUsers}
+                                        style={{
+                                            background: '#1e3a8a',
+                                            color: 'white',
+                                            border: 'none',
+                                            padding: '1rem 2rem',
+                                            borderRadius: '8px',
+                                            cursor: 'pointer',
+                                            fontWeight: '600',
+                                            fontSize: '1rem'
+                                        }}>
+                                        Load Users
+                                    </button>
+                                </div>
+                            )}
+                            
+                            {isLoadingUsers && (
+                                <div style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                                    Loading users...
+                                </div>
+                            )}
+                            
+                            {users.length > 0 && (
+                                <div style={{ display: 'grid', gap: '1rem' }}>
+                                    {users.map(user => (
+                                        <div key={user.username} style={{
+                                            background: '#f8fafc',
+                                            padding: '1.5rem',
+                                            borderRadius: '8px',
+                                            border: '2px solid #e2e8f0'
+                                        }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem' }}>
+                                                <div>
+                                                    <div style={{ fontWeight: '600', color: '#1e3a8a', fontSize: '1.1rem', marginBottom: '0.5rem' }}>
+                                                        {user.email}
+                                                    </div>
+                                                    <div style={{ display: 'flex', gap: '1rem', fontSize: '0.9rem', color: '#64748b' }}>
+                                                        <span>Username: {user.username}</span>
+                                                        <span>Status: {user.status}</span>
+                                                        <span style={{
+                                                            background: user.role === 'superadmin' ? '#fef3c7' : user.role === 'hr' ? '#dbeafe' : user.role === 'admin' ? '#e0e7ff' : '#f1f5f9',
+                                                            color: user.role === 'superadmin' ? '#92400e' : user.role === 'hr' ? '#1e40af' : user.role === 'admin' ? '#4338ca' : '#475569',
+                                                            padding: '0.25rem 0.75rem',
+                                                            borderRadius: '12px',
+                                                            fontWeight: '600'
+                                                        }}>
+                                                            {user.role.toUpperCase()}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <button
+                                                    onClick={() => setSelectedUser(selectedUser?.username === user.username ? null : user)}
+                                                    style={{
+                                                        background: '#1e3a8a',
+                                                        color: 'white',
+                                                        border: 'none',
+                                                        padding: '0.5rem 1rem',
+                                                        borderRadius: '6px',
+                                                        cursor: 'pointer',
+                                                        fontWeight: '600'
+                                                    }}>
+                                                    {selectedUser?.username === user.username ? 'Cancel' : 'Manage'}
+                                                </button>
+                                            </div>
+                                            
+                                            {selectedUser?.username === user.username && (
+                                                <div style={{
+                                                    marginTop: '1rem',
+                                                    padding: '1rem',
+                                                    background: 'white',
+                                                    borderRadius: '6px',
+                                                    border: '1px solid #e2e8f0'
+                                                }}>
+                                                    <div style={{ marginBottom: '1rem' }}>
+                                                        <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.5rem', color: '#1e3a8a' }}>
+                                                            Change Role:
+                                                        </label>
+                                                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                                            {['employee', 'admin', 'hr', ...(userRole === 'superadmin' ? ['superadmin'] : [])].map(role => (
+                                                                <button
+                                                                    key={role}
+                                                                    onClick={() => updateUserRole(user.username, role)}
+                                                                    disabled={user.role === role || (userRole === 'hr' && user.role === 'superadmin')}
+                                                                    style={{
+                                                                        background: user.role === role ? '#10b981' : '#1e3a8a',
+                                                                        color: 'white',
+                                                                        border: 'none',
+                                                                        padding: '0.5rem 1rem',
+                                                                        borderRadius: '6px',
+                                                                        cursor: user.role === role || (userRole === 'hr' && user.role === 'superadmin') ? 'not-allowed' : 'pointer',
+                                                                        fontWeight: '600',
+                                                                        opacity: user.role === role || (userRole === 'hr' && user.role === 'superadmin') ? 0.5 : 1
+                                                                    }}>
+                                                                    {role.charAt(0).toUpperCase() + role.slice(1)}
+                                                                    {user.role === role && ' ✓'}
+                                                                </button>
+                                                            ))}
+                                                        </div>
+                                                        {userRole === 'hr' && user.role === 'superadmin' && (
+                                                            <div style={{ marginTop: '0.5rem', color: '#ef4444', fontSize: '0.9rem' }}>
+                                                                ⚠️ HR cannot modify SuperAdmin accounts
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    
+                                                    {(userRole === 'superadmin' || (userRole === 'hr' && user.role !== 'superadmin')) && (
+                                                        <button
+                                                            onClick={() => deleteUserAccount(user.username)}
+                                                            style={{
+                                                                background: '#ef4444',
+                                                                color: 'white',
+                                                                border: 'none',
+                                                                padding: '0.5rem 1rem',
+                                                                borderRadius: '6px',
+                                                                cursor: 'pointer',
+                                                                fontWeight: '600',
+                                                                marginTop: '0.5rem'
+                                                            }}>
+                                                            🗑️ Delete User
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

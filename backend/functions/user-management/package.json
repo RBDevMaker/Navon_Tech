@@ -1,0 +1,9 @@
+{
+  "name": "user-management-function",
+  "version": "1.0.0",
+  "description": "Lambda function for managing Cognito users and roles",
+  "main": "index.js",
+  "dependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.0.0"
+  }
+}

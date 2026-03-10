@@ -271,6 +271,85 @@ Resources:
             Auth:
               Authorizer: NONE
 
+  UserManagementFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/user-management/
+      Handler: index.handler
+      Description: Manages Cognito users and roles with permission checks
+      MemorySize: 512
+      Timeout: 30
+      Environment:
+        Variables:
+          USER_POOL_ID: !Ref UserPool
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - cognito-idp:ListUsers
+                - cognito-idp:AdminGetUser
+                - cognito-idp:AdminAddUserToGroup
+                - cognito-idp:AdminRemoveUserFromGroup
+                - cognito-idp:AdminUpdateUserAttributes
+                - cognito-idp:AdminDeleteUser
+              Resource: !GetAtt UserPool.Arn
+        - Statement:
+            - Effect: Allow
+              Action:
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+              Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"
+      Events:
+        ListUsers:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/users
+            Method: GET
+            Auth:
+              Authorizer: CognitoAuthorizer
+        GetUser:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/users/{username}
+            Method: GET
+            Auth:
+              Authorizer: CognitoAuthorizer
+        UpdateUser:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/users/{username}
+            Method: PUT
+            Auth:
+              Authorizer: CognitoAuthorizer
+        DeleteUser:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/users/{username}
+            Method: DELETE
+            Auth:
+              Authorizer: CognitoAuthorizer
+        UsersOptions:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/users
+            Method: OPTIONS
+            Auth:
+              Authorizer: NONE
+        UserOptions:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/users/{username}
+            Method: OPTIONS
+            Auth:
+              Authorizer: NONE
+
   ResumeManagementFunction:
     Type: AWS::Serverless::Function
     Properties:
