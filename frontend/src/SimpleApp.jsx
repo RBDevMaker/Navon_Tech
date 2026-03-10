@@ -281,14 +281,20 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             const session = await fetchAuthSession();
             const token = session.tokens?.idToken?.toString();
             
+            if (!token) {
+                throw new Error('No authentication token found');
+            }
+            
             const response = await fetch(`${apiUrl}/users`, {
                 headers: {
-                    'Authorization': token
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 }
             });
             
             if (!response.ok) {
-                throw new Error('Failed to fetch users');
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || `Failed to fetch users: ${response.status}`);
             }
             
             const data = await response.json();
@@ -307,18 +313,22 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             const session = await fetchAuthSession();
             const token = session.tokens?.idToken?.toString();
             
+            if (!token) {
+                throw new Error('No authentication token found');
+            }
+            
             const response = await fetch(`${apiUrl}/users/${username}`, {
                 method: 'PUT',
                 headers: {
-                    'Authorization': token,
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ newRole })
             });
             
             if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error || 'Failed to update user role');
+                const error = await response.json().catch(() => ({}));
+                throw new Error(error.error || error.message || 'Failed to update user role');
             }
             
             const data = await response.json();
@@ -343,16 +353,21 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             const session = await fetchAuthSession();
             const token = session.tokens?.idToken?.toString();
             
+            if (!token) {
+                throw new Error('No authentication token found');
+            }
+            
             const response = await fetch(`${apiUrl}/users/${username}`, {
                 method: 'DELETE',
                 headers: {
-                    'Authorization': token
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 }
             });
             
             if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error || 'Failed to delete user');
+                const error = await response.json().catch(() => ({}));
+                throw new Error(error.error || error.message || 'Failed to delete user');
             }
             
             alert(`✅ Successfully deleted ${username}`);
