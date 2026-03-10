@@ -6282,6 +6282,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 const updatedProfile = {
                                     firstName: formData.get('firstName'),
                                     lastName: formData.get('lastName'),
+                                    name: `${formData.get('firstName')} ${formData.get('lastName')}`.trim(),
                                     title: formData.get('title'),
                                     department: formData.get('department'),
                                     email: formData.get('email'),
