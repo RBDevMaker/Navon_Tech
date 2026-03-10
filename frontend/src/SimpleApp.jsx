@@ -158,8 +158,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             
             console.log('Fetched files:', { handbookFiles, benefitsFiles, hrFormsFiles });
             
-            // Process handbook files
-            const handbookData = handbookFiles.files?.map(file => ({
+            // Process handbook files - filter out items without name
+            const handbookData = handbookFiles.files?.filter(file => file.name && file.name.trim() !== '').map(file => ({
                 id: file.key,
                 name: file.name,
                 size: file.size,
@@ -169,8 +169,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 s3Url: file.url
             })) || [];
             
-            // Process benefits files
-            const benefitsData = benefitsFiles.files?.map(file => ({
+            // Process benefits files - filter out items without name
+            const benefitsData = benefitsFiles.files?.filter(file => file.name && file.name.trim() !== '').map(file => ({
                 id: file.key,
                 name: file.name,
                 size: file.size,
@@ -180,8 +180,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 s3Url: file.url
             })) || [];
             
-            // Process HR forms files
-            const hrFormsData = hrFormsFiles.files?.map(file => ({
+            // Process HR forms files - filter out items without name
+            const hrFormsData = hrFormsFiles.files?.filter(file => file.name && file.name.trim() !== '').map(file => ({
                 id: file.key,
                 name: file.name,
                 size: file.size,
