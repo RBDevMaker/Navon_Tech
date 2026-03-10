@@ -282,6 +282,7 @@ Resources:
       Environment:
         Variables:
           USER_POOL_ID: !Ref UserPool
+          AUDIT_TABLE: !Ref AuditLogsTable
       Policies:
         - Statement:
             - Effect: Allow
@@ -294,6 +295,8 @@ Resources:
                 - cognito-idp:AdminUpdateUserAttributes
                 - cognito-idp:AdminDeleteUser
               Resource: !GetAtt UserPool.Arn
+        - DynamoDBCrudPolicy:
+            TableName: !Ref AuditLogsTable
         - Statement:
             - Effect: Allow
               Action:
@@ -347,6 +350,53 @@ Resources:
           Properties:
             RestApiId: !Ref CompanyApi
             Path: /api/users/{username}
+            Method: OPTIONS
+            Auth:
+              Authorizer: NONE
+
+  AuditLogsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/audit-logs/
+      Handler: index.handler
+      Description: Manages audit logs for user activity tracking
+      MemorySize: 512
+      Timeout: 30
+      Environment:
+        Variables:
+          AUDIT_TABLE: !Ref AuditLogsTable
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref AuditLogsTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+              Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"
+      Events:
+        GetAuditLogs:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/audit-logs
+            Method: GET
+            Auth:
+              Authorizer: CognitoAuthorizer
+        CreateAuditLog:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/audit-logs
+            Method: POST
+            Auth:
+              Authorizer: CognitoAuthorizer
+        AuditLogsOptions:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/audit-logs
             Method: OPTIONS
             Auth:
               Authorizer: NONE
@@ -513,6 +563,58 @@ Resources:
           Value: !Ref Environment
         - Key: Purpose
           Value: ResumeTracking
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+
+  # Audit Logs Table
+  AuditLogsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: AuditLogs
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: eventId
+          AttributeType: S
+        - AttributeName: timestamp
+          AttributeType: N
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: eventType
+          AttributeType: S
+      KeySchema:
+        - AttributeName: eventId
+          KeyType: HASH
+        - AttributeName: timestamp
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: UserIdIndex
+          KeySchema:
+            - AttributeName: userId
+              KeyType: HASH
+            - AttributeName: timestamp
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: EventTypeIndex
+          KeySchema:
+            - AttributeName: eventType
+              KeyType: HASH
+            - AttributeName: timestamp
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      SSESpecification:
+        SSEEnabled: true
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Purpose
+          Value: AuditLogging
     DeletionPolicy: Retain
     UpdateReplacePolicy: Retain
 
@@ -694,6 +796,12 @@ Outputs:
     Value: !Ref ResumeMetadataTable
     Export:
       Name: !Sub "${AWS::StackName}-ResumeMetadataTable"
+
+  AuditLogsTable:
+    Description: "Audit Logs DynamoDB Table Name"
+    Value: !Ref AuditLogsTable
+    Export:
+      Name: !Sub "${AWS::StackName}-AuditLogsTable"
 
   Region:
     Description: "AWS Region"

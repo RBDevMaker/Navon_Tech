@@ -1,7 +1,39 @@
 const { CognitoIdentityProviderClient, ListUsersCommand, AdminGetUserCommand, AdminListGroupsForUserCommand, AdminAddUserToGroupCommand, AdminRemoveUserFromGroupCommand, AdminUpdateUserAttributesCommand, AdminDeleteUserCommand } = require('@aws-sdk/client-cognito-identity-provider');
+const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
+const { DynamoDBDocumentClient, PutCommand } = require('@aws-sdk/lib-dynamodb');
+const { v4: uuidv4 } = require('uuid');
 
 const cognitoClient = new CognitoIdentityProviderClient({ region: process.env.AWS_REGION || 'us-east-1' });
+const dynamoClient = new DynamoDBClient({ region: process.env.AWS_REGION || 'us-east-1' });
+const docClient = DynamoDBDocumentClient.from(dynamoClient);
 const USER_POOL_ID = process.env.USER_POOL_ID;
+const AUDIT_TABLE = 'AuditLogs';
+
+// Helper function to log audit events
+async function logAuditEvent(eventData) {
+    try {
+        const timestamp = Date.now();
+        const eventId = uuidv4();
+        
+        const auditEntry = {
+            eventId,
+            timestamp,
+            ...eventData,
+            ttl: Math.floor(Date.now() / 1000) + (365 * 24 * 60 * 60) // 1 year retention
+        };
+
+        const command = new PutCommand({
+            TableName: AUDIT_TABLE,
+            Item: auditEntry
+        });
+
+        await docClient.send(command);
+        console.log('Audit log created:', eventId);
+    } catch (error) {
+        console.error('Failed to create audit log:', error);
+        // Don't throw - audit logging should not break main functionality
+    }
+}
 
 const CORS_HEADERS = {
     'Access-Control-Allow-Origin': '*',
@@ -360,6 +392,22 @@ async function updateUser(username, updateData, requesterRole) {
         // Get updated user details
         const updatedUser = await getUserDetails(username);
 
+        // Log audit event for role change
+        if (updateData.newRole && updateData.newRole !== targetRole) {
+            await logAuditEvent({
+                userId: username,
+                userEmail: updatedUser.email,
+                eventType: 'ROLE_CHANGE',
+                action: `Changed role from ${targetRole} to ${updateData.newRole}`,
+                targetUser: username,
+                changes: {
+                    oldRole: targetRole,
+                    newRole: updateData.newRole
+                },
+                success: true
+            });
+        }
+
         return {
             statusCode: 200,
             headers: CORS_HEADERS,
@@ -403,6 +451,19 @@ async function deleteUser(username, requesterRole) {
             UserPoolId: USER_POOL_ID,
             Username: username
         }));
+
+        // Log audit event for user deletion
+        await logAuditEvent({
+            userId: username,
+            userEmail: targetUser.email,
+            eventType: 'USER_DELETE',
+            action: `Deleted user account`,
+            targetUser: username,
+            changes: {
+                deletedRole: targetRole
+            },
+            success: true
+        });
 
         return {
             statusCode: 200,

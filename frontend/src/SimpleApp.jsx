@@ -59,6 +59,12 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
     const [isLoadingUsers, setIsLoadingUsers] = useState(false);
+    
+    // Audit logs states
+    const [showAuditLogsModal, setShowAuditLogsModal] = useState(false);
+    const [auditLogs, setAuditLogs] = useState([]);
+    const [isLoadingLogs, setIsLoadingLogs] = useState(false);
+    const [logFilters, setLogFilters] = useState({ eventType: 'all', userId: '', limit: '100' });
 
     // Handle hash changes for navigation
     useEffect(() => {
@@ -408,6 +414,98 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         } catch (error) {
             console.error('Error deleting user:', error);
             alert(`❌ ${error.message}`);
+        }
+    };
+    
+    // Audit Logs Functions
+    const fetchAuditLogs = async (filters = {}) => {
+        setIsLoadingLogs(true);
+        try {
+            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+            const session = await fetchAuthSession();
+            const token = session.tokens?.idToken?.toString();
+            
+            if (!token) {
+                throw new Error('No authentication token found');
+            }
+            
+            // Build query string
+            const queryParams = new URLSearchParams();
+            if (filters.eventType && filters.eventType !== 'all') {
+                queryParams.append('eventType', filters.eventType);
+            }
+            if (filters.userId) {
+                queryParams.append('userId', filters.userId);
+            }
+            if (filters.limit) {
+                queryParams.append('limit', filters.limit);
+            }
+            
+            const queryString = queryParams.toString();
+            const url = `${apiUrl}/audit-logs${queryString ? `?${queryString}` : ''}`;
+            
+            console.log('Fetching audit logs from:', url);
+            
+            const response = await fetch(url, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || errorData.error || `Failed to fetch audit logs: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            console.log('Audit logs data:', data);
+            setAuditLogs(data.logs || []);
+        } catch (error) {
+            console.error('Error fetching audit logs:', error);
+            alert(`Failed to load audit logs: ${error.message}`);
+        } finally {
+            setIsLoadingLogs(false);
+        }
+    };
+    
+    const exportAuditLogs = () => {
+        if (auditLogs.length === 0) {
+            alert('⚠️ No audit logs to export');
+            return;
+        }
+        
+        try {
+            const exportData = auditLogs.map(log => ({
+                'Event ID': log.eventId,
+                'Timestamp': new Date(log.timestamp).toLocaleString(),
+                'User Email': log.userEmail || '',
+                'User ID': log.userId || '',
+                'Event Type': log.eventType || '',
+                'Action': log.action || '',
+                'Target User': log.targetUser || '',
+                'Success': log.success ? 'Yes' : 'No',
+                'Changes': log.changes ? JSON.stringify(log.changes) : ''
+            }));
+
+            const worksheet = XLSX.utils.json_to_sheet(exportData);
+            const columnWidths = Object.keys(exportData[0] || {}).map(key => ({
+                wch: Math.max(key.length, 20)
+            }));
+            worksheet['!cols'] = columnWidths;
+
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Audit Logs');
+
+            const timestamp = new Date().toISOString().split('T')[0];
+            const filename = `Audit_Logs_${timestamp}.xlsx`;
+
+            XLSX.writeFile(workbook, filename);
+            console.log(`✅ Exported ${exportData.length} audit logs to ${filename}`);
+            alert(`✅ Successfully exported ${exportData.length} audit log(s) to ${filename}`);
+        } catch (error) {
+            console.error('Error exporting audit logs:', error);
+            alert('❌ Failed to export audit logs. Please try again.');
         }
     };
 
@@ -5499,6 +5597,63 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     }}>
                                         ⭐ Enter
                                     </div>
+                                </div>
+                            )}
+                            
+                            {/* Card 7: Audit Logs - SuperAdmin and HR */}
+                            {(userRole === 'superadmin' || userRole === 'hr') && (
+                                <div className="hover-lift animate-scale-in" style={{
+                                    background: 'white',
+                                    padding: '3rem 2rem',
+                                    borderRadius: '20px',
+                                    textAlign: 'center',
+                                    border: '3px solid #d4af37',
+                                    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.15)',
+                                    transition: 'all 0.4s ease',
+                                    animationDelay: '0.5s',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'space-between'
+                                }}>
+                                    <div>
+                                        <div style={{
+                                            fontSize: '4rem',
+                                            marginBottom: '1.5rem'
+                                        }}>
+                                            📊
+                                        </div>
+                                        <h3 style={{
+                                            color: '#1e3a8a',
+                                            fontSize: '1.5rem',
+                                            fontWeight: '700',
+                                            marginBottom: '1rem'
+                                        }}>
+                                            Audit Logs
+                                        </h3>
+                                        <p style={{
+                                            color: '#64748b',
+                                            fontSize: '1rem',
+                                            lineHeight: '1.6',
+                                            marginBottom: '2rem'
+                                        }}>
+                                            View all user activity, track login history, monitor role changes, and export audit reports.
+                                        </p>
+                                    </div>
+                                    <button 
+                                        onClick={() => setShowAuditLogsModal(true)}
+                                        style={{
+                                            background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
+                                            border: '2px solid #d4af37',
+                                            borderRadius: '8px',
+                                            padding: '0.75rem 1.5rem',
+                                            color: 'white',
+                                            fontWeight: '700',
+                                            fontSize: '1rem',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.3s ease'
+                                        }}>
+                                        📊 View Logs
+                                    </button>
                                 </div>
                             )}
                         </div>
@@ -13303,6 +13458,247 @@ Please review and approve this request.
                                             )}
                                         </div>
                                     ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
+            
+            {/* Audit Logs Modal */}
+            {showAuditLogsModal && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(0, 0, 0, 0.7)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 10000,
+                    padding: '2rem'
+                }} onClick={() => setShowAuditLogsModal(false)}>
+                    <div style={{
+                        background: 'white',
+                        borderRadius: '12px',
+                        maxWidth: '1400px',
+                        width: '100%',
+                        maxHeight: '90vh',
+                        overflow: 'auto',
+                        position: 'relative'
+                    }} onClick={(e) => e.stopPropagation()}>
+                        <div style={{
+                            padding: '2rem',
+                            borderBottom: '2px solid #e2e8f0',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            position: 'sticky',
+                            top: 0,
+                            background: 'white',
+                            zIndex: 1
+                        }}>
+                            <h2 style={{ color: '#1e3a8a', margin: 0 }}>📊 Audit Logs</h2>
+                            <button
+                                onClick={() => setShowAuditLogsModal(false)}
+                                style={{
+                                    background: 'none',
+                                    border: 'none',
+                                    fontSize: '2rem',
+                                    cursor: 'pointer',
+                                    color: '#64748b',
+                                    padding: '0',
+                                    width: '40px',
+                                    height: '40px'
+                                }}>
+                                ✕
+                            </button>
+                        </div>
+                        
+                        <div style={{ padding: '2rem' }}>
+                            {/* Filters */}
+                            <div style={{
+                                background: '#f8fafc',
+                                padding: '1.5rem',
+                                borderRadius: '8px',
+                                marginBottom: '2rem',
+                                border: '2px solid #e2e8f0'
+                            }}>
+                                <h3 style={{ color: '#1e3a8a', marginBottom: '1rem' }}>Filters</h3>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+                                    <div>
+                                        <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.5rem', color: '#475569' }}>
+                                            Event Type:
+                                        </label>
+                                        <select
+                                            value={logFilters.eventType}
+                                            onChange={(e) => setLogFilters({ ...logFilters, eventType: e.target.value })}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.5rem',
+                                                borderRadius: '6px',
+                                                border: '2px solid #e2e8f0',
+                                                fontSize: '1rem'
+                                            }}>
+                                            <option value="all">All Events</option>
+                                            <option value="LOGIN">Login</option>
+                                            <option value="LOGOUT">Logout</option>
+                                            <option value="ROLE_CHANGE">Role Change</option>
+                                            <option value="USER_CREATE">User Create</option>
+                                            <option value="USER_DELETE">User Delete</option>
+                                            <option value="PROFILE_UPDATE">Profile Update</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.5rem', color: '#475569' }}>
+                                            User ID:
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={logFilters.userId}
+                                            onChange={(e) => setLogFilters({ ...logFilters, userId: e.target.value })}
+                                            placeholder="Filter by user ID"
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.5rem',
+                                                borderRadius: '6px',
+                                                border: '2px solid #e2e8f0',
+                                                fontSize: '1rem'
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.5rem', color: '#475569' }}>
+                                            Limit:
+                                        </label>
+                                        <select
+                                            value={logFilters.limit}
+                                            onChange={(e) => setLogFilters({ ...logFilters, limit: e.target.value })}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.5rem',
+                                                borderRadius: '6px',
+                                                border: '2px solid #e2e8f0',
+                                                fontSize: '1rem'
+                                            }}>
+                                            <option value="50">50 logs</option>
+                                            <option value="100">100 logs</option>
+                                            <option value="200">200 logs</option>
+                                            <option value="500">500 logs</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                                    <button
+                                        onClick={() => fetchAuditLogs(logFilters)}
+                                        style={{
+                                            background: '#1e3a8a',
+                                            color: 'white',
+                                            border: 'none',
+                                            padding: '0.75rem 1.5rem',
+                                            borderRadius: '6px',
+                                            cursor: 'pointer',
+                                            fontWeight: '600',
+                                            fontSize: '1rem'
+                                        }}>
+                                        🔍 Apply Filters
+                                    </button>
+                                    <button
+                                        onClick={exportAuditLogs}
+                                        disabled={auditLogs.length === 0}
+                                        style={{
+                                            background: auditLogs.length === 0 ? '#cbd5e1' : '#10b981',
+                                            color: 'white',
+                                            border: 'none',
+                                            padding: '0.75rem 1.5rem',
+                                            borderRadius: '6px',
+                                            cursor: auditLogs.length === 0 ? 'not-allowed' : 'pointer',
+                                            fontWeight: '600',
+                                            fontSize: '1rem'
+                                        }}>
+                                        📥 Export to Excel
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            {/* Logs Display */}
+                            {!auditLogs.length && !isLoadingLogs && (
+                                <div style={{ textAlign: 'center', padding: '3rem', color: '#64748b' }}>
+                                    <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>📊</div>
+                                    <p style={{ fontSize: '1.2rem', fontWeight: '600' }}>No audit logs loaded</p>
+                                    <p>Click "Apply Filters" to load audit logs</p>
+                                </div>
+                            )}
+                            
+                            {isLoadingLogs && (
+                                <div style={{ textAlign: 'center', padding: '3rem', color: '#64748b' }}>
+                                    Loading audit logs...
+                                </div>
+                            )}
+                            
+                            {auditLogs.length > 0 && (
+                                <div>
+                                    <div style={{ marginBottom: '1rem', color: '#64748b', fontWeight: '600' }}>
+                                        Showing {auditLogs.length} log(s)
+                                    </div>
+                                    <div style={{ display: 'grid', gap: '1rem' }}>
+                                        {auditLogs.map(log => (
+                                            <div key={log.eventId} style={{
+                                                background: '#f8fafc',
+                                                padding: '1.5rem',
+                                                borderRadius: '8px',
+                                                border: '2px solid #e2e8f0'
+                                            }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem' }}>
+                                                    <div>
+                                                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '0.5rem' }}>
+                                                            <span style={{
+                                                                background: log.eventType === 'ROLE_CHANGE' ? '#dbeafe' : 
+                                                                           log.eventType === 'USER_DELETE' ? '#fee2e2' :
+                                                                           log.eventType === 'LOGIN' ? '#d1fae5' :
+                                                                           log.eventType === 'USER_CREATE' ? '#e0e7ff' : '#f1f5f9',
+                                                                color: log.eventType === 'ROLE_CHANGE' ? '#1e40af' :
+                                                                       log.eventType === 'USER_DELETE' ? '#991b1b' :
+                                                                       log.eventType === 'LOGIN' ? '#065f46' :
+                                                                       log.eventType === 'USER_CREATE' ? '#4338ca' : '#475569',
+                                                                padding: '0.25rem 0.75rem',
+                                                                borderRadius: '12px',
+                                                                fontWeight: '600',
+                                                                fontSize: '0.875rem'
+                                                            }}>
+                                                                {log.eventType}
+                                                            </span>
+                                                            <span style={{
+                                                                background: log.success ? '#d1fae5' : '#fee2e2',
+                                                                color: log.success ? '#065f46' : '#991b1b',
+                                                                padding: '0.25rem 0.75rem',
+                                                                borderRadius: '12px',
+                                                                fontWeight: '600',
+                                                                fontSize: '0.875rem'
+                                                            }}>
+                                                                {log.success ? '✓ Success' : '✗ Failed'}
+                                                            </span>
+                                                        </div>
+                                                        <div style={{ fontWeight: '600', color: '#1e3a8a', fontSize: '1.1rem', marginBottom: '0.5rem' }}>
+                                                            {log.action}
+                                                        </div>
+                                                        <div style={{ fontSize: '0.9rem', color: '#64748b' }}>
+                                                            <div>User: {log.userEmail || log.userId}</div>
+                                                            {log.targetUser && <div>Target: {log.targetUser}</div>}
+                                                            <div>Time: {new Date(log.timestamp).toLocaleString()}</div>
+                                                            {log.changes && (
+                                                                <div style={{ marginTop: '0.5rem', padding: '0.5rem', background: 'white', borderRadius: '4px', fontSize: '0.85rem' }}>
+                                                                    Changes: {JSON.stringify(log.changes, null, 2)}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             )}
                         </div>
