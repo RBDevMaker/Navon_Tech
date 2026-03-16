@@ -157,6 +157,18 @@ async function createProfile(profileData) {
             salary: profileData.salary || '',
             startDate: profileData.startDate || '',
             manager: profileData.manager || '',
+            // Employment type fields
+            employmentType: profileData.employmentType || 'Employee',
+            billableStatus: profileData.billableStatus || 'Billable',
+            contractAssignment: profileData.contractAssignment || '',
+            // Personal information
+            personalEmail: profileData.personalEmail || '',
+            address: profileData.address || '',
+            birthdate: profileData.birthdate || '',
+            gender: profileData.gender || '',
+            // Additional information
+            dietaryAllergy: profileData.dietaryAllergy || '',
+            shirtSize: profileData.shirtSize || '',
             // Metadata
             createdAt: timestamp,
             updatedAt: timestamp,
@@ -196,7 +208,10 @@ async function updateProfile(employeeId, profileData) {
         const fields = [
             'name', 'email', 'phone', 'department', 'title', 'location',
             'emergencyContact', 'emergencyPhone', 'profilePicture', 'employeeGroup',
-            'salary', 'startDate', 'manager'
+            'salary', 'startDate', 'manager',
+            'employmentType', 'billableStatus', 'contractAssignment',
+            'personalEmail', 'address', 'birthdate', 'gender',
+            'dietaryAllergy', 'shirtSize'
         ];
 
         fields.forEach(field => {

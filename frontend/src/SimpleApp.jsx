@@ -34,6 +34,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         employeeId: ''
     });
     const [teamMembers, setTeamMembers] = useState([]);
+    const [selectedEmployee, setSelectedEmployee] = useState(null);
     const [uploadedFiles, setUploadedFiles] = useState({
         employeeHandbook: [],
         benefits: [],
@@ -234,7 +235,16 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 profilePicture: profile.profilePicture || '',
                 salary: profile.salary || '',
                 startDate: profile.startDate || '',
-                manager: profile.manager || ''
+                manager: profile.manager || '',
+                employmentType: profile.employmentType || 'Employee',
+                billableStatus: profile.billableStatus || 'Billable',
+                contractAssignment: profile.contractAssignment || '',
+                personalEmail: profile.personalEmail || '',
+                address: profile.address || '',
+                birthdate: profile.birthdate || '',
+                gender: profile.gender || '',
+                dietaryAllergy: profile.dietaryAllergy || '',
+                shirtSize: profile.shirtSize || ''
             }));
             
             setTeamMembers(formattedProfiles.sort((a, b) => {
@@ -8942,8 +8952,11 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     padding: '2rem',
                                     borderRadius: '12px',
                                     border: '2px solid #d4af37',
-                                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-                                }}>
+                                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                    cursor: 'pointer'
+                                }}
+                                onClick={() => setSelectedEmployee(member)}
+                                >
                                     <div style={{ marginBottom: '1.5rem' }}>
                                         <div style={{
                                             background: '#f8fafc',
@@ -8984,38 +8997,41 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                 <div>
                                                     <div style={{ fontWeight: '600', color: '#1e3a8a' }}>{member.name || member.email}</div>
                                                     <div style={{ color: '#64748b', fontSize: '0.9rem' }}>{member.title || 'Employee'}</div>
-                                                    {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
-                                                        <div style={{ color: '#64748b', fontSize: '0.8rem' }}>Employee ID: {member.id}</div>
-                                                    )}
                                                 </div>
                                             </div>
+                                            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
+                                                <span style={{
+                                                    background: member.employmentType === 'Contract' ? '#fef3c7' : '#dcfce7',
+                                                    color: member.employmentType === 'Contract' ? '#92400e' : '#166534',
+                                                    padding: '0.25rem 0.6rem',
+                                                    borderRadius: '12px',
+                                                    fontSize: '0.7rem',
+                                                    fontWeight: '600'
+                                                }}>
+                                                    {member.employmentType || 'Employee'}
+                                                </span>
+                                                <span style={{
+                                                    background: member.billableStatus === 'Non-Billable' ? '#fee2e2' : '#dbeafe',
+                                                    color: member.billableStatus === 'Non-Billable' ? '#991b1b' : '#1e40af',
+                                                    padding: '0.25rem 0.6rem',
+                                                    borderRadius: '12px',
+                                                    fontSize: '0.7rem',
+                                                    fontWeight: '600'
+                                                }}>
+                                                    {member.billableStatus || 'Billable'}
+                                                </span>
+                                            </div>
                                             <div style={{ fontSize: '0.9rem', color: '#475569' }}>
-                                                <div style={{ marginBottom: '0.5rem' }}>📧 {member.email}</div>
-                                                {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
-                                                    <>
-                                                        {member.phone && (
-                                                            <div style={{ marginBottom: '0.5rem' }}>📱 {member.phone}</div>
-                                                        )}
-                                                        {member.location && (
-                                                            <div style={{ marginBottom: '0.5rem' }}>🏢 {member.location}</div>
-                                                        )}
-                                                        {member.department && (
-                                                            <div style={{ marginBottom: '0.5rem' }}>🏷️ Department: {member.department}</div>
-                                                        )}
-                                                        {member.startDate && (
-                                                            <div style={{ marginBottom: '0.5rem' }}>📅 Start Date: {new Date(member.startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
-                                                        )}
-                                                        {member.salary && (userRole === 'hr' || userRole === 'superadmin') && (
-                                                            <div style={{ marginBottom: '0.5rem' }}>💰 Salary: {member.salary}</div>
-                                                        )}
-                                                        {member.manager && (
-                                                            <div style={{ marginBottom: '0.5rem' }}>👤 Manager: {member.manager}</div>
-                                                        )}
-                                                        {member.emergencyContact && (
-                                                            <div>🚨 Emergency Contact: {member.emergencyContact}</div>
-                                                        )}
-                                                    </>
+                                                {member.department && (
+                                                    <div style={{ marginBottom: '0.5rem' }}>🏷️ {member.department}</div>
                                                 )}
+                                                {member.location && (
+                                                    <div style={{ marginBottom: '0.5rem' }}>🏢 {member.location}</div>
+                                                )}
+                                                <div style={{ marginBottom: '0.5rem' }}>📧 {member.email}</div>
+                                            </div>
+                                            <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.5rem' }}>
+                                                Click to view full profile →
                                             </div>
                                         </div>
                                     </div>
@@ -9113,6 +9129,122 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                         </div>
                     </div>
                 </section>
+            )}
+
+            {/* Employee Detail Modal */}
+            {selectedEmployee && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(0,0,0,0.6)',
+                    zIndex: 10000,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '2rem'
+                }}
+                onClick={(e) => { if (e.target === e.currentTarget) setSelectedEmployee(null); }}
+                >
+                    <div style={{
+                        background: 'white',
+                        borderRadius: '16px',
+                        maxWidth: '700px',
+                        width: '100%',
+                        maxHeight: '85vh',
+                        overflowY: 'auto',
+                        padding: '2rem',
+                        boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
+                    }}>
+                        {/* Header */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                <div style={{
+                                    width: '70px',
+                                    height: '70px',
+                                    background: selectedEmployee.profilePicture ? 'transparent' : '#1e3a8a',
+                                    borderRadius: '50%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: 'white',
+                                    fontWeight: 'bold',
+                                    fontSize: '1.5rem',
+                                    overflow: 'hidden'
+                                }}>
+                                    {selectedEmployee.profilePicture ? (
+                                        <img src={selectedEmployee.profilePicture} alt={selectedEmployee.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    ) : (
+                                        selectedEmployee.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'
+                                    )}
+                                </div>
+                                <div>
+                                    <h2 style={{ margin: 0, color: '#1e3a8a', fontSize: '1.5rem' }}>{selectedEmployee.name}</h2>
+                                    <div style={{ color: '#64748b', fontSize: '0.95rem' }}>{selectedEmployee.title}</div>
+                                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                                        <span style={{
+                                            background: selectedEmployee.employmentType === 'Contract' ? '#fef3c7' : '#dcfce7',
+                                            color: selectedEmployee.employmentType === 'Contract' ? '#92400e' : '#166534',
+                                            padding: '0.2rem 0.6rem', borderRadius: '12px', fontSize: '0.7rem', fontWeight: '600'
+                                        }}>{selectedEmployee.employmentType || 'Employee'}</span>
+                                        <span style={{
+                                            background: selectedEmployee.billableStatus === 'Non-Billable' ? '#fee2e2' : '#dbeafe',
+                                            color: selectedEmployee.billableStatus === 'Non-Billable' ? '#991b1b' : '#1e40af',
+                                            padding: '0.2rem 0.6rem', borderRadius: '12px', fontSize: '0.7rem', fontWeight: '600'
+                                        }}>{selectedEmployee.billableStatus || 'Billable'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button onClick={() => setSelectedEmployee(null)} style={{
+                                background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: '#94a3b8'
+                            }}>✕</button>
+                        </div>
+
+                        {/* Employment Information */}
+                        <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '10px', marginBottom: '1rem', border: '1px solid #e2e8f0' }}>
+                            <h3 style={{ margin: '0 0 0.75rem 0', color: '#1e3a8a', fontSize: '1rem' }}>💼 Employment Information</h3>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.85rem', color: '#475569' }}>
+                                <div>📧 {selectedEmployee.email}</div>
+                                {selectedEmployee.phone && <div>📱 {selectedEmployee.phone}</div>}
+                                {selectedEmployee.department && <div>🏷️ {selectedEmployee.department}</div>}
+                                {selectedEmployee.location && <div>🏢 {selectedEmployee.location}</div>}
+                                {selectedEmployee.startDate && <div>📅 Start: {new Date(selectedEmployee.startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>}
+                                {selectedEmployee.manager && <div>👤 Manager: {selectedEmployee.manager}</div>}
+                                {selectedEmployee.contractAssignment && <div>📋 Assignment: {selectedEmployee.contractAssignment}</div>}
+                                {selectedEmployee.salary && (userRole === 'hr' || userRole === 'superadmin') && <div>💰 Salary: {selectedEmployee.salary}</div>}
+                            </div>
+                        </div>
+
+                        {/* Personal Information - HR/Admin only */}
+                        {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
+                            <div style={{ background: '#f0f9ff', padding: '1.25rem', borderRadius: '10px', marginBottom: '1rem', border: '1px solid #bae6fd' }}>
+                                <h3 style={{ margin: '0 0 0.75rem 0', color: '#0369a1', fontSize: '1rem' }}>👤 Personal Information</h3>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.85rem', color: '#475569' }}>
+                                    <div>📧 Personal Email: {selectedEmployee.personalEmail || 'Not provided'}</div>
+                                    <div>🏠 Address: {selectedEmployee.address || 'Not provided'}</div>
+                                    <div>🎂 Birthdate: {selectedEmployee.birthdate || 'Not provided'}</div>
+                                    <div>⚧ Gender: {selectedEmployee.gender || 'Not provided'}</div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Additional Information - HR/Admin only */}
+                        {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
+                            <div style={{ background: '#fefce8', padding: '1.25rem', borderRadius: '10px', marginBottom: '1rem', border: '1px solid #fde68a' }}>
+                                <h3 style={{ margin: '0 0 0.75rem 0', color: '#92400e', fontSize: '1rem' }}>📝 Additional Information</h3>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.85rem', color: '#475569' }}>
+                                    <div>🍽️ Dietary/Allergy: {selectedEmployee.dietaryAllergy || 'None'}</div>
+                                    <div>👕 Shirt Size: {selectedEmployee.shirtSize || 'Not provided'}</div>
+                                    <div>🚨 Emergency Contact: {selectedEmployee.emergencyContact || 'Not provided'}</div>
+                                    <div>📞 Emergency Phone: {selectedEmployee.emergencyPhone || 'Not provided'}</div>
+                                    <div>📋 Contract Assignment: {selectedEmployee.contractAssignment || 'N/A'}</div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
             )}
 
             {/* TIME CARD MANAGEMENT PAGE */}
