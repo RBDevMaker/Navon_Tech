@@ -402,7 +402,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                     'Manager': member.manager || '',
                     'Start Date': member.startDate || '',
                     'Salary': member.salary || '',
-                    'Contractor Type': member.contractorType || '',
                     'Entity Type': member.entityType || '',
                     'Tax Classification': member.taxClassification || '',
                     'Business Legal Name': member.businessLegalName || '',
@@ -431,7 +430,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                     'Emergency Phone': member.emergencyPhone || '',
                     'Manager': member.manager || '',
                     'Start Date': member.startDate || '',
-                    'Contractor Type': member.contractorType || '',
                     'Entity Type': member.entityType || '',
                     'Business Legal Name': member.businessLegalName || '',
                     'DBA Name': member.dbaName || ''
@@ -5777,7 +5775,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             </div>
                             
                             {/* Card 6: User Management - SuperAdmin, HR, and Admin */}
-                            {(userRole === 'superadmin' || userRole === 'hr' || userRole === 'admin') && (
+                            {(userRole === 'superadmin' || userRole === 'hr' || userRole === 'admin') && isAdminView && (
                                 <div 
                                     className="hover-lift animate-scale-in" 
                                     onClick={() => {
@@ -6580,7 +6578,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                     position: 'relative'
                 }}>
                     {/* Toggle Button - Upper Right Corner */}
-                    {(userRole === 'admin' || userRole === 'hr' || userRole === 'superadmin') && (
+                    {(userRole === 'admin' || userRole === 'hr' || userRole === 'superadmin') && isAdminView && (
                         <div style={{
                             position: 'absolute',
                             top: '1rem',
@@ -7786,68 +7784,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                         background: 'white'
                                                     }}
                                                 />
-                                            </div>
-
-                                            {/* Contractor Type */}
-                                            <div>
-                                                <label style={{
-                                                    display: 'block',
-                                                    marginBottom: '0.5rem',
-                                                    color: '#92400e',
-                                                    fontWeight: '600',
-                                                    fontSize: '0.9rem'
-                                                }}>
-                                                    Contractor Type
-                                                </label>
-                                                <select
-                                                    name="contractorType"
-                                                    value={profileData.contractorType || ''}
-                                                    onChange={(e) => setProfileData(prev => ({ ...prev, contractorType: e.target.value }))}
-                                                    style={{
-                                                        width: '100%',
-                                                        padding: '0.75rem',
-                                                        border: '2px solid #fbbf24',
-                                                        borderRadius: '8px',
-                                                        fontSize: '1rem',
-                                                        outline: 'none',
-                                                        background: 'white'
-                                                    }}
-                                                >
-                                                    <option value="">Select type</option>
-                                                    <option value="Individual">Individual</option>
-                                                    <option value="Company">Company</option>
-                                                </select>
-                                            </div>
-
-                                            {/* US Person or Company */}
-                                            <div>
-                                                <label style={{
-                                                    display: 'block',
-                                                    marginBottom: '0.5rem',
-                                                    color: '#92400e',
-                                                    fontWeight: '600',
-                                                    fontSize: '0.9rem'
-                                                }}>
-                                                    U.S. Person or Company
-                                                </label>
-                                                <select
-                                                    name="usPersonOrCompany"
-                                                    value={profileData.usPersonOrCompany || ''}
-                                                    onChange={(e) => setProfileData(prev => ({ ...prev, usPersonOrCompany: e.target.value }))}
-                                                    style={{
-                                                        width: '100%',
-                                                        padding: '0.75rem',
-                                                        border: '2px solid #fbbf24',
-                                                        borderRadius: '8px',
-                                                        fontSize: '1rem',
-                                                        outline: 'none',
-                                                        background: 'white'
-                                                    }}
-                                                >
-                                                    <option value="">Select</option>
-                                                    <option value="Yes">Yes</option>
-                                                    <option value="No">No</option>
-                                                </select>
                                             </div>
 
                                             {/* Entity Type */}
@@ -9477,7 +9413,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                     <div style={{ color: '#64748b', fontSize: '0.9rem' }}>
                                                         {profileData.title || 'Your Title'}
                                                     </div>
-                                                    {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
+                                                    {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && isAdminView && (
                                                         <div style={{ color: '#64748b', fontSize: '0.8rem' }}>
                                                             Employee ID: {profileData.email?.split('@')[0].toUpperCase() || 'N/A'}
                                                         </div>
@@ -9488,7 +9424,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                 <div style={{ marginBottom: '0.5rem' }}>
                                                     📧 {profileData.email || 'your.email@navontech.com'}
                                                 </div>
-                                                {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
+                                                {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && isAdminView && (
                                                     <>
                                                         {profileData.phone && (
                                                             <div style={{ marginBottom: '0.5rem' }}>
@@ -9529,7 +9465,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                 )}
                                             </div>
                                         </div>
-                                        {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && profileData.title && (
+                                        {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && isAdminView && profileData.title && (
                                             <div style={{
                                                 display: 'grid',
                                                 gridTemplateColumns: (userRole === 'hr' || userRole === 'admin') ? '1fr 1fr' : '1fr',
@@ -9763,7 +9699,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             <div>
                                                 <div style={{ fontWeight: '600', color: '#1e3a8a' }}>John Doe</div>
                                                 <div style={{ color: '#64748b', fontSize: '0.9rem' }}>Senior Cloud Engineer</div>
-                                                {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
+                                                {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && isAdminView && (
                                                     <div style={{ color: '#64748b', fontSize: '0.8rem' }}>Employee ID: EMP-2024-001</div>
                                                 )}
                                             </div>
@@ -9967,11 +9903,11 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             <h3 style={{ margin: '0 0 0.75rem 0', color: '#1e3a8a', fontSize: '1rem' }}>💼 Employment Information</h3>
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.85rem', color: '#475569' }}>
                                 <div>📧 {selectedEmployee.email}</div>
-                                {selectedEmployee.phone && <div>📱 {selectedEmployee.phone}</div>}
                                 {selectedEmployee.department && <div>🏷️ {selectedEmployee.department}</div>}
-                                {selectedEmployee.location && <div>🏢 {selectedEmployee.location}</div>}
-                                {selectedEmployee.startDate && <div>📅 Start: {new Date(selectedEmployee.startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>}
-                                {selectedEmployee.manager && <div>👤 Manager: {selectedEmployee.manager}</div>}
+                                {selectedEmployee.location && <div>� {selectedEmployee.location}</div>}
+                                {selectedEmployee.phone && isAdminView && <div>📱 {selectedEmployee.phone}</div>}
+                                {selectedEmployee.startDate && isAdminView && <div>📅 Start: {new Date(selectedEmployee.startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>}
+                                {selectedEmployee.manager && isAdminView && <div>👤 Manager: {selectedEmployee.manager}</div>}
                                 {selectedEmployee.contractAssignment && (userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && isAdminView && <div>📋 Prime: {selectedEmployee.contractAssignment}</div>}
                                 {selectedEmployee.salary && (userRole === 'hr' || userRole === 'superadmin') && isAdminView && <div>💰 Salary: {selectedEmployee.salary}</div>}
                             </div>
@@ -10010,11 +9946,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.85rem', color: '#475569' }}>
                                     <div>🏛️ Business Legal Name: {selectedEmployee.businessLegalName || 'Not provided'}</div>
                                     <div>📋 DBA Name: {selectedEmployee.dbaName || 'N/A'}</div>
-                                    <div>🏷️ Contractor Type: {selectedEmployee.contractorType || 'Not provided'}</div>
-                                    <div>🏢 Entity Type: {selectedEmployee.entityType || 'Not provided'}</div>
+                                    <div>� Entity Type: {selectedEmployee.entityType || 'Not provided'}</div>
                                     <div>📊 Tax Classification: {selectedEmployee.taxClassification || 'Not provided'}</div>
-                                    <div>🇺🇸 US Person/Company: {selectedEmployee.usPersonOrCompany || 'Not provided'}</div>
-                                    <div>👤 LLC Owner: {selectedEmployee.llcOwnerName || 'N/A'}</div>
+                                    <div>� LLC Owner:f {selectedEmployee.llcOwnerName || 'N/A'}</div>
                                     <div>🔄 Single Member LLC: {selectedEmployee.singleMemberLLC || 'N/A'}</div>
                                 </div>
                             </div>
@@ -10570,7 +10504,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             </div>
                             
                             {/* Resumes & Applications - HR/Admin/SuperAdmin Only */}
-                            {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
+                            {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && isAdminView && (
                                 <div className="hover-lift animate-scale-in" style={{
                                     background: 'white',
                                     padding: '2rem',
