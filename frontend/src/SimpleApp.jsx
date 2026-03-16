@@ -52,6 +52,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [isAddingEmployee, setIsAddingEmployee] = useState(false); // Toggle for My Profile vs Add Employee
     const [isAdminView, setIsAdminView] = useState(true); // Toggle for Administration View vs Employee View
     const [directorySearch, setDirectorySearch] = useState(''); // Search filter for team directory
+    const [directoryFilter, setDirectoryFilter] = useState('all'); // Category filter for team directory
+    const [directoryMonth, setDirectoryMonth] = useState(''); // Month filter for start date
     const [showPreviousEmployees, setShowPreviousEmployees] = useState(false); // Toggle for Previous Employees
     
     // Resume management states
@@ -9195,22 +9197,119 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             </div>
                         </div>
 
-                        {/* Search Bar */}
-                        <div style={{ marginBottom: '2rem' }}>
-                            <input
-                                type="text"
-                                placeholder="🔍 Search by name, department, or role..."
-                                value={directorySearch}
-                                onChange={(e) => setDirectorySearch(e.target.value)}
-                                style={{
-                                    width: '100%',
-                                    padding: '1rem',
-                                    border: '2px solid #d4af37',
-                                    borderRadius: '12px',
-                                    fontSize: '1rem',
-                                    outline: 'none'
-                                }}
-                            />
+                        {/* Search Bar & Filters */}
+                        <div style={{ marginBottom: '2rem', position: 'relative', zIndex: 10 }}>
+                            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                                <input
+                                    type="text"
+                                    placeholder="🔍 Search by name, department, or role..."
+                                    value={directoryFilter === 'all' ? directorySearch : ''}
+                                    onChange={(e) => { setDirectoryFilter('all'); setDirectorySearch(e.target.value); }}
+                                    style={{
+                                        flex: 1,
+                                        padding: '1rem 1.5rem',
+                                        border: '2px solid #d4af37',
+                                        borderRadius: '12px',
+                                        fontSize: '1.1rem',
+                                        outline: 'none',
+                                        boxSizing: 'border-box',
+                                        background: 'white',
+                                        boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+                                    }}
+                                    onFocus={(e) => { e.target.style.borderColor = '#1e3a8a'; e.target.style.boxShadow = '0 0 0 3px rgba(30,58,138,0.15)'; }}
+                                    onBlur={(e) => { e.target.style.borderColor = '#d4af37'; e.target.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)'; }}
+                                />
+                                <select
+                                    value={directoryFilter}
+                                    onChange={(e) => { setDirectoryFilter(e.target.value); setDirectorySearch(''); setDirectoryMonth(''); }}
+                                    style={{
+                                        padding: '1rem 1.5rem',
+                                        border: '2px solid #d4af37',
+                                        borderRadius: '12px',
+                                        fontSize: '1rem',
+                                        outline: 'none',
+                                        background: 'white',
+                                        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                                        cursor: 'pointer',
+                                        fontWeight: '600',
+                                        color: '#1e3a8a',
+                                        whiteSpace: 'nowrap'
+                                    }}>
+                                    <option value="all">All Employees</option>
+                                    <option value="department">By Department</option>
+                                    <option value="employmentType">By Employment Type</option>
+                                    <option value="billableStatus">By Billable Status</option>
+                                    <option value="prime">By Prime</option>
+                                    <option value="gender">By Gender</option>
+                                    <option value="location">By Location</option>
+                                    <option value="shirtSize">By T-Shirt Size</option>
+                                    <option value="startDate">By Start Date</option>
+                                </select>
+                                {directoryFilter !== 'all' && (
+                                    <select
+                                        value={directorySearch}
+                                        onChange={(e) => { setDirectorySearch(e.target.value); setDirectoryMonth(''); }}
+                                        style={{
+                                            padding: '1rem 1.5rem',
+                                            border: '2px solid #1e3a8a',
+                                            borderRadius: '12px',
+                                            fontSize: '1rem',
+                                            outline: 'none',
+                                            background: 'white',
+                                            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                                            cursor: 'pointer',
+                                            fontWeight: '600',
+                                            color: '#1e3a8a',
+                                            whiteSpace: 'nowrap'
+                                        }}>
+                                        <option value="">All</option>
+                                        {[...new Set(teamMembers
+                                            .filter(m => m.employmentType !== 'Archived')
+                                            .map(m => {
+                                                if (directoryFilter === 'department') return m.department;
+                                                if (directoryFilter === 'employmentType') return m.employmentType;
+                                                if (directoryFilter === 'billableStatus') return m.billableStatus;
+                                                if (directoryFilter === 'prime') return m.contractAssignment;
+                                                if (directoryFilter === 'gender') return m.gender;
+                                                if (directoryFilter === 'location') return m.location;
+                                                if (directoryFilter === 'shirtSize') return m.shirtSize;
+                                                if (directoryFilter === 'startDate') return m.startDate ? new Date(m.startDate).getFullYear().toString() : null;
+                                                return '';
+                                            })
+                                            .filter(Boolean)
+                                        )].sort().map(val => (
+                                            <option key={val} value={val}>{val}</option>
+                                        ))}
+                                    </select>
+                                )}
+                                {directoryFilter === 'startDate' && directorySearch && (
+                                    <select
+                                        value={directoryMonth}
+                                        onChange={(e) => setDirectoryMonth(e.target.value)}
+                                        style={{
+                                            padding: '1rem 1.5rem',
+                                            border: '2px solid #1e3a8a',
+                                            borderRadius: '12px',
+                                            fontSize: '1rem',
+                                            outline: 'none',
+                                            background: 'white',
+                                            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                                            cursor: 'pointer',
+                                            fontWeight: '600',
+                                            color: '#1e3a8a',
+                                            whiteSpace: 'nowrap'
+                                        }}>
+                                        <option value="">All Months</option>
+                                        {['January','February','March','April','May','June','July','August','September','October','November','December']
+                                            .map((name, i) => ({ name, num: String(i + 1).padStart(2, '0') }))
+                                            .filter(({ num }) => teamMembers.some(m => m.startDate && new Date(m.startDate).getFullYear().toString() === directorySearch && String(new Date(m.startDate).getMonth() + 1).padStart(2, '0') === num))
+                                            .map(({ name, num }) => (
+                                                <option key={num} value={num}>{name}</option>
+                                            ))
+                                        }
+                                    </select>
+                                )}
+                            </div>
                         </div>
 
                         {/* Employee Cards Grid */}
@@ -9430,6 +9529,25 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 if (member.employmentType === 'Archived') return false;
                                 if (!directorySearch.trim()) return true;
                                 const search = directorySearch.toLowerCase();
+                                // Category filter mode
+                                if (directoryFilter !== 'all') {
+                                    if (directoryFilter === 'startDate') {
+                                        // Start date: show all if no specific value, or match year + optional month
+                                        if (!search) return true;
+                                        if (!member.startDate) return false;
+                                        const d = new Date(member.startDate);
+                                        const yearMatch = d.getFullYear().toString() === search;
+                                        if (!yearMatch) return false;
+                                        if (directoryMonth) {
+                                            return String(d.getMonth() + 1).padStart(2, '0') === directoryMonth;
+                                        }
+                                        return true;
+                                    }
+                                    const fieldMap = { department: 'department', employmentType: 'employmentType', billableStatus: 'billableStatus', prime: 'contractAssignment', gender: 'gender', location: 'location', shirtSize: 'shirtSize' };
+                                    const field = fieldMap[directoryFilter];
+                                    return (member[field] || '').toLowerCase() === search.toLowerCase();
+                                }
+                                // Text search mode
                                 return (
                                     (member.name || '').toLowerCase().includes(search) ||
                                     (member.department || '').toLowerCase().includes(search) ||
@@ -9438,6 +9556,11 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     (member.location || '').toLowerCase().includes(search) ||
                                     (member.contractAssignment || '').toLowerCase().includes(search)
                                 );
+                            }).sort((a, b) => {
+                                if (directoryFilter === 'startDate') {
+                                    return new Date(a.startDate || '9999-12-31') - new Date(b.startDate || '9999-12-31');
+                                }
+                                return 0;
                             }).map((member) => (
                                 <div key={member.id} className="hover-lift animate-scale-in" style={{
                                     background: 'white',
