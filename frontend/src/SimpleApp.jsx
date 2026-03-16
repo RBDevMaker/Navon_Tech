@@ -245,7 +245,15 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 birthdate: profile.birthdate || '',
                 gender: profile.gender || '',
                 dietaryAllergy: profile.dietaryAllergy || '',
-                shirtSize: profile.shirtSize || ''
+                shirtSize: profile.shirtSize || '',
+                contractorType: profile.contractorType || '',
+                taxClassification: profile.taxClassification || '',
+                entityType: profile.entityType || '',
+                singleMemberLLC: profile.singleMemberLLC || '',
+                llcOwnerName: profile.llcOwnerName || '',
+                businessLegalName: profile.businessLegalName || '',
+                dbaName: profile.dbaName || '',
+                usPersonOrCompany: profile.usPersonOrCompany || ''
             }));
             
             setTeamMembers(formattedProfiles.sort((a, b) => {
@@ -9244,7 +9252,23 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     <div>👕 Shirt Size: {selectedEmployee.shirtSize || 'Not provided'}</div>
                                     <div>🚨 Emergency Contact: {selectedEmployee.emergencyContact || 'Not provided'}</div>
                                     <div>📞 Emergency Phone: {selectedEmployee.emergencyPhone || 'Not provided'}</div>
-                                    <div>📋 Contract Assignment: {selectedEmployee.contractAssignment || 'N/A'}</div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Contractor Information - HR/Admin only, contractors only */}
+                        {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && selectedEmployee.employmentType === 'Contract' && (
+                            <div style={{ background: '#fdf2f8', padding: '1.25rem', borderRadius: '10px', marginBottom: '1rem', border: '1px solid #fbcfe8' }}>
+                                <h3 style={{ margin: '0 0 0.75rem 0', color: '#9d174d', fontSize: '1rem' }}>🏢 Contractor / Business Information</h3>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.85rem', color: '#475569' }}>
+                                    <div>🏛️ Business Legal Name: {selectedEmployee.businessLegalName || 'Not provided'}</div>
+                                    <div>📋 DBA Name: {selectedEmployee.dbaName || 'N/A'}</div>
+                                    <div>🏷️ Contractor Type: {selectedEmployee.contractorType || 'Not provided'}</div>
+                                    <div>🏢 Entity Type: {selectedEmployee.entityType || 'Not provided'}</div>
+                                    <div>📊 Tax Classification: {selectedEmployee.taxClassification || 'Not provided'}</div>
+                                    <div>🇺🇸 US Person/Company: {selectedEmployee.usPersonOrCompany || 'Not provided'}</div>
+                                    <div>👤 LLC Owner: {selectedEmployee.llcOwnerName || 'N/A'}</div>
+                                    <div>🔄 Single Member LLC: {selectedEmployee.singleMemberLLC || 'N/A'}</div>
                                 </div>
                             </div>
                         )}

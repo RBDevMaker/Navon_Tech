@@ -212,7 +212,9 @@ async function updateProfile(employeeId, profileData) {
             'salary', 'startDate', 'manager',
             'employmentType', 'billableStatus', 'contractAssignment', 'contractName',
             'personalEmail', 'address', 'birthdate', 'gender',
-            'dietaryAllergy', 'shirtSize'
+            'dietaryAllergy', 'shirtSize',
+            'contractorType', 'taxClassification', 'entityType', 'singleMemberLLC',
+            'llcOwnerName', 'businessLegalName', 'dbaName', 'usPersonOrCompany'
         ];
 
         fields.forEach(field => {
