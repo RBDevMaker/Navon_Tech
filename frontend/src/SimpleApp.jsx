@@ -9008,6 +9008,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                     <div style={{ color: '#64748b', fontSize: '0.9rem' }}>{member.title || 'Employee'}</div>
                                                 </div>
                                             </div>
+                                            {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
                                             <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
                                                 <span style={{
                                                     background: member.employmentType === 'Contract' ? '#fef3c7' : '#dcfce7',
@@ -9030,6 +9031,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                     {member.billableStatus || 'Billable'}
                                                 </span>
                                             </div>
+                                            )}
                                             <div style={{ fontSize: '0.9rem', color: '#475569' }}>
                                                 {member.contractName && (
                                                     <div style={{ marginBottom: '0.5rem' }}>📋 Contract: {member.contractName}</div>
@@ -9195,6 +9197,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 <div>
                                     <h2 style={{ margin: 0, color: '#1e3a8a', fontSize: '1.5rem' }}>{selectedEmployee.name}</h2>
                                     <div style={{ color: '#64748b', fontSize: '0.95rem' }}>{selectedEmployee.title}</div>
+                                    {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
                                     <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
                                         <span style={{
                                             background: selectedEmployee.employmentType === 'Contract' ? '#fef3c7' : '#dcfce7',
@@ -9207,6 +9210,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             padding: '0.2rem 0.6rem', borderRadius: '12px', fontSize: '0.7rem', fontWeight: '600'
                                         }}>{selectedEmployee.billableStatus || 'Billable'}</span>
                                     </div>
+                                    )}
                                 </div>
                             </div>
                             <button onClick={() => setSelectedEmployee(null)} style={{
