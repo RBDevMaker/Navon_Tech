@@ -1643,8 +1643,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     </span>
                                     <button
                                         onClick={() => {
-                                            const utterance = new SpeechSynthesisUtterance('Nah von');
-                                            utterance.rate = 0.8;
+                                            const utterance = new SpeechSynthesisUtterance('na von');
+                                            utterance.rate = 0.9;
                                             utterance.pitch = 1;
                                             window.speechSynthesis.speak(utterance);
                                         }}
