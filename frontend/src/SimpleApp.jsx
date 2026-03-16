@@ -7637,7 +7637,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                 />
                                             </div>
 
-                                            {/* Salary */}
+                                            {/* Salary - HR and SuperAdmin only */}
+                                            {(userRole === 'hr' || userRole === 'superadmin') && (
                                             <div>
                                                 <label style={{
                                                     display: 'block',
@@ -7665,6 +7666,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                     }}
                                                 />
                                             </div>
+                                            )}
 
                                             {/* Manager */}
                                             <div>
