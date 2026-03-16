@@ -7379,8 +7379,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             <option value="">Select gender</option>
                                             <option value="Male">Male</option>
                                             <option value="Female">Female</option>
-                                            <option value="Non-binary">Non-binary</option>
-                                            <option value="Prefer not to say">Prefer not to say</option>
                                         </select>
                                     </div>
 
@@ -7449,6 +7447,13 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             <option value="XL">XL</option>
                                             <option value="2XL">2XL</option>
                                             <option value="3XL">3XL</option>
+                                            <option value="XS Womens">XS Womens</option>
+                                            <option value="S Womens">S Womens</option>
+                                            <option value="M Womens">M Womens</option>
+                                            <option value="L Womens">L Womens</option>
+                                            <option value="XL Womens">XL Womens</option>
+                                            <option value="2XL Womens">2XL Womens</option>
+                                            <option value="3XL Womens">3XL Womens</option>
                                         </select>
                                     </div>
                                 </div>
