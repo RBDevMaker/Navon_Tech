@@ -5915,7 +5915,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                         {/* User Management Grid */}
                         <div style={{
                             display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                            gridTemplateColumns: 'repeat(2, 1fr)',
                             gap: '2rem',
                             marginBottom: '3rem'
                         }}>
@@ -7987,7 +7987,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                         {/* Security Settings Grid */}
                         <div style={{
                             display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                            gridTemplateColumns: 'repeat(2, 1fr)',
                             gap: '2rem',
                             marginBottom: '3rem'
                         }}>
