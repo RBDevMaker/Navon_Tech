@@ -52,6 +52,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [isAddingEmployee, setIsAddingEmployee] = useState(false); // Toggle for My Profile vs Add Employee
     const [isAdminView, setIsAdminView] = useState(true); // Toggle for Administration View vs Employee View
     const [directorySearch, setDirectorySearch] = useState(''); // Search filter for team directory
+    const [showPreviousEmployees, setShowPreviousEmployees] = useState(false); // Toggle for Previous Employees
     
     // Resume management states
     const [resumes, setResumes] = useState([]);
@@ -62,6 +63,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     
     // User management states
     const [showManageUsersModal, setShowManageUsersModal] = useState(false);
+    const [showArchiveModal, setShowArchiveModal] = useState(false);
     const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
     const [isLoadingUsers, setIsLoadingUsers] = useState(false);
@@ -71,6 +73,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [auditLogs, setAuditLogs] = useState([]);
     const [isLoadingLogs, setIsLoadingLogs] = useState(false);
     const [logFilters, setLogFilters] = useState({ eventType: 'all', userId: '', limit: '100' });
+    const [loginHistory, setLoginHistory] = useState([]);
+    const [isLoadingLoginHistory, setIsLoadingLoginHistory] = useState(false);
 
     // Handle hash changes for navigation
     useEffect(() => {
@@ -138,7 +142,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
 
     // Fetch users when on user management page
     useEffect(() => {
-        if (currentPage === 'usermanagement' && (userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin')) {
+        if ((currentPage === 'usermanagement' || currentPage === 'securitysettings') && (userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin')) {
             fetchUsers();
         }
     }, [currentPage, userRole]);
@@ -5991,16 +5995,16 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 </div>
                                 <div style={{ marginBottom: '1rem', flex: 1 }}>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Modify user information
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
                                         • Change user roles (Employee/Admin/HR{userRole === 'superadmin' ? '/SuperAdmin' : ''})
                                     </p>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
                                         • Promote or demote users{userRole === 'hr' ? ' (cannot modify SuperAdmins)' : ''}
                                     </p>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Update permissions
+                                        • Send portal invitations
+                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
+                                        • Archive user accounts
                                     </p>
                                 </div>
                                 <button 
@@ -6020,7 +6024,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 </button>
                             </div>
 
-                            {/* Delete Users */}
+                            {/* Archive Users */}
                             <div className="hover-lift animate-scale-in" style={{
                                 background: 'white',
                                 padding: '2rem',
@@ -6032,40 +6036,30 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 flexDirection: 'column'
                             }}>
                                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
-                                    <div style={{
-                                        fontSize: '2.5rem',
-                                        marginRight: '1rem'
-                                    }}>
-                                        🗑️
-                                    </div>
+                                    <div style={{ fontSize: '2.5rem', marginRight: '1rem' }}>📦</div>
                                     <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
-                                        Delete Users
+                                        Archive Users
                                     </h3>
                                 </div>
                                 <div style={{ marginBottom: '1rem', flex: 1 }}>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Remove user accounts
+                                        • Move to Previous Employees
                                     </p>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Delete Admins {userRole === 'superadmin' ? 'and HR users' : '(HR cannot delete SuperAdmins)'}
+                                        • Disable portal access
                                     </p>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Archive user data
+                                        • Preserve employee records
                                     </p>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Revoke all access
+                                        • View archived in Team Directory
                                     </p>
                                 </div>
                                 <button 
-                                    onClick={() => {
-                                        const message = userRole === 'hr' 
-                                            ? '🚧 Delete User Feature\n\nThis feature will allow you to:\n• Delete Employee and Admin accounts\n• Archive user data\n• Revoke access\n\n⚠️ HR cannot delete SuperAdmin accounts.\n⚠️ This action requires confirmation.\n\nComing soon after backend deployment!'
-                                            : '🚧 Delete User Feature\n\nThis feature will allow you to:\n• Delete any user account\n• Remove Admins and HR users\n• Archive user data\n• Revoke all access\n\n⚠️ This action requires confirmation.\n\nComing soon after backend deployment!';
-                                        alert(message);
-                                    }}
+                                    onClick={() => setShowArchiveModal(true)}
                                     style={{
-                                        background: '#ef4444',
-                                        color: 'white',
+                                        background: '#f59e0b',
+                                        color: '#0f172a',
                                         border: 'none',
                                         padding: '0.75rem 1.5rem',
                                         borderRadius: '6px',
@@ -6074,48 +6068,38 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         width: '100%',
                                         marginTop: 'auto'
                                     }}>
-                                    Delete Users
+                                    Archive Users
                                 </button>
                             </div>
 
-                            {/* Audit Logs */}
+                            {/* Security Settings Card */}
                             <div className="hover-lift animate-scale-in" style={{
                                 background: 'white',
                                 padding: '2rem',
                                 borderRadius: '12px',
                                 border: '2px solid #d4af37',
                                 boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                animationDelay: '0.3s',
+                                animationDelay: '0.4s',
                                 display: 'flex',
                                 flexDirection: 'column'
                             }}>
                                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
-                                    <div style={{
-                                        fontSize: '2.5rem',
-                                        marginRight: '1rem'
-                                    }}>
-                                        📊
-                                    </div>
+                                    <div style={{ fontSize: '2.5rem', marginRight: '1rem' }}>🔐</div>
                                     <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
-                                        Audit Logs
+                                        Security Settings
                                     </h3>
                                 </div>
                                 <div style={{ marginBottom: '1rem', flex: 1 }}>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • View all user activity
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Track login history
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Monitor role changes
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Export audit reports
-                                    </p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Reset user passwords</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• View login history</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Audit logs (SuperAdmin)</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Security clearance status</p>
                                 </div>
                                 <button 
-                                    onClick={() => setShowAuditLogsModal(true)}
+                                    onClick={() => {
+                                        setCurrentPage('securitysettings');
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }}
                                     style={{
                                         background: '#1e3a8a',
                                         color: 'white',
@@ -6127,7 +6111,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         width: '100%',
                                         marginTop: 'auto'
                                     }}>
-                                    View Audit Logs
+                                    Manage Security
                                 </button>
                             </div>
                         </div>
@@ -6465,110 +6449,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 </button>
                             </div>
 
-                            {/* Manage Users & Roles Card - Admin, HR, SuperAdmin only */}
-                            {(userRole === 'admin' || userRole === 'hr' || userRole === 'superadmin') && (
-                                <div className="hover-lift animate-scale-in" style={{
-                                    background: 'white',
-                                    padding: '2rem',
-                                    borderRadius: '12px',
-                                    border: '2px solid #d4af37',
-                                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                    animationDelay: '0.2s'
-                                }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
-                                        <div style={{
-                                            fontSize: '2.5rem',
-                                            marginRight: '1rem'
-                                        }}>
-                                            ⚙️
-                                        </div>
-                                        <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
-                                            Manage Users & Roles
-                                        </h3>
-                                    </div>
-                                    <div style={{ marginBottom: '1rem' }}>
-                                        <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                            • Modify user information
-                                        </p>
-                                        <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                            • Change user roles
-                                        </p>
-                                        <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                            • Promote or demote users
-                                        </p>
-                                        <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                            • Delete user accounts
-                                        </p>
-                                    </div>
-                                    <button 
-                                        onClick={() => setShowManageUsersModal(true)}
-                                        style={{
-                                            background: '#1e3a8a',
-                                            color: 'white',
-                                            border: 'none',
-                                            padding: '0.75rem 1.5rem',
-                                            borderRadius: '6px',
-                                            cursor: 'pointer',
-                                            fontWeight: '600',
-                                            width: '100%'
-                                        }}>
-                                        Manage Users
-                                    </button>
-                                </div>
-                            )}
-
-                            {/* Security Settings Card */}
-                            <div className="hover-lift animate-scale-in" style={{
-                                background: 'white',
-                                padding: '2rem',
-                                borderRadius: '12px',
-                                border: '2px solid #d4af37',
-                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                animationDelay: '0.3s'
-                            }}>
-                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
-                                    <div style={{
-                                        fontSize: '2.5rem',
-                                        marginRight: '1rem'
-                                    }}>
-                                        🔐
-                                    </div>
-                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
-                                        Security Settings
-                                    </h3>
-                                </div>
-                                <div style={{ marginBottom: '1rem' }}>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Change password
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Manage MFA devices
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • View login history
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Security clearance status
-                                    </p>
-                                </div>
-                                <button 
-                                    onClick={() => {
-                                        setCurrentPage('securitysettings');
-                                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                                    }}
-                                    style={{
-                                        background: '#1e3a8a',
-                                        color: 'white',
-                                        border: 'none',
-                                        padding: '0.75rem 1.5rem',
-                                        borderRadius: '6px',
-                                        cursor: 'pointer',
-                                        fontWeight: '600',
-                                        width: '100%'
-                                    }}>
-                                    Manage Security
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </section>
@@ -8087,7 +7967,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             </p>
                             <button 
                                 onClick={() => {
-                                    setCurrentPage('employeeprofile');
+                                    setCurrentPage('usermanagement');
                                     window.scrollTo({ top: 0, behavior: 'smooth' });
                                 }}
                                 style={{
@@ -8111,7 +7991,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             gap: '2rem',
                             marginBottom: '3rem'
                         }}>
-                            {/* Password Management */}
+                            {/* Password Management - Functional */}
                             <div className="hover-lift animate-scale-in" style={{
                                 background: 'white',
                                 padding: '2rem',
@@ -8120,56 +8000,81 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
                             }}>
                                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
-                                    <div style={{
-                                        fontSize: '2.5rem',
-                                        marginRight: '1rem'
-                                    }}>
-                                        🔑
-                                    </div>
+                                    <div style={{ fontSize: '2.5rem', marginRight: '1rem' }}>🔑</div>
                                     <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
                                         Password Management
                                     </h3>
                                 </div>
-                                <div style={{ marginBottom: '1.5rem' }}>
-                                    <div style={{
-                                        background: '#f0fdf4',
-                                        padding: '1rem',
-                                        borderRadius: '8px',
-                                        marginBottom: '1rem',
-                                        border: '1px solid #86efac'
-                                    }}>
-                                        <div style={{ fontWeight: '600', color: '#15803d', marginBottom: '0.5rem' }}>
-                                            ✅ Password Strength: Strong
+                                {(userRole === 'superadmin' || userRole === 'hr') ? (
+                                    <div>
+                                        <p style={{ color: '#64748b', marginBottom: '1rem', fontSize: '0.9rem' }}>
+                                            Reset a user's password and send them an email with temporary credentials.
+                                        </p>
+                                        <div style={{ marginBottom: '1rem' }}>
+                                            <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.5rem', color: '#1e3a8a', fontSize: '0.9rem' }}>
+                                                User Email
+                                            </label>
+                                            <select
+                                                id="resetPasswordEmail"
+                                                style={{
+                                                    width: '100%', padding: '0.75rem', borderRadius: '8px',
+                                                    border: '2px solid #e2e8f0', fontSize: '0.95rem'
+                                                }}>
+                                                <option value="">Select a user...</option>
+                                                {users.map(u => (
+                                                    <option key={u.username} value={u.username}>{u.email} ({u.role})</option>
+                                                ))}
+                                            </select>
                                         </div>
-                                        <div style={{ fontSize: '0.9rem', color: '#166534' }}>
-                                            Last changed: 15 days ago
+                                        <button
+                                            onClick={async () => {
+                                                const select = document.getElementById('resetPasswordEmail');
+                                                const username = select.value;
+                                                if (!username) { alert('Please select a user.'); return; }
+                                                const userEmail = select.options[select.selectedIndex].text;
+                                                if (!confirm(`Reset password for ${userEmail}? They will receive an email with a temporary password.`)) return;
+                                                try {
+                                                    const session = await fetchAuthSession();
+                                                    const token = session.tokens?.idToken?.toString();
+                                                    const res = await fetch(`https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api/users/${username}`, {
+                                                        method: 'POST',
+                                                        headers: { 'Content-Type': 'application/json', 'Authorization': token },
+                                                        body: JSON.stringify({ action: 'resetPassword', tempPassword: 'NavonTemp2024!' })
+                                                    });
+                                                    const data = await res.json();
+                                                    if (res.ok) {
+                                                        alert(`✅ Password reset. Email sent to ${userEmail}`);
+                                                    } else {
+                                                        alert(`❌ Failed: ${data.error || data.message}`);
+                                                    }
+                                                } catch (err) {
+                                                    alert(`❌ Error: ${err.message}`);
+                                                }
+                                            }}
+                                            style={{
+                                                background: '#1e3a8a', color: 'white', border: 'none',
+                                                padding: '0.75rem 1.5rem', borderRadius: '6px',
+                                                cursor: 'pointer', fontWeight: '600', width: '100%'
+                                            }}>
+                                            🔑 Reset Password & Send Email
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div>
+                                        <p style={{ color: '#64748b', marginBottom: '1rem', fontSize: '0.9rem' }}>
+                                            Contact your administrator to reset your password.
+                                        </p>
+                                        <div style={{
+                                            background: '#f8fafc', padding: '1rem', borderRadius: '8px',
+                                            border: '1px solid #e2e8f0', fontSize: '0.9rem', color: '#64748b'
+                                        }}>
+                                            📧 rachelle.briscoe@navontech.com
                                         </div>
                                     </div>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
-                                        • Minimum 12 characters required
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
-                                        • Must include uppercase, lowercase, numbers
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
-                                        • Special characters recommended
-                                    </p>
-                                </div>
-                                <button style={{
-                                    background: '#1e3a8a',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '0.75rem 1.5rem',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600',
-                                    width: '100%'
-                                }}>
-                                    Change Password
-                                </button>
+                                )}
                             </div>
 
-                            {/* Multi-Factor Authentication */}
+                            {/* Login History - Functional */}
                             <div className="hover-lift animate-scale-in" style={{
                                 background: 'white',
                                 padding: '2rem',
@@ -8179,143 +8084,101 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 animationDelay: '0.1s'
                             }}>
                                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
-                                    <div style={{
-                                        fontSize: '2.5rem',
-                                        marginRight: '1rem'
-                                    }}>
-                                        📱
-                                    </div>
+                                    <div style={{ fontSize: '2.5rem', marginRight: '1rem' }}>📊</div>
                                     <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
-                                        Multi-Factor Authentication
+                                        Login History
                                     </h3>
                                 </div>
-                                <div style={{ marginBottom: '1.5rem' }}>
-                                    <div style={{
-                                        background: '#f0fdf4',
-                                        padding: '1rem',
-                                        borderRadius: '8px',
-                                        marginBottom: '1rem',
-                                        border: '1px solid #86efac'
-                                    }}>
-                                        <div style={{ fontWeight: '600', color: '#15803d', marginBottom: '0.5rem' }}>
-                                            ✅ MFA Enabled
+                                <div style={{ marginBottom: '1.5rem', maxHeight: '300px', overflowY: 'auto' }}>
+                                    {loginHistory.length === 0 && !isLoadingLoginHistory && (
+                                        <div style={{ textAlign: 'center', padding: '1rem', color: '#64748b', fontSize: '0.9rem' }}>
+                                            Click "Load Login History" to view recent logins
                                         </div>
-                                        <div style={{ fontSize: '0.9rem', color: '#166534' }}>
-                                            Primary device: iPhone (****1234)
+                                    )}
+                                    {isLoadingLoginHistory && (
+                                        <div style={{ textAlign: 'center', padding: '1rem', color: '#64748b' }}>Loading...</div>
+                                    )}
+                                    {loginHistory.map((login, index) => (
+                                        <div key={index} style={{
+                                            background: login.success !== false ? '#f0fdf4' : '#fef2f2',
+                                            padding: '0.75rem',
+                                            borderRadius: '6px',
+                                            marginBottom: '0.5rem',
+                                            border: `1px solid ${login.success !== false ? '#86efac' : '#fca5a5'}`
+                                        }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
+                                                <div style={{ fontWeight: '600', color: login.success !== false ? '#15803d' : '#dc2626', fontSize: '0.9rem' }}>
+                                                    {login.success !== false ? '✅' : '❌'} {new Date(login.timestamp).toLocaleString()}
+                                                </div>
+                                            </div>
+                                            <div style={{ fontSize: '0.8rem', color: login.success !== false ? '#166534' : '#991b1b' }}>
+                                                👤 {login.userEmail || login.userId || 'Unknown'} {login.action ? `• ${login.action}` : ''}
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div style={{
-                                        background: '#f8fafc',
-                                        padding: '0.75rem',
-                                        borderRadius: '6px',
-                                        marginBottom: '0.5rem',
-                                        border: '1px solid #e2e8f0'
-                                    }}>
-                                        <div style={{ fontWeight: '600', color: '#1e3a8a', fontSize: '0.9rem' }}>
-                                            📲 Authenticator App
-                                        </div>
-                                        <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                                            Microsoft Authenticator - Active
-                                        </div>
-                                    </div>
-                                    <div style={{
-                                        background: '#f8fafc',
-                                        padding: '0.75rem',
-                                        borderRadius: '6px',
-                                        border: '1px solid #e2e8f0'
-                                    }}>
-                                        <div style={{ fontWeight: '600', color: '#1e3a8a', fontSize: '0.9rem' }}>
-                                            💬 SMS Backup
-                                        </div>
-                                        <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                                            +1 (555) ***-1234 - Active
-                                        </div>
-                                    </div>
+                                    ))}
                                 </div>
-                                <button style={{
-                                    background: '#1e3a8a',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '0.75rem 1.5rem',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600',
-                                    width: '100%'
-                                }}>
-                                    Manage MFA Devices
+                                <button
+                                    onClick={async () => {
+                                        setIsLoadingLoginHistory(true);
+                                        try {
+                                            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                                            const session = await fetchAuthSession();
+                                            const token = session.tokens?.idToken?.toString();
+                                            const res = await fetch(`${apiUrl}/audit-logs?eventType=LOGIN&limit=50`, {
+                                                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+                                            });
+                                            const data = await res.json();
+                                            setLoginHistory(data.logs || []);
+                                        } catch (err) {
+                                            alert(`Failed to load login history: ${err.message}`);
+                                        } finally {
+                                            setIsLoadingLoginHistory(false);
+                                        }
+                                    }}
+                                    style={{
+                                        background: '#1e3a8a', color: 'white', border: 'none',
+                                        padding: '0.75rem 1.5rem', borderRadius: '6px',
+                                        cursor: 'pointer', fontWeight: '600', width: '100%'
+                                    }}>
+                                    🔍 Load Login History
                                 </button>
                             </div>
 
-                            {/* Login History */}
+                            {/* Audit Logs - SuperAdmin Only */}
+                            {userRole === 'superadmin' && (
                             <div className="hover-lift animate-scale-in" style={{
                                 background: 'white',
                                 padding: '2rem',
                                 borderRadius: '12px',
                                 border: '2px solid #d4af37',
                                 boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                animationDelay: '0.2s'
+                                animationDelay: '0.2s',
+                                display: 'flex',
+                                flexDirection: 'column'
                             }}>
                                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
-                                    <div style={{
-                                        fontSize: '2.5rem',
-                                        marginRight: '1rem'
-                                    }}>
-                                        📊
-                                    </div>
+                                    <div style={{ fontSize: '2.5rem', marginRight: '1rem' }}>📋</div>
                                     <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
-                                        Login History
+                                        Audit Logs
                                     </h3>
                                 </div>
-                                <div style={{ marginBottom: '1.5rem' }}>
-                                    {[
-                                        { time: '2 hours ago', location: 'Leesburg, VA', device: 'Chrome on Windows', status: 'success' },
-                                        { time: '1 day ago', location: 'Leesburg, VA', device: 'Safari on iPhone', status: 'success' },
-                                        { time: '3 days ago', location: 'Washington, DC', device: 'Chrome on Windows', status: 'success' },
-                                        { time: '1 week ago', location: 'Unknown Location', device: 'Firefox on Linux', status: 'failed' }
-                                    ].map((login, index) => (
-                                        <div key={index} style={{
-                                            background: login.status === 'success' ? '#f0fdf4' : '#fef2f2',
-                                            padding: '0.75rem',
-                                            borderRadius: '6px',
-                                            marginBottom: '0.5rem',
-                                            border: `1px solid ${login.status === 'success' ? '#86efac' : '#fca5a5'}`
-                                        }}>
-                                            <div style={{ 
-                                                display: 'flex', 
-                                                justifyContent: 'space-between', 
-                                                alignItems: 'center',
-                                                marginBottom: '0.25rem'
-                                            }}>
-                                                <div style={{ 
-                                                    fontWeight: '600', 
-                                                    color: login.status === 'success' ? '#15803d' : '#dc2626',
-                                                    fontSize: '0.9rem'
-                                                }}>
-                                                    {login.status === 'success' ? '✅' : '❌'} {login.time}
-                                                </div>
-                                            </div>
-                                            <div style={{ 
-                                                fontSize: '0.8rem', 
-                                                color: login.status === 'success' ? '#166534' : '#991b1b'
-                                            }}>
-                                                📍 {login.location} • 💻 {login.device}
-                                            </div>
-                                        </div>
-                                    ))}
+                                <div style={{ marginBottom: '1rem', flex: 1 }}>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• View all user activity</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Track login history</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Monitor role changes</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Export audit reports</p>
                                 </div>
-                                <button style={{
-                                    background: '#1e3a8a',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '0.75rem 1.5rem',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600',
-                                    width: '100%'
-                                }}>
-                                    View Full History
+                                <button 
+                                    onClick={() => setShowAuditLogsModal(true)}
+                                    style={{
+                                        background: '#1e3a8a', color: 'white', border: 'none',
+                                        padding: '0.75rem 1.5rem', borderRadius: '6px',
+                                        cursor: 'pointer', fontWeight: '600', width: '100%', marginTop: 'auto'
+                                    }}>
+                                    View Audit Logs
                                 </button>
                             </div>
+                            )}
 
                             {/* Security Status */}
                             <div className="hover-lift animate-scale-in" style={{
@@ -8358,9 +8221,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         </div>
                                         <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
                                             <div style={{ marginBottom: '0.25rem' }}>✅ Strong password enabled</div>
-                                            <div style={{ marginBottom: '0.25rem' }}>✅ MFA configured</div>
                                             <div style={{ marginBottom: '0.25rem' }}>✅ Recent login activity normal</div>
                                             <div style={{ marginBottom: '0.25rem' }}>✅ Account recovery info updated</div>
+                                            <div style={{ marginBottom: '0.25rem' }}>✅ Audit logging enabled</div>
                                             <div style={{ marginBottom: '0.25rem' }}>⚠️ Security training due in 30 days</div>
                                         </div>
                                     </div>
@@ -9563,6 +9426,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             
                             {/* Other Team Members from Database */}
                             {teamMembers.filter((member) => {
+                                // Exclude archived employees from main directory
+                                if (member.employmentType === 'Archived') return false;
                                 if (!directorySearch.trim()) return true;
                                 const search = directorySearch.toLowerCase();
                                 return (
@@ -9580,9 +9445,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     borderRadius: '12px',
                                     border: '2px solid #d4af37',
                                     boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                    cursor: 'pointer'
+                                    cursor: (isAdminView || member.email === loginEmail) ? 'pointer' : 'default'
                                 }}
-                                onClick={() => setSelectedEmployee(member)}
+                                onClick={() => { if (isAdminView || member.email === loginEmail) setSelectedEmployee(member); }}
                                 >
                                     <div style={{ marginBottom: '1.5rem' }}>
                                         <div style={{
@@ -9662,9 +9527,11 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                 )}
                                                 <div style={{ marginBottom: '0.5rem' }}>📧 {member.email}</div>
                                             </div>
+                                            {(isAdminView || member.email === loginEmail) && (
                                             <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.5rem' }}>
                                                 Click to view full profile →
                                             </div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -9760,8 +9627,90 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             </div>
                         </div>
 
+                        {/* Previous Employees - HR and SuperAdmin only */}
+                        {(userRole === 'hr' || userRole === 'superadmin') && isAdminView && (() => {
+                            const archivedMembers = teamMembers.filter(m => m.employmentType === 'Archived');
+                            const exampleArchived = archivedMembers.length === 0 ? [
+                                { id: 'example-archived', name: 'James Carter', title: 'Software Engineer', email: 'james.carter@navontech.com', employmentType: 'Archived', department: 'Engineering' }
+                            ] : [];
+                            const allArchived = [...archivedMembers, ...exampleArchived];
+                            return (
+                            <div style={{
+                                background: 'white',
+                                borderRadius: '12px',
+                                border: '2px solid #94a3b8',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                marginTop: '2rem',
+                                overflow: 'hidden'
+                            }}>
+                                <button
+                                    onClick={() => setShowPreviousEmployees(!showPreviousEmployees)}
+                                    style={{
+                                        width: '100%',
+                                        background: showPreviousEmployees ? '#475569' : '#64748b',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '1rem 2rem',
+                                        fontSize: '1.1rem',
+                                        fontWeight: '700',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center'
+                                    }}>
+                                    <span>📦 Previous Employees ({allArchived.length})</span>
+                                    <span style={{ fontSize: '1.2rem' }}>{showPreviousEmployees ? '▲' : '▼'}</span>
+                                </button>
+                                {showPreviousEmployees && (
+                                    <div style={{ padding: '1.5rem' }}>
+                                        <div style={{
+                                            display: 'grid',
+                                            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+                                            gap: '1rem'
+                                        }}>
+                                            {allArchived.map(member => (
+                                                <div key={member.id} style={{
+                                                    background: '#f1f5f9',
+                                                    padding: '1.25rem',
+                                                    borderRadius: '8px',
+                                                    border: '1px solid #cbd5e1',
+                                                    opacity: 0.7,
+                                                    filter: 'grayscale(40%)'
+                                                }}>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                                        <div style={{
+                                                            width: '50px', height: '50px', borderRadius: '50%',
+                                                            background: '#e2e8f0', display: 'flex', alignItems: 'center',
+                                                            justifyContent: 'center', fontSize: '1.5rem', overflow: 'hidden'
+                                                        }}>
+                                                            {member.profilePicture ? (
+                                                                <img src={member.profilePicture} alt={member.name} style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(100%)' }} />
+                                                            ) : '👤'}
+                                                        </div>
+                                                        <div style={{ flex: 1 }}>
+                                                            <div style={{ fontWeight: '700', color: '#64748b', fontSize: '1rem' }}>{member.name}</div>
+                                                            <div style={{ color: '#94a3b8', fontSize: '0.85rem' }}>{member.title || 'No title'}</div>
+                                                            <div style={{ color: '#94a3b8', fontSize: '0.8rem' }}>{member.email}</div>
+                                                        </div>
+                                                        <span style={{
+                                                            background: '#fee2e2', color: '#991b1b',
+                                                            padding: '0.25rem 0.6rem', borderRadius: '12px',
+                                                            fontSize: '0.7rem', fontWeight: '600'
+                                                        }}>
+                                                            Archived
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        );
+                        })()}
+
                         {/* Team Statistics */}
-                        {(userRole === 'hr' || userRole === 'superadmin') && isAdminView && (
+                        {userRole === 'superadmin' && isAdminView && (
                             <div style={{
                                 background: 'white',
                                 padding: '2rem',
@@ -9779,8 +9728,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     gap: '1rem'
                                 }}>
                                     <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '8px', border: '2px solid #e2e8f0', textAlign: 'center' }}>
-                                        <div style={{ fontSize: '2rem', fontWeight: '700', color: '#1e3a8a' }}>{teamMembers.length}</div>
-                                        <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.25rem', fontWeight: '600' }}>Total Employees</div>
+                                        <div style={{ fontSize: '2rem', fontWeight: '700', color: '#1e3a8a' }}>{teamMembers.filter(m => m.employmentType !== 'Archived').length}</div>
+                                        <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.25rem', fontWeight: '600' }}>Active Employees</div>
                                     </div>
                                     <div style={{ background: '#f0fdf4', padding: '1.25rem', borderRadius: '8px', border: '2px solid #bbf7d0', textAlign: 'center' }}>
                                         <div style={{ fontSize: '2rem', fontWeight: '700', color: '#16a34a' }}>{teamMembers.filter(m => m.employmentType === 'Employee' || m.employmentType === 'Full-Time' || !m.employmentType).length}</div>
@@ -9799,8 +9748,12 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.25rem', fontWeight: '600' }}>Non-Billable</div>
                                     </div>
                                     <div style={{ background: '#f5f3ff', padding: '1.25rem', borderRadius: '8px', border: '2px solid #ddd6fe', textAlign: 'center' }}>
-                                        <div style={{ fontSize: '2rem', fontWeight: '700', color: '#7c3aed' }}>{[...new Set(teamMembers.map(m => m.department).filter(Boolean))].length}</div>
+                                        <div style={{ fontSize: '2rem', fontWeight: '700', color: '#7c3aed' }}>{[...new Set(teamMembers.filter(m => m.employmentType !== 'Archived').map(m => m.department).filter(Boolean))].length}</div>
                                         <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.25rem', fontWeight: '600' }}>Departments</div>
+                                    </div>
+                                    <div style={{ background: '#f1f5f9', padding: '1.25rem', borderRadius: '8px', border: '2px solid #94a3b8', textAlign: 'center' }}>
+                                        <div style={{ fontSize: '2rem', fontWeight: '700', color: '#64748b' }}>{teamMembers.filter(m => m.employmentType === 'Archived').length}</div>
+                                        <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.25rem', fontWeight: '600' }}>Previous Employees</div>
                                     </div>
                                 </div>
                             </div>
@@ -14837,51 +14790,6 @@ Please review and approve this request.
                                                                 }}>
                                                                 📧 Send Invitation
                                                             </button>
-                                                            <button
-                                                                onClick={async () => {
-                                                                    if (!confirm(`Reset password for ${user.email}? They will receive an email with a temporary password.`)) return;
-                                                                    try {
-                                                                        const session = await fetchAuthSession();
-                                                                        const token = session.tokens?.idToken?.toString();
-                                                                        const res = await fetch(`https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api/users/${user.username}`, {
-                                                                            method: 'POST',
-                                                                            headers: { 'Content-Type': 'application/json', 'Authorization': token },
-                                                                            body: JSON.stringify({ action: 'resetPassword', tempPassword: 'NavonTemp2024!' })
-                                                                        });
-                                                                        const data = await res.json();
-                                                                        if (res.ok) {
-                                                                            alert(`✅ Password reset. Email sent to ${user.email}`);
-                                                                        } else {
-                                                                            alert(`❌ Failed: ${data.error || data.message}`);
-                                                                        }
-                                                                    } catch (err) {
-                                                                        alert(`❌ Error: ${err.message}`);
-                                                                    }
-                                                                }}
-                                                                style={{
-                                                                    background: '#f59e0b',
-                                                                    color: '#0f172a',
-                                                                    border: 'none',
-                                                                    padding: '0.5rem 1rem',
-                                                                    borderRadius: '6px',
-                                                                    cursor: 'pointer',
-                                                                    fontWeight: '600'
-                                                                }}>
-                                                                🔑 Reset Password
-                                                            </button>
-                                                            <button
-                                                                onClick={() => deleteUserAccount(user.username)}
-                                                                style={{
-                                                                    background: '#ef4444',
-                                                                    color: 'white',
-                                                                    border: 'none',
-                                                                    padding: '0.5rem 1rem',
-                                                                    borderRadius: '6px',
-                                                                    cursor: 'pointer',
-                                                                    fontWeight: '600'
-                                                                }}>
-                                                                🗑️ Delete User
-                                                            </button>
                                                         </div>
                                                     )}
                                                 </div>
@@ -14895,6 +14803,83 @@ Please review and approve this request.
                 </div>
             )}
             
+            {/* Archive Users Modal */}
+            {showArchiveModal && (
+                <div style={{
+                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                    background: 'rgba(0, 0, 0, 0.7)', display: 'flex',
+                    alignItems: 'center', justifyContent: 'center', zIndex: 10000, padding: '2rem'
+                }} onClick={() => setShowArchiveModal(false)}>
+                    <div style={{
+                        background: 'white', borderRadius: '12px', maxWidth: '700px',
+                        width: '100%', maxHeight: '80vh', overflow: 'auto', position: 'relative'
+                    }} onClick={(e) => e.stopPropagation()}>
+                        <div style={{
+                            padding: '1.5rem 2rem', borderBottom: '2px solid #e2e8f0',
+                            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                            position: 'sticky', top: 0, background: 'white', zIndex: 1
+                        }}>
+                            <h2 style={{ color: '#1e3a8a', margin: 0 }}>📦 Archive Users</h2>
+                            <button onClick={() => setShowArchiveModal(false)} style={{
+                                background: 'none', border: 'none', fontSize: '2rem',
+                                cursor: 'pointer', color: '#64748b', padding: '0'
+                            }}>✕</button>
+                        </div>
+                        <div style={{ padding: '1.5rem 2rem' }}>
+                            <p style={{ color: '#64748b', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
+                                Archiving a user moves them to Previous Employees and disables their portal access. Their records are preserved.
+                            </p>
+                            {users.filter(u => u.status === 'CONFIRMED' || u.status === 'FORCE_CHANGE_PASSWORD').map(user => (
+                                <div key={user.username} style={{
+                                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                                    padding: '1rem', background: '#f8fafc', borderRadius: '8px',
+                                    marginBottom: '0.75rem', border: '1px solid #e2e8f0'
+                                }}>
+                                    <div>
+                                        <div style={{ fontWeight: '600', color: '#1e3a8a' }}>{user.email}</div>
+                                        <div style={{ fontSize: '0.85rem', color: '#64748b' }}>{user.role}</div>
+                                    </div>
+                                    <button
+                                        onClick={async () => {
+                                            if (!confirm(`Archive ${user.email}? They will be moved to Previous Employees and their portal access will be disabled.`)) return;
+                                            try {
+                                                const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                                                await fetch(`${apiUrl}/profiles/${user.email}`, {
+                                                    method: 'PUT',
+                                                    headers: { 'Content-Type': 'application/json' },
+                                                    body: JSON.stringify({ employmentType: 'Archived' })
+                                                });
+                                                const session = await fetchAuthSession();
+                                                const token = session.tokens?.idToken?.toString();
+                                                const res = await fetch(`${apiUrl}/users/${user.username}`, {
+                                                    method: 'DELETE',
+                                                    headers: { 'Authorization': token }
+                                                });
+                                                if (res.ok) {
+                                                    alert(`✅ ${user.email} has been archived.`);
+                                                    fetchUsers();
+                                                } else {
+                                                    const data = await res.json();
+                                                    alert(`❌ Failed: ${data.error || data.message}`);
+                                                }
+                                            } catch (err) {
+                                                alert(`❌ Error: ${err.message}`);
+                                            }
+                                        }}
+                                        style={{
+                                            background: '#f59e0b', color: '#0f172a', border: 'none',
+                                            padding: '0.5rem 1rem', borderRadius: '6px',
+                                            cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem'
+                                        }}>
+                                        📦 Archive
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Audit Logs Modal */}
             {showAuditLogsModal && (
                 <div style={{

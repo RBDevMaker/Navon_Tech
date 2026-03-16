@@ -62,6 +62,18 @@ export function AuthWrapper({ children }) {
         try {
             await signIn({ username: email, password });
             await checkUser();
+            // Log login event to audit logs
+            try {
+                const session = await fetchAuthSession();
+                const token = session.tokens?.idToken?.toString();
+                if (token) {
+                    fetch(`${import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api'}/audit-logs`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                        body: JSON.stringify({ eventType: 'LOGIN', action: 'User logged in', userEmail: email })
+                    });
+                }
+            } catch (logErr) { console.log('Audit log failed:', logErr); }
         } catch (err) {
             console.error('Sign in error:', err);
             setError(err.message || 'Failed to sign in');
