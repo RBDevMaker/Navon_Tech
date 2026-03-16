@@ -9936,7 +9936,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     <div>📧 Personal Email: {selectedEmployee.personalEmail || 'Not provided'}</div>
                                     <div>🏠 Address: {selectedEmployee.address || 'Not provided'}</div>
                                     <div>🎂 Birthdate: {selectedEmployee.birthdate || 'Not provided'}</div>
-                                    <div>⚧ Gender: {selectedEmployee.gender || 'Not provided'}</div>
+                                    <div>👤 Gender: {selectedEmployee.gender || 'Not provided'}</div>
                                 </div>
                             </div>
                         )}
