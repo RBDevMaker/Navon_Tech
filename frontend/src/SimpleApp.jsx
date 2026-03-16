@@ -9034,7 +9034,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             )}
                                             <div style={{ fontSize: '0.9rem', color: '#475569' }}>
                                                 {member.contractName && (
-                                                    <div style={{ marginBottom: '0.5rem' }}>📋 Contract: {member.contractName}</div>
+                                                    <div style={{ marginBottom: '0.5rem' }}>📋 Prime: {member.contractName}</div>
                                                 )}
                                                 {member.department && (
                                                     <div style={{ marginBottom: '0.5rem' }}>🏷️ {member.department}</div>
@@ -9228,8 +9228,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 {selectedEmployee.location && <div>🏢 {selectedEmployee.location}</div>}
                                 {selectedEmployee.startDate && <div>📅 Start: {new Date(selectedEmployee.startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>}
                                 {selectedEmployee.manager && <div>👤 Manager: {selectedEmployee.manager}</div>}
-                                {selectedEmployee.contractAssignment && <div>📋 Assignment: {selectedEmployee.contractAssignment}</div>}
-                                {selectedEmployee.contractName && <div>📝 Contract Name: {selectedEmployee.contractName}</div>}
+                                {selectedEmployee.contractAssignment && <div>📋 Prime: {selectedEmployee.contractAssignment}</div>}
                                 {selectedEmployee.salary && (userRole === 'hr' || userRole === 'superadmin') && <div>💰 Salary: {selectedEmployee.salary}</div>}
                             </div>
                         </div>
