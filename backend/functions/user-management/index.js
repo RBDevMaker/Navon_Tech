@@ -1,9 +1,11 @@
-const { CognitoIdentityProviderClient, ListUsersCommand, AdminGetUserCommand, AdminListGroupsForUserCommand, AdminAddUserToGroupCommand, AdminRemoveUserFromGroupCommand, AdminUpdateUserAttributesCommand, AdminDeleteUserCommand } = require('@aws-sdk/client-cognito-identity-provider');
+const { CognitoIdentityProviderClient, ListUsersCommand, AdminGetUserCommand, AdminListGroupsForUserCommand, AdminAddUserToGroupCommand, AdminRemoveUserFromGroupCommand, AdminUpdateUserAttributesCommand, AdminDeleteUserCommand, AdminResetUserPasswordCommand, AdminSetUserPasswordCommand } = require('@aws-sdk/client-cognito-identity-provider');
+const { SESClient, SendEmailCommand } = require('@aws-sdk/client-ses');
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
 const { DynamoDBDocumentClient, PutCommand } = require('@aws-sdk/lib-dynamodb');
 const { v4: uuidv4 } = require('uuid');
 
 const cognitoClient = new CognitoIdentityProviderClient({ region: process.env.AWS_REGION || 'us-east-1' });
+const sesClient = new SESClient({ region: process.env.AWS_REGION || 'us-east-1' });
 const dynamoClient = new DynamoDBClient({ region: process.env.AWS_REGION || 'us-east-1' });
 const docClient = DynamoDBDocumentClient.from(dynamoClient);
 const USER_POOL_ID = process.env.USER_POOL_ID;
@@ -90,6 +92,20 @@ exports.handler = async (event) => {
                 // Update user role or attributes
                 const updateData = JSON.parse(event.body);
                 return await updateUser(username, updateData, requesterRole);
+            
+            case 'POST':
+                // Invite user or reset password
+                const postData = JSON.parse(event.body);
+                if (postData.action === 'invite') {
+                    return await inviteUser(username, postData, requesterRole);
+                } else if (postData.action === 'resetPassword') {
+                    return await resetUserPassword(username, postData, requesterRole);
+                }
+                return {
+                    statusCode: 400,
+                    headers: CORS_HEADERS,
+                    body: JSON.stringify({ error: 'Invalid action. Use "invite" or "resetPassword"' })
+                };
             
             case 'DELETE':
                 // Delete user
@@ -476,5 +492,326 @@ async function deleteUser(username, requesterRole) {
     } catch (error) {
         console.error('Error deleting user:', error);
         throw error;
+    }
+}
+
+async function inviteUser(username, data, requesterRole) {
+    try {
+        if (!['superadmin', 'hr'].includes(requesterRole)) {
+            return {
+                statusCode: 403,
+                headers: CORS_HEADERS,
+                body: JSON.stringify({ error: 'Only SuperAdmin and HR can send invitations' })
+            };
+        }
+
+        const userDetails = await getUserDetails(username);
+        const tempPassword = data.tempPassword || 'NavonTemp2024!';
+        const portalUrl = data.portalUrl || 'https://main.d21gtgfmmjo0uh.amplifyapp.com';
+
+        // Set a new temporary password so user is forced to change on login
+        await cognitoClient.send(new AdminSetUserPasswordCommand({
+            UserPoolId: USER_POOL_ID,
+            Username: username,
+            Password: tempPassword,
+            Permanent: false
+        }));
+
+        // Build the invitation email
+        const employeeName = userDetails.attributes?.name || username.split('@')[0];
+        const roleName = userDetails.role === 'superadmin' ? 'Super Administrator' :
+                         userDetails.role === 'hr' ? 'Human Resources' :
+                         userDetails.role === 'admin' ? 'Administrator' : 'Employee';
+
+        const htmlBody = `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background-color:#f1f5f9;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f1f5f9;padding:40px 20px;">
+<tr><td align="center">
+<table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.1);">
+
+<!-- Header -->
+<tr><td style="background:linear-gradient(135deg,#1e3a8a 0%,#3b82f6 100%);padding:40px 40px 30px;text-align:center;">
+<h1 style="color:#d4af37;font-size:28px;margin:0 0 8px;font-weight:800;letter-spacing:1px;">NAVON TECHNOLOGIES</h1>
+<p style="color:rgba(255,255,255,0.9);font-size:14px;margin:0;letter-spacing:2px;">EMPLOYEE PORTAL INVITATION</p>
+</td></tr>
+
+<!-- Gold Divider -->
+<tr><td style="background:#d4af37;height:4px;"></td></tr>
+
+<!-- Body -->
+<tr><td style="padding:40px;">
+<h2 style="color:#1e3a8a;font-size:22px;margin:0 0 20px;">Welcome, ${employeeName}</h2>
+<p style="color:#334155;font-size:16px;line-height:1.6;margin:0 0 24px;">
+You have been granted access to the <strong>Navon Technologies Employee Portal</strong>. This secure platform provides access to company resources, your employee profile, team directory, and more.
+</p>
+
+<!-- Credentials Box -->
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:12px;margin:0 0 24px;">
+<tr><td style="padding:24px;">
+<h3 style="color:#1e3a8a;font-size:16px;margin:0 0 16px;border-bottom:2px solid #d4af37;padding-bottom:8px;">🔐 Your Login Credentials</h3>
+<table width="100%" cellpadding="0" cellspacing="0">
+<tr>
+<td style="padding:8px 0;color:#64748b;font-size:14px;width:140px;">Username:</td>
+<td style="padding:8px 0;color:#1e293b;font-size:14px;font-weight:600;">${userDetails.email}</td>
+</tr>
+<tr>
+<td style="padding:8px 0;color:#64748b;font-size:14px;">Temporary Password:</td>
+<td style="padding:8px 0;color:#1e293b;font-size:14px;font-weight:600;">${tempPassword}</td>
+</tr>
+<tr>
+<td style="padding:8px 0;color:#64748b;font-size:14px;">Access Level:</td>
+<td style="padding:8px 0;color:#1e293b;font-size:14px;font-weight:600;">${roleName}</td>
+</tr>
+</table>
+</td></tr>
+</table>
+
+<!-- CTA Button -->
+<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
+<tr><td align="center">
+<a href="${portalUrl}" style="display:inline-block;background:linear-gradient(135deg,#1e3a8a 0%,#3b82f6 100%);color:#ffffff;text-decoration:none;padding:16px 40px;border-radius:8px;font-size:16px;font-weight:700;letter-spacing:0.5px;">
+Access Employee Portal →
+</a>
+</td></tr>
+</table>
+
+<!-- Instructions -->
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#fffbeb;border:2px solid #fbbf24;border-radius:12px;margin:0 0 24px;">
+<tr><td style="padding:20px;">
+<h3 style="color:#92400e;font-size:14px;margin:0 0 12px;">⚠️ Important - First Login Instructions</h3>
+<ol style="color:#92400e;font-size:14px;line-height:1.8;margin:0;padding-left:20px;">
+<li>Click the portal link above or visit the URL directly</li>
+<li>Enter your username and temporary password</li>
+<li>You will be prompted to create a new password</li>
+<li>Your new password must be at least 8 characters with uppercase, lowercase, and numbers</li>
+</ol>
+</td></tr>
+</table>
+
+<p style="color:#64748b;font-size:14px;line-height:1.6;margin:0;">
+If you have any questions or need assistance, please contact your administrator at <a href="mailto:rachelle.briscoe@navontech.com" style="color:#3b82f6;">rachelle.briscoe@navontech.com</a>.
+</p>
+</td></tr>
+
+<!-- Footer -->
+<tr><td style="background:#1e293b;padding:24px 40px;text-align:center;">
+<p style="color:#d4af37;font-size:12px;margin:0 0 8px;font-weight:600;letter-spacing:1px;">NAVON TECHNOLOGIES</p>
+<p style="color:#94a3b8;font-size:11px;margin:0;">This is a confidential communication. Unauthorized access is prohibited.</p>
+<p style="color:#94a3b8;font-size:11px;margin:4px 0 0;">Bowie, Maryland | navontech.com</p>
+</td></tr>
+
+</table>
+</td></tr>
+</table>
+</body>
+</html>`;
+
+        const textBody = `Welcome to Navon Technologies Employee Portal, ${employeeName}!\n\nYou have been granted access to the Employee Portal.\n\nYour Login Credentials:\nUsername: ${userDetails.email}\nTemporary Password: ${tempPassword}\nAccess Level: ${roleName}\n\nPortal URL: ${portalUrl}\n\nOn your first login, you will be prompted to create a new password.\n\nIf you need assistance, contact rachelle.briscoe@navontech.com`;
+
+        // Send the email via SES
+        await sesClient.send(new SendEmailCommand({
+            Source: 'Navon Technologies <rachelle.briscoe@navontech.com>',
+            Destination: {
+                ToAddresses: [userDetails.email]
+            },
+            Message: {
+                Subject: {
+                    Data: '🔐 Welcome to Navon Technologies Employee Portal',
+                    Charset: 'UTF-8'
+                },
+                Body: {
+                    Html: {
+                        Data: htmlBody,
+                        Charset: 'UTF-8'
+                    },
+                    Text: {
+                        Data: textBody,
+                        Charset: 'UTF-8'
+                    }
+                }
+            }
+        }));
+
+        // Log audit event
+        await logAuditEvent({
+            userId: username,
+            userEmail: userDetails.email,
+            eventType: 'USER_INVITE',
+            action: `Invitation email sent to ${userDetails.email}`,
+            targetUser: username,
+            success: true
+        });
+
+        return {
+            statusCode: 200,
+            headers: CORS_HEADERS,
+            body: JSON.stringify({
+                message: 'Invitation sent successfully',
+                email: userDetails.email
+            })
+        };
+    } catch (error) {
+        console.error('Error inviting user:', error);
+        return {
+            statusCode: 500,
+            headers: CORS_HEADERS,
+            body: JSON.stringify({
+                error: 'Failed to send invitation',
+                message: error.message
+            })
+        };
+    }
+}
+
+async function resetUserPassword(username, data, requesterRole) {
+    try {
+        if (!['superadmin', 'hr'].includes(requesterRole)) {
+            return {
+                statusCode: 403,
+                headers: CORS_HEADERS,
+                body: JSON.stringify({ error: 'Only SuperAdmin and HR can reset passwords' })
+            };
+        }
+
+        const userDetails = await getUserDetails(username);
+        const tempPassword = data.tempPassword || 'NavonTemp2024!';
+        const portalUrl = data.portalUrl || 'https://main.d21gtgfmmjo0uh.amplifyapp.com';
+
+        // Set a new temporary password
+        await cognitoClient.send(new AdminSetUserPasswordCommand({
+            UserPoolId: USER_POOL_ID,
+            Username: username,
+            Password: tempPassword,
+            Permanent: false
+        }));
+
+        const employeeName = userDetails.attributes?.name || username.split('@')[0];
+
+        const htmlBody = `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background-color:#f1f5f9;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f1f5f9;padding:40px 20px;">
+<tr><td align="center">
+<table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.1);">
+
+<!-- Header -->
+<tr><td style="background:linear-gradient(135deg,#1e3a8a 0%,#3b82f6 100%);padding:40px 40px 30px;text-align:center;">
+<h1 style="color:#d4af37;font-size:28px;margin:0 0 8px;font-weight:800;letter-spacing:1px;">NAVON TECHNOLOGIES</h1>
+<p style="color:rgba(255,255,255,0.9);font-size:14px;margin:0;letter-spacing:2px;">PASSWORD RESET</p>
+</td></tr>
+
+<!-- Gold Divider -->
+<tr><td style="background:#d4af37;height:4px;"></td></tr>
+
+<!-- Body -->
+<tr><td style="padding:40px;">
+<h2 style="color:#1e3a8a;font-size:22px;margin:0 0 20px;">Password Reset, ${employeeName}</h2>
+<p style="color:#334155;font-size:16px;line-height:1.6;margin:0 0 24px;">
+Your password for the Navon Technologies Employee Portal has been reset by an administrator. Please use the temporary password below to log in and set a new password.
+</p>
+
+<!-- Credentials Box -->
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:12px;margin:0 0 24px;">
+<tr><td style="padding:24px;">
+<h3 style="color:#1e3a8a;font-size:16px;margin:0 0 16px;border-bottom:2px solid #d4af37;padding-bottom:8px;">🔑 New Temporary Password</h3>
+<table width="100%" cellpadding="0" cellspacing="0">
+<tr>
+<td style="padding:8px 0;color:#64748b;font-size:14px;width:140px;">Username:</td>
+<td style="padding:8px 0;color:#1e293b;font-size:14px;font-weight:600;">${userDetails.email}</td>
+</tr>
+<tr>
+<td style="padding:8px 0;color:#64748b;font-size:14px;">Temporary Password:</td>
+<td style="padding:8px 0;color:#1e293b;font-size:14px;font-weight:600;">${tempPassword}</td>
+</tr>
+</table>
+</td></tr>
+</table>
+
+<!-- CTA Button -->
+<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
+<tr><td align="center">
+<a href="${portalUrl}" style="display:inline-block;background:linear-gradient(135deg,#1e3a8a 0%,#3b82f6 100%);color:#ffffff;text-decoration:none;padding:16px 40px;border-radius:8px;font-size:16px;font-weight:700;letter-spacing:0.5px;">
+Log In Now →
+</a>
+</td></tr>
+</table>
+
+<p style="color:#64748b;font-size:14px;line-height:1.6;margin:0;">
+You will be prompted to create a new password on your next login. If you did not request this reset, please contact <a href="mailto:rachelle.briscoe@navontech.com" style="color:#3b82f6;">rachelle.briscoe@navontech.com</a> immediately.
+</p>
+</td></tr>
+
+<!-- Footer -->
+<tr><td style="background:#1e293b;padding:24px 40px;text-align:center;">
+<p style="color:#d4af37;font-size:12px;margin:0 0 8px;font-weight:600;letter-spacing:1px;">NAVON TECHNOLOGIES</p>
+<p style="color:#94a3b8;font-size:11px;margin:0;">This is a confidential communication. Unauthorized access is prohibited.</p>
+<p style="color:#94a3b8;font-size:11px;margin:4px 0 0;">Bowie, Maryland | navontech.com</p>
+</td></tr>
+
+</table>
+</td></tr>
+</table>
+</body>
+</html>`;
+
+        const textBody = `Password Reset - Navon Technologies\n\nHello ${employeeName},\n\nYour password has been reset.\n\nUsername: ${userDetails.email}\nTemporary Password: ${tempPassword}\n\nPortal URL: ${portalUrl}\n\nYou will be prompted to create a new password on your next login.\n\nIf you did not request this, contact rachelle.briscoe@navontech.com immediately.`;
+
+        // Send the email
+        await sesClient.send(new SendEmailCommand({
+            Source: 'Navon Technologies <rachelle.briscoe@navontech.com>',
+            Destination: {
+                ToAddresses: [userDetails.email]
+            },
+            Message: {
+                Subject: {
+                    Data: '🔑 Password Reset - Navon Technologies Portal',
+                    Charset: 'UTF-8'
+                },
+                Body: {
+                    Html: {
+                        Data: htmlBody,
+                        Charset: 'UTF-8'
+                    },
+                    Text: {
+                        Data: textBody,
+                        Charset: 'UTF-8'
+                    }
+                }
+            }
+        }));
+
+        // Log audit event
+        await logAuditEvent({
+            userId: username,
+            userEmail: userDetails.email,
+            eventType: 'PASSWORD_RESET',
+            action: `Password reset for ${userDetails.email}`,
+            targetUser: username,
+            success: true
+        });
+
+        return {
+            statusCode: 200,
+            headers: CORS_HEADERS,
+            body: JSON.stringify({
+                message: 'Password reset successfully. Email sent.',
+                email: userDetails.email
+            })
+        };
+    } catch (error) {
+        console.error('Error resetting password:', error);
+        return {
+            statusCode: 500,
+            headers: CORS_HEADERS,
+            body: JSON.stringify({
+                error: 'Failed to reset password',
+                message: error.message
+            })
+        };
     }
 }

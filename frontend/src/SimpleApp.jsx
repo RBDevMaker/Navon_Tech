@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { uploadProfilePicture, uploadDocument, canUpload, deleteFromS3, uploadToS3, listS3Contents } from './services/s3Upload';
 import { Amplify } from 'aws-amplify';
-import { signIn, signOut, getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
+import { signIn, signOut, getCurrentUser, fetchAuthSession, confirmSignIn } from 'aws-amplify/auth';
 import awsConfig from './aws-config';
 import * as XLSX from 'xlsx';
 
@@ -46,6 +46,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [showPassword, setShowPassword] = useState(false);
     const [loginError, setLoginError] = useState('');
     const [isAuthenticating, setIsAuthenticating] = useState(false);
+    const [requiresNewPassword, setRequiresNewPassword] = useState(false);
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmNewPassword, setConfirmNewPassword] = useState('');
     const [isAddingEmployee, setIsAddingEmployee] = useState(false); // Toggle for My Profile vs Add Employee
     const [isAdminView, setIsAdminView] = useState(true); // Toggle for Administration View vs Employee View
     const [directorySearch, setDirectorySearch] = useState(''); // Search filter for team directory
@@ -13080,6 +13083,142 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
 
                         {/* Login Form */}
                         <div style={{ padding: '1.5rem' }}>
+                            {requiresNewPassword ? (
+                                /* New Password Form */
+                                <form onSubmit={async (e) => {
+                                    e.preventDefault();
+                                    setLoginError('');
+                                    
+                                    if (newPassword !== confirmNewPassword) {
+                                        setLoginError('Passwords do not match.');
+                                        return;
+                                    }
+                                    if (newPassword.length < 8) {
+                                        setLoginError('Password must be at least 8 characters.');
+                                        return;
+                                    }
+                                    
+                                    setIsAuthenticating(true);
+                                    try {
+                                        const result = await confirmSignIn({ challengeResponse: newPassword });
+                                        
+                                        if (result.isSignedIn) {
+                                            const session = await fetchAuthSession();
+                                            const groups = session.tokens?.accessToken?.payload['cognito:groups'] || [];
+                                            let role = 'employee';
+                                            if (groups.includes('SuperAdmin')) role = 'superadmin';
+                                            else if (groups.includes('Admin')) role = 'admin';
+                                            else if (groups.includes('HR')) role = 'hr';
+                                            
+                                            setUserRole(role);
+                                            setRequiresNewPassword(false);
+                                            setNewPassword('');
+                                            setConfirmNewPassword('');
+                                            setCurrentPage('secureportal');
+                                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                                        }
+                                    } catch (err) {
+                                        console.error('Password change error:', err);
+                                        setLoginError(err.message || 'Failed to set new password.');
+                                    } finally {
+                                        setIsAuthenticating(false);
+                                    }
+                                }}>
+                                    <div style={{
+                                        background: 'rgba(212, 175, 55, 0.15)',
+                                        border: '1px solid rgba(212, 175, 55, 0.4)',
+                                        borderRadius: '8px',
+                                        padding: '1rem',
+                                        marginBottom: '1.5rem',
+                                        textAlign: 'center'
+                                    }}>
+                                        <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>🔑</div>
+                                        <p style={{ color: 'white', fontSize: '0.9rem', margin: 0, fontWeight: '600' }}>
+                                            Please create a new password to continue
+                                        </p>
+                                    </div>
+
+                                    <div style={{ marginBottom: '1rem' }}>
+                                        <label style={{ display: 'block', marginBottom: '0.4rem', color: 'white', fontWeight: '600', fontSize: '0.85rem' }}>
+                                            New Password
+                                        </label>
+                                        <input
+                                            type="password"
+                                            value={newPassword}
+                                            onChange={(e) => setNewPassword(e.target.value)}
+                                            required
+                                            placeholder="At least 8 characters"
+                                            style={{
+                                                width: '100%', padding: '0.65rem',
+                                                border: '2px solid rgba(255, 255, 255, 0.3)', borderRadius: '8px',
+                                                fontSize: '0.95rem', background: 'rgba(255, 255, 255, 0.9)',
+                                                color: '#1e293b', outline: 'none'
+                                            }}
+                                        />
+                                    </div>
+
+                                    <div style={{ marginBottom: '1rem' }}>
+                                        <label style={{ display: 'block', marginBottom: '0.4rem', color: 'white', fontWeight: '600', fontSize: '0.85rem' }}>
+                                            Confirm New Password
+                                        </label>
+                                        <input
+                                            type="password"
+                                            value={confirmNewPassword}
+                                            onChange={(e) => setConfirmNewPassword(e.target.value)}
+                                            required
+                                            placeholder="Re-enter your new password"
+                                            style={{
+                                                width: '100%', padding: '0.65rem',
+                                                border: '2px solid rgba(255, 255, 255, 0.3)', borderRadius: '8px',
+                                                fontSize: '0.95rem', background: 'rgba(255, 255, 255, 0.9)',
+                                                color: '#1e293b', outline: 'none'
+                                            }}
+                                        />
+                                    </div>
+
+                                    <div style={{
+                                        background: 'rgba(255,255,255,0.1)', borderRadius: '8px',
+                                        padding: '0.75rem', marginBottom: '1rem',
+                                        fontSize: '0.8rem', color: 'rgba(255,255,255,0.8)'
+                                    }}>
+                                        Password must contain: 8+ characters, uppercase, lowercase, and numbers
+                                    </div>
+
+                                    {loginError && (
+                                        <div style={{
+                                            background: '#fee2e2', border: '1px solid #ef4444',
+                                            color: '#991b1b', padding: '0.75rem', borderRadius: '8px',
+                                            marginBottom: '1rem', fontSize: '0.9rem'
+                                        }}>
+                                            {loginError}
+                                        </div>
+                                    )}
+
+                                    <button type="submit" disabled={isAuthenticating} style={{
+                                        width: '100%', background: isAuthenticating ? '#94a3b8' : '#d4af37',
+                                        color: '#0f172a', border: 'none', padding: '1rem', borderRadius: '8px',
+                                        fontSize: '1rem', fontWeight: '700',
+                                        cursor: isAuthenticating ? 'not-allowed' : 'pointer',
+                                        marginBottom: '0.5rem'
+                                    }}>
+                                        {isAuthenticating ? 'Setting Password...' : 'Set New Password'}
+                                    </button>
+
+                                    <button type="button" onClick={() => {
+                                        setRequiresNewPassword(false);
+                                        setNewPassword('');
+                                        setConfirmNewPassword('');
+                                        setLoginError('');
+                                    }} style={{
+                                        width: '100%', background: 'transparent',
+                                        color: 'rgba(255,255,255,0.8)', border: '1px solid rgba(255,255,255,0.3)',
+                                        padding: '0.75rem', borderRadius: '8px',
+                                        fontSize: '0.9rem', cursor: 'pointer'
+                                    }}>
+                                        ← Back to Login
+                                    </button>
+                                </form>
+                            ) : (
                             <form onSubmit={async (e) => {
                                 e.preventDefault();
                                 setLoginError('');
@@ -13100,7 +13239,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     
                                     // Check if password change is required
                                     if (result.nextStep?.signInStep === 'CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED') {
-                                        setLoginError('Password change required. Please contact administrator.');
+                                        setRequiresNewPassword(true);
                                         setIsAuthenticating(false);
                                         return;
                                     }
@@ -13280,6 +13419,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     {isAuthenticating ? 'Signing In...' : 'Sign In'}
                                 </button>
                             </form>
+                            )}
                         </div>
                     </div>
                 </section>
@@ -14616,20 +14756,85 @@ Please review and approve this request.
                                                     </div>
                                                     
                                                     {(userRole === 'superadmin' || (userRole === 'hr' && user.role !== 'superadmin')) && (
-                                                        <button
-                                                            onClick={() => deleteUserAccount(user.username)}
-                                                            style={{
-                                                                background: '#ef4444',
-                                                                color: 'white',
-                                                                border: 'none',
-                                                                padding: '0.5rem 1rem',
-                                                                borderRadius: '6px',
-                                                                cursor: 'pointer',
-                                                                fontWeight: '600',
-                                                                marginTop: '0.5rem'
-                                                            }}>
-                                                            🗑️ Delete User
-                                                        </button>
+                                                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.5rem' }}>
+                                                            <button
+                                                                onClick={async () => {
+                                                                    if (!confirm(`Send portal invitation email to ${user.email}?`)) return;
+                                                                    try {
+                                                                        const session = await fetchAuthSession();
+                                                                        const token = session.tokens?.idToken?.toString();
+                                                                        const res = await fetch(`https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api/users/${user.username}`, {
+                                                                            method: 'POST',
+                                                                            headers: { 'Content-Type': 'application/json', 'Authorization': token },
+                                                                            body: JSON.stringify({ action: 'invite', tempPassword: 'NavonTemp2024!' })
+                                                                        });
+                                                                        const data = await res.json();
+                                                                        if (res.ok) {
+                                                                            alert(`✅ Invitation sent to ${user.email}`);
+                                                                        } else {
+                                                                            alert(`❌ Failed: ${data.error || data.message}`);
+                                                                        }
+                                                                    } catch (err) {
+                                                                        alert(`❌ Error: ${err.message}`);
+                                                                    }
+                                                                }}
+                                                                style={{
+                                                                    background: '#10b981',
+                                                                    color: 'white',
+                                                                    border: 'none',
+                                                                    padding: '0.5rem 1rem',
+                                                                    borderRadius: '6px',
+                                                                    cursor: 'pointer',
+                                                                    fontWeight: '600'
+                                                                }}>
+                                                                📧 Send Invitation
+                                                            </button>
+                                                            <button
+                                                                onClick={async () => {
+                                                                    if (!confirm(`Reset password for ${user.email}? They will receive an email with a temporary password.`)) return;
+                                                                    try {
+                                                                        const session = await fetchAuthSession();
+                                                                        const token = session.tokens?.idToken?.toString();
+                                                                        const res = await fetch(`https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api/users/${user.username}`, {
+                                                                            method: 'POST',
+                                                                            headers: { 'Content-Type': 'application/json', 'Authorization': token },
+                                                                            body: JSON.stringify({ action: 'resetPassword', tempPassword: 'NavonTemp2024!' })
+                                                                        });
+                                                                        const data = await res.json();
+                                                                        if (res.ok) {
+                                                                            alert(`✅ Password reset. Email sent to ${user.email}`);
+                                                                        } else {
+                                                                            alert(`❌ Failed: ${data.error || data.message}`);
+                                                                        }
+                                                                    } catch (err) {
+                                                                        alert(`❌ Error: ${err.message}`);
+                                                                    }
+                                                                }}
+                                                                style={{
+                                                                    background: '#f59e0b',
+                                                                    color: '#0f172a',
+                                                                    border: 'none',
+                                                                    padding: '0.5rem 1rem',
+                                                                    borderRadius: '6px',
+                                                                    cursor: 'pointer',
+                                                                    fontWeight: '600'
+                                                                }}>
+                                                                🔑 Reset Password
+                                                            </button>
+                                                            <button
+                                                                onClick={() => deleteUserAccount(user.username)}
+                                                                style={{
+                                                                    background: '#ef4444',
+                                                                    color: 'white',
+                                                                    border: 'none',
+                                                                    padding: '0.5rem 1rem',
+                                                                    borderRadius: '6px',
+                                                                    cursor: 'pointer',
+                                                                    fontWeight: '600'
+                                                                }}>
+                                                                🗑️ Delete User
+                                                            </button>
+                                                        </div>
                                                     )}
                                                 </div>
                                             )}

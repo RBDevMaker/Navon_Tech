@@ -294,7 +294,15 @@ Resources:
                 - cognito-idp:AdminRemoveUserFromGroup
                 - cognito-idp:AdminUpdateUserAttributes
                 - cognito-idp:AdminDeleteUser
+                - cognito-idp:AdminSetUserPassword
+                - cognito-idp:AdminResetUserPassword
               Resource: !GetAtt UserPool.Arn
+        - Statement:
+            - Effect: Allow
+              Action:
+                - ses:SendEmail
+                - ses:SendRawEmail
+              Resource: "*"
         - DynamoDBCrudPolicy:
             TableName: !Ref AuditLogsTable
         - Statement:
@@ -327,6 +335,14 @@ Resources:
             RestApiId: !Ref CompanyApi
             Path: /api/users/{username}
             Method: PUT
+            Auth:
+              Authorizer: CognitoAuthorizer
+        UserAction:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/users/{username}
+            Method: POST
             Auth:
               Authorizer: CognitoAuthorizer
         DeleteUser:
