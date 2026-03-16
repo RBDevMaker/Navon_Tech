@@ -9033,8 +9033,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             </div>
                                             )}
                                             <div style={{ fontSize: '0.9rem', color: '#475569' }}>
-                                                {member.contractName && (
-                                                    <div style={{ marginBottom: '0.5rem' }}>📋 Prime: {member.contractName}</div>
+                                                {member.contractAssignment && (
+                                                    <div style={{ marginBottom: '0.5rem' }}>📋 Prime: {member.contractAssignment}</div>
                                                 )}
                                                 {member.department && (
                                                     <div style={{ marginBottom: '0.5rem' }}>🏷️ {member.department}</div>
