@@ -12285,7 +12285,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     </label>
                                     <input
                                         type="email"
-                                        placeholder="your.username@navontech.com"
+                                        placeholder=""
                                         value={loginEmail}
                                         onChange={(e) => setLoginEmail(e.target.value)}
                                         required
