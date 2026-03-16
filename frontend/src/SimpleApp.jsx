@@ -238,9 +238,14 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             }));
             
             setTeamMembers(formattedProfiles.sort((a, b) => {
-                const lastA = a.name.split(' ').pop().toLowerCase();
-                const lastB = b.name.split(' ').pop().toLowerCase();
-                return lastA.localeCompare(lastB);
+                const partsA = a.name.split(' ');
+                const partsB = b.name.split(' ');
+                const lastA = partsA.pop().toLowerCase();
+                const lastB = partsB.pop().toLowerCase();
+                if (lastA !== lastB) return lastA.localeCompare(lastB);
+                const firstA = partsA[0]?.toLowerCase() || '';
+                const firstB = partsB[0]?.toLowerCase() || '';
+                return firstA.localeCompare(firstB);
             }));
             console.log('Team members updated:', formattedProfiles);
         } catch (error) {
