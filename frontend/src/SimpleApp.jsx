@@ -239,6 +239,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 employmentType: profile.employmentType || 'Employee',
                 billableStatus: profile.billableStatus || 'Billable',
                 contractAssignment: profile.contractAssignment || '',
+                contractName: profile.contractName || '',
                 personalEmail: profile.personalEmail || '',
                 address: profile.address || '',
                 birthdate: profile.birthdate || '',
@@ -9022,6 +9023,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                 </span>
                                             </div>
                                             <div style={{ fontSize: '0.9rem', color: '#475569' }}>
+                                                {member.contractName && (
+                                                    <div style={{ marginBottom: '0.5rem' }}>📋 Contract: {member.contractName}</div>
+                                                )}
                                                 {member.department && (
                                                     <div style={{ marginBottom: '0.5rem' }}>🏷️ {member.department}</div>
                                                 )}
@@ -9213,6 +9217,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 {selectedEmployee.startDate && <div>📅 Start: {new Date(selectedEmployee.startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>}
                                 {selectedEmployee.manager && <div>👤 Manager: {selectedEmployee.manager}</div>}
                                 {selectedEmployee.contractAssignment && <div>📋 Assignment: {selectedEmployee.contractAssignment}</div>}
+                                {selectedEmployee.contractName && <div>📝 Contract Name: {selectedEmployee.contractName}</div>}
                                 {selectedEmployee.salary && (userRole === 'hr' || userRole === 'superadmin') && <div>💰 Salary: {selectedEmployee.salary}</div>}
                             </div>
                         </div>

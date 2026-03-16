@@ -161,6 +161,7 @@ async function createProfile(profileData) {
             employmentType: profileData.employmentType || 'Employee',
             billableStatus: profileData.billableStatus || 'Billable',
             contractAssignment: profileData.contractAssignment || '',
+            contractName: profileData.contractName || '',
             // Personal information
             personalEmail: profileData.personalEmail || '',
             address: profileData.address || '',
@@ -209,7 +210,7 @@ async function updateProfile(employeeId, profileData) {
             'name', 'email', 'phone', 'department', 'title', 'location',
             'emergencyContact', 'emergencyPhone', 'profilePicture', 'employeeGroup',
             'salary', 'startDate', 'manager',
-            'employmentType', 'billableStatus', 'contractAssignment',
+            'employmentType', 'billableStatus', 'contractAssignment', 'contractName',
             'personalEmail', 'address', 'birthdate', 'gender',
             'dietaryAllergy', 'shirtSize'
         ];
