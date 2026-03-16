@@ -237,7 +237,11 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 manager: profile.manager || ''
             }));
             
-            setTeamMembers(formattedProfiles);
+            setTeamMembers(formattedProfiles.sort((a, b) => {
+                const lastA = a.name.split(' ').pop().toLowerCase();
+                const lastB = b.name.split(' ').pop().toLowerCase();
+                return lastA.localeCompare(lastB);
+            }));
             console.log('Team members updated:', formattedProfiles);
         } catch (error) {
             console.error('Error fetching team members:', error);
