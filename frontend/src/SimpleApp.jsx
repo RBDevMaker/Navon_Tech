@@ -48,6 +48,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [isAuthenticating, setIsAuthenticating] = useState(false);
     const [isAddingEmployee, setIsAddingEmployee] = useState(false); // Toggle for My Profile vs Add Employee
     const [isAdminView, setIsAdminView] = useState(true); // Toggle for Administration View vs Employee View
+    const [directorySearch, setDirectorySearch] = useState(''); // Search filter for team directory
     
     // Resume management states
     const [resumes, setResumes] = useState([]);
@@ -387,10 +388,25 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                     'Email': member.email || '',
                     'Phone': member.phone || '',
                     'Location': member.location || '',
+                    'Employment Type': member.employmentType || '',
+                    'Billable Status': member.billableStatus || '',
+                    'Prime': member.contractAssignment || '',
+                    'Personal Email': member.personalEmail || '',
+                    'Address': member.address || '',
+                    'Birthdate': member.birthdate || '',
+                    'Gender': member.gender || '',
+                    'Shirt Size': member.shirtSize || '',
+                    'Dietary/Allergy': member.dietaryAllergy || '',
                     'Emergency Contact': member.emergencyContact || '',
+                    'Emergency Phone': member.emergencyPhone || '',
                     'Manager': member.manager || '',
                     'Start Date': member.startDate || '',
-                    'Salary': member.salary || ''
+                    'Salary': member.salary || '',
+                    'Contractor Type': member.contractorType || '',
+                    'Entity Type': member.entityType || '',
+                    'Tax Classification': member.taxClassification || '',
+                    'Business Legal Name': member.businessLegalName || '',
+                    'DBA Name': member.dbaName || ''
                 }));
             } else if (userRole === 'admin') {
                 // Admin sees everything EXCEPT salary
@@ -402,9 +418,23 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                     'Email': member.email || '',
                     'Phone': member.phone || '',
                     'Location': member.location || '',
+                    'Employment Type': member.employmentType || '',
+                    'Billable Status': member.billableStatus || '',
+                    'Prime': member.contractAssignment || '',
+                    'Personal Email': member.personalEmail || '',
+                    'Address': member.address || '',
+                    'Birthdate': member.birthdate || '',
+                    'Gender': member.gender || '',
+                    'Shirt Size': member.shirtSize || '',
+                    'Dietary/Allergy': member.dietaryAllergy || '',
                     'Emergency Contact': member.emergencyContact || '',
+                    'Emergency Phone': member.emergencyPhone || '',
                     'Manager': member.manager || '',
-                    'Start Date': member.startDate || ''
+                    'Start Date': member.startDate || '',
+                    'Contractor Type': member.contractorType || '',
+                    'Entity Type': member.entityType || '',
+                    'Business Legal Name': member.businessLegalName || '',
+                    'DBA Name': member.dbaName || ''
                 }));
             } else {
                 // Employees see limited info
@@ -7506,7 +7536,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 </div>
 
                                 {/* HR-Only Section */}
-                                {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
+                                {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && isAdminView && (
                                     <div style={{
                                         marginTop: '2rem',
                                         padding: '1.5rem',
@@ -9283,8 +9313,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 Search and connect with team members across the organization
                             </p>
                             <div style={{
-                                background: (userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') ? 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)' : '#f0f9ff',
-                                border: (userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') ? '2px solid #d4af37' : '2px solid #0ea5e9',
+                                background: (userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') && isAdminView ? 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)' : '#f0f9ff',
+                                border: (userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') && isAdminView ? '2px solid #d4af37' : '2px solid #0ea5e9',
                                 borderRadius: '8px',
                                 padding: '1rem',
                                 margin: '0 auto 2rem auto',
@@ -9293,10 +9323,11 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 <p style={{
                                     margin: 0,
                                     fontSize: '0.9rem',
-                                    color: (userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') ? '#92400e' : '#0369a1',
-                                    fontWeight: (userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') ? '700' : '400'
+                                    color: (userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') && isAdminView ? '#92400e' : '#0369a1',
+                                    fontWeight: (userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') && isAdminView ? '700' : '400'
                                 }}>
-                                    {(userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') ? '⭐ ' : 'ℹ️ '}<strong>Your Role: {userRole.toUpperCase()}</strong>{(userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') ? ' ⭐' : ''} - {
+                                    {(userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') && isAdminView ? '⭐ ' : 'ℹ️ '}<strong>{!isAdminView ? 'Employee View' : `Your Role: ${userRole.toUpperCase()}`}</strong>{(userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') && isAdminView ? ' ⭐' : ''} - {
+                                        !isAdminView ? 'You can see Name, Title, and Email only.' :
                                         userRole === 'hr' || userRole === 'superadmin' ? 'You have full directory access with all employee information including salaries.' :
                                         userRole === 'admin' ? 'You have full directory access except salary information (HR/SuperAdmin only).' :
                                         'You can see Name, Title, and Email only.'
@@ -9363,6 +9394,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             <input
                                 type="text"
                                 placeholder="🔍 Search by name, department, or role..."
+                                value={directorySearch}
+                                onChange={(e) => setDirectorySearch(e.target.value)}
                                 style={{
                                     width: '100%',
                                     padding: '1rem',
@@ -9586,7 +9619,18 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             )}
                             
                             {/* Other Team Members from Database */}
-                            {teamMembers.map((member) => (
+                            {teamMembers.filter((member) => {
+                                if (!directorySearch.trim()) return true;
+                                const search = directorySearch.toLowerCase();
+                                return (
+                                    (member.name || '').toLowerCase().includes(search) ||
+                                    (member.department || '').toLowerCase().includes(search) ||
+                                    (member.title || '').toLowerCase().includes(search) ||
+                                    (member.email || '').toLowerCase().includes(search) ||
+                                    (member.location || '').toLowerCase().includes(search) ||
+                                    (member.contractAssignment || '').toLowerCase().includes(search)
+                                );
+                            }).map((member) => (
                                 <div key={member.id} className="hover-lift animate-scale-in" style={{
                                     background: 'white',
                                     padding: '2rem',
