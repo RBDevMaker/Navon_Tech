@@ -6805,12 +6805,30 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     phone: formData.get('phone'),
                                     location: formData.get('location'),
                                     emergencyContact: formData.get('emergencyContact'),
+                                    emergencyPhone: formData.get('emergencyPhone'),
+                                    personalEmail: formData.get('personalEmail'),
+                                    address: formData.get('address'),
+                                    birthdate: formData.get('birthdate'),
+                                    gender: formData.get('gender'),
+                                    dietaryAllergy: formData.get('dietaryAllergy'),
+                                    shirtSize: formData.get('shirtSize'),
                                     showInDirectory: formData.get('showInDirectory') === 'on',
                                     // HR-only fields
                                     employeeId: formData.get('employeeId') || profileData.employeeId,
                                     startDate: formData.get('startDate') || profileData.startDate,
                                     salary: formData.get('salary') || profileData.salary,
-                                    manager: formData.get('manager') || profileData.manager
+                                    manager: formData.get('manager') || profileData.manager,
+                                    employmentType: formData.get('employmentType') || profileData.employmentType,
+                                    billableStatus: formData.get('billableStatus') || profileData.billableStatus,
+                                    contractAssignment: formData.get('contractAssignment') || profileData.contractAssignment,
+                                    contractorType: formData.get('contractorType') || profileData.contractorType,
+                                    taxClassification: formData.get('taxClassification') || profileData.taxClassification,
+                                    entityType: formData.get('entityType') || profileData.entityType,
+                                    singleMemberLLC: formData.get('singleMemberLLC') || profileData.singleMemberLLC,
+                                    llcOwnerName: formData.get('llcOwnerName') || profileData.llcOwnerName,
+                                    businessLegalName: formData.get('businessLegalName') || profileData.businessLegalName,
+                                    dbaName: formData.get('dbaName') || profileData.dbaName,
+                                    usPersonOrCompany: formData.get('usPersonOrCompany') || profileData.usPersonOrCompany
                                 };
                                 
                                 console.log('updatedProfile object:', updatedProfile);
@@ -7159,6 +7177,229 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
                                         />
                                     </div>
+
+                                    {/* Emergency Phone */}
+                                    <div>
+                                        <label style={{
+                                            display: 'block',
+                                            marginBottom: '0.5rem',
+                                            color: '#334155',
+                                            fontWeight: '600',
+                                            fontSize: '0.9rem'
+                                        }}>
+                                            Emergency Phone
+                                        </label>
+                                        <input
+                                            type="tel"
+                                            name="emergencyPhone"
+                                            value={profileData.emergencyPhone || ''}
+                                            onChange={(e) => setProfileData(prev => ({ ...prev, emergencyPhone: e.target.value }))}
+                                            placeholder="Enter emergency phone"
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                border: '2px solid #e2e8f0',
+                                                borderRadius: '8px',
+                                                fontSize: '1rem',
+                                                outline: 'none'
+                                            }}
+                                            onFocus={(e) => e.target.style.borderColor = '#1e3a8a'}
+                                            onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                                        />
+                                    </div>
+
+                                    {/* Personal Email */}
+                                    <div>
+                                        <label style={{
+                                            display: 'block',
+                                            marginBottom: '0.5rem',
+                                            color: '#334155',
+                                            fontWeight: '600',
+                                            fontSize: '0.9rem'
+                                        }}>
+                                            Personal Email
+                                        </label>
+                                        <input
+                                            type="email"
+                                            name="personalEmail"
+                                            value={profileData.personalEmail || ''}
+                                            onChange={(e) => setProfileData(prev => ({ ...prev, personalEmail: e.target.value }))}
+                                            placeholder="Enter personal email"
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                border: '2px solid #e2e8f0',
+                                                borderRadius: '8px',
+                                                fontSize: '1rem',
+                                                outline: 'none'
+                                            }}
+                                            onFocus={(e) => e.target.style.borderColor = '#1e3a8a'}
+                                            onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                                        />
+                                    </div>
+
+                                    {/* Home Address */}
+                                    <div>
+                                        <label style={{
+                                            display: 'block',
+                                            marginBottom: '0.5rem',
+                                            color: '#334155',
+                                            fontWeight: '600',
+                                            fontSize: '0.9rem'
+                                        }}>
+                                            Home Address
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="address"
+                                            value={profileData.address || ''}
+                                            onChange={(e) => setProfileData(prev => ({ ...prev, address: e.target.value }))}
+                                            placeholder="Enter home address"
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                border: '2px solid #e2e8f0',
+                                                borderRadius: '8px',
+                                                fontSize: '1rem',
+                                                outline: 'none'
+                                            }}
+                                            onFocus={(e) => e.target.style.borderColor = '#1e3a8a'}
+                                            onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                                        />
+                                    </div>
+
+                                    {/* Date of Birth */}
+                                    <div>
+                                        <label style={{
+                                            display: 'block',
+                                            marginBottom: '0.5rem',
+                                            color: '#334155',
+                                            fontWeight: '600',
+                                            fontSize: '0.9rem'
+                                        }}>
+                                            Date of Birth
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="birthdate"
+                                            value={profileData.birthdate || ''}
+                                            onChange={(e) => setProfileData(prev => ({ ...prev, birthdate: e.target.value }))}
+                                            placeholder="MM/DD/YYYY"
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                border: '2px solid #e2e8f0',
+                                                borderRadius: '8px',
+                                                fontSize: '1rem',
+                                                outline: 'none'
+                                            }}
+                                            onFocus={(e) => e.target.style.borderColor = '#1e3a8a'}
+                                            onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                                        />
+                                    </div>
+
+                                    {/* Gender */}
+                                    <div>
+                                        <label style={{
+                                            display: 'block',
+                                            marginBottom: '0.5rem',
+                                            color: '#334155',
+                                            fontWeight: '600',
+                                            fontSize: '0.9rem'
+                                        }}>
+                                            Gender
+                                        </label>
+                                        <select
+                                            name="gender"
+                                            value={profileData.gender || ''}
+                                            onChange={(e) => setProfileData(prev => ({ ...prev, gender: e.target.value }))}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                border: '2px solid #e2e8f0',
+                                                borderRadius: '8px',
+                                                fontSize: '1rem',
+                                                outline: 'none',
+                                                background: 'white'
+                                            }}
+                                            onFocus={(e) => e.target.style.borderColor = '#1e3a8a'}
+                                            onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                                        >
+                                            <option value="">Select gender</option>
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
+                                            <option value="Non-binary">Non-binary</option>
+                                            <option value="Prefer not to say">Prefer not to say</option>
+                                        </select>
+                                    </div>
+
+                                    {/* Dietary/Allergy */}
+                                    <div>
+                                        <label style={{
+                                            display: 'block',
+                                            marginBottom: '0.5rem',
+                                            color: '#334155',
+                                            fontWeight: '600',
+                                            fontSize: '0.9rem'
+                                        }}>
+                                            Dietary/Allergy Info
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="dietaryAllergy"
+                                            value={profileData.dietaryAllergy || ''}
+                                            onChange={(e) => setProfileData(prev => ({ ...prev, dietaryAllergy: e.target.value }))}
+                                            placeholder="Any dietary restrictions or allergies"
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                border: '2px solid #e2e8f0',
+                                                borderRadius: '8px',
+                                                fontSize: '1rem',
+                                                outline: 'none'
+                                            }}
+                                            onFocus={(e) => e.target.style.borderColor = '#1e3a8a'}
+                                            onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                                        />
+                                    </div>
+
+                                    {/* Shirt Size */}
+                                    <div>
+                                        <label style={{
+                                            display: 'block',
+                                            marginBottom: '0.5rem',
+                                            color: '#334155',
+                                            fontWeight: '600',
+                                            fontSize: '0.9rem'
+                                        }}>
+                                            Shirt Size
+                                        </label>
+                                        <select
+                                            name="shirtSize"
+                                            value={profileData.shirtSize || ''}
+                                            onChange={(e) => setProfileData(prev => ({ ...prev, shirtSize: e.target.value }))}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                border: '2px solid #e2e8f0',
+                                                borderRadius: '8px',
+                                                fontSize: '1rem',
+                                                outline: 'none',
+                                                background: 'white'
+                                            }}
+                                            onFocus={(e) => e.target.style.borderColor = '#1e3a8a'}
+                                            onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                                        >
+                                            <option value="">Select size</option>
+                                            <option value="XS">XS</option>
+                                            <option value="S">S</option>
+                                            <option value="M">M</option>
+                                            <option value="L">L</option>
+                                            <option value="XL">XL</option>
+                                            <option value="2XL">2XL</option>
+                                            <option value="3XL">3XL</option>
+                                        </select>
+                                    </div>
                                 </div>
 
                                 {/* Privacy Settings */}
@@ -7358,6 +7599,340 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                     value={profileData.manager || ''}
                                                     onChange={(e) => setProfileData(prev => ({ ...prev, manager: e.target.value }))}
                                                     placeholder="Manager's name"
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '0.75rem',
+                                                        border: '2px solid #fbbf24',
+                                                        borderRadius: '8px',
+                                                        fontSize: '1rem',
+                                                        outline: 'none',
+                                                        background: 'white'
+                                                    }}
+                                                />
+                                            </div>
+
+                                            {/* Employment Type */}
+                                            <div>
+                                                <label style={{
+                                                    display: 'block',
+                                                    marginBottom: '0.5rem',
+                                                    color: '#92400e',
+                                                    fontWeight: '600',
+                                                    fontSize: '0.9rem'
+                                                }}>
+                                                    Employment Type
+                                                </label>
+                                                <select
+                                                    name="employmentType"
+                                                    value={profileData.employmentType || ''}
+                                                    onChange={(e) => setProfileData(prev => ({ ...prev, employmentType: e.target.value }))}
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '0.75rem',
+                                                        border: '2px solid #fbbf24',
+                                                        borderRadius: '8px',
+                                                        fontSize: '1rem',
+                                                        outline: 'none',
+                                                        background: 'white'
+                                                    }}
+                                                >
+                                                    <option value="">Select type</option>
+                                                    <option value="Employee">Employee</option>
+                                                    <option value="Contract">Contract</option>
+                                                </select>
+                                            </div>
+
+                                            {/* Billable Status */}
+                                            <div>
+                                                <label style={{
+                                                    display: 'block',
+                                                    marginBottom: '0.5rem',
+                                                    color: '#92400e',
+                                                    fontWeight: '600',
+                                                    fontSize: '0.9rem'
+                                                }}>
+                                                    Billable Status
+                                                </label>
+                                                <select
+                                                    name="billableStatus"
+                                                    value={profileData.billableStatus || ''}
+                                                    onChange={(e) => setProfileData(prev => ({ ...prev, billableStatus: e.target.value }))}
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '0.75rem',
+                                                        border: '2px solid #fbbf24',
+                                                        borderRadius: '8px',
+                                                        fontSize: '1rem',
+                                                        outline: 'none',
+                                                        background: 'white'
+                                                    }}
+                                                >
+                                                    <option value="">Select status</option>
+                                                    <option value="Billable">Billable</option>
+                                                    <option value="Non-Billable">Non-Billable</option>
+                                                </select>
+                                            </div>
+
+                                            {/* Prime (Contract Assignment) */}
+                                            <div>
+                                                <label style={{
+                                                    display: 'block',
+                                                    marginBottom: '0.5rem',
+                                                    color: '#92400e',
+                                                    fontWeight: '600',
+                                                    fontSize: '0.9rem'
+                                                }}>
+                                                    Prime
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    name="contractAssignment"
+                                                    value={profileData.contractAssignment || ''}
+                                                    onChange={(e) => setProfileData(prev => ({ ...prev, contractAssignment: e.target.value }))}
+                                                    placeholder="e.g., Archfield, Nightwing"
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '0.75rem',
+                                                        border: '2px solid #fbbf24',
+                                                        borderRadius: '8px',
+                                                        fontSize: '1rem',
+                                                        outline: 'none',
+                                                        background: 'white'
+                                                    }}
+                                                />
+                                            </div>
+
+                                            {/* Contractor Type */}
+                                            <div>
+                                                <label style={{
+                                                    display: 'block',
+                                                    marginBottom: '0.5rem',
+                                                    color: '#92400e',
+                                                    fontWeight: '600',
+                                                    fontSize: '0.9rem'
+                                                }}>
+                                                    Contractor Type
+                                                </label>
+                                                <select
+                                                    name="contractorType"
+                                                    value={profileData.contractorType || ''}
+                                                    onChange={(e) => setProfileData(prev => ({ ...prev, contractorType: e.target.value }))}
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '0.75rem',
+                                                        border: '2px solid #fbbf24',
+                                                        borderRadius: '8px',
+                                                        fontSize: '1rem',
+                                                        outline: 'none',
+                                                        background: 'white'
+                                                    }}
+                                                >
+                                                    <option value="">Select type</option>
+                                                    <option value="Individual">Individual</option>
+                                                    <option value="Company">Company</option>
+                                                </select>
+                                            </div>
+
+                                            {/* US Person or Company */}
+                                            <div>
+                                                <label style={{
+                                                    display: 'block',
+                                                    marginBottom: '0.5rem',
+                                                    color: '#92400e',
+                                                    fontWeight: '600',
+                                                    fontSize: '0.9rem'
+                                                }}>
+                                                    U.S. Person or Company
+                                                </label>
+                                                <select
+                                                    name="usPersonOrCompany"
+                                                    value={profileData.usPersonOrCompany || ''}
+                                                    onChange={(e) => setProfileData(prev => ({ ...prev, usPersonOrCompany: e.target.value }))}
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '0.75rem',
+                                                        border: '2px solid #fbbf24',
+                                                        borderRadius: '8px',
+                                                        fontSize: '1rem',
+                                                        outline: 'none',
+                                                        background: 'white'
+                                                    }}
+                                                >
+                                                    <option value="">Select</option>
+                                                    <option value="Yes">Yes</option>
+                                                    <option value="No">No</option>
+                                                </select>
+                                            </div>
+
+                                            {/* Entity Type */}
+                                            <div>
+                                                <label style={{
+                                                    display: 'block',
+                                                    marginBottom: '0.5rem',
+                                                    color: '#92400e',
+                                                    fontWeight: '600',
+                                                    fontSize: '0.9rem'
+                                                }}>
+                                                    Entity Type
+                                                </label>
+                                                <select
+                                                    name="entityType"
+                                                    value={profileData.entityType || ''}
+                                                    onChange={(e) => setProfileData(prev => ({ ...prev, entityType: e.target.value }))}
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '0.75rem',
+                                                        border: '2px solid #fbbf24',
+                                                        borderRadius: '8px',
+                                                        fontSize: '1rem',
+                                                        outline: 'none',
+                                                        background: 'white'
+                                                    }}
+                                                >
+                                                    <option value="">Select entity type</option>
+                                                    <option value="Sole Proprietor">Sole Proprietor</option>
+                                                    <option value="LLC">LLC</option>
+                                                    <option value="S-corp">S-corp</option>
+                                                    <option value="C-corp">C-corp</option>
+                                                    <option value="Partnership">Partnership</option>
+                                                </select>
+                                            </div>
+
+                                            {/* Tax Classification */}
+                                            <div>
+                                                <label style={{
+                                                    display: 'block',
+                                                    marginBottom: '0.5rem',
+                                                    color: '#92400e',
+                                                    fontWeight: '600',
+                                                    fontSize: '0.9rem'
+                                                }}>
+                                                    Tax Classification
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    name="taxClassification"
+                                                    value={profileData.taxClassification || ''}
+                                                    onChange={(e) => setProfileData(prev => ({ ...prev, taxClassification: e.target.value }))}
+                                                    placeholder="e.g., Individual, S-corp"
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '0.75rem',
+                                                        border: '2px solid #fbbf24',
+                                                        borderRadius: '8px',
+                                                        fontSize: '1rem',
+                                                        outline: 'none',
+                                                        background: 'white'
+                                                    }}
+                                                />
+                                            </div>
+
+                                            {/* Single Member LLC */}
+                                            <div>
+                                                <label style={{
+                                                    display: 'block',
+                                                    marginBottom: '0.5rem',
+                                                    color: '#92400e',
+                                                    fontWeight: '600',
+                                                    fontSize: '0.9rem'
+                                                }}>
+                                                    Single Member LLC
+                                                </label>
+                                                <select
+                                                    name="singleMemberLLC"
+                                                    value={profileData.singleMemberLLC || ''}
+                                                    onChange={(e) => setProfileData(prev => ({ ...prev, singleMemberLLC: e.target.value }))}
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '0.75rem',
+                                                        border: '2px solid #fbbf24',
+                                                        borderRadius: '8px',
+                                                        fontSize: '1rem',
+                                                        outline: 'none',
+                                                        background: 'white'
+                                                    }}
+                                                >
+                                                    <option value="">Select</option>
+                                                    <option value="Yes">Yes</option>
+                                                    <option value="No">No</option>
+                                                </select>
+                                            </div>
+
+                                            {/* LLC Owner Name */}
+                                            <div>
+                                                <label style={{
+                                                    display: 'block',
+                                                    marginBottom: '0.5rem',
+                                                    color: '#92400e',
+                                                    fontWeight: '600',
+                                                    fontSize: '0.9rem'
+                                                }}>
+                                                    LLC Owner Name
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    name="llcOwnerName"
+                                                    value={profileData.llcOwnerName || ''}
+                                                    onChange={(e) => setProfileData(prev => ({ ...prev, llcOwnerName: e.target.value }))}
+                                                    placeholder="Owner name"
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '0.75rem',
+                                                        border: '2px solid #fbbf24',
+                                                        borderRadius: '8px',
+                                                        fontSize: '1rem',
+                                                        outline: 'none',
+                                                        background: 'white'
+                                                    }}
+                                                />
+                                            </div>
+
+                                            {/* Business Legal Name */}
+                                            <div>
+                                                <label style={{
+                                                    display: 'block',
+                                                    marginBottom: '0.5rem',
+                                                    color: '#92400e',
+                                                    fontWeight: '600',
+                                                    fontSize: '0.9rem'
+                                                }}>
+                                                    Business Legal Name
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    name="businessLegalName"
+                                                    value={profileData.businessLegalName || ''}
+                                                    onChange={(e) => setProfileData(prev => ({ ...prev, businessLegalName: e.target.value }))}
+                                                    placeholder="Legal business name"
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '0.75rem',
+                                                        border: '2px solid #fbbf24',
+                                                        borderRadius: '8px',
+                                                        fontSize: '1rem',
+                                                        outline: 'none',
+                                                        background: 'white'
+                                                    }}
+                                                />
+                                            </div>
+
+                                            {/* DBA Name */}
+                                            <div>
+                                                <label style={{
+                                                    display: 'block',
+                                                    marginBottom: '0.5rem',
+                                                    color: '#92400e',
+                                                    fontWeight: '600',
+                                                    fontSize: '0.9rem'
+                                                }}>
+                                                    DBA Name
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    name="dbaName"
+                                                    value={profileData.dbaName || ''}
+                                                    onChange={(e) => setProfileData(prev => ({ ...prev, dbaName: e.target.value }))}
+                                                    placeholder="Doing Business As name"
                                                     style={{
                                                         width: '100%',
                                                         padding: '0.75rem',
@@ -9033,7 +9608,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             </div>
                                             )}
                                             <div style={{ fontSize: '0.9rem', color: '#475569' }}>
-                                                {member.contractAssignment && (
+                                                {member.contractAssignment && (userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
                                                     <div style={{ marginBottom: '0.5rem' }}>📋 Prime: {member.contractAssignment}</div>
                                                 )}
                                                 {member.department && (
@@ -9175,23 +9750,92 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                         {/* Header */}
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                <div style={{
-                                    width: '70px',
-                                    height: '70px',
-                                    background: selectedEmployee.profilePicture ? 'transparent' : '#1e3a8a',
-                                    borderRadius: '50%',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    color: 'white',
-                                    fontWeight: 'bold',
-                                    fontSize: '1.5rem',
-                                    overflow: 'hidden'
-                                }}>
-                                    {selectedEmployee.profilePicture ? (
-                                        <img src={selectedEmployee.profilePicture} alt={selectedEmployee.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                    ) : (
-                                        selectedEmployee.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'
+                                <div style={{ position: 'relative' }}>
+                                    <div style={{
+                                        width: '70px',
+                                        height: '70px',
+                                        background: selectedEmployee.profilePicture ? 'transparent' : '#1e3a8a',
+                                        borderRadius: '50%',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        color: 'white',
+                                        fontWeight: 'bold',
+                                        fontSize: '1.5rem',
+                                        overflow: 'hidden'
+                                    }}>
+                                        {selectedEmployee.profilePicture ? (
+                                            <img src={selectedEmployee.profilePicture} alt={selectedEmployee.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        ) : (
+                                            selectedEmployee.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'
+                                        )}
+                                    </div>
+                                    {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin' || selectedEmployee.email === profileData.email) && (
+                                        <>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                id="modalProfilePicUpload"
+                                                style={{ display: 'none' }}
+                                                onChange={async (e) => {
+                                                    if (e.target.files && e.target.files[0]) {
+                                                        const file = e.target.files[0];
+                                                        if (file.size > 10 * 1024 * 1024) {
+                                                            alert('❌ File size must be less than 10MB');
+                                                            e.target.value = '';
+                                                            return;
+                                                        }
+                                                        if (!file.type.startsWith('image/')) {
+                                                            alert('❌ Please upload an image file');
+                                                            e.target.value = '';
+                                                            return;
+                                                        }
+                                                        try {
+                                                            const oldImageUrl = selectedEmployee.profilePicture || null;
+                                                            const imageUrl = await uploadProfilePicture(file, selectedEmployee.email || selectedEmployee.employeeId, oldImageUrl);
+                                                            // Update the selected employee state
+                                                            setSelectedEmployee(prev => ({ ...prev, profilePicture: imageUrl }));
+                                                            // Also update in the team members list
+                                                            setTeamMembers(prev => prev.map(m => 
+                                                                m.email === selectedEmployee.email ? { ...m, profilePicture: imageUrl } : m
+                                                            ));
+                                                            // Save to database
+                                                            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                                                            await fetch(`${apiUrl}/profiles/${selectedEmployee.email}`, {
+                                                                method: 'PUT',
+                                                                headers: { 'Content-Type': 'application/json' },
+                                                                body: JSON.stringify({ profilePicture: imageUrl })
+                                                            });
+                                                            alert('✅ Photo updated successfully!');
+                                                        } catch (error) {
+                                                            console.error('Photo upload error:', error);
+                                                            alert('❌ Failed to upload photo. Please try again.');
+                                                        }
+                                                        e.target.value = '';
+                                                    }
+                                                }}
+                                            />
+                                            <label
+                                                htmlFor="modalProfilePicUpload"
+                                                style={{
+                                                    position: 'absolute',
+                                                    bottom: '-2px',
+                                                    right: '-2px',
+                                                    background: '#d4af37',
+                                                    borderRadius: '50%',
+                                                    width: '24px',
+                                                    height: '24px',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    cursor: 'pointer',
+                                                    fontSize: '0.7rem',
+                                                    border: '2px solid white',
+                                                    boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+                                                }}
+                                                title="Change photo"
+                                            >📷</label>
+                                        </>
                                     )}
                                 </div>
                                 <div>
@@ -9228,7 +9872,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 {selectedEmployee.location && <div>🏢 {selectedEmployee.location}</div>}
                                 {selectedEmployee.startDate && <div>📅 Start: {new Date(selectedEmployee.startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>}
                                 {selectedEmployee.manager && <div>👤 Manager: {selectedEmployee.manager}</div>}
-                                {selectedEmployee.contractAssignment && <div>📋 Prime: {selectedEmployee.contractAssignment}</div>}
+                                {selectedEmployee.contractAssignment && (userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && <div>📋 Prime: {selectedEmployee.contractAssignment}</div>}
                                 {selectedEmployee.salary && (userRole === 'hr' || userRole === 'superadmin') && <div>💰 Salary: {selectedEmployee.salary}</div>}
                             </div>
                         </div>
