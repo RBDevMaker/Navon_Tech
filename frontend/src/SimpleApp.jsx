@@ -149,6 +149,31 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         }
     }, [currentPage, userRole]);
 
+    // Fetch logged-in user's profile from DynamoDB when navigating to profile page
+    useEffect(() => {
+        if ((currentPage === 'employeeprofile' || currentPage === 'secureportal') && loginEmail && !isAddingEmployee) {
+            const fetchMyProfile = async () => {
+                try {
+                    const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                    const res = await fetch(`${apiUrl}/profiles/${encodeURIComponent(loginEmail)}`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data && data.name) {
+                            setProfileData(prev => ({
+                                ...prev,
+                                ...data,
+                                employeeId: data.employeeId || data.email
+                            }));
+                        }
+                    }
+                } catch (err) {
+                    console.log('Could not fetch profile:', err);
+                }
+            };
+            fetchMyProfile();
+        }
+    }, [currentPage, loginEmail, isAddingEmployee]);
+
     // Fetch HR documents from S3 when on HR documents page
     useEffect(() => {
         if (currentPage === 'hrdocuments') {
@@ -6839,12 +6864,12 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     console.log('Payload being sent:', JSON.stringify(profilePayload, null, 2));
                                     
                                     const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
-                                    const endpoint = `${apiUrl}/profiles`;
+                                    const endpoint = `${apiUrl}/profiles/${encodeURIComponent(employeeIdToSave)}`;
                                     console.log('API URL:', endpoint);
                                     console.log('========================');
                                     
                                     const response = await fetch(endpoint, {
-                                        method: 'POST',
+                                        method: 'PUT',
                                         headers: {
                                             'Content-Type': 'application/json'
                                         },
