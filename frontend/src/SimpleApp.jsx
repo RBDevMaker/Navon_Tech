@@ -364,6 +364,17 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         }
     };
 
+    // Normalize date string to YYYY-MM-DD format for date inputs
+    const normalizeDate = (dateStr) => {
+        if (!dateStr) return '';
+        // Already in YYYY-MM-DD format
+        if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
+        // Try parsing any date format
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return '';
+        return d.toISOString().split('T')[0];
+    };
+
     // Permission functions
     const canDeleteHandbook = () => userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin';
     const canUploadHandbook = () => userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin';
@@ -6854,13 +6865,13 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     emergencyPhone: profileData.emergencyPhone || '',
                                     personalEmail: profileData.personalEmail || '',
                                     address: profileData.address || '',
-                                    birthdate: profileData.birthdate || '',
+                                    birthdate: normalizeDate(profileData.birthdate),
                                     gender: profileData.gender || '',
                                     dietaryAllergy: profileData.dietaryAllergy || '',
                                     shirtSize: profileData.shirtSize || '',
                                     showInDirectory: profileData.showInDirectory || false,
                                     employeeId: profileData.employeeId || profileData.email,
-                                    startDate: profileData.startDate || '',
+                                    startDate: normalizeDate(profileData.startDate),
                                     salary: profileData.salary || '',
                                     manager: profileData.manager || '',
                                     employmentType: profileData.employmentType || '',
@@ -7630,7 +7641,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                 <input
                                                     type="date"
                                                     name="startDate"
-                                                    value={profileData.startDate || ''}
+                                                    value={normalizeDate(profileData.startDate)}
                                                     onChange={(e) => setProfileData(prev => ({ ...prev, startDate: e.target.value }))}
                                                     style={{
                                                         width: '100%',
