@@ -1,5 +1,5 @@
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
-const { DynamoDBDocumentClient, PutCommand, GetCommand, ScanCommand, UpdateCommand } = require('@aws-sdk/lib-dynamodb');
+const { DynamoDBDocumentClient, PutCommand, GetCommand, ScanCommand, UpdateCommand, DeleteCommand } = require('@aws-sdk/lib-dynamodb');
 
 const client = new DynamoDBClient({ region: process.env.AWS_REGION || 'us-east-1' });
 const docClient = DynamoDBDocumentClient.from(client);
@@ -29,9 +29,14 @@ exports.handler = async (event) => {
         const path = event.path || event.rawPath || '';
         const method = event.httpMethod || event.requestContext?.http?.method;
         
-        // Get employee ID from path or body
-        const pathParts = path.split('/');
-        const employeeId = pathParts[pathParts.length - 1];
+        // Get employee ID from path parameters or path
+        const employeeId = event.pathParameters?.employeeId 
+            ? decodeURIComponent(event.pathParameters.employeeId)
+            : (() => {
+                const pathParts = path.split('/');
+                const rawId = pathParts[pathParts.length - 1];
+                return decodeURIComponent(rawId);
+            })();
 
         switch (method) {
             case 'GET':
@@ -108,24 +113,44 @@ async function getProfile(employeeId) {
 
 async function getAllProfiles() {
     try {
-        const params = {
+        // First, scan ALL employee profiles (including inactive) to clean up duplicates
+        const allParams = {
             TableName: TABLE_NAME,
-            FilterExpression: 'begins_with(PK, :pk) AND SK = :sk AND active = :active',
+            FilterExpression: 'begins_with(PK, :pk) AND SK = :sk',
             ExpressionAttributeValues: {
                 ':pk': 'EMPLOYEE#',
-                ':sk': 'PROFILE',
-                ':active': true
+                ':sk': 'PROFILE'
             }
         };
 
-        const result = await docClient.send(new ScanCommand(params));
+        const allResult = await docClient.send(new ScanCommand(allParams));
+        const allItems = allResult.Items || [];
+
+        // Find and delete URL-encoded duplicates (PK contains %)
+        const toDelete = allItems.filter(item => (item.PK || '').includes('%'));
+        for (const item of toDelete) {
+            try {
+                await docClient.send(new DeleteCommand({
+                    TableName: TABLE_NAME,
+                    Key: { PK: item.PK, SK: item.SK }
+                }));
+                console.log('Deleted encoded duplicate:', item.PK);
+            } catch (err) {
+                console.error('Failed to delete duplicate:', item.PK, err);
+            }
+        }
+
+        // Now return only active, non-encoded profiles
+        const activeProfiles = allItems.filter(item => 
+            item.active === true && !(item.PK || '').includes('%')
+        );
 
         return {
             statusCode: 200,
             headers: CORS_HEADERS,
             body: JSON.stringify({
-                profiles: result.Items || [],
-                count: result.Count || 0
+                profiles: activeProfiles,
+                count: activeProfiles.length
             })
         };
     } catch (error) {
@@ -207,7 +232,7 @@ async function updateProfile(employeeId, profileData) {
         const expressionAttributeValues = {};
 
         const fields = [
-            'name', 'email', 'phone', 'department', 'title', 'location',
+            'employeeId', 'name', 'email', 'phone', 'department', 'title', 'location',
             'emergencyContact', 'emergencyPhone', 'profilePicture', 'employeeGroup',
             'salary', 'startDate', 'manager',
             'employmentType', 'billableStatus', 'contractAssignment', 'contractName',
@@ -229,6 +254,11 @@ async function updateProfile(employeeId, profileData) {
         updateExpressions.push('#updatedAt = :updatedAt');
         expressionAttributeNames['#updatedAt'] = 'updatedAt';
         expressionAttributeValues[':updatedAt'] = timestamp;
+
+        // Always ensure active is true on update
+        updateExpressions.push('#active = :active');
+        expressionAttributeNames['#active'] = 'active';
+        expressionAttributeValues[':active'] = true;
 
         const params = {
             TableName: TABLE_NAME,

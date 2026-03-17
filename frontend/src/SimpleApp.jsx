@@ -50,6 +50,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [newPassword, setNewPassword] = useState('');
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
     const [isAddingEmployee, setIsAddingEmployee] = useState(false); // Toggle for My Profile vs Add Employee
+    const [editingEmployeeEmail, setEditingEmployeeEmail] = useState(null); // Track when editing another employee's profile
     const [isAdminView, setIsAdminView] = useState(true); // Toggle for Administration View vs Employee View
     const [directorySearch, setDirectorySearch] = useState(''); // Search filter for team directory
     const [directoryFilter, setDirectoryFilter] = useState('all'); // Category filter for team directory
@@ -83,6 +84,10 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         const handleHashChange = () => {
             const hash = window.location.hash.slice(1) || 'home';
             setCurrentPage(hash);
+            // Clear editing state when navigating away from profile form
+            if (hash !== 'myprofile' && editingEmployeeEmail) {
+                setEditingEmployeeEmail(null);
+            }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
@@ -177,6 +182,18 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     useEffect(() => {
         if (currentPage === 'teamdirectory') {
             fetchTeamMembers();
+            // Also re-fetch logged-in user's profile to ensure YOU card is correct
+            if (loginEmail && !editingEmployeeEmail) {
+                const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                fetch(`${apiUrl}/profiles/${loginEmail}`)
+                    .then(res => res.ok ? res.json() : null)
+                    .then(data => {
+                        if (data && data.name) {
+                            setProfileData(prev => ({ ...prev, ...data, employeeId: data.employeeId || data.email }));
+                        }
+                    })
+                    .catch(() => {});
+            }
         }
     }, [currentPage]);
 
@@ -189,7 +206,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
 
     // Fetch logged-in user's profile from DynamoDB
     useEffect(() => {
-        if (loginEmail && !isAddingEmployee) {
+        if (loginEmail && !isAddingEmployee && !editingEmployeeEmail) {
             const fetchMyProfile = async () => {
                 try {
                     const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
@@ -210,7 +227,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             };
             fetchMyProfile();
         }
-    }, [loginEmail, isAddingEmployee]);
+    }, [loginEmail, isAddingEmployee, editingEmployeeEmail]);
 
     // Fetch HR documents from S3 when on HR documents page
     useEffect(() => {
@@ -6823,41 +6840,41 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 const firstName = formData.get('firstName') || profileData.name?.split(' ')[0] || '';
                                 const lastName = formData.get('lastName') || profileData.name?.split(' ').slice(1).join(' ') || '';
                                 
-                                // Collect form data
+                                // Collect form data - use profileData directly since inputs are controlled
                                 const updatedProfile = {
                                     firstName,
                                     lastName,
                                     name: `${firstName} ${lastName}`.trim(),
-                                    title: formData.get('title'),
-                                    department: formData.get('department'),
-                                    email: formData.get('email'),
-                                    phone: formData.get('phone'),
-                                    location: formData.get('location'),
-                                    emergencyContact: formData.get('emergencyContact'),
-                                    emergencyPhone: formData.get('emergencyPhone'),
-                                    personalEmail: formData.get('personalEmail'),
-                                    address: formData.get('address'),
-                                    birthdate: formData.get('birthdate'),
-                                    gender: formData.get('gender'),
-                                    dietaryAllergy: formData.get('dietaryAllergy'),
-                                    shirtSize: formData.get('shirtSize'),
-                                    showInDirectory: formData.get('showInDirectory') === 'on',
-                                    // HR-only fields
-                                    employeeId: formData.get('employeeId') || profileData.employeeId,
-                                    startDate: formData.get('startDate') || profileData.startDate,
-                                    salary: formData.get('salary') || profileData.salary,
-                                    manager: formData.get('manager') || profileData.manager,
-                                    employmentType: formData.get('employmentType') || profileData.employmentType,
-                                    billableStatus: formData.get('billableStatus') || profileData.billableStatus,
-                                    contractAssignment: formData.get('contractAssignment') || profileData.contractAssignment,
-                                    contractorType: formData.get('contractorType') || profileData.contractorType,
-                                    taxClassification: formData.get('taxClassification') || profileData.taxClassification,
-                                    entityType: formData.get('entityType') || profileData.entityType,
-                                    singleMemberLLC: formData.get('singleMemberLLC') || profileData.singleMemberLLC,
-                                    llcOwnerName: formData.get('llcOwnerName') || profileData.llcOwnerName,
-                                    businessLegalName: formData.get('businessLegalName') || profileData.businessLegalName,
-                                    dbaName: formData.get('dbaName') || profileData.dbaName,
-                                    usPersonOrCompany: formData.get('usPersonOrCompany') || profileData.usPersonOrCompany
+                                    title: profileData.title || '',
+                                    department: profileData.department || '',
+                                    email: profileData.email || loginEmail || '',
+                                    phone: profileData.phone || '',
+                                    location: profileData.location || '',
+                                    emergencyContact: profileData.emergencyContact || '',
+                                    emergencyPhone: profileData.emergencyPhone || '',
+                                    personalEmail: profileData.personalEmail || '',
+                                    address: profileData.address || '',
+                                    birthdate: profileData.birthdate || '',
+                                    gender: profileData.gender || '',
+                                    dietaryAllergy: profileData.dietaryAllergy || '',
+                                    shirtSize: profileData.shirtSize || '',
+                                    showInDirectory: profileData.showInDirectory || false,
+                                    employeeId: profileData.employeeId || profileData.email,
+                                    startDate: profileData.startDate || '',
+                                    salary: profileData.salary || '',
+                                    manager: profileData.manager || '',
+                                    employmentType: profileData.employmentType || '',
+                                    billableStatus: profileData.billableStatus || '',
+                                    contractAssignment: profileData.contractAssignment || '',
+                                    contractorType: profileData.contractorType || '',
+                                    taxClassification: profileData.taxClassification || '',
+                                    entityType: profileData.entityType || '',
+                                    singleMemberLLC: profileData.singleMemberLLC || '',
+                                    llcOwnerName: profileData.llcOwnerName || '',
+                                    businessLegalName: profileData.businessLegalName || '',
+                                    dbaName: profileData.dbaName || '',
+                                    usPersonOrCompany: profileData.usPersonOrCompany || '',
+                                    profilePicture: profileData.profilePicture || ''
                                 };
                                 
                                 console.log('updatedProfile object:', updatedProfile);
@@ -6881,22 +6898,23 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 // Save profile to database
                                 try {
                                     // Ensure we have an employeeId (use email if not set)
-                                    const employeeIdToSave = updatedProfile.employeeId || updatedProfile.email;
+                                    // Always use email as the primary key for saving
+                                    const employeeIdToSave = updatedProfile.email;
                                     
                                     console.log('=== PROFILE SAVE DEBUG ===');
                                     console.log('updatedProfile.employeeId:', updatedProfile.employeeId);
                                     console.log('updatedProfile.email:', updatedProfile.email);
-                                    console.log('employeeIdToSave:', employeeIdToSave);
+                                    console.log('employeeIdToSave (email):', employeeIdToSave);
                                     console.log('Full updatedProfile:', JSON.stringify(updatedProfile, null, 2));
                                     
-                                    if (!employeeIdToSave || !updatedProfile.email) {
-                                        alert(`⚠️ Email is required to save profile.\n\nemployeeId: ${employeeIdToSave}\nemail: ${updatedProfile.email}`);
+                                    if (!employeeIdToSave) {
+                                        alert(`⚠️ Email is required to save profile.`);
                                         return;
                                     }
                                     
                                     const profilePayload = {
                                         ...updatedProfile,
-                                        employeeId: employeeIdToSave  // Override with the correct employeeId
+                                        employeeId: employeeIdToSave  // Always use email as the key
                                     };
                                     
                                     console.log('Payload being sent:', JSON.stringify(profilePayload, null, 2));
@@ -6930,21 +6948,46 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     return;
                                 }
                                 
-                                // Update profile state
-                                setProfileData(prev => ({
-                                    ...prev,
-                                    ...updatedProfile,
-                                    name: `${updatedProfile.firstName} ${updatedProfile.lastName}`
-                                }));
-                                
-                                // In production, this would save to a database
-                                console.log('Profile updated:', updatedProfile);
-                                
-                                // Show success message and offer to view team directory
-                                const viewDirectory = confirm('✅ Profile updated successfully!\n\nWould you like to view the Team Directory now?');
-                                if (viewDirectory) {
+                                // If editing another employee, restore logged-in user's profile
+                                if (editingEmployeeEmail) {
+                                    setEditingEmployeeEmail(null);
+                                    // Refresh team directory data
+                                    fetchTeamMembers();
+                                    // Re-fetch logged-in user's own profile
+                                    try {
+                                        const apiUrl2 = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                                        const res = await fetch(`${apiUrl2}/profiles/${loginEmail}`);
+                                        if (res.ok) {
+                                            const data = await res.json();
+                                            if (data && data.name) {
+                                                setProfileData(prev => ({ ...prev, ...data, employeeId: data.employeeId || data.email }));
+                                            }
+                                        }
+                                    } catch (err) {
+                                        console.log('Could not re-fetch own profile:', err);
+                                    }
+                                    alert(`✅ ${updatedProfile.name}'s profile updated successfully!`);
                                     setCurrentPage('teamdirectory');
                                     window.scrollTo({ top: 0, behavior: 'smooth' });
+                                } else {
+                                    // Update own profile state
+                                    setProfileData(prev => ({
+                                        ...prev,
+                                        ...updatedProfile,
+                                        name: `${updatedProfile.firstName} ${updatedProfile.lastName}`
+                                    }));
+                                    
+                                    // Refresh team directory data
+                                    fetchTeamMembers();
+                                    
+                                    console.log('Profile updated:', updatedProfile);
+                                    
+                                    // Show success message and offer to view team directory
+                                    const viewDirectory = confirm('✅ Profile updated successfully!\n\nWould you like to view the Team Directory now?');
+                                    if (viewDirectory) {
+                                        setCurrentPage('teamdirectory');
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }
                                 }
                             }}>
                                 <h3 style={{
@@ -6952,8 +6995,22 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     fontSize: '1.5rem',
                                     marginBottom: '2rem'
                                 }}>
-                                    Personal Information
+                                    {editingEmployeeEmail ? `✏️ Editing: ${profileData.name || editingEmployeeEmail}` : 'Personal Information'}
                                 </h3>
+                                {editingEmployeeEmail && (
+                                    <div style={{
+                                        background: '#fef3c7',
+                                        border: '2px solid #d4af37',
+                                        borderRadius: '8px',
+                                        padding: '0.75rem 1rem',
+                                        marginBottom: '1.5rem',
+                                        fontSize: '0.9rem',
+                                        color: '#92400e',
+                                        fontWeight: '600'
+                                    }}>
+                                        ⚠️ You are editing {profileData.name || editingEmployeeEmail}'s profile. Changes will save to their record.
+                                    </div>
+                                )}
 
                                 <div style={{
                                     display: 'grid',
@@ -7484,11 +7541,11 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 </div>
 
                                 {/* HR-Only Section */}
-                                {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && isAdminView && (
+                                {userRole !== 'employee' && (
                                     <div style={{
                                         marginTop: '2rem',
                                         padding: '1.5rem',
-                                        background: (userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') ? 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)' : '#fef3c7',
+                                        background: (userRole === 'superadmin' || userRole === 'hr') ? 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)' : '#fef3c7',
                                         borderRadius: '8px',
                                         border: '2px solid #d4af37'
                                     }}>
@@ -7502,7 +7559,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                 fontSize: '1.2rem',
                                                 margin: 0
                                             }}>
-                                                {(userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') && '⭐ '}🔐 HR-Only Information{(userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') && ' ⭐'}
+                                                {(userRole === 'superadmin' || userRole === 'hr') && '⭐ '}🔐 HR-Only Information{(userRole === 'superadmin' || userRole === 'hr') && ' ⭐'}
                                             </h4>
                                             <span style={{
                                                 background: '#d4af37',
@@ -7522,7 +7579,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             marginBottom: '1.5rem',
                                             fontWeight: '600'
                                         }}>
-                                            Only HR, Admin, and SuperAdmin users can view and edit these fields
+                                            Visible to all roles except Employees. Salary visible to HR and SuperAdmin only.
                                         </p>
 
                                         <div style={{
@@ -7954,7 +8011,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     </button>
                                     <button
                                         type="button"
-                                        onClick={() => {
+                                        onClick={async () => {
                                             if (isAddingEmployee) {
                                                 // Clear form when canceling add employee
                                                 setProfileData({
@@ -7974,6 +8031,23 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                 });
                                                 setPendingProfilePicture(null);
                                                 setIsAddingEmployee(false);
+                                            } else if (editingEmployeeEmail) {
+                                                // Restore logged-in user's profile when canceling edit of another employee
+                                                setEditingEmployeeEmail(null);
+                                                try {
+                                                    const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                                                    const res = await fetch(`${apiUrl}/profiles/${loginEmail}`);
+                                                    if (res.ok) {
+                                                        const data = await res.json();
+                                                        if (data && data.name) {
+                                                            setProfileData(prev => ({ ...prev, ...data, employeeId: data.employeeId || data.email }));
+                                                        }
+                                                    }
+                                                } catch (err) {
+                                                    console.log('Could not re-fetch own profile:', err);
+                                                }
+                                                setCurrentPage('teamdirectory');
+                                                window.scrollTo({ top: 0, behavior: 'smooth' });
                                             } else {
                                                 setCurrentPage('employeeprofile');
                                                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -9445,13 +9519,33 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                     <div style={{ color: '#64748b', fontSize: '0.9rem' }}>
                                                         {profileData.title || 'Your Title'}
                                                     </div>
-                                                    {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && isAdminView && (
-                                                        <div style={{ color: '#64748b', fontSize: '0.8rem' }}>
-                                                            Employee ID: {profileData.email?.split('@')[0].toUpperCase() || 'N/A'}
-                                                        </div>
-                                                    )}
+
                                                 </div>
                                             </div>
+                                            {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && isAdminView && (
+                                            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
+                                                <span style={{
+                                                    background: profileData.employmentType === 'Contract' ? '#fef3c7' : '#dcfce7',
+                                                    color: profileData.employmentType === 'Contract' ? '#92400e' : '#166534',
+                                                    padding: '0.25rem 0.6rem',
+                                                    borderRadius: '12px',
+                                                    fontSize: '0.7rem',
+                                                    fontWeight: '600'
+                                                }}>
+                                                    {profileData.employmentType || 'Employee'}
+                                                </span>
+                                                <span style={{
+                                                    background: profileData.billableStatus === 'Non-Billable' ? '#fee2e2' : '#dbeafe',
+                                                    color: profileData.billableStatus === 'Non-Billable' ? '#991b1b' : '#1e40af',
+                                                    padding: '0.25rem 0.6rem',
+                                                    borderRadius: '12px',
+                                                    fontSize: '0.7rem',
+                                                    fontWeight: '600'
+                                                }}>
+                                                    {profileData.billableStatus || 'Billable'}
+                                                </span>
+                                            </div>
+                                            )}
                                             <div style={{ fontSize: '0.9rem', color: '#475569' }}>
                                                 <div style={{ marginBottom: '0.5rem' }}>
                                                     📧 {profileData.email || 'your.email@navontech.com'}
@@ -9495,6 +9589,10 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                         )}
                                                     </>
                                                 )}
+                                            </div>
+                                            <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.5rem', cursor: 'pointer' }}
+                                                onClick={() => { setSelectedEmployee({ ...profileData, id: profileData.employeeId || profileData.email }); }}>
+                                                Click to view full profile →
                                             </div>
                                         </div>
                                         {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && isAdminView && profileData.title && (
@@ -9590,6 +9688,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             {teamMembers.filter((member) => {
                                 // Exclude archived employees from main directory
                                 if (member.employmentType === 'Archived') return false;
+                                // Exclude logged-in user (shown in the "You" card above)
+                                if (loginEmail && member.email && member.email.toLowerCase() === loginEmail.toLowerCase()) return false;
                                 if (!directorySearch.trim()) return true;
                                 const search = directorySearch.toLowerCase();
                                 // Category filter mode
@@ -9712,6 +9812,25 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                     <div style={{ marginBottom: '0.5rem' }}>🏢 {member.location}</div>
                                                 )}
                                                 <div style={{ marginBottom: '0.5rem' }}>📧 {member.email}</div>
+                                                {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && isAdminView && (
+                                                    <>
+                                                        {member.phone && (
+                                                            <div style={{ marginBottom: '0.5rem' }}>📱 {member.phone}</div>
+                                                        )}
+                                                        {member.startDate && (
+                                                            <div style={{ marginBottom: '0.5rem' }}>📅 Start Date: {new Date(member.startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                                                        )}
+                                                        {member.salary && (userRole === 'hr' || userRole === 'superadmin') && (
+                                                            <div style={{ marginBottom: '0.5rem' }}>💰 Salary: {member.salary}</div>
+                                                        )}
+                                                        {member.manager && (
+                                                            <div style={{ marginBottom: '0.5rem' }}>👤 Manager: {member.manager}</div>
+                                                        )}
+                                                        {member.emergencyContact && (
+                                                            <div style={{ marginBottom: '0.5rem' }}>🚨 Emergency: {member.emergencyContact}</div>
+                                                        )}
+                                                    </>
+                                                )}
                                             </div>
                                             {(isAdminView || member.email === loginEmail) && (
                                             <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.5rem' }}>
@@ -10138,11 +10257,80 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.85rem', color: '#475569' }}>
                                     <div>🏛️ Business Legal Name: {selectedEmployee.businessLegalName || 'Not provided'}</div>
                                     <div>📋 DBA Name: {selectedEmployee.dbaName || 'N/A'}</div>
-                                    <div>� Entity Type: {selectedEmployee.entityType || 'Not provided'}</div>
+                                    <div>🏢 Entity Type: {selectedEmployee.entityType || 'Not provided'}</div>
                                     <div>📊 Tax Classification: {selectedEmployee.taxClassification || 'Not provided'}</div>
-                                    <div>� LLC Owner:f {selectedEmployee.llcOwnerName || 'N/A'}</div>
+                                    <div>👤 LLC Owner: {selectedEmployee.llcOwnerName || 'N/A'}</div>
                                     <div>🔄 Single Member LLC: {selectedEmployee.singleMemberLLC || 'N/A'}</div>
                                 </div>
+                            </div>
+                        )}
+
+                        {/* Edit Profile Button - HR and SuperAdmin only */}
+                        {(userRole === 'hr' || userRole === 'superadmin') && isAdminView && (
+                            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
+                                <button
+                                    onClick={() => {
+                                        // Load selected employee's data into the profile form
+                                        const empEmail = selectedEmployee.email || '';
+                                        setEditingEmployeeEmail(empEmail);
+                                        setProfileData({
+                                            name: selectedEmployee.name || '',
+                                            email: empEmail,
+                                            phone: selectedEmployee.phone || '',
+                                            department: selectedEmployee.department || '',
+                                            title: selectedEmployee.title || '',
+                                            location: selectedEmployee.location || '',
+                                            emergencyContact: selectedEmployee.emergencyContact || '',
+                                            emergencyPhone: selectedEmployee.emergencyPhone || '',
+                                            profilePicture: selectedEmployee.profilePicture || '',
+                                            salary: selectedEmployee.salary || '',
+                                            startDate: selectedEmployee.startDate || '',
+                                            manager: selectedEmployee.manager || '',
+                                            employeeId: selectedEmployee.email || '',
+                                            employmentType: selectedEmployee.employmentType || '',
+                                            billableStatus: selectedEmployee.billableStatus || '',
+                                            contractAssignment: selectedEmployee.contractAssignment || '',
+                                            personalEmail: selectedEmployee.personalEmail || '',
+                                            address: selectedEmployee.address || '',
+                                            birthdate: selectedEmployee.birthdate || '',
+                                            gender: selectedEmployee.gender || '',
+                                            dietaryAllergy: selectedEmployee.dietaryAllergy || '',
+                                            shirtSize: selectedEmployee.shirtSize || '',
+                                            contractorType: selectedEmployee.contractorType || '',
+                                            taxClassification: selectedEmployee.taxClassification || '',
+                                            entityType: selectedEmployee.entityType || '',
+                                            singleMemberLLC: selectedEmployee.singleMemberLLC || '',
+                                            llcOwnerName: selectedEmployee.llcOwnerName || '',
+                                            businessLegalName: selectedEmployee.businessLegalName || '',
+                                            dbaName: selectedEmployee.dbaName || '',
+                                            usPersonOrCompany: selectedEmployee.usPersonOrCompany || ''
+                                        });
+                                        setIsAddingEmployee(false);
+                                        setSelectedEmployee(null);
+                                        setCurrentPage('myprofile');
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }}
+                                    style={{
+                                        background: '#1e3a8a',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '0.75rem 2rem',
+                                        borderRadius: '8px',
+                                        cursor: 'pointer',
+                                        fontWeight: '700',
+                                        fontSize: '1rem',
+                                        transition: 'all 0.3s ease'
+                                    }}
+                                    onMouseOver={(e) => {
+                                        e.target.style.transform = 'translateY(-2px)';
+                                        e.target.style.boxShadow = '0 4px 12px rgba(30, 58, 138, 0.3)';
+                                    }}
+                                    onMouseOut={(e) => {
+                                        e.target.style.transform = 'translateY(0)';
+                                        e.target.style.boxShadow = 'none';
+                                    }}>
+                                    ✏️ Edit Profile
+                                </button>
                             </div>
                         )}
                     </div>
