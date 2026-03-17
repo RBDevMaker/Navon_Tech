@@ -118,6 +118,17 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 employeeId: ''
             });
             setPendingProfilePicture(null);
+        } else if (loginEmail) {
+            // Re-fetch profile when switching back from Add Employee
+            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+            fetch(`${apiUrl}/profiles/${encodeURIComponent(loginEmail)}`)
+                .then(res => res.ok ? res.json() : null)
+                .then(data => {
+                    if (data && data.name) {
+                        setProfileData(prev => ({ ...prev, ...data, employeeId: data.employeeId || data.email }));
+                    }
+                })
+                .catch(() => {});
         }
     }, [isAddingEmployee]);
 
@@ -149,9 +160,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         }
     }, [currentPage, userRole]);
 
-    // Fetch logged-in user's profile from DynamoDB when navigating to profile page
+    // Fetch logged-in user's profile from DynamoDB
     useEffect(() => {
-        if ((currentPage === 'employeeprofile' || currentPage === 'secureportal') && loginEmail && !isAddingEmployee) {
+        if (loginEmail && !isAddingEmployee) {
             const fetchMyProfile = async () => {
                 try {
                     const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
@@ -172,7 +183,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             };
             fetchMyProfile();
         }
-    }, [currentPage, loginEmail, isAddingEmployee]);
+    }, [loginEmail, isAddingEmployee]);
 
     // Fetch HR documents from S3 when on HR documents page
     useEffect(() => {
@@ -9262,13 +9273,13 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     }}>
                                     <option value="all">All Employees</option>
                                     <option value="department">By Department</option>
-                                    <option value="employmentType">By Employment Type</option>
-                                    <option value="billableStatus">By Billable Status</option>
-                                    <option value="prime">By Prime</option>
-                                    <option value="gender">By Gender</option>
-                                    <option value="location">By Location</option>
-                                    <option value="shirtSize">By T-Shirt Size</option>
-                                    <option value="startDate">By Start Date</option>
+                                    {isAdminView && <option value="employmentType">By Employment Type</option>}
+                                    {isAdminView && <option value="billableStatus">By Billable Status</option>}
+                                    {isAdminView && <option value="prime">By Prime</option>}
+                                    {isAdminView && <option value="gender">By Gender</option>}
+                                    {isAdminView && <option value="location">By Location</option>}
+                                    {isAdminView && <option value="shirtSize">By T-Shirt Size</option>}
+                                    {isAdminView && <option value="startDate">By Start Date</option>}
                                 </select>
                                 {directoryFilter !== 'all' && (
                                     <select
@@ -13263,6 +13274,26 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             setRequiresNewPassword(false);
                                             setNewPassword('');
                                             setConfirmNewPassword('');
+                                            
+                                            // Get email and fetch profile
+                                            let email = loginEmail;
+                                            try {
+                                                const idPayload = session.tokens?.idToken?.payload;
+                                                if (idPayload?.email) email = idPayload.email;
+                                            } catch (e) {}
+                                            if (!email.includes('@')) email = `${email}@navontech.com`;
+                                            setLoginEmail(email);
+                                            try {
+                                                const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                                                const profileRes = await fetch(`${apiUrl}/profiles/${encodeURIComponent(email)}`);
+                                                if (profileRes.ok) {
+                                                    const profileJson = await profileRes.json();
+                                                    if (profileJson && profileJson.name) {
+                                                        setProfileData(prev => ({ ...prev, ...profileJson, employeeId: profileJson.employeeId || profileJson.email }));
+                                                    }
+                                                }
+                                            } catch (profileErr) { console.log('Profile fetch failed:', profileErr); }
+                                            
                                             setCurrentPage('secureportal');
                                             window.scrollTo({ top: 0, behavior: 'smooth' });
                                         }
@@ -13404,6 +13435,28 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     else if (groups.includes('HR')) role = 'hr';
                                     
                                     setUserRole(role);
+                                    
+                                    // Get email for profile lookups
+                                    let email = loginEmail;
+                                    try {
+                                        const idPayload = session.tokens?.idToken?.payload;
+                                        if (idPayload?.email) email = idPayload.email;
+                                    } catch (e) {}
+                                    if (!email.includes('@')) email = `${email}@navontech.com`;
+                                    setLoginEmail(email);
+                                    
+                                    // Fetch profile immediately after login
+                                    try {
+                                        const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                                        const profileRes = await fetch(`${apiUrl}/profiles/${encodeURIComponent(email)}`);
+                                        if (profileRes.ok) {
+                                            const profileJson = await profileRes.json();
+                                            if (profileJson && profileJson.name) {
+                                                setProfileData(prev => ({ ...prev, ...profileJson, employeeId: profileJson.employeeId || profileJson.email }));
+                                            }
+                                        }
+                                    } catch (profileErr) { console.log('Profile fetch after login failed:', profileErr); }
+                                    
                                     setCurrentPage('secureportal');
                                     window.scrollTo({ top: 0, behavior: 'smooth' });
                                 } catch (err) {
