@@ -283,6 +283,7 @@ Resources:
         Variables:
           USER_POOL_ID: !Ref UserPool
           AUDIT_TABLE: !Ref AuditLogsTable
+          DYNAMODB_TABLE: !Ref CompanyDataTable
       Policies:
         - Statement:
             - Effect: Allow
@@ -305,6 +306,8 @@ Resources:
               Resource: "*"
         - DynamoDBCrudPolicy:
             TableName: !Ref AuditLogsTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref CompanyDataTable
         - Statement:
             - Effect: Allow
               Action:

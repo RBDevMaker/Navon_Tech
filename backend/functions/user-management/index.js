@@ -1,7 +1,7 @@
 const { CognitoIdentityProviderClient, ListUsersCommand, AdminGetUserCommand, AdminListGroupsForUserCommand, AdminAddUserToGroupCommand, AdminRemoveUserFromGroupCommand, AdminUpdateUserAttributesCommand, AdminDeleteUserCommand, AdminResetUserPasswordCommand, AdminSetUserPasswordCommand } = require('@aws-sdk/client-cognito-identity-provider');
 const { SESClient, SendEmailCommand } = require('@aws-sdk/client-ses');
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
-const { DynamoDBDocumentClient, PutCommand } = require('@aws-sdk/lib-dynamodb');
+const { DynamoDBDocumentClient, PutCommand, GetCommand } = require('@aws-sdk/lib-dynamodb');
 const { v4: uuidv4 } = require('uuid');
 
 const cognitoClient = new CognitoIdentityProviderClient({ region: process.env.AWS_REGION || 'us-east-1' });
@@ -506,8 +506,26 @@ async function inviteUser(username, data, requesterRole) {
         }
 
         const userDetails = await getUserDetails(username);
-        const tempPassword = data.tempPassword || 'NavonTemp2024!';
-        const portalUrl = data.portalUrl || 'https://navontech.com/#portal';
+        
+        // Look up employee's start date from DynamoDB for temp password
+        const empEmail = userDetails.email || username;
+        let hireYear = new Date().getFullYear();
+        try {
+            const profileResult = await docClient.send(new GetCommand({
+                TableName: process.env.DYNAMODB_TABLE || 'CompanyDataTable',
+                Key: { PK: `EMPLOYEE#${empEmail}`, SK: 'PROFILE' }
+            }));
+            if (profileResult.Item && profileResult.Item.startDate) {
+                const parsed = new Date(profileResult.Item.startDate);
+                if (!isNaN(parsed.getTime())) {
+                    hireYear = parsed.getFullYear();
+                }
+            }
+        } catch (err) {
+            console.log('Could not fetch employee profile for hire year:', err);
+        }
+        const tempPassword = data.tempPassword || `NavonTemp${hireYear}!`;
+        const portalUrl = data.portalUrl || 'https://navontech.com/#login';
 
         // Set a new temporary password so user is forced to change on login
         await cognitoClient.send(new AdminSetUserPasswordCommand({
@@ -677,8 +695,26 @@ async function resetUserPassword(username, data, requesterRole) {
         }
 
         const userDetails = await getUserDetails(username);
-        const tempPassword = data.tempPassword || 'NavonTemp2024!';
-        const portalUrl = data.portalUrl || 'https://navontech.com/#portal';
+        
+        // Look up employee's start date from DynamoDB for temp password
+        const empEmail2 = userDetails.email || username;
+        let hireYear2 = new Date().getFullYear();
+        try {
+            const profileResult2 = await docClient.send(new GetCommand({
+                TableName: process.env.DYNAMODB_TABLE || 'CompanyDataTable',
+                Key: { PK: `EMPLOYEE#${empEmail2}`, SK: 'PROFILE' }
+            }));
+            if (profileResult2.Item && profileResult2.Item.startDate) {
+                const parsed2 = new Date(profileResult2.Item.startDate);
+                if (!isNaN(parsed2.getTime())) {
+                    hireYear2 = parsed2.getFullYear();
+                }
+            }
+        } catch (err) {
+            console.log('Could not fetch employee profile for hire year:', err);
+        }
+        const tempPassword = data.tempPassword || `NavonTemp${hireYear2}!`;
+        const portalUrl = data.portalUrl || 'https://navontech.com/#login';
 
         // Set a new temporary password
         await cognitoClient.send(new AdminSetUserPasswordCommand({
