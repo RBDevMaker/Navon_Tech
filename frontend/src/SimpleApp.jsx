@@ -98,6 +98,33 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             setUserRole(authenticatedUserRole);
         }
     }, [authenticatedUserRole]);
+
+    // Check for existing auth session on mount and load profile
+    useEffect(() => {
+        const checkExistingSession = async () => {
+            try {
+                const session = await fetchAuthSession();
+                if (session.tokens?.idToken) {
+                    const payload = session.tokens.idToken.payload;
+                    const email = payload?.email || '';
+                    const groups = session.tokens.accessToken?.payload['cognito:groups'] || [];
+                    
+                    let role = 'employee';
+                    if (groups.includes('SuperAdmin')) role = 'superadmin';
+                    else if (groups.includes('Admin')) role = 'admin';
+                    else if (groups.includes('HR')) role = 'hr';
+                    
+                    if (email) {
+                        setLoginEmail(email);
+                        setUserRole(role);
+                    }
+                }
+            } catch (err) {
+                // No existing session
+            }
+        };
+        checkExistingSession();
+    }, []);
     
     // Clear form when switching to Add Employee mode
     useEffect(() => {
@@ -121,7 +148,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         } else if (loginEmail) {
             // Re-fetch profile when switching back from Add Employee
             const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
-            fetch(`${apiUrl}/profiles/${encodeURIComponent(loginEmail)}`)
+            fetch(`${apiUrl}/profiles/${loginEmail}`)
                 .then(res => res.ok ? res.json() : null)
                 .then(data => {
                     if (data && data.name) {
@@ -166,7 +193,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             const fetchMyProfile = async () => {
                 try {
                     const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
-                    const res = await fetch(`${apiUrl}/profiles/${encodeURIComponent(loginEmail)}`);
+                    const res = await fetch(`${apiUrl}/profiles/${loginEmail}`);
                     if (res.ok) {
                         const data = await res.json();
                         if (data && data.name) {
@@ -6875,7 +6902,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     console.log('Payload being sent:', JSON.stringify(profilePayload, null, 2));
                                     
                                     const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
-                                    const endpoint = `${apiUrl}/profiles/${encodeURIComponent(employeeIdToSave)}`;
+                                    const endpoint = `${apiUrl}/profiles/${employeeIdToSave}`;
                                     console.log('API URL:', endpoint);
                                     console.log('========================');
                                     
@@ -13285,7 +13312,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             setLoginEmail(email);
                                             try {
                                                 const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
-                                                const profileRes = await fetch(`${apiUrl}/profiles/${encodeURIComponent(email)}`);
+                                                const profileRes = await fetch(`${apiUrl}/profiles/${email}`);
                                                 if (profileRes.ok) {
                                                     const profileJson = await profileRes.json();
                                                     if (profileJson && profileJson.name) {
@@ -13448,7 +13475,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     // Fetch profile immediately after login
                                     try {
                                         const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
-                                        const profileRes = await fetch(`${apiUrl}/profiles/${encodeURIComponent(email)}`);
+                                        const profileRes = await fetch(`${apiUrl}/profiles/${email}`);
                                         if (profileRes.ok) {
                                             const profileJson = await profileRes.json();
                                             if (profileJson && profileJson.name) {
