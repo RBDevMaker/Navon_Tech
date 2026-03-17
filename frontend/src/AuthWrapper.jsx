@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Amplify } from 'aws-amplify';
-import { signIn, signOut, getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
+import { signIn, signOut, getCurrentUser, fetchAuthSession, confirmSignIn } from 'aws-amplify/auth';
 import awsConfig from './aws-config';
 
 // Configure Amplify
@@ -21,6 +21,10 @@ export function AuthWrapper({ children }) {
     const [requestEmail, setRequestEmail] = useState('');
     const [requestReason, setRequestReason] = useState('');
     const [requestSuccess, setRequestSuccess] = useState(false);
+    const [newPasswordRequired, setNewPasswordRequired] = useState(false);
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmNewPassword, setConfirmNewPassword] = useState('');
+    const [showNewPassword, setShowNewPassword] = useState(false);
 
     useEffect(() => {
         checkUser();
@@ -60,7 +64,15 @@ export function AuthWrapper({ children }) {
         e.preventDefault();
         setError('');
         try {
-            await signIn({ username: email, password });
+            const result = await signIn({ username: email, password });
+            
+            // Check if Cognito requires a new password (first login with temp password)
+            if (result.nextStep?.signInStep === 'CONFIRM_SIGN_IN_WITH_NEW_PASSWORD') {
+                setNewPasswordRequired(true);
+                setShowLogin(false);
+                return;
+            }
+            
             await checkUser();
             // Log login event to audit logs
             try {
@@ -77,6 +89,46 @@ export function AuthWrapper({ children }) {
         } catch (err) {
             console.error('Sign in error:', err);
             setError(err.message || 'Failed to sign in');
+        }
+    }
+
+    async function handleNewPassword(e) {
+        e.preventDefault();
+        setError('');
+        
+        if (newPassword !== confirmNewPassword) {
+            setError('Passwords do not match.');
+            return;
+        }
+        if (newPassword.length < 8) {
+            setError('Password must be at least 8 characters.');
+            return;
+        }
+        
+        try {
+            const result = await confirmSignIn({ challengeResponse: newPassword });
+            
+            if (result.isSignedIn) {
+                setNewPasswordRequired(false);
+                setNewPassword('');
+                setConfirmNewPassword('');
+                await checkUser();
+                // Log first login event
+                try {
+                    const session = await fetchAuthSession();
+                    const token = session.tokens?.idToken?.toString();
+                    if (token) {
+                        fetch(`${import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api'}/audit-logs`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                            body: JSON.stringify({ eventType: 'FIRST_LOGIN', action: 'User completed first login and set new password', userEmail: email })
+                        });
+                    }
+                } catch (logErr) { console.log('Audit log failed:', logErr); }
+            }
+        } catch (err) {
+            console.error('New password error:', err);
+            setError(err.message || 'Failed to set new password');
         }
     }
 
@@ -421,6 +473,154 @@ export function AuthWrapper({ children }) {
                             </div>
                         </form>
                     )}
+                </div>
+            </div>
+        );
+    }
+
+    // New Password Required Screen (first login with temp password)
+    if (newPasswordRequired) {
+        return (
+            <div style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'rgba(15, 23, 42, 0.5)',
+                backdropFilter: 'blur(5px)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                padding: '2rem',
+                zIndex: 9999
+            }}>
+                <div style={{
+                    background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
+                    padding: '3rem',
+                    borderRadius: '16px',
+                    boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+                    maxWidth: '450px',
+                    width: '100%',
+                    border: '3px solid #d4af37'
+                }}>
+                    <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                        <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>🔑</div>
+                        <h1 style={{ color: 'white', fontSize: '1.8rem', marginBottom: '0.5rem', fontWeight: '800' }}>
+                            Create New Password
+                        </h1>
+                        <p style={{ color: 'rgba(255, 255, 255, 0.9)', fontSize: '0.95rem', lineHeight: '1.5' }}>
+                            Welcome to Navon Technologies! For security, please create a new password to replace your temporary one.
+                        </p>
+                    </div>
+
+                    <form onSubmit={handleNewPassword}>
+                        <div style={{ marginBottom: '1.5rem' }}>
+                            <label style={{ display: 'block', marginBottom: '0.5rem', color: 'white', fontWeight: '600' }}>
+                                New Password
+                            </label>
+                            <div style={{ position: 'relative' }}>
+                                <input
+                                    type={showNewPassword ? "text" : "password"}
+                                    value={newPassword}
+                                    onChange={(e) => setNewPassword(e.target.value)}
+                                    required
+                                    style={{
+                                        width: '100%',
+                                        padding: '0.75rem',
+                                        paddingRight: '3rem',
+                                        border: '2px solid rgba(255, 255, 255, 0.3)',
+                                        borderRadius: '8px',
+                                        fontSize: '1rem',
+                                        background: 'rgba(255, 255, 255, 0.9)',
+                                        color: '#1e293b'
+                                    }}
+                                    placeholder="Enter new password"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowNewPassword(!showNewPassword)}
+                                    style={{
+                                        position: 'absolute',
+                                        right: '0.75rem',
+                                        top: '50%',
+                                        transform: 'translateY(-50%)',
+                                        background: 'transparent',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        fontSize: '0.9rem',
+                                        color: '#1e3a8a',
+                                        fontWeight: '600'
+                                    }}>
+                                    {showNewPassword ? 'Hide' : 'Show'}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div style={{ marginBottom: '1.5rem' }}>
+                            <label style={{ display: 'block', marginBottom: '0.5rem', color: 'white', fontWeight: '600' }}>
+                                Confirm New Password
+                            </label>
+                            <input
+                                type={showNewPassword ? "text" : "password"}
+                                value={confirmNewPassword}
+                                onChange={(e) => setConfirmNewPassword(e.target.value)}
+                                required
+                                style={{
+                                    width: '100%',
+                                    padding: '0.75rem',
+                                    border: '2px solid rgba(255, 255, 255, 0.3)',
+                                    borderRadius: '8px',
+                                    fontSize: '1rem',
+                                    background: 'rgba(255, 255, 255, 0.9)',
+                                    color: '#1e293b'
+                                }}
+                                placeholder="Confirm new password"
+                            />
+                        </div>
+
+                        <div style={{
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '8px',
+                            padding: '0.75rem 1rem',
+                            marginBottom: '1.5rem',
+                            border: '1px solid rgba(255, 255, 255, 0.2)'
+                        }}>
+                            <p style={{ color: 'rgba(255, 255, 255, 0.9)', fontSize: '0.8rem', margin: 0, lineHeight: '1.6' }}>
+                                Password must be at least 8 characters with uppercase, lowercase, and numbers.
+                            </p>
+                        </div>
+
+                        {error && (
+                            <div style={{
+                                background: '#fee2e2',
+                                border: '1px solid #ef4444',
+                                color: '#991b1b',
+                                padding: '0.75rem',
+                                borderRadius: '8px',
+                                marginBottom: '1rem',
+                                fontSize: '0.9rem'
+                            }}>
+                                {error}
+                            </div>
+                        )}
+
+                        <button
+                            type="submit"
+                            style={{
+                                width: '100%',
+                                background: '#d4af37',
+                                color: '#0f172a',
+                                padding: '1rem',
+                                border: 'none',
+                                borderRadius: '8px',
+                                fontSize: '1rem',
+                                fontWeight: '700',
+                                cursor: 'pointer'
+                            }}>
+                            Set Password & Continue
+                        </button>
+                    </form>
                 </div>
             </div>
         );
