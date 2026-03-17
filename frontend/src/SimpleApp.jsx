@@ -13599,6 +13599,34 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                 color: '#1e293b', outline: 'none'
                                             }}
                                         />
+                                        {newPassword && (() => {
+                                            let score = 0;
+                                            if (newPassword.length >= 8) score++;
+                                            if (newPassword.length >= 12) score++;
+                                            if (/[A-Z]/.test(newPassword)) score++;
+                                            if (/[a-z]/.test(newPassword)) score++;
+                                            if (/[0-9]/.test(newPassword)) score++;
+                                            if (/[^A-Za-z0-9]/.test(newPassword)) score++;
+                                            const level = score <= 2 ? 'Weak' : score <= 4 ? 'Fair' : 'Strong';
+                                            const color = score <= 2 ? '#ef4444' : score <= 4 ? '#f59e0b' : '#10b981';
+                                            const width = `${Math.min((score / 6) * 100, 100)}%`;
+                                            return (
+                                                <div style={{ marginTop: '0.5rem' }}>
+                                                    <div style={{ background: 'rgba(255,255,255,0.2)', borderRadius: '4px', height: '6px', overflow: 'hidden' }}>
+                                                        <div style={{ background: color, height: '100%', width, borderRadius: '4px', transition: 'all 0.3s ease' }} />
+                                                    </div>
+                                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.25rem' }}>
+                                                        <span style={{ fontSize: '0.75rem', color, fontWeight: '600' }}>{level}</span>
+                                                        <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.7)' }}>
+                                                            {!/[A-Z]/.test(newPassword) && <span style={{ marginLeft: '0.5rem' }}>+ uppercase</span>}
+                                                            {!/[0-9]/.test(newPassword) && <span style={{ marginLeft: '0.5rem' }}>+ number</span>}
+                                                            {!/[^A-Za-z0-9]/.test(newPassword) && <span style={{ marginLeft: '0.5rem' }}>+ symbol</span>}
+                                                            {newPassword.length < 12 && <span style={{ marginLeft: '0.5rem' }}>+ length</span>}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })()}
                                     </div>
 
                                     <div style={{ marginBottom: '1rem' }}>
