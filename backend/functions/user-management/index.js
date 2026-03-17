@@ -507,7 +507,7 @@ async function inviteUser(username, data, requesterRole) {
 
         const userDetails = await getUserDetails(username);
         const tempPassword = data.tempPassword || 'NavonTemp2024!';
-        const portalUrl = data.portalUrl || 'https://main.d21gtgfmmjo0uh.amplifyapp.com';
+        const portalUrl = data.portalUrl || 'https://navontech.com/#portal';
 
         // Set a new temporary password so user is forced to change on login
         await cognitoClient.send(new AdminSetUserPasswordCommand({
@@ -600,7 +600,7 @@ If you have any questions or need assistance, please contact your administrator 
 <tr><td style="background:#1e293b;padding:24px 40px;text-align:center;">
 <p style="color:#d4af37;font-size:12px;margin:0 0 8px;font-weight:600;letter-spacing:1px;">NAVON TECHNOLOGIES</p>
 <p style="color:#94a3b8;font-size:11px;margin:0;">This is a confidential communication. Unauthorized access is prohibited.</p>
-<p style="color:#94a3b8;font-size:11px;margin:4px 0 0;">Bowie, Maryland | navontech.com</p>
+<p style="color:#94a3b8;font-size:11px;margin:4px 0 0;">Leesburg, Virginia | navontech.com</p>
 </td></tr>
 
 </table>
@@ -678,7 +678,7 @@ async function resetUserPassword(username, data, requesterRole) {
 
         const userDetails = await getUserDetails(username);
         const tempPassword = data.tempPassword || 'NavonTemp2024!';
-        const portalUrl = data.portalUrl || 'https://main.d21gtgfmmjo0uh.amplifyapp.com';
+        const portalUrl = data.portalUrl || 'https://navontech.com/#portal';
 
         // Set a new temporary password
         await cognitoClient.send(new AdminSetUserPasswordCommand({
@@ -750,7 +750,7 @@ You will be prompted to create a new password on your next login. If you did not
 <tr><td style="background:#1e293b;padding:24px 40px;text-align:center;">
 <p style="color:#d4af37;font-size:12px;margin:0 0 8px;font-weight:600;letter-spacing:1px;">NAVON TECHNOLOGIES</p>
 <p style="color:#94a3b8;font-size:11px;margin:0;">This is a confidential communication. Unauthorized access is prohibited.</p>
-<p style="color:#94a3b8;font-size:11px;margin:4px 0 0;">Bowie, Maryland | navontech.com</p>
+<p style="color:#94a3b8;font-size:11px;margin:4px 0 0;">Leesburg, Virginia | navontech.com</p>
 </td></tr>
 
 </table>

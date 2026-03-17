@@ -54,7 +54,13 @@ export function AuthWrapper({ children }) {
             setShowLogin(false);
         } catch (err) {
             console.log('Not signed in');
-            setShowSecurityWarning(true);
+            // If URL has #portal, skip security warning and go straight to login
+            if (window.location.hash === '#portal') {
+                setShowSecurityWarning(false);
+                setShowLogin(true);
+            } else {
+                setShowSecurityWarning(true);
+            }
         } finally {
             setLoading(false);
         }
