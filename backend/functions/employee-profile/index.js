@@ -196,6 +196,7 @@ async function createProfile(profileData) {
             dietaryAllergy: profileData.dietaryAllergy || '',
             shirtSize: profileData.shirtSize || '',
             // Metadata
+            showInDirectory: profileData.showInDirectory || false,
             createdAt: timestamp,
             updatedAt: timestamp,
             active: true
@@ -239,7 +240,8 @@ async function updateProfile(employeeId, profileData) {
             'personalEmail', 'address', 'birthdate', 'gender',
             'dietaryAllergy', 'shirtSize',
             'contractorType', 'taxClassification', 'entityType', 'singleMemberLLC',
-            'llcOwnerName', 'businessLegalName', 'dbaName', 'usPersonOrCompany'
+            'llcOwnerName', 'businessLegalName', 'dbaName', 'usPersonOrCompany',
+            'showInDirectory'
         ];
 
         fields.forEach(field => {

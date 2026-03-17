@@ -51,6 +51,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
     const [isAddingEmployee, setIsAddingEmployee] = useState(false); // Toggle for My Profile vs Add Employee
     const [editingEmployeeEmail, setEditingEmployeeEmail] = useState(null); // Track when editing another employee's profile
+    const [savedOwnProfile, setSavedOwnProfile] = useState(null); // Store own profile while editing another employee
     const [isAdminView, setIsAdminView] = useState(true); // Toggle for Administration View vs Employee View
     const [directorySearch, setDirectorySearch] = useState(''); // Search filter for team directory
     const [directoryFilter, setDirectoryFilter] = useState('all'); // Category filter for team directory
@@ -87,6 +88,13 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             // Clear editing state when navigating away from profile form
             if (hash !== 'myprofile' && editingEmployeeEmail) {
                 setEditingEmployeeEmail(null);
+                // Restore own profile from saved copy
+                setSavedOwnProfile(prev => {
+                    if (prev) {
+                        setProfileData(prev);
+                    }
+                    return null;
+                });
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
@@ -344,7 +352,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 llcOwnerName: profile.llcOwnerName || '',
                 businessLegalName: profile.businessLegalName || '',
                 dbaName: profile.dbaName || '',
-                usPersonOrCompany: profile.usPersonOrCompany || ''
+                usPersonOrCompany: profile.usPersonOrCompany || '',
+                showInDirectory: profile.showInDirectory || false
             }));
             
             setTeamMembers(formattedProfiles.sort((a, b) => {
@@ -373,6 +382,15 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         const d = new Date(dateStr);
         if (isNaN(d.getTime())) return '';
         return d.toISOString().split('T')[0];
+    };
+
+    // Format a YYYY-MM-DD date string for display without timezone shift
+    const formatDate = (dateStr) => {
+        if (!dateStr) return '';
+        const normalized = normalizeDate(dateStr);
+        if (!normalized) return '';
+        const [y, m, d] = normalized.split('-').map(Number);
+        return new Date(y, m - 1, d).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
     };
 
     // Permission functions
@@ -6964,18 +6982,24 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     setEditingEmployeeEmail(null);
                                     // Refresh team directory data
                                     fetchTeamMembers();
-                                    // Re-fetch logged-in user's own profile
-                                    try {
-                                        const apiUrl2 = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
-                                        const res = await fetch(`${apiUrl2}/profiles/${loginEmail}`);
-                                        if (res.ok) {
-                                            const data = await res.json();
-                                            if (data && data.name) {
-                                                setProfileData(prev => ({ ...prev, ...data, employeeId: data.employeeId || data.email }));
+                                    // Restore own profile immediately from saved copy
+                                    if (savedOwnProfile) {
+                                        setProfileData(savedOwnProfile);
+                                        setSavedOwnProfile(null);
+                                    } else {
+                                        // Fallback: re-fetch from API
+                                        try {
+                                            const apiUrl2 = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                                            const res = await fetch(`${apiUrl2}/profiles/${loginEmail}`);
+                                            if (res.ok) {
+                                                const data = await res.json();
+                                                if (data && data.name) {
+                                                    setProfileData(prev => ({ ...prev, ...data, employeeId: data.employeeId || data.email }));
+                                                }
                                             }
+                                        } catch (err) {
+                                            console.log('Could not re-fetch own profile:', err);
                                         }
-                                    } catch (err) {
-                                        console.log('Could not re-fetch own profile:', err);
                                     }
                                     alert(`✅ ${updatedProfile.name}'s profile updated successfully!`);
                                     setCurrentPage('teamdirectory');
@@ -7529,7 +7553,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         <input
                                             type="checkbox"
                                             name="showInDirectory"
-                                            defaultChecked={false}
+                                            checked={profileData.showInDirectory || false}
+                                            onChange={(e) => setProfileData(prev => ({ ...prev, showInDirectory: e.target.checked }))}
                                             style={{
                                                 width: '20px',
                                                 height: '20px',
@@ -8045,17 +8070,22 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             } else if (editingEmployeeEmail) {
                                                 // Restore logged-in user's profile when canceling edit of another employee
                                                 setEditingEmployeeEmail(null);
-                                                try {
-                                                    const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
-                                                    const res = await fetch(`${apiUrl}/profiles/${loginEmail}`);
-                                                    if (res.ok) {
-                                                        const data = await res.json();
-                                                        if (data && data.name) {
-                                                            setProfileData(prev => ({ ...prev, ...data, employeeId: data.employeeId || data.email }));
+                                                if (savedOwnProfile) {
+                                                    setProfileData(savedOwnProfile);
+                                                    setSavedOwnProfile(null);
+                                                } else {
+                                                    try {
+                                                        const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                                                        const res = await fetch(`${apiUrl}/profiles/${loginEmail}`);
+                                                        if (res.ok) {
+                                                            const data = await res.json();
+                                                            if (data && data.name) {
+                                                                setProfileData(prev => ({ ...prev, ...data, employeeId: data.employeeId || data.email }));
+                                                            }
                                                         }
+                                                    } catch (err) {
+                                                        console.log('Could not re-fetch own profile:', err);
                                                     }
-                                                } catch (err) {
-                                                    console.log('Could not re-fetch own profile:', err);
                                                 }
                                                 setCurrentPage('teamdirectory');
                                                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -9283,10 +9313,10 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     fontWeight: (userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') && isAdminView ? '700' : '400'
                                 }}>
                                     {(userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') && isAdminView ? '⭐ ' : 'ℹ️ '}<strong>{!isAdminView ? 'Employee View' : `Your Role: ${userRole.toUpperCase()}`}</strong>{(userRole === 'superadmin' || userRole === 'admin' || userRole === 'hr') && isAdminView ? ' ⭐' : ''} - {
-                                        !isAdminView ? 'You can see Name, Title, and Email only.' :
+                                        !isAdminView ? 'Only team members who opted into the Public Directory are shown. You can see their Name and Email.' :
                                         userRole === 'hr' || userRole === 'superadmin' ? 'You have full directory access with all employee information including salaries.' :
                                         userRole === 'admin' ? 'You have full directory access except salary information (HR/SuperAdmin only).' :
-                                        'You can see Name, Title, and Email only.'
+                                        'Only team members who opted into the Public Directory are shown. You can see their Name and Email.'
                                     }
                                 </p>
                             </div>
@@ -9467,7 +9497,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             gap: '2rem'
                         }}>
                             {/* Current User's Profile (if they opted in) */}
-                            {profileData.name && (
+                            {profileData.name && (isAdminView || userRole !== 'employee' || profileData.showInDirectory) && (
                                 <div className="hover-lift animate-scale-in" style={{
                                     background: 'white',
                                     padding: '2rem',
@@ -9528,7 +9558,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                         </span>
                                                     </div>
                                                     <div style={{ color: '#64748b', fontSize: '0.9rem' }}>
-                                                        {profileData.title || 'Your Title'}
+                                                        {(isAdminView || userRole !== 'employee') ? (profileData.title || 'Your Title') : ''}
                                                     </div>
 
                                                 </div>
@@ -9580,7 +9610,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                         )}
                                                         {profileData.startDate && (
                                                             <div style={{ marginBottom: '0.5rem' }}>
-                                                                📅 Start Date: {new Date(profileData.startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                                                📅 Start Date: {formatDate(profileData.startDate)}
                                                             </div>
                                                         )}
                                                         {profileData.salary && (userRole === 'hr' || userRole === 'superadmin') && (
@@ -9701,6 +9731,10 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 if (member.employmentType === 'Archived') return false;
                                 // Exclude logged-in user (shown in the "You" card above)
                                 if (loginEmail && member.email && member.email.toLowerCase() === loginEmail.toLowerCase()) return false;
+                                // In employee view, only show members who opted into public directory
+                                if (!isAdminView || userRole === 'employee') {
+                                    if (!member.showInDirectory) return false;
+                                }
                                 if (!directorySearch.trim()) return true;
                                 const search = directorySearch.toLowerCase();
                                 // Category filter mode
@@ -9785,7 +9819,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                 </div>
                                                 <div>
                                                     <div style={{ fontWeight: '600', color: '#1e3a8a' }}>{member.name || member.email}</div>
-                                                    <div style={{ color: '#64748b', fontSize: '0.9rem' }}>{member.title || 'Employee'}</div>
+                                                    {isAdminView && userRole !== 'employee' && (
+                                                        <div style={{ color: '#64748b', fontSize: '0.9rem' }}>{member.title || 'Employee'}</div>
+                                                    )}
                                                 </div>
                                             </div>
                                             {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && isAdminView && (
@@ -9816,10 +9852,10 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                 {member.contractAssignment && (userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && isAdminView && (
                                                     <div style={{ marginBottom: '0.5rem' }}>📋 Prime: {member.contractAssignment}</div>
                                                 )}
-                                                {member.department && (
-                                                    <div style={{ marginBottom: '0.5rem' }}>🏷️ {member.department}</div>
+                                                {isAdminView && userRole !== 'employee' && member.department && (
+                                                    <div style={{ marginBottom: '0.5rem' }}>�️ {member.department}</div>
                                                 )}
-                                                {member.location && (
+                                                {isAdminView && userRole !== 'employee' && member.location && (
                                                     <div style={{ marginBottom: '0.5rem' }}>🏢 {member.location}</div>
                                                 )}
                                                 <div style={{ marginBottom: '0.5rem' }}>📧 {member.email}</div>
@@ -9829,7 +9865,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                             <div style={{ marginBottom: '0.5rem' }}>📱 {member.phone}</div>
                                                         )}
                                                         {member.startDate && (
-                                                            <div style={{ marginBottom: '0.5rem' }}>📅 Start Date: {new Date(member.startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                                                            <div style={{ marginBottom: '0.5rem' }}>📅 Start Date: {formatDate(member.startDate)}</div>
                                                         )}
                                                         {member.salary && (userRole === 'hr' || userRole === 'superadmin') && (
                                                             <div style={{ marginBottom: '0.5rem' }}>💰 Salary: {member.salary}</div>
@@ -10228,7 +10264,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 {selectedEmployee.department && <div>🏷️ {selectedEmployee.department}</div>}
                                 {selectedEmployee.location && <div>� {selectedEmployee.location}</div>}
                                 {selectedEmployee.phone && isAdminView && <div>📱 {selectedEmployee.phone}</div>}
-                                {selectedEmployee.startDate && isAdminView && <div>📅 Start: {new Date(selectedEmployee.startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>}
+                                {selectedEmployee.startDate && isAdminView && <div>📅 Start: {formatDate(selectedEmployee.startDate)}</div>}
                                 {selectedEmployee.manager && isAdminView && <div>👤 Manager: {selectedEmployee.manager}</div>}
                                 {selectedEmployee.contractAssignment && (userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && isAdminView && <div>📋 Prime: {selectedEmployee.contractAssignment}</div>}
                                 {selectedEmployee.salary && (userRole === 'hr' || userRole === 'superadmin') && isAdminView && <div>💰 Salary: {selectedEmployee.salary}</div>}
@@ -10281,8 +10317,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
                                 <button
                                     onClick={() => {
-                                        // Load selected employee's data into the profile form
+                                        // Save own profile before loading another employee's data
                                         const empEmail = selectedEmployee.email || '';
+                                        setSavedOwnProfile({ ...profileData });
                                         setEditingEmployeeEmail(empEmail);
                                         setProfileData({
                                             name: selectedEmployee.name || '',
@@ -10314,7 +10351,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             llcOwnerName: selectedEmployee.llcOwnerName || '',
                                             businessLegalName: selectedEmployee.businessLegalName || '',
                                             dbaName: selectedEmployee.dbaName || '',
-                                            usPersonOrCompany: selectedEmployee.usPersonOrCompany || ''
+                                            usPersonOrCompany: selectedEmployee.usPersonOrCompany || '',
+                                            showInDirectory: selectedEmployee.showInDirectory || false
                                         });
                                         setIsAddingEmployee(false);
                                         setSelectedEmployee(null);
