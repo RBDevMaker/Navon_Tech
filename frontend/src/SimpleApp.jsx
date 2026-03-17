@@ -49,6 +49,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [requiresNewPassword, setRequiresNewPassword] = useState(false);
     const [newPassword, setNewPassword] = useState('');
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
+    const [showWelcomeGuide, setShowWelcomeGuide] = useState(false);
     const [isAddingEmployee, setIsAddingEmployee] = useState(false); // Toggle for My Profile vs Add Employee
     const [editingEmployeeEmail, setEditingEmployeeEmail] = useState(null); // Track when editing another employee's profile
     const [savedOwnProfile, setSavedOwnProfile] = useState(null); // Store own profile while editing another employee
@@ -5462,6 +5463,76 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                         </div>
                     </div>
                 </section>
+            )}
+
+            {/* WELCOME GUIDE MODAL - shows after first login password change */}
+            {showWelcomeGuide && (
+                <div style={{
+                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                    background: 'rgba(15, 23, 42, 0.7)', backdropFilter: 'blur(5px)',
+                    display: 'flex', justifyContent: 'center', alignItems: 'center',
+                    padding: '2rem', zIndex: 9999
+                }}>
+                    <div style={{
+                        background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
+                        padding: '3rem', borderRadius: '16px',
+                        boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+                        maxWidth: '550px', width: '100%', border: '3px solid #d4af37'
+                    }}>
+                        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                            <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>✅</div>
+                            <h1 style={{ color: 'white', fontSize: '1.8rem', marginBottom: '0.5rem', fontWeight: '800' }}>
+                                Welcome to Navon Technologies!
+                            </h1>
+                            <p style={{ color: 'rgba(255, 255, 255, 0.9)', fontSize: '0.95rem' }}>
+                                Your password has been set successfully. Here's how to access the portal in the future.
+                            </p>
+                        </div>
+                        <div style={{
+                            background: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px',
+                            padding: '1.5rem', marginBottom: '1.5rem',
+                            border: '1px solid rgba(212, 175, 55, 0.4)'
+                        }}>
+                            <h3 style={{ color: '#d4af37', fontSize: '1.1rem', margin: '0 0 1rem 0' }}>
+                                🛡️ How to Access the Portal
+                            </h3>
+                            <div style={{ color: 'rgba(255, 255, 255, 0.95)', fontSize: '0.95rem', lineHeight: '1.8' }}>
+                                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                                    <span style={{ background: '#d4af37', color: '#0f172a', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '0.8rem', flexShrink: 0 }}>1</span>
+                                    <span>Visit <strong style={{ color: '#d4af37' }}>navontech.com</strong></span>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                                    <span style={{ background: '#d4af37', color: '#0f172a', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '0.8rem', flexShrink: 0 }}>2</span>
+                                    <span>Scroll to the bottom and find the <strong style={{ color: '#d4af37' }}>🛡️ shield icon</strong> in the footer</span>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                                    <span style={{ background: '#d4af37', color: '#0f172a', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '0.8rem', flexShrink: 0 }}>3</span>
+                                    <span><strong style={{ color: '#d4af37' }}>⌘ + Click</strong> (Mac) or <strong style={{ color: '#d4af37' }}>Ctrl + Click</strong> (Windows) on the shield</span>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+                                    <span style={{ background: '#d4af37', color: '#0f172a', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '0.8rem', flexShrink: 0 }}>4</span>
+                                    <span>Sign in with your email and new password</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div style={{
+                            background: 'rgba(212, 175, 55, 0.15)', borderRadius: '8px',
+                            padding: '0.75rem 1rem', marginBottom: '1.5rem',
+                            border: '1px solid rgba(212, 175, 55, 0.3)', textAlign: 'center'
+                        }}>
+                            <p style={{ color: '#d4af37', fontSize: '0.85rem', margin: 0, fontWeight: '600' }}>
+                                💡 Tip: You can also bookmark <strong>navontech.com/#login</strong> for direct login access
+                            </p>
+                        </div>
+                        <button onClick={() => setShowWelcomeGuide(false)} style={{
+                            width: '100%', background: '#d4af37', color: '#0f172a',
+                            padding: '1rem', border: 'none', borderRadius: '8px',
+                            fontSize: '1.1rem', fontWeight: '700', cursor: 'pointer'
+                        }}>
+                            Got It — Enter Portal →
+                        </button>
+                    </div>
+                </div>
             )}
 
             {/* SECURE PORTAL PAGE - DUPLICATE */}
@@ -13559,6 +13630,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             } catch (profileErr) { console.log('Profile fetch failed:', profileErr); }
                                             
                                             setCurrentPage('secureportal');
+                                            setShowWelcomeGuide(true);
                                             window.scrollTo({ top: 0, behavior: 'smooth' });
                                         }
                                     } catch (err) {
