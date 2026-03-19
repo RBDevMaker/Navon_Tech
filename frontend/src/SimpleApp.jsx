@@ -9601,6 +9601,51 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             </div>
                         </div>
 
+                        {/* Showing count */}
+                        {(() => {
+                            const youMatches = profileData.name && (isAdminView || userRole !== 'employee' || profileData.showInDirectory) ? (() => {
+                                if (directoryFilter === 'startDate' && (directorySearch || directoryMonth)) {
+                                    if (!profileData.startDate) return 0;
+                                    const [y, mo] = profileData.startDate.split('-');
+                                    if (directorySearch && y !== directorySearch) return 0;
+                                    if (directoryMonth && mo !== directoryMonth) return 0;
+                                }
+                                if (directoryFilter !== 'all' && directoryFilter !== 'startDate' && directorySearch) {
+                                    const fieldMap = { department: 'department', employmentType: 'employmentType', billableStatus: 'billableStatus', prime: 'contractAssignment', gender: 'gender', location: 'location', shirtSize: 'shirtSize' };
+                                    const field = fieldMap[directoryFilter];
+                                    if (field && (profileData[field] || '').toLowerCase() !== directorySearch.toLowerCase()) return 0;
+                                }
+                                if (directoryFilter === 'all' && directorySearch.trim()) {
+                                    const s = directorySearch.toLowerCase();
+                                    if (!((profileData.name||'').toLowerCase().includes(s)||(profileData.department||'').toLowerCase().includes(s)||(profileData.title||'').toLowerCase().includes(s)||(profileData.email||'').toLowerCase().includes(s)||(profileData.location||'').toLowerCase().includes(s))) return 0;
+                                }
+                                return 1;
+                            })() : 0;
+                            const othersCount = teamMembers.filter(m => {
+                                if (m.employmentType === 'Archived') return false;
+                                if (loginEmail && m.email && m.email.toLowerCase() === loginEmail.toLowerCase()) return false;
+                                if (!isAdminView || userRole === 'employee') { if (!m.showInDirectory) return false; }
+                                if (directoryFilter === 'startDate') {
+                                    if (!directorySearch && !directoryMonth) return true;
+                                    if (!m.startDate) return false;
+                                    const [y, mo] = m.startDate.split('-');
+                                    return (!directorySearch || y === directorySearch) && (!directoryMonth || mo === directoryMonth);
+                                }
+                                if (!directorySearch.trim()) return true;
+                                const s = directorySearch.toLowerCase();
+                                if (directoryFilter !== 'all') {
+                                    const fieldMap = { department: 'department', employmentType: 'employmentType', billableStatus: 'billableStatus', prime: 'contractAssignment', gender: 'gender', location: 'location', shirtSize: 'shirtSize' };
+                                    return (m[fieldMap[directoryFilter]] || '').toLowerCase() === s;
+                                }
+                                return (m.name||'').toLowerCase().includes(s)||(m.department||'').toLowerCase().includes(s)||(m.title||'').toLowerCase().includes(s)||(m.email||'').toLowerCase().includes(s)||(m.location||'').toLowerCase().includes(s);
+                            }).length;
+                            return (
+                                <p style={{ color: '#64748b', fontSize: '0.95rem', marginBottom: '1rem', fontWeight: '600' }}>
+                                    Showing {youMatches + othersCount} employee{youMatches + othersCount !== 1 ? 's' : ''}
+                                </p>
+                            );
+                        })()}
+
                         {/* Employee Cards Grid */}
                         <div style={{
                             display: 'grid',
@@ -15670,7 +15715,9 @@ Please review and approve this request.
                                             }}>
                                             <option value="all">All Events</option>
                                             <option value="LOGIN">Login</option>
+                                            <option value="FIRST_LOGIN">First Login</option>
                                             <option value="LOGOUT">Logout</option>
+                                            <option value="USER_INVITE">User Invite</option>
                                             <option value="ROLE_CHANGE">Role Change</option>
                                             <option value="USER_CREATE">User Create</option>
                                             <option value="USER_DELETE">User Delete</option>
