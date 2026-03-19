@@ -8663,7 +8663,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                         {/* HR Documents Grid */}
                         <div style={{
                             display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(min(450px, 100%), 1fr))',
                             gap: '2rem'
                         }}>
                             {/* Employee Handbook 2026 */}
@@ -9599,7 +9599,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                         {/* Employee Cards Grid */}
                         <div style={{
                             display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(min(400px, 100%), 1fr))',
                             gap: '2rem'
                         }}>
                             {/* Current User's Profile (if they opted in) */}
@@ -10931,7 +10931,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                         {/* Document Categories Grid */}
                         <div style={{
                             display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(min(350px, 100%), 1fr))',
                             gap: '2rem',
                             marginBottom: '3rem'
                         }}>
@@ -11299,11 +11299,12 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                         {/* Resumes Content */}
                         <div style={{
                             background: 'white',
-                            padding: '3rem',
+                            padding: 'clamp(1rem, 3vw, 3rem)',
                             borderRadius: '12px',
                             border: '2px solid #d4af37',
                             boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                            marginBottom: '2rem'
+                            marginBottom: '2rem',
+                            overflowX: 'auto'
                         }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
                                 <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem' }}>
@@ -14498,7 +14499,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 onClick={() => {
                                     setShowSecureModal(false);
                                     setCurrentPage('login');
-                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    setTimeout(() => window.scrollTo({ top: 0, behavior: 'instant' }), 50);
                                 }}
                                 style={{
                                     width: '100%',
