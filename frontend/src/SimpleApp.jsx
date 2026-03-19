@@ -13629,6 +13629,19 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                 }
                                             } catch (profileErr) { console.log('Profile fetch failed:', profileErr); }
                                             
+                                            // Log first login event to audit logs
+                                            try {
+                                                const token = session.tokens?.idToken?.toString();
+                                                const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                                                if (token) {
+                                                    fetch(`${apiUrl}/audit-logs`, {
+                                                        method: 'POST',
+                                                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                                                        body: JSON.stringify({ eventType: 'FIRST_LOGIN', action: 'User completed first login and set new password', userEmail: email })
+                                                    });
+                                                }
+                                            } catch (logErr) { console.log('Audit log failed:', logErr); }
+                                            
                                             setCurrentPage('secureportal');
                                             setShowWelcomeGuide(true);
                                             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -13820,6 +13833,19 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             }
                                         }
                                     } catch (profileErr) { console.log('Profile fetch after login failed:', profileErr); }
+                                    
+                                    // Log login event to audit logs
+                                    try {
+                                        const token = session.tokens?.idToken?.toString();
+                                        const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                                        if (token) {
+                                            fetch(`${apiUrl}/audit-logs`, {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                                                body: JSON.stringify({ eventType: 'LOGIN', action: 'User logged in', userEmail: email })
+                                            });
+                                        }
+                                    } catch (logErr) { console.log('Audit log failed:', logErr); }
                                     
                                     setCurrentPage('secureportal');
                                     window.scrollTo({ top: 0, behavior: 'smooth' });
