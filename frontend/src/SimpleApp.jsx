@@ -8655,6 +8655,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                         }}>
                             <h3 style={{ color: '#dc2626', marginBottom: '1.5rem', fontSize: '1.5rem', textAlign: 'center' }}>
                                 🚨 Emergency Security Actions
+                                <span style={{ display: 'block', fontSize: '0.85rem', color: '#94a3b8', fontWeight: '400', marginTop: '0.25rem' }}>(Not Active)</span>
                             </h3>
                             <div style={{
                                 display: 'grid',
