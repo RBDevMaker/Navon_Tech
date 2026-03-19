@@ -9528,6 +9528,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     {isAdminView && <option value="location">By Location</option>}
                                     {isAdminView && <option value="shirtSize">By T-Shirt Size</option>}
                                     {isAdminView && <option value="startDate">By Start Date</option>}
+                                    {isAdminView && <option value="startMonth">By Start Month (All Years)</option>}
                                 </select>
                                 {directoryFilter !== 'all' && (
                                     <select
@@ -9558,10 +9559,21 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                 if (directoryFilter === 'location') return m.location;
                                                 if (directoryFilter === 'shirtSize') return m.shirtSize;
                                                 if (directoryFilter === 'startDate') return m.startDate ? new Date(m.startDate).getFullYear().toString() : null;
+                                                if (directoryFilter === 'startMonth') {
+                                                    if (!m.startDate) return null;
+                                                    const month = new Date(m.startDate).getMonth();
+                                                    return ['January','February','March','April','May','June','July','August','September','October','November','December'][month];
+                                                }
                                                 return '';
                                             })
                                             .filter(Boolean)
-                                        )].sort().map(val => (
+                                        )].sort((a, b) => {
+                                            if (directoryFilter === 'startMonth') {
+                                                const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+                                                return months.indexOf(a) - months.indexOf(b);
+                                            }
+                                            return a.localeCompare(b);
+                                        }).map(val => (
                                             <option key={val} value={val}>{val}</option>
                                         ))}
                                     </select>
@@ -9917,6 +9929,14 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         }
                                         return true;
                                     }
+                                    if (directoryFilter === 'startMonth') {
+                                        // Start month: match month name across all years
+                                        if (!search) return true;
+                                        if (!member.startDate) return false;
+                                        const d = new Date(member.startDate);
+                                        const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+                                        return months[d.getMonth()] === search;
+                                    }
                                     const fieldMap = { department: 'department', employmentType: 'employmentType', billableStatus: 'billableStatus', prime: 'contractAssignment', gender: 'gender', location: 'location', shirtSize: 'shirtSize' };
                                     const field = fieldMap[directoryFilter];
                                     return (member[field] || '').toLowerCase() === search.toLowerCase();
@@ -9931,7 +9951,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     (member.contractAssignment || '').toLowerCase().includes(search)
                                 );
                             }).sort((a, b) => {
-                                if (directoryFilter === 'startDate') {
+                                if (directoryFilter === 'startDate' || directoryFilter === 'startMonth') {
                                     return new Date(a.startDate || '9999-12-31') - new Date(b.startDate || '9999-12-31');
                                 }
                                 return 0;
