@@ -9743,55 +9743,55 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             </div>
                                         </div>
                                         {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && isAdminView && profileData.title && (
-                                            <div style={{
-                                                display: 'grid',
-                                                gridTemplateColumns: (userRole === 'hr' || userRole === 'admin') ? 'repeat(2, 1fr)' : '1fr 1fr',
-                                                gap: '0.5rem',
-                                                fontSize: '0.85rem'
-                                            }}>
+                                            <div style={{ fontSize: '0.85rem' }}>
                                                 <div style={{
                                                     background: '#dcfce7',
                                                     color: '#166534',
                                                     padding: '0.5rem',
                                                     borderRadius: '6px',
                                                     textAlign: 'center',
-                                                    fontWeight: '600'
+                                                    fontWeight: '600',
+                                                    marginBottom: '0.5rem'
                                                 }}>
                                                     Profile Updated
                                                 </div>
-                                                <button
-                                                    onClick={() => {
-                                                        setCurrentPage('employeeprofile');
-                                                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                                                    }}
-                                                    style={{
-                                                        background: '#1e3a8a',
-                                                        color: 'white',
-                                                        border: 'none',
-                                                        padding: '0.5rem',
-                                                        borderRadius: '6px',
-                                                        cursor: 'pointer',
-                                                        fontWeight: '600',
-                                                        textAlign: 'center'
-                                                    }}>
-                                                    ✏️ Edit Profile
-                                                </button>
-                                                <a
-                                                    href="mailto:rachelle.briscoe@navontech.com?subject=Password Reset Request&body=Hi,%0A%0AI would like to request a password reset for my account.%0A%0AEmail: "
-                                                    style={{
-                                                        background: '#64748b',
-                                                        color: 'white',
-                                                        border: 'none',
-                                                        padding: '0.5rem',
-                                                        borderRadius: '6px',
-                                                        cursor: 'pointer',
-                                                        fontWeight: '600',
-                                                        textAlign: 'center',
-                                                        textDecoration: 'none',
-                                                        display: 'block'
-                                                    }}>
-                                                    🔑 Reset Password
-                                                </a>
+                                                <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                                                    <button
+                                                        onClick={() => {
+                                                            setCurrentPage('employeeprofile');
+                                                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                                                        }}
+                                                        style={{
+                                                            flex: 1,
+                                                            background: '#1e3a8a',
+                                                            color: 'white',
+                                                            border: 'none',
+                                                            padding: '0.5rem',
+                                                            borderRadius: '6px',
+                                                            cursor: 'pointer',
+                                                            fontWeight: '600',
+                                                            textAlign: 'center'
+                                                        }}>
+                                                        ✏️ Edit Profile
+                                                    </button>
+                                                    <a
+                                                        href="mailto:rachelle.briscoe@navontech.com?subject=Password Reset Request&body=Hi,%0A%0AI would like to request a password reset for my account.%0A%0AEmail: "
+                                                        style={{
+                                                            flex: 1,
+                                                            background: '#64748b',
+                                                            color: 'white',
+                                                            border: 'none',
+                                                            padding: '0.5rem',
+                                                            borderRadius: '6px',
+                                                            cursor: 'pointer',
+                                                            fontWeight: '600',
+                                                            textAlign: 'center',
+                                                            textDecoration: 'none',
+                                                            display: 'block'
+                                                        }}>
+                                                        🔑 Reset Password
+                                                    </a>
+                                                </div>
                                                 {(userRole === 'hr' || userRole === 'admin') && (
                                                     <button
                                                         onClick={async () => {
