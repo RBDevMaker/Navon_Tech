@@ -9558,11 +9558,16 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                 if (directoryFilter === 'gender') return m.gender;
                                                 if (directoryFilter === 'location') return m.location;
                                                 if (directoryFilter === 'shirtSize') return m.shirtSize;
-                                                if (directoryFilter === 'startDate') return m.startDate ? new Date(m.startDate).getFullYear().toString() : null;
+                                                if (directoryFilter === 'startDate') {
+                                                    if (!m.startDate) return null;
+                                                    const [y] = m.startDate.split('-');
+                                                    return y;
+                                                }
                                                 if (directoryFilter === 'startMonth') {
                                                     if (!m.startDate) return null;
-                                                    const month = new Date(m.startDate).getMonth();
-                                                    return ['January','February','March','April','May','June','July','August','September','October','November','December'][month];
+                                                    const [, mo] = m.startDate.split('-');
+                                                    const monthIdx = parseInt(mo, 10) - 1;
+                                                    return ['January','February','March','April','May','June','July','August','September','October','November','December'][monthIdx];
                                                 }
                                                 return '';
                                             })
@@ -9598,7 +9603,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         <option value="">All Months</option>
                                         {['January','February','March','April','May','June','July','August','September','October','November','December']
                                             .map((name, i) => ({ name, num: String(i + 1).padStart(2, '0') }))
-                                            .filter(({ num }) => teamMembers.some(m => m.startDate && new Date(m.startDate).getFullYear().toString() === directorySearch && String(new Date(m.startDate).getMonth() + 1).padStart(2, '0') === num))
+                                            .filter(({ num }) => teamMembers.some(m => m.startDate && m.startDate.split('-')[0] === directorySearch && m.startDate.split('-')[1] === num))
                                             .map(({ name, num }) => (
                                                 <option key={num} value={num}>{name}</option>
                                             ))
@@ -9918,24 +9923,22 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 // Category filter mode
                                 if (directoryFilter !== 'all') {
                                     if (directoryFilter === 'startDate') {
-                                        // Start date: show all if no specific value, or match year + optional month
                                         if (!search) return true;
                                         if (!member.startDate) return false;
-                                        const d = new Date(member.startDate);
-                                        const yearMatch = d.getFullYear().toString() === search;
-                                        if (!yearMatch) return false;
+                                        const [y, mo] = member.startDate.split('-');
+                                        if (y !== search) return false;
                                         if (directoryMonth) {
-                                            return String(d.getMonth() + 1).padStart(2, '0') === directoryMonth;
+                                            return mo === directoryMonth;
                                         }
                                         return true;
                                     }
                                     if (directoryFilter === 'startMonth') {
-                                        // Start month: match month name across all years
                                         if (!search) return true;
                                         if (!member.startDate) return false;
-                                        const d = new Date(member.startDate);
+                                        const [, mo] = member.startDate.split('-');
+                                        const monthIdx = parseInt(mo, 10) - 1;
                                         const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-                                        return months[d.getMonth()] === search;
+                                        return months[monthIdx] === search;
                                     }
                                     const fieldMap = { department: 'department', employmentType: 'employmentType', billableStatus: 'billableStatus', prime: 'contractAssignment', gender: 'gender', location: 'location', shirtSize: 'shirtSize' };
                                     const field = fieldMap[directoryFilter];
