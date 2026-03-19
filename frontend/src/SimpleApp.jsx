@@ -11447,6 +11447,10 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                         </div>
 
                         {/* Upload Section */}
+                        {(() => {
+                            const canUploadDoc = canUpload(userRole, 'document') && isAdminView;
+                            const displayRole = !isAdminView ? 'EMPLOYEE (View)' : userRole.toUpperCase();
+                            return (
                         <div style={{
                             background: 'white',
                             padding: '2rem',
@@ -11484,16 +11488,18 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 <select
                                     value={uploadCategory}
                                     onChange={(e) => setUploadCategory(e.target.value)}
+                                    disabled={!canUploadDoc}
                                     style={{
                                         padding: '0.75rem 1.5rem',
                                         border: '2px solid #1e3a8a',
                                         borderRadius: '8px',
                                         fontSize: '1rem',
                                         fontWeight: '600',
-                                        color: '#1e3a8a',
-                                        background: 'white',
-                                        cursor: 'pointer',
-                                        minWidth: '280px'
+                                        color: canUploadDoc ? '#1e3a8a' : '#94a3b8',
+                                        background: canUploadDoc ? 'white' : '#f1f5f9',
+                                        cursor: canUploadDoc ? 'pointer' : 'not-allowed',
+                                        minWidth: '280px',
+                                        opacity: canUploadDoc ? 1 : 0.6
                                     }}>
                                     <option value="HR-Documents">📁 HR Documents</option>
                                     <option value="Compliance-Security">🔒 Compliance & Security</option>
@@ -11505,10 +11511,11 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 type="file"
                                 id="documentUpload"
                                 multiple
+                                disabled={!canUploadDoc}
                                 style={{ display: 'none' }}
                                 onChange={async (e) => {
-                                    if (!canUpload(userRole, 'document')) {
-                                        alert('❌ Access Denied: Only HR and Admin users can upload documents.\n\nCurrent Role: ' + userRole.toUpperCase() + '\nRequired Role: HR or ADMIN');
+                                    if (!canUploadDoc) {
+                                        alert('❌ Access Denied: Only HR and Admin users can upload documents.\n\nCurrent Role: ' + displayRole + '\nRequired Role: HR or ADMIN');
                                         e.target.value = '';
                                         return;
                                     }
@@ -11544,25 +11551,29 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 }}
                             />
                             <label
-                                htmlFor="documentUpload"
+                                htmlFor={canUploadDoc ? 'documentUpload' : undefined}
+                                onClick={!canUploadDoc ? () => alert('❌ Access Denied: Only HR and Admin users can upload documents.\n\nCurrent Role: ' + displayRole + '\nRequired Role: HR or ADMIN') : undefined}
                                 style={{
-                                background: '#d4af37',
-                                color: '#0f172a',
+                                background: canUploadDoc ? '#d4af37' : '#94a3b8',
+                                color: canUploadDoc ? '#0f172a' : '#e2e8f0',
                                 border: 'none',
                                 padding: '1rem 2rem',
                                 borderRadius: '8px',
-                                cursor: 'pointer',
+                                cursor: canUploadDoc ? 'pointer' : 'not-allowed',
                                 fontWeight: '700',
                                 fontSize: '1rem',
-                                display: 'inline-block'
+                                display: 'inline-block',
+                                opacity: canUploadDoc ? 1 : 0.7
                             }}>
-                                Select Files to Upload
+                                {canUploadDoc ? 'Select Files to Upload' : '🔒 Upload Restricted'}
                             </label>
                             <p style={{ color: '#64748b', marginTop: '1rem', fontSize: '0.9rem' }}>
-                                Current Role: <strong>{userRole.toUpperCase()}</strong> | 
-                                Upload Access: <strong>{canUpload(userRole, 'document') ? '✅ Granted' : '❌ Denied'}</strong>
+                                Current Role: <strong>{displayRole}</strong> | 
+                                Upload Access: <strong>{canUploadDoc ? '✅ Granted' : '❌ Denied'}</strong>
                             </p>
                         </div>
+                            );
+                        })()}
                     </div>
                 </section>
             )}
