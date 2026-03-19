@@ -11740,13 +11740,14 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             {!isLoadingResumes && (
                                 <div style={{
                                     background: '#f8fafc',
-                                    padding: '1.5rem',
+                                    padding: 'clamp(0.75rem, 2vw, 1.5rem)',
                                     borderRadius: '8px',
                                     border: '2px solid #e2e8f0',
-                                    marginBottom: '1rem'
+                                    marginBottom: '1rem',
+                                    overflow: 'hidden'
                                 }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', flexWrap: 'wrap', gap: '1rem' }}>
-                                        <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
+                                        <div style={{ flex: 1, minWidth: 0, overflow: 'hidden', wordBreak: 'break-word' }}>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
                                                 <h4 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.2rem', wordBreak: 'break-word' }}>
                                                     Sarah Johnson
@@ -11781,7 +11782,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                 10+ years experience in full-stack development, AWS certified, React/Node.js expert
                                             </p>
                                         </div>
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', minWidth: '150px' }}>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', width: '100%', maxWidth: '200px' }}>
                                             <button 
                                                 onClick={() => alert('📄 Sample Resume\n\nThis is a demo resume. Once you deploy the backend, real resumes will be stored in S3 and accessible here.')}
                                                 style={{
@@ -11847,13 +11848,14 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             {!isLoadingResumes && filteredResumes.map((resume, index) => (
                                 <div key={resume.resumeId || index} style={{
                                     background: '#f8fafc',
-                                    padding: '1.5rem',
+                                    padding: 'clamp(0.75rem, 2vw, 1.5rem)',
                                     borderRadius: '8px',
                                     border: '2px solid #e2e8f0',
-                                    marginBottom: '1rem'
+                                    marginBottom: '1rem',
+                                    overflow: 'hidden'
                                 }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', flexWrap: 'wrap', gap: '1rem' }}>
-                                        <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
+                                        <div style={{ flex: 1, minWidth: 0, overflow: 'hidden', wordBreak: 'break-word' }}>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
                                                 <h4 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.2rem', wordBreak: 'break-word' }}>
                                                     {resume.candidateName || 'Unknown Candidate'}
@@ -11898,7 +11900,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                 </p>
                                             )}
                                         </div>
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', minWidth: '150px' }}>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', width: '100%', maxWidth: '200px' }}>
                                             <button 
                                                 onClick={() => viewResume(resume.s3Key, resume.candidateName)}
                                                 style={{
