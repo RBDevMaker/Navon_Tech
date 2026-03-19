@@ -9608,7 +9608,30 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             gap: '2rem'
                         }}>
                             {/* Current User's Profile (if they opted in) */}
-                            {profileData.name && (isAdminView || userRole !== 'employee' || profileData.showInDirectory) && (
+                            {profileData.name && (isAdminView || userRole !== 'employee' || profileData.showInDirectory) && (() => {
+                                // Apply same filters to YOU card
+                                if (directoryFilter === 'startDate' && (directorySearch || directoryMonth)) {
+                                    if (!profileData.startDate) return false;
+                                    const [y, mo] = profileData.startDate.split('-');
+                                    if (directorySearch && y !== directorySearch) return false;
+                                    if (directoryMonth && mo !== directoryMonth) return false;
+                                }
+                                if (directoryFilter !== 'all' && directoryFilter !== 'startDate' && directorySearch) {
+                                    const fieldMap = { department: 'department', employmentType: 'employmentType', billableStatus: 'billableStatus', prime: 'contractAssignment', gender: 'gender', location: 'location', shirtSize: 'shirtSize' };
+                                    const field = fieldMap[directoryFilter];
+                                    if (field && (profileData[field] || '').toLowerCase() !== directorySearch.toLowerCase()) return false;
+                                }
+                                if (directoryFilter === 'all' && directorySearch.trim()) {
+                                    const search = directorySearch.toLowerCase();
+                                    const match = (profileData.name || '').toLowerCase().includes(search) ||
+                                        (profileData.department || '').toLowerCase().includes(search) ||
+                                        (profileData.title || '').toLowerCase().includes(search) ||
+                                        (profileData.email || '').toLowerCase().includes(search) ||
+                                        (profileData.location || '').toLowerCase().includes(search);
+                                    if (!match) return false;
+                                }
+                                return true;
+                            })() && (
                                 <div className="hover-lift animate-scale-in" style={{
                                     background: 'white',
                                     padding: '2rem',
@@ -9906,17 +9929,18 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 if (!isAdminView || userRole === 'employee') {
                                     if (!member.showInDirectory) return false;
                                 }
+                                if (directoryFilter === 'startDate') {
+                                    if (!directorySearch && !directoryMonth) return true;
+                                    if (!member.startDate) return false;
+                                    const [y, mo] = member.startDate.split('-');
+                                    const yearMatch = !directorySearch || y === directorySearch;
+                                    const monthMatch = !directoryMonth || mo === directoryMonth;
+                                    return yearMatch && monthMatch;
+                                }
                                 if (!directorySearch.trim()) return true;
                                 const search = directorySearch.toLowerCase();
                                 // Category filter mode
                                 if (directoryFilter !== 'all') {
-                                    if (directoryFilter === 'startDate') {
-                                        if (!member.startDate) return (!search && !directoryMonth) ? true : false;
-                                        const [y, mo] = member.startDate.split('-');
-                                        const yearMatch = !search || y === search;
-                                        const monthMatch = !directoryMonth || mo === directoryMonth;
-                                        return yearMatch && monthMatch;
-                                    }
                                     const fieldMap = { department: 'department', employmentType: 'employmentType', billableStatus: 'billableStatus', prime: 'contractAssignment', gender: 'gender', location: 'location', shirtSize: 'shirtSize' };
                                     const field = fieldMap[directoryFilter];
                                     return (member[field] || '').toLowerCase() === search.toLowerCase();
