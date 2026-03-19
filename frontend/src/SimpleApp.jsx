@@ -1696,8 +1696,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 zIndex: 1000,
                 backdropFilter: 'blur(10px)',
                 borderBottom: '3px solid transparent',
-                borderImage: 'linear-gradient(90deg, transparent 0%, #d4af37 20%, #f4e5a1 50%, #d4af37 80%, transparent 100%) 1',
-                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3), 0 3px 15px rgba(212, 175, 55, 0.3)'
+                borderImage: 'linear-gradient(90deg, transparent 0%, #d4af37 20%, #f4e5a1 50%, #d4af37 80%, transparent 100%) 1'
             }}>
                 <div style={{ display: 'flex', alignItems: 'center' }} className="animate-slide-in-left">
                     <a href="#home" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
@@ -6583,7 +6582,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             }}>
                                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
                                     <div style={{
-                                        fontSize: '2.5rem',
+                                        fontSize: '1.2rem',
                                         marginRight: '1rem',
                                         background: '#1e3a8a',
                                         color: 'white',
@@ -6593,8 +6592,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
-                                        fontWeight: 'bold',
-                                        fontSize: '1.2rem'
+                                        fontWeight: 'bold'
                                     }}>
                                         HR
                                     </div>
@@ -11499,7 +11497,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         color: canUploadDoc ? '#1e3a8a' : '#94a3b8',
                                         background: canUploadDoc ? 'white' : '#f1f5f9',
                                         cursor: canUploadDoc ? 'pointer' : 'not-allowed',
-                                        minWidth: '280px',
+                                        minWidth: 'min(280px, 100%)',
+                                        maxWidth: '100%',
                                         opacity: canUploadDoc ? 1 : 0.6
                                     }}>
                                     <option value="HR-Documents">📁 HR Documents</option>
@@ -11747,9 +11746,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     marginBottom: '1rem'
                                 }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', flexWrap: 'wrap', gap: '1rem' }}>
-                                        <div style={{ flex: 1, minWidth: '250px' }}>
+                                        <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
-                                                <h4 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.2rem' }}>
+                                                <h4 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.2rem', wordBreak: 'break-word' }}>
                                                     Sarah Johnson
                                                 </h4>
                                                 <span style={{
@@ -11854,9 +11853,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     marginBottom: '1rem'
                                 }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', flexWrap: 'wrap', gap: '1rem' }}>
-                                        <div style={{ flex: 1, minWidth: '250px' }}>
+                                        <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
-                                                <h4 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.2rem' }}>
+                                                <h4 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.2rem', wordBreak: 'break-word' }}>
                                                     {resume.candidateName || 'Unknown Candidate'}
                                                 </h4>
                                                 <span style={{
