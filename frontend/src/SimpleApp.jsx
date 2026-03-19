@@ -4694,9 +4694,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                         }}>
                             <div className="hover-lift" style={{ 
                                 textAlign: 'center', 
-                                maxWidth: 'min(600px, 90vw)',
+                                maxWidth: 'min(600px, 85vw)',
                                 background: 'linear-gradient(135deg, #f5f5dc 0%, #ede0c8 100%)',
-                                padding: 'clamp(1.25rem, 3vw, 3rem)',
+                                padding: 'clamp(1rem, 2.5vw, 3rem)',
                                 borderRadius: '8px',
                                 border: '8px solid transparent',
                                 borderImage: 'linear-gradient(45deg, #d4af37 0%, #f4e5a1 25%, #d4af37 50%, #b8941f 75%, #d4af37 100%) 1',
@@ -4704,7 +4704,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 animation: 'rollIn 1s ease-out forwards',
                                 transform: 'translateX(-100%) rotate(-360deg)',
                                 opacity: 0,
-                                position: 'relative'
+                                position: 'relative',
+                                boxSizing: 'border-box'
                             }}>
                                 {/* Corner decorations for mitered frame effect */}
                                 <div style={{
@@ -4744,8 +4745,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     clipPath: 'polygon(100% 0, 100% 100%, 0 100%)'
                                 }}></div>
                                 
-                                <h3 style={{ marginBottom: 'clamp(1rem, 2vw, 2rem)', fontSize: 'clamp(1.2rem, 3vw, 2rem)', fontWeight: '800', color: '#0f172a', position: 'relative', zIndex: 1 }}>Contact Information</h3>
-                                <p style={{ marginBottom: 'clamp(0.75rem, 2vw, 1.5rem)', fontSize: 'clamp(0.85rem, 2vw, 1.3rem)', lineHeight: '1.8', color: '#1e293b', position: 'relative', zIndex: 1, wordBreak: 'break-word' }}>
+                                <h3 style={{ marginBottom: 'clamp(0.5rem, 1.5vw, 2rem)', fontSize: 'clamp(1rem, 2.5vw, 2rem)', fontWeight: '800', color: '#0f172a', position: 'relative', zIndex: 1 }}>Contact Information</h3>
+                                <p style={{ marginBottom: 'clamp(0.5rem, 1.5vw, 1.5rem)', fontSize: 'clamp(0.75rem, 1.8vw, 1.3rem)', lineHeight: '1.7', color: '#1e293b', position: 'relative', zIndex: 1, wordBreak: 'break-word' }}>
                                     <strong>Address:</strong><br />
                                     161 Fort Evans Rd NE STE 210<br />
                                     Leesburg, VA 20176<br /><br />
@@ -4756,8 +4757,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 </p>
                                 
                                 <div style={{
-                                    width: '80px',
-                                    height: '80px',
+                                    width: 'clamp(40px, 8vw, 80px)',
+                                    height: 'clamp(40px, 8vw, 80px)',
                                     background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
                                     borderRadius: '50%',
                                     display: 'flex',
@@ -4768,7 +4769,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     position: 'relative',
                                     zIndex: 1
                                 }}>
-                                    <span style={{ fontSize: '2.5rem' }}>📧</span>
+                                    <span style={{ fontSize: 'clamp(1.2rem, 3vw, 2.5rem)' }}>📧</span>
                                 </div>
                             </div>
                         </div>
