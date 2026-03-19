@@ -7647,6 +7647,41 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     </label>
                                 </div>
 
+                                {/* Request Password Reset - for all users */}
+                                <div style={{
+                                    marginTop: '2rem',
+                                    padding: '1.5rem',
+                                    background: '#f8fafc',
+                                    borderRadius: '8px',
+                                    border: '2px solid #e2e8f0'
+                                }}>
+                                    <h4 style={{
+                                        color: '#1e3a8a',
+                                        fontSize: '1.2rem',
+                                        marginBottom: '0.75rem'
+                                    }}>
+                                        🔑 Password Reset
+                                    </h4>
+                                    <p style={{ fontSize: '0.9rem', color: '#64748b', marginBottom: '1rem', lineHeight: '1.5' }}>
+                                        Need to change your password? Contact your administrator to request a password reset.
+                                    </p>
+                                    <a
+                                        href="mailto:rachelle.briscoe@navontech.com?subject=Password Reset Request&body=Hi,%0A%0AI would like to request a password reset for my account.%0A%0AEmail: "
+                                        style={{
+                                            display: 'inline-block',
+                                            background: '#1e3a8a',
+                                            color: 'white',
+                                            padding: '0.75rem 1.5rem',
+                                            borderRadius: '8px',
+                                            textDecoration: 'none',
+                                            fontWeight: '600',
+                                            fontSize: '0.9rem'
+                                        }}
+                                    >
+                                        📧 Request Password Reset
+                                    </a>
+                                </div>
+
                                 {/* HR-Only Section */}
                                 {userRole !== 'employee' && (
                                     <div style={{
