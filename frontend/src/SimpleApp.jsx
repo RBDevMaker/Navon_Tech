@@ -11581,9 +11581,10 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             {/* RESUMES & APPLICATIONS PAGE - HR/Admin/SuperAdmin Only */}
             {currentPage === 'resumes' && (userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
                 <section style={{ 
-                    padding: '4rem 2rem', 
+                    padding: 'clamp(1rem, 3vw, 4rem) clamp(0.5rem, 2vw, 2rem)', 
                     background: '#f1f5f9',
-                    minHeight: '100vh'
+                    minHeight: '100vh',
+                    overflow: 'hidden'
                 }}>
                     <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
                         <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
@@ -11625,18 +11626,20 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                         {/* Resumes Content */}
                         <div style={{
                             background: 'white',
-                            padding: 'clamp(1rem, 3vw, 3rem)',
+                            padding: 'clamp(0.75rem, 2vw, 3rem)',
                             borderRadius: '12px',
                             border: '2px solid #d4af37',
                             boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
                             marginBottom: '2rem',
-                            overflowX: 'auto'
+                            overflow: 'hidden',
+                            maxWidth: '100%',
+                            boxSizing: 'border-box'
                         }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
                                 <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem' }}>
                                     Resumes ({filteredResumes.length + 1})
                                 </h3>
-                                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', width: '100%' }}>
                                     {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
                                         <>
                                             <button
@@ -11680,8 +11683,10 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             padding: '0.5rem 1rem',
                                             borderRadius: '6px',
                                             border: '2px solid #d4af37',
-                                            fontSize: '0.9rem',
-                                            cursor: 'pointer'
+                                            fontSize: '0.85rem',
+                                            cursor: 'pointer',
+                                            flex: '1 1 auto',
+                                            minWidth: 0
                                         }}>
                                         <option value="all">All Departments</option>
                                         <option value="Engineering">Engineering</option>
@@ -11700,8 +11705,10 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             padding: '0.5rem 1rem',
                                             borderRadius: '6px',
                                             border: '2px solid #d4af37',
-                                            fontSize: '0.9rem',
-                                            cursor: 'pointer'
+                                            fontSize: '0.85rem',
+                                            cursor: 'pointer',
+                                            flex: '1 1 auto',
+                                            minWidth: 0
                                         }}>
                                         <option value="all">All Stages</option>
                                         <option value="New">New</option>
@@ -11721,8 +11728,10 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             padding: '0.5rem 1rem',
                                             borderRadius: '6px',
                                             border: '2px solid #d4af37',
-                                            fontSize: '0.9rem',
-                                            cursor: 'pointer'
+                                            fontSize: '0.85rem',
+                                            cursor: 'pointer',
+                                            flex: '1 1 auto',
+                                            minWidth: 0
                                         }}>
                                         <option value="newest">Newest First</option>
                                         <option value="oldest">Oldest First</option>
