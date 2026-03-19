@@ -83,6 +83,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [securityAssessment, setSecurityAssessment] = useState(null);
     const [isLoadingAssessment, setIsLoadingAssessment] = useState(false);
     const [showSecurityAssessment, setShowSecurityAssessment] = useState(false);
+    const [uploadCategory, setUploadCategory] = useState('HR-Documents');
 
     // Handle hash changes for navigation
     useEffect(() => {
@@ -11475,6 +11476,31 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             <p style={{ color: '#64748b', marginBottom: '1.5rem' }}>
                                 All uploads are encrypted and scanned for security compliance
                             </p>
+                            {/* Category Dropdown */}
+                            <div style={{ marginBottom: '1.5rem' }}>
+                                <label style={{ display: 'block', fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem', fontSize: '0.95rem' }}>
+                                    Upload To:
+                                </label>
+                                <select
+                                    value={uploadCategory}
+                                    onChange={(e) => setUploadCategory(e.target.value)}
+                                    style={{
+                                        padding: '0.75rem 1.5rem',
+                                        border: '2px solid #1e3a8a',
+                                        borderRadius: '8px',
+                                        fontSize: '1rem',
+                                        fontWeight: '600',
+                                        color: '#1e3a8a',
+                                        background: 'white',
+                                        cursor: 'pointer',
+                                        minWidth: '280px'
+                                    }}>
+                                    <option value="HR-Documents">📁 HR Documents</option>
+                                    <option value="Compliance-Security">🔒 Compliance & Security</option>
+                                    <option value="Shared-Resources">📂 Shared Resources</option>
+                                    <option value="Resumes">📄 Resumes</option>
+                                </select>
+                            </div>
                             <input
                                 type="file"
                                 id="documentUpload"
@@ -11489,6 +11515,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     
                                     if (e.target.files && e.target.files.length > 0) {
                                         const files = Array.from(e.target.files);
+                                        const categoryLabels = { 'HR-Documents': 'HR Documents', 'Compliance-Security': 'Compliance & Security', 'Shared-Resources': 'Shared Resources', 'Resumes': 'Resumes' };
                                         
                                         try {
                                             const button = document.querySelector('label[for="documentUpload"]');
@@ -11497,10 +11524,10 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             button.style.pointerEvents = 'none';
                                             
                                             for (const file of files) {
-                                                await uploadDocument(file, 'General');
+                                                await uploadDocument(file, uploadCategory);
                                             }
                                             
-                                            alert(`✅ Successfully uploaded ${files.length} file(s)!`);
+                                            alert(`✅ Successfully uploaded ${files.length} file(s) to ${categoryLabels[uploadCategory] || uploadCategory}!`);
                                             
                                             button.textContent = originalText;
                                             button.style.pointerEvents = 'auto';
