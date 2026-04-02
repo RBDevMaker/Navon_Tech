@@ -16,6 +16,7 @@ aws cognito-idp create-group --user-pool-id $USER_POOL_ID --group-name "Navon_Em
 aws cognito-idp create-group --user-pool-id $USER_POOL_ID --group-name "HR" --description "Human Resources - full employee data access" --precedence 3
 aws cognito-idp create-group --user-pool-id $USER_POOL_ID --group-name "Admin" --description "Administrators - full access except salary" --precedence 2
 aws cognito-idp create-group --user-pool-id $USER_POOL_ID --group-name "SuperAdmin" --description "Super Administrators - full system access" --precedence 1
+aws cognito-idp create-group --user-pool-id $USER_POOL_ID --group-name "security" --description "Security - HR permissions plus security-exclusive features" --precedence 5
 echo "✅ Groups created"
 echo ""
 
@@ -112,4 +113,4 @@ echo "  HR:              Yahvinah Bryant"
 echo "  Admin:           Gregory Bryant"
 echo "  SuperAdmin:      Rachelle Briscoe, Brian Briscoe"
 echo ""
-echo "Role Priority: SuperAdmin > Admin > HR > Employee"
+echo "Role Priority: SuperAdmin > Security > HR > Admin > Employee"

@@ -49,7 +49,8 @@ const ROLE_HIERARCHY = {
     'employee': 1,
     'admin': 2,
     'hr': 3,
-    'superadmin': 4
+    'security': 4,
+    'superadmin': 5
 };
 
 exports.handler = async (event) => {
@@ -184,6 +185,7 @@ async function getRequesterRole(event) {
     
     // Return highest role
     if (normalizedGroups.includes('superadmin')) return 'superadmin';
+    if (normalizedGroups.includes('security')) return 'security';
     if (normalizedGroups.includes('hr')) return 'hr';
     if (normalizedGroups.includes('admin')) return 'admin';
     return 'employee';
@@ -194,7 +196,7 @@ async function getAllUsers(requesterRole) {
         console.log('getAllUsers called with requesterRole:', requesterRole);
         
         // Only superadmin, hr, and admin can list users
-        if (!['superadmin', 'hr', 'admin'].includes(requesterRole)) {
+        if (!['superadmin', 'security', 'hr', 'admin'].includes(requesterRole)) {
             console.log('Permission denied for role:', requesterRole);
             return {
                 statusCode: 403,
@@ -202,7 +204,7 @@ async function getAllUsers(requesterRole) {
                 body: JSON.stringify({ 
                     error: 'Insufficient permissions',
                     requesterRole: requesterRole,
-                    allowedRoles: ['superadmin', 'hr', 'admin']
+                    allowedRoles: ['superadmin', 'security', 'hr', 'admin']
                 })
             };
         }
@@ -237,8 +239,8 @@ async function getAllUsers(requesterRole) {
 
 async function getUser(username, requesterRole) {
     try {
-        // Only superadmin, hr, and admin can view user details
-        if (!['superadmin', 'hr', 'admin'].includes(requesterRole)) {
+        // Only superadmin, security, hr, and admin can view user details
+        if (!['superadmin', 'security', 'hr', 'admin'].includes(requesterRole)) {
             return {
                 statusCode: 403,
                 headers: CORS_HEADERS,
@@ -287,6 +289,7 @@ async function getUserDetails(username) {
     // Determine role from groups (normalize to lowercase)
     let role = 'employee';
     if (normalizedGroups.includes('superadmin')) role = 'superadmin';
+    else if (normalizedGroups.includes('security')) role = 'security';
     else if (normalizedGroups.includes('hr')) role = 'hr';
     else if (normalizedGroups.includes('admin')) role = 'admin';
 
@@ -307,7 +310,7 @@ async function getUserDetails(username) {
 async function updateUser(username, updateData, requesterRole) {
     try {
         // Check permissions
-        if (!['superadmin', 'hr', 'admin'].includes(requesterRole)) {
+        if (!['superadmin', 'security', 'hr', 'admin'].includes(requesterRole)) {
             return {
                 statusCode: 403,
                 headers: CORS_HEADERS,
@@ -319,12 +322,12 @@ async function updateUser(username, updateData, requesterRole) {
         const targetUser = await getUserDetails(username);
         const targetRole = targetUser.role;
 
-        // HR cannot modify superadmin accounts
-        if (requesterRole === 'hr' && targetRole === 'superadmin') {
+        // HR/Security cannot modify superadmin accounts
+        if ((requesterRole === 'hr' || requesterRole === 'security') && targetRole === 'superadmin') {
             return {
                 statusCode: 403,
                 headers: CORS_HEADERS,
-                body: JSON.stringify({ error: 'HR cannot modify SuperAdmin accounts' })
+                body: JSON.stringify({ error: 'Cannot modify SuperAdmin accounts' })
             };
         }
 
@@ -340,11 +343,11 @@ async function updateUser(username, updateData, requesterRole) {
         // Update role if specified
         if (updateData.newRole && updateData.newRole !== targetRole) {
             // Validate role change permissions
-            if (requesterRole === 'hr' && updateData.newRole === 'superadmin') {
+            if ((requesterRole === 'hr' || requesterRole === 'security') && updateData.newRole === 'superadmin') {
                 return {
                     statusCode: 403,
                     headers: CORS_HEADERS,
-                    body: JSON.stringify({ error: 'HR cannot promote users to SuperAdmin' })
+                    body: JSON.stringify({ error: 'Cannot promote users to SuperAdmin' })
                 };
             }
 
@@ -361,6 +364,7 @@ async function updateUser(username, updateData, requesterRole) {
                 'employee': null,
                 'admin': 'Admin',
                 'hr': 'HR',
+                'security': 'security',
                 'superadmin': 'SuperAdmin'
             };
 
@@ -440,8 +444,8 @@ async function updateUser(username, updateData, requesterRole) {
 
 async function deleteUser(username, requesterRole) {
     try {
-        // Only superadmin and hr can delete users
-        if (!['superadmin', 'hr'].includes(requesterRole)) {
+        // Only superadmin, security, and hr can delete users
+        if (!['superadmin', 'security', 'hr'].includes(requesterRole)) {
             return {
                 statusCode: 403,
                 headers: CORS_HEADERS,
@@ -453,12 +457,12 @@ async function deleteUser(username, requesterRole) {
         const targetUser = await getUserDetails(username);
         const targetRole = targetUser.role;
 
-        // HR cannot delete superadmin accounts
-        if (requesterRole === 'hr' && targetRole === 'superadmin') {
+        // HR/Security cannot delete superadmin accounts
+        if ((requesterRole === 'hr' || requesterRole === 'security') && targetRole === 'superadmin') {
             return {
                 statusCode: 403,
                 headers: CORS_HEADERS,
-                body: JSON.stringify({ error: 'HR cannot delete SuperAdmin accounts' })
+                body: JSON.stringify({ error: 'Cannot delete SuperAdmin accounts' })
             };
         }
 
@@ -497,11 +501,11 @@ async function deleteUser(username, requesterRole) {
 
 async function inviteUser(username, data, requesterRole) {
     try {
-        if (!['superadmin', 'hr'].includes(requesterRole)) {
+        if (!['superadmin', 'security', 'hr'].includes(requesterRole)) {
             return {
                 statusCode: 403,
                 headers: CORS_HEADERS,
-                body: JSON.stringify({ error: 'Only SuperAdmin and HR can send invitations' })
+                body: JSON.stringify({ error: 'Only SuperAdmin, Security, and HR can send invitations' })
             };
         }
 
@@ -538,6 +542,7 @@ async function inviteUser(username, data, requesterRole) {
         // Build the invitation email
         const employeeName = userDetails.attributes?.name || username.split('@')[0];
         const roleName = userDetails.role === 'superadmin' ? 'Super Administrator' :
+                         userDetails.role === 'security' ? 'Security' :
                          userDetails.role === 'hr' ? 'Human Resources' :
                          userDetails.role === 'admin' ? 'Administrator' : 'Employee';
 
@@ -686,11 +691,11 @@ If you have any questions or need assistance, please contact your administrator 
 
 async function resetUserPassword(username, data, requesterRole) {
     try {
-        if (!['superadmin', 'hr'].includes(requesterRole)) {
+        if (!['superadmin', 'security', 'hr'].includes(requesterRole)) {
             return {
                 statusCode: 403,
                 headers: CORS_HEADERS,
-                body: JSON.stringify({ error: 'Only SuperAdmin and HR can reset passwords' })
+                body: JSON.stringify({ error: 'Only SuperAdmin, Security, and HR can reset passwords' })
             };
         }
 
