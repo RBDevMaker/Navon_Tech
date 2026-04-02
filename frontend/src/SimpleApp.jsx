@@ -6257,6 +6257,153 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 </button>
                             </div>
 
+                            {/* CSV Import Card */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.3s',
+                                display: 'flex',
+                                flexDirection: 'column'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{ fontSize: '2.5rem', marginRight: '1rem' }}>📥</div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        Import Employees (CSV)
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem', flex: 1 }}>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Import from Rippling or spreadsheet</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Auto-skips existing employees</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Creates profiles for new hires only</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• CSV: Name, Email, Department, Title, Start Date</p>
+                                </div>
+                                <input
+                                    type="file"
+                                    id="csvImport"
+                                    accept=".csv"
+                                    style={{ display: 'none' }}
+                                    onChange={async (e) => {
+                                        const file = e.target.files?.[0];
+                                        if (!file) return;
+                                        e.target.value = '';
+                                        try {
+                                            const text = await file.text();
+                                            const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+                                            if (lines.length < 2) { alert('CSV file is empty or has no data rows.'); return; }
+                                            const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/['"]/g, ''));
+                                            // Map common header names
+                                            const findCol = (names) => headers.findIndex(h => names.some(n => h.includes(n)));
+                                            const nameIdx = findCol(['name', 'full name', 'employee name']);
+                                            const firstIdx = findCol(['first name', 'first_name', 'firstname']);
+                                            const lastIdx = findCol(['last name', 'last_name', 'lastname']);
+                                            const emailIdx = findCol(['email', 'work email', 'email address']);
+                                            const deptIdx = findCol(['department', 'dept']);
+                                            const titleIdx = findCol(['title', 'job title', 'position', 'role']);
+                                            const startIdx = findCol(['start date', 'hire date', 'start_date', 'hire_date']);
+                                            const phoneIdx = findCol(['phone', 'work phone', 'mobile', 'phone number']);
+                                            const locationIdx = findCol(['location', 'office', 'work location']);
+
+                                            if (emailIdx === -1) { alert('CSV must have an Email column. Found headers: ' + headers.join(', ')); return; }
+                                            if (nameIdx === -1 && firstIdx === -1) { alert('CSV must have a Name or First Name column. Found headers: ' + headers.join(', ')); return; }
+
+                                            const rows = lines.slice(1).map(line => {
+                                                const cols = line.match(/(".*?"|[^",]+|(?<=,)(?=,))/g)?.map(c => c.trim().replace(/^"|"$/g, '')) || line.split(',').map(c => c.trim());
+                                                const email = cols[emailIdx]?.trim();
+                                                const name = nameIdx !== -1 ? cols[nameIdx]?.trim() : `${cols[firstIdx]?.trim() || ''} ${cols[lastIdx]?.trim() || ''}`.trim();
+                                                return {
+                                                    email: email || '',
+                                                    name: name || '',
+                                                    department: deptIdx !== -1 ? cols[deptIdx]?.trim() || '' : '',
+                                                    title: titleIdx !== -1 ? cols[titleIdx]?.trim() || '' : '',
+                                                    startDate: startIdx !== -1 ? cols[startIdx]?.trim() || '' : '',
+                                                    phone: phoneIdx !== -1 ? cols[phoneIdx]?.trim() || '' : '',
+                                                    location: locationIdx !== -1 ? cols[locationIdx]?.trim() || '' : ''
+                                                };
+                                            }).filter(r => r.email && r.email.includes('@'));
+
+                                            if (rows.length === 0) { alert('No valid employee rows found in CSV.'); return; }
+
+                                            // Fetch existing profiles
+                                            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                                            const existingRes = await fetch(`${apiUrl}/profiles`);
+                                            const existingData = await existingRes.json();
+                                            const existingEmails = new Set((existingData.profiles || existingData || []).map(p => (p.email || '').toLowerCase()));
+
+                                            const newEmployees = rows.filter(r => !existingEmails.has(r.email.toLowerCase()));
+                                            const skipped = rows.length - newEmployees.length;
+
+                                            if (newEmployees.length === 0) {
+                                                alert(`All ${rows.length} employees already exist in the directory. No new profiles to create.`);
+                                                return;
+                                            }
+
+                                            if (!confirm(`Found ${rows.length} employees in CSV.\n\n✅ New employees to add: ${newEmployees.length}\n⏭️ Already exist (skip): ${skipped}\n\nProceed with import?`)) return;
+
+                                            let added = 0;
+                                            let failed = 0;
+                                            for (const emp of newEmployees) {
+                                                try {
+                                                    // Normalize start date to YYYY-MM-DD if possible
+                                                    let normalizedDate = emp.startDate;
+                                                    if (normalizedDate) {
+                                                        const d = new Date(normalizedDate);
+                                                        if (!isNaN(d.getTime())) {
+                                                            normalizedDate = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+                                                        }
+                                                    }
+                                                    const profilePayload = {
+                                                        email: emp.email,
+                                                        name: emp.name,
+                                                        department: emp.department,
+                                                        title: emp.title,
+                                                        startDate: normalizedDate,
+                                                        phone: emp.phone,
+                                                        location: emp.location,
+                                                        employmentType: 'Full-Time',
+                                                        showInDirectory: true
+                                                    };
+                                                    const res = await fetch(`${apiUrl}/profiles`, {
+                                                        method: 'POST',
+                                                        headers: { 'Content-Type': 'application/json' },
+                                                        body: JSON.stringify(profilePayload)
+                                                    });
+                                                    if (res.ok) added++;
+                                                    else failed++;
+                                                } catch (err) {
+                                                    failed++;
+                                                }
+                                            }
+                                            alert(`✅ Import Complete!\n\nAdded: ${added} new employee${added !== 1 ? 's' : ''}\nSkipped: ${skipped} existing\n${failed > 0 ? `Failed: ${failed}` : ''}`);
+                                            // Refresh team members if on directory
+                                            if (typeof fetchTeamMembers === 'function') fetchTeamMembers();
+                                        } catch (err) {
+                                            alert('❌ Error reading CSV: ' + err.message);
+                                        }
+                                    }}
+                                />
+                                <label
+                                    htmlFor="csvImport"
+                                    style={{
+                                        background: '#10b981',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '0.75rem 1.5rem',
+                                        borderRadius: '6px',
+                                        cursor: 'pointer',
+                                        fontWeight: '600',
+                                        width: '100%',
+                                        marginTop: 'auto',
+                                        textAlign: 'center',
+                                        display: 'block',
+                                        boxSizing: 'border-box'
+                                    }}>
+                                    📥 Upload CSV File
+                                </label>
+                            </div>
+
                             {/* Security Settings Card */}
                             <div className="hover-lift animate-scale-in" style={{
                                 background: 'white',
