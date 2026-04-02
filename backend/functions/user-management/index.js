@@ -343,7 +343,16 @@ async function updateUser(username, updateData, requesterRole) {
         // Update role if specified
         if (updateData.newRole && updateData.newRole !== targetRole) {
             // Validate role change permissions
-            if ((requesterRole === 'hr' || requesterRole === 'security') && updateData.newRole === 'superadmin') {
+            // HR can only assign employee role
+            if (requesterRole === 'hr' && updateData.newRole !== 'employee') {
+                return {
+                    statusCode: 403,
+                    headers: CORS_HEADERS,
+                    body: JSON.stringify({ error: 'HR can only assign the Employee role' })
+                };
+            }
+
+            if ((requesterRole === 'security') && updateData.newRole === 'superadmin') {
                 return {
                     statusCode: 403,
                     headers: CORS_HEADERS,

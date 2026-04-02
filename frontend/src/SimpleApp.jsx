@@ -15726,7 +15726,7 @@ Please review and approve this request.
                                                             Change Role:
                                                         </label>
                                                         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                                                            {['employee', 'admin', 'hr', 'security', ...(userRole === 'superadmin' ? ['superadmin'] : [])].map(role => (
+                                                            {(userRole === 'hr' ? ['employee'] : ['employee', 'admin', 'hr', 'security', ...(userRole === 'superadmin' ? ['superadmin'] : [])]).map(role => (
                                                                 <button
                                                                     key={role}
                                                                     onClick={() => updateUserRole(user.username, role)}
