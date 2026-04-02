@@ -10701,19 +10701,19 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.25rem', fontWeight: '600' }}>Active Employees</div>
                                     </div>
                                     <div style={{ background: '#f0fdf4', padding: '1.25rem', borderRadius: '8px', border: '2px solid #bbf7d0', textAlign: 'center' }}>
-                                        <div style={{ fontSize: '2rem', fontWeight: '700', color: '#16a34a' }}>{teamMembers.filter(m => m.employmentType === 'Employee' || m.employmentType === 'Full-Time' || !m.employmentType).length}</div>
+                                        <div style={{ fontSize: '2rem', fontWeight: '700', color: '#16a34a' }}>{teamMembers.filter(m => m.employmentType !== 'Archived' && (m.employmentType === 'Employee' || m.employmentType === 'Full-Time' || !m.employmentType)).length}</div>
                                         <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.25rem', fontWeight: '600' }}>Full-Time</div>
                                     </div>
                                     <div style={{ background: '#fef3c7', padding: '1.25rem', borderRadius: '8px', border: '2px solid #fbbf24', textAlign: 'center' }}>
-                                        <div style={{ fontSize: '2rem', fontWeight: '700', color: '#d97706' }}>{teamMembers.filter(m => m.employmentType === 'Contract').length}</div>
+                                        <div style={{ fontSize: '2rem', fontWeight: '700', color: '#d97706' }}>{teamMembers.filter(m => m.employmentType !== 'Archived' && m.employmentType === 'Contract').length}</div>
                                         <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.25rem', fontWeight: '600' }}>Contractors</div>
                                     </div>
                                     <div style={{ background: '#eff6ff', padding: '1.25rem', borderRadius: '8px', border: '2px solid #bfdbfe', textAlign: 'center' }}>
-                                        <div style={{ fontSize: '2rem', fontWeight: '700', color: '#2563eb' }}>{teamMembers.filter(m => m.billableStatus === 'Billable').length}</div>
+                                        <div style={{ fontSize: '2rem', fontWeight: '700', color: '#2563eb' }}>{teamMembers.filter(m => m.employmentType !== 'Archived' && m.billableStatus === 'Billable').length}</div>
                                         <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.25rem', fontWeight: '600' }}>Billable</div>
                                     </div>
                                     <div style={{ background: '#fdf2f8', padding: '1.25rem', borderRadius: '8px', border: '2px solid #fbcfe8', textAlign: 'center' }}>
-                                        <div style={{ fontSize: '2rem', fontWeight: '700', color: '#db2777' }}>{teamMembers.filter(m => m.billableStatus === 'Non-Billable').length}</div>
+                                        <div style={{ fontSize: '2rem', fontWeight: '700', color: '#db2777' }}>{teamMembers.filter(m => m.employmentType !== 'Archived' && m.billableStatus === 'Non-Billable').length}</div>
                                         <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.25rem', fontWeight: '600' }}>Non-Billable</div>
                                     </div>
                                     <div style={{ background: '#f5f3ff', padding: '1.25rem', borderRadius: '8px', border: '2px solid #ddd6fe', textAlign: 'center' }}>
