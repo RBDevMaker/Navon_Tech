@@ -6345,7 +6345,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             }
 
                                             const terminated = newEmployees.filter(e => (e.status||'').toLowerCase().match(/terminat|inactive|offboard|separated/)).length;
-                                            const pending = newEmployees.filter(e => (e.status||'').toLowerCase().match(/pending|not started|pre-start|onboarding/)).length;
+                                            const pending = newEmployees.filter(e => (e.status||'').toLowerCase().match(/pending|not started|pre-start|onboarding|accepted/)).length;
                                             const active = newEmployees.length - terminated - pending;
 
                                             if (!confirm(`Found ${rows.length} employees in CSV.\n\n✅ New employees to add: ${newEmployees.length}\n   • Active: ${active}\n   • Pending/Not Started: ${pending}\n   • Terminated → Previous Employees: ${terminated}\n⏭️ Already exist (skip): ${skipped}\n\nProceed with import?`)) return;
@@ -6374,7 +6374,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                             const s = (emp.status || '').toLowerCase();
                                                             const t = (emp.empType || '').toLowerCase();
                                                             if (s.includes('terminat') || s.includes('inactive') || s.includes('offboard') || s.includes('separated')) return 'Archived';
-                                                            if (s.includes('pending') || s.includes('not started') || s.includes('pre-start') || s.includes('onboarding')) return 'Pending';
+                                                            if (s.includes('pending') || s.includes('not started') || s.includes('pre-start') || s.includes('onboarding') || s.includes('accepted')) return 'Pending';
                                                             if (t.includes('contract') || t.includes('1099')) return 'Contract';
                                                             if (t.includes('part')) return 'Part-Time';
                                                             return 'Full-Time';
