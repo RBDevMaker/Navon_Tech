@@ -4397,12 +4397,11 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         marginBottom: '0.5rem',
                                         fontSize: '1rem'
                                     }}>
-                                        Position Title / Skillset<span style={{ color: '#ef4444' }}>*</span>
+                                        Position Title / Skillset
                                     </label>
                                     <input 
                                         type="text"
                                         name="position"
-                                        required
                                         value={selectedJob}
                                         onChange={(e) => setSelectedJob(e.target.value)}
                                         placeholder="Example: Software Developer, Project Manager, Systems Engineer, etc."
@@ -11632,7 +11631,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             border: '2px solid #d4af37',
                             boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
                             marginBottom: '2rem',
-                            overflow: 'hidden',
                             maxWidth: '100%',
                             boxSizing: 'border-box'
                         }}>
@@ -11640,7 +11638,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem' }}>
                                     Resumes ({filteredResumes.length + 1})
                                 </h3>
-                                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', width: '100%' }}>
+                                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                                     {(userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin') && (
                                         <>
                                             <button
@@ -11687,7 +11685,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             fontSize: '0.85rem',
                                             cursor: 'pointer',
                                             flex: '1 1 auto',
-                                            minWidth: 0
+                                            minWidth: '100px'
                                         }}>
                                         <option value="all">All Departments</option>
                                         <option value="Engineering">Engineering</option>
@@ -11709,7 +11707,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             fontSize: '0.85rem',
                                             cursor: 'pointer',
                                             flex: '1 1 auto',
-                                            minWidth: 0
+                                            minWidth: '100px'
                                         }}>
                                         <option value="all">All Stages</option>
                                         <option value="New">New</option>
@@ -11732,7 +11730,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             fontSize: '0.85rem',
                                             cursor: 'pointer',
                                             flex: '1 1 auto',
-                                            minWidth: 0
+                                            minWidth: '100px'
                                         }}>
                                         <option value="newest">Newest First</option>
                                         <option value="oldest">Oldest First</option>
@@ -13131,12 +13129,11 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                 marginBottom: '0.5rem',
                                                 fontSize: '0.9rem'
                                             }}>
-                                                Position/Role<span style={{ color: '#ef4444' }}>*</span>
+                                                Position/Role
                                             </label>
                                             <input 
                                                 type="text"
                                                 name="position"
-                                                required
                                                 placeholder="e.g., Senior Cloud Architect, DevOps Engineer"
                                                 style={{
                                                     width: '100%',
@@ -15356,12 +15353,11 @@ Please review and approve this request.
                                             fontWeight: '600',
                                             fontSize: '0.9rem'
                                         }}>
-                                            Position *
+                                            Position
                                         </label>
                                         <input
                                             name="position"
                                             type="text"
-                                            required
                                             style={{
                                                 width: '100%',
                                                 padding: '0.75rem',
