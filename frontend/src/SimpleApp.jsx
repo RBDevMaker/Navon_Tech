@@ -9931,22 +9931,24 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         <option value="">All</option>
                                         {[...new Set(teamMembers
                                             .filter(m => m.employmentType !== 'Archived')
-                                            .map(m => {
-                                                if (directoryFilter === 'department') return m.department;
-                                                if (directoryFilter === 'employmentType') return m.employmentType;
-                                                if (directoryFilter === 'billableStatus') return m.billableStatus;
-                                                if (directoryFilter === 'prime') return m.contractAssignment;
-                                                if (directoryFilter === 'gender') return m.gender;
-                                                if (directoryFilter === 'location') return m.location;
-                                                if (directoryFilter === 'shirtSize') return m.shirtSize;
-                                                if (directoryFilter === 'startDate') {
-                                                    if (!m.startDate) return null;
-                                                    const [y] = m.startDate.split('-');
-                                                    return y;
-                                                }
-                                                return '';
+                                            .flatMap(m => {
+                                                if (directoryFilter === 'department') return (m.department || '').split(',').map(d => d.trim()).filter(Boolean);
+                                                const val = (() => {
+                                                    if (directoryFilter === 'employmentType') return m.employmentType;
+                                                    if (directoryFilter === 'billableStatus') return m.billableStatus;
+                                                    if (directoryFilter === 'prime') return m.contractAssignment;
+                                                    if (directoryFilter === 'gender') return m.gender;
+                                                    if (directoryFilter === 'location') return m.location;
+                                                    if (directoryFilter === 'shirtSize') return m.shirtSize;
+                                                    if (directoryFilter === 'startDate') {
+                                                        if (!m.startDate) return null;
+                                                        const [y] = m.startDate.split('-');
+                                                        return y;
+                                                    }
+                                                    return '';
+                                                })();
+                                                return val ? [val] : [];
                                             })
-                                            .filter(Boolean)
                                         )].sort((a, b) => {
                                             return a.localeCompare(b);
                                         }).map(val => (
@@ -9995,7 +9997,11 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 if (directoryFilter !== 'all' && directoryFilter !== 'startDate' && directorySearch) {
                                     const fieldMap = { department: 'department', employmentType: 'employmentType', billableStatus: 'billableStatus', prime: 'contractAssignment', gender: 'gender', location: 'location', shirtSize: 'shirtSize' };
                                     const field = fieldMap[directoryFilter];
-                                    if (field && (profileData[field] || '').toLowerCase() !== directorySearch.toLowerCase()) return 0;
+                                    if (field) {
+                                        if (directoryFilter === 'department') {
+                                            if (!(profileData[field] || '').split(',').map(d => d.trim().toLowerCase()).includes(directorySearch.toLowerCase())) return 0;
+                                        } else if ((profileData[field] || '').toLowerCase() !== directorySearch.toLowerCase()) return 0;
+                                    }
                                 }
                                 if (directoryFilter === 'all' && directorySearch.trim()) {
                                     const s = directorySearch.toLowerCase();
@@ -10017,6 +10023,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 const s = directorySearch.toLowerCase();
                                 if (directoryFilter !== 'all') {
                                     const fieldMap = { department: 'department', employmentType: 'employmentType', billableStatus: 'billableStatus', prime: 'contractAssignment', gender: 'gender', location: 'location', shirtSize: 'shirtSize' };
+                                    if (directoryFilter === 'department') return (m[fieldMap[directoryFilter]] || '').split(',').map(d => d.trim().toLowerCase()).includes(s);
                                     return (m[fieldMap[directoryFilter]] || '').toLowerCase() === s;
                                 }
                                 return (m.name||'').toLowerCase().includes(s)||(m.department||'').toLowerCase().includes(s)||(m.title||'').toLowerCase().includes(s)||(m.email||'').toLowerCase().includes(s)||(m.location||'').toLowerCase().includes(s);
@@ -10046,7 +10053,11 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 if (directoryFilter !== 'all' && directoryFilter !== 'startDate' && directorySearch) {
                                     const fieldMap = { department: 'department', employmentType: 'employmentType', billableStatus: 'billableStatus', prime: 'contractAssignment', gender: 'gender', location: 'location', shirtSize: 'shirtSize' };
                                     const field = fieldMap[directoryFilter];
-                                    if (field && (profileData[field] || '').toLowerCase() !== directorySearch.toLowerCase()) return false;
+                                    if (field) {
+                                        if (directoryFilter === 'department') {
+                                            if (!(profileData[field] || '').split(',').map(d => d.trim().toLowerCase()).includes(directorySearch.toLowerCase())) return false;
+                                        } else if ((profileData[field] || '').toLowerCase() !== directorySearch.toLowerCase()) return false;
+                                    }
                                 }
                                 if (directoryFilter === 'all' && directorySearch.trim()) {
                                     const search = directorySearch.toLowerCase();
@@ -10370,6 +10381,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 if (directoryFilter !== 'all') {
                                     const fieldMap = { department: 'department', employmentType: 'employmentType', billableStatus: 'billableStatus', prime: 'contractAssignment', gender: 'gender', location: 'location', shirtSize: 'shirtSize' };
                                     const field = fieldMap[directoryFilter];
+                                    if (directoryFilter === 'department') return (member[field] || '').split(',').map(d => d.trim().toLowerCase()).includes(search.toLowerCase());
                                     return (member[field] || '').toLowerCase() === search.toLowerCase();
                                 }
                                 // Text search mode
