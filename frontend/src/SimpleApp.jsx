@@ -6305,6 +6305,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             const startIdx = findCol(['start date', 'hire date', 'start_date', 'hire_date']);
                                             const phoneIdx = findCol(['phone', 'work phone', 'mobile', 'phone number']);
                                             const locationIdx = findCol(['location', 'office', 'work location']);
+                                            const statusIdx = findCol(['status', 'employment status', 'employee status', 'emp status']);
+                                            const empTypeIdx = findCol(['employment type', 'emp type', 'type', 'worker type']);
 
                                             if (emailIdx === -1) { alert('CSV must have an Email column. Found headers: ' + headers.join(', ')); return; }
                                             if (nameIdx === -1 && firstIdx === -1) { alert('CSV must have a Name or First Name column. Found headers: ' + headers.join(', ')); return; }
@@ -6320,7 +6322,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                     title: titleIdx !== -1 ? cols[titleIdx]?.trim() || '' : '',
                                                     startDate: startIdx !== -1 ? cols[startIdx]?.trim() || '' : '',
                                                     phone: phoneIdx !== -1 ? cols[phoneIdx]?.trim() || '' : '',
-                                                    location: locationIdx !== -1 ? cols[locationIdx]?.trim() || '' : ''
+                                                    location: locationIdx !== -1 ? cols[locationIdx]?.trim() || '' : '',
+                                                    status: statusIdx !== -1 ? cols[statusIdx]?.trim() || '' : '',
+                                                    empType: empTypeIdx !== -1 ? cols[empTypeIdx]?.trim() || '' : ''
                                                 };
                                             }).filter(r => r.email && r.email.includes('@'));
 
@@ -6340,7 +6344,11 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                 return;
                                             }
 
-                                            if (!confirm(`Found ${rows.length} employees in CSV.\n\n✅ New employees to add: ${newEmployees.length}\n⏭️ Already exist (skip): ${skipped}\n\nProceed with import?`)) return;
+                                            const terminated = newEmployees.filter(e => (e.status||'').toLowerCase().match(/terminat|inactive|offboard|separated/)).length;
+                                            const pending = newEmployees.filter(e => (e.status||'').toLowerCase().match(/pending|not started|pre-start|onboarding/)).length;
+                                            const active = newEmployees.length - terminated - pending;
+
+                                            if (!confirm(`Found ${rows.length} employees in CSV.\n\n✅ New employees to add: ${newEmployees.length}\n   • Active: ${active}\n   • Pending/Not Started: ${pending}\n   • Terminated → Previous Employees: ${terminated}\n⏭️ Already exist (skip): ${skipped}\n\nProceed with import?`)) return;
 
                                             let added = 0;
                                             let failed = 0;
@@ -6362,8 +6370,16 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                         startDate: normalizedDate,
                                                         phone: emp.phone,
                                                         location: emp.location,
-                                                        employmentType: 'Full-Time',
-                                                        showInDirectory: true
+                                                        employmentType: (() => {
+                                                            const s = (emp.status || '').toLowerCase();
+                                                            const t = (emp.empType || '').toLowerCase();
+                                                            if (s.includes('terminat') || s.includes('inactive') || s.includes('offboard') || s.includes('separated')) return 'Archived';
+                                                            if (s.includes('pending') || s.includes('not started') || s.includes('pre-start') || s.includes('onboarding')) return 'Pending';
+                                                            if (t.includes('contract') || t.includes('1099')) return 'Contract';
+                                                            if (t.includes('part')) return 'Part-Time';
+                                                            return 'Full-Time';
+                                                        })(),
+                                                        showInDirectory: !((emp.status || '').toLowerCase().includes('terminat'))
                                                     };
                                                     const res = await fetch(`${apiUrl}/profiles`, {
                                                         method: 'POST',
