@@ -11798,438 +11798,54 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             </button>
                         </div>
 
-                        {/* Resumes Content */}
-                        <div style={{
-                            background: 'white',
-                            padding: 'clamp(0.75rem, 2vw, 3rem)',
-                            borderRadius: '12px',
-                            border: '2px solid #d4af37',
-                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                            marginBottom: '2rem',
-                            maxWidth: '100%',
-                            boxSizing: 'border-box'
-                        }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
-                                <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem' }}>
-                                    Resumes ({filteredResumes.length + 1})
-                                </h3>
-                                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                                    {(userRole === 'hr' || userRole === 'admin' || userRole === 'security' || userRole === 'superadmin') && (
-                                        <>
-                                            <button
-                                                onClick={() => setShowUploadModal(true)}
-                                                style={{
-                                                    background: '#10b981',
-                                                    color: 'white',
-                                                    border: 'none',
-                                                    padding: '0.5rem 1.5rem',
-                                                    borderRadius: '6px',
-                                                    cursor: 'pointer',
-                                                    fontSize: '0.9rem',
-                                                    fontWeight: '600'
-                                                }}>
-                                                📤 Upload Resume
-                                            </button>
-                                            <button
-                                                onClick={exportToExcel}
-                                                style={{
-                                                    background: '#059669',
-                                                    color: 'white',
-                                                    border: 'none',
-                                                    padding: '0.5rem 1.5rem',
-                                                    borderRadius: '6px',
-                                                    cursor: 'pointer',
-                                                    fontSize: '0.9rem',
-                                                    fontWeight: '600'
-                                                }}>
-                                                📊 Export to Excel
-                                            </button>
-                                        </>
-                                    )}
-                                    <select
-                                        value={resumeFilter.department}
-                                        onChange={(e) => {
-                                            const newFilter = { ...resumeFilter, department: e.target.value };
-                                            setResumeFilter(newFilter);
-                                            fetchResumes(newFilter.department, newFilter.stage, newFilter.sort);
-                                        }}
-                                        style={{
-                                            padding: '0.5rem 1rem',
-                                            borderRadius: '6px',
-                                            border: '2px solid #d4af37',
-                                            fontSize: '0.85rem',
-                                            cursor: 'pointer',
-                                            flex: '1 1 auto',
-                                            minWidth: '100px'
-                                        }}>
-                                        <option value="all">All Departments</option>
-                                        <option value="Engineering">Engineering</option>
-                                        <option value="Sales">Sales</option>
-                                        <option value="Marketing">Marketing</option>
-                                        <option value="HR">HR</option>
-                                    </select>
-                                    <select
-                                        value={resumeFilter.stage}
-                                        onChange={(e) => {
-                                            const newFilter = { ...resumeFilter, stage: e.target.value };
-                                            setResumeFilter(newFilter);
-                                            fetchResumes(newFilter.department, newFilter.stage, newFilter.sort);
-                                        }}
-                                        style={{
-                                            padding: '0.5rem 1rem',
-                                            borderRadius: '6px',
-                                            border: '2px solid #d4af37',
-                                            fontSize: '0.85rem',
-                                            cursor: 'pointer',
-                                            flex: '1 1 auto',
-                                            minWidth: '100px'
-                                        }}>
-                                        <option value="all">All Stages</option>
-                                        <option value="New">New</option>
-                                        <option value="Screening">Screening</option>
-                                        <option value="Interview">Interview</option>
-                                        <option value="Offer">Offer</option>
-                                        <option value="Rejected">Rejected / Archived</option>
-                                    </select>
-                                    <select
-                                        value={resumeFilter.sort}
-                                        onChange={(e) => {
-                                            const newFilter = { ...resumeFilter, sort: e.target.value };
-                                            setResumeFilter(newFilter);
-                                            fetchResumes(newFilter.department, newFilter.stage, newFilter.sort);
-                                        }}
-                                        style={{
-                                            padding: '0.5rem 1rem',
-                                            borderRadius: '6px',
-                                            border: '2px solid #d4af37',
-                                            fontSize: '0.85rem',
-                                            cursor: 'pointer',
-                                            flex: '1 1 auto',
-                                            minWidth: '100px'
-                                        }}>
-                                        <option value="newest">Newest First</option>
-                                        <option value="oldest">Oldest First</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            {isLoadingResumes && (
-                                <div style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                                    Loading resumes...
-                                </div>
-                            )}
-
-                            {/* Sample Resume Card - Always visible */}
-                            {!isLoadingResumes && (
-                                <div style={{
-                                    background: '#f8fafc',
-                                    padding: 'clamp(0.75rem, 2vw, 1.5rem)',
-                                    borderRadius: '8px',
-                                    border: '2px solid #e2e8f0',
-                                    marginBottom: '1rem',
-                                    overflow: 'hidden'
-                                }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
-                                        <h4 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.2rem' }}>
-                                            Sarah Johnson
-                                        </h4>
-                                        <span style={{
-                                            background: '#dbeafe',
-                                            color: '#1e40af',
-                                            padding: '0.25rem 0.75rem',
-                                            borderRadius: '12px',
-                                            fontSize: '0.75rem',
-                                            fontWeight: '600'
-                                        }}>
-                                            New
-                                        </span>
-                                    </div>
-                                    <p style={{ color: '#64748b', margin: '0.25rem 0', fontSize: '0.9rem' }}>
-                                        <strong>Position:</strong> Senior Software Engineer
-                                    </p>
-                                    <p style={{ color: '#64748b', margin: '0.25rem 0', fontSize: '0.9rem' }}>
-                                        <strong>Department:</strong> Engineering
-                                    </p>
-                                    <p style={{ color: '#64748b', margin: '0.25rem 0', fontSize: '0.9rem' }}>
-                                        <strong>Email:</strong> sarah.johnson@email.com
-                                    </p>
-                                    <p style={{ color: '#64748b', margin: '0.25rem 0', fontSize: '0.9rem' }}>
-                                        <strong>Phone:</strong> (555) 234-5678
-                                    </p>
-                                    <p style={{ color: '#64748b', margin: '0.25rem 0', fontSize: '0.9rem' }}>
-                                        <strong>Received:</strong> March 9, 2026
-                                    </p>
-                                    <p style={{ color: '#64748b', margin: '0.25rem 0 0.75rem', fontSize: '0.85rem', fontStyle: 'italic' }}>
-                                        10+ years experience in full-stack development, AWS certified, React/Node.js expert
-                                    </p>
-                                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                                        <button 
-                                            onClick={() => alert('📄 Sample Resume\n\nThis is a demo resume. Once you deploy the backend, real resumes will be stored in S3 and accessible here.')}
-                                            style={{
-                                                background: '#1e3a8a',
-                                                color: 'white',
-                                                border: 'none',
-                                                padding: '0.5rem 1rem',
-                                                borderRadius: '6px',
-                                                cursor: 'pointer',
-                                                fontSize: '0.85rem',
-                                                fontWeight: '600'
-                                            }}>
-                                            📄 View Resume
-                                        </button>
-                                        {(userRole === 'hr' || userRole === 'admin' || userRole === 'security' || userRole === 'superadmin') && (
-                                            <>
-                                                <select
-                                                    value="New"
-                                                    onChange={(e) => alert(`Stage changed to: ${e.target.value}\n\nThis is a demo resume. Deploy the backend to enable full functionality.`)}
-                                                    style={{
-                                                        padding: '0.5rem',
-                                                        borderRadius: '6px',
-                                                        border: '2px solid #d4af37',
-                                                        fontSize: '0.85rem',
-                                                        cursor: 'pointer'
-                                                    }}>
-                                                    <option value="New">New</option>
-                                                    <option value="Screening">Screening</option>
-                                                    <option value="Interview">Interview</option>
-                                                    <option value="Offer">Offer</option>
-                                                    <option value="Rejected">Rejected / Archived</option>
-                                                </select>
-                                                <button
-                                                    onClick={() => alert('🗑️ Delete Resume\n\nThis is a demo resume and cannot be deleted. Deploy the backend to enable full functionality.')}
-                                                    style={{
-                                                        background: '#ef4444',
-                                                        color: 'white',
-                                                        border: 'none',
-                                                        padding: '0.5rem 1rem',
-                                                        borderRadius: '6px',
-                                                        cursor: 'pointer',
-                                                        fontSize: '0.85rem',
-                                                        fontWeight: '600'
-                                                    }}>
-                                                    🗑️ Delete
-                                                </button>
-                                            </>
-                                        )}
+                        {/* Kanban Board */}
+                        {(() => {
+                            const stages = [
+                                { key: 'New', label: 'New', icon: '📥', bg: 'linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%)', border: '#3b82f6', color: '#1e40af' },
+                                { key: 'Screening', label: 'Screening', icon: '🔍', bg: 'linear-gradient(135deg, #fef3c7 0%, #fefce8 100%)', border: '#f59e0b', color: '#92400e' },
+                                { key: 'Interview', label: 'Interview', icon: '📝', bg: 'linear-gradient(135deg, #ddd6fe 0%, #ede9fe 100%)', border: '#8b5cf6', color: '#5b21b6' },
+                                { key: 'Offer', label: 'Offer', icon: '✅', bg: 'linear-gradient(135deg, #dcfce7 0%, #f0fdf4 100%)', border: '#10b981', color: '#166534' },
+                                { key: 'Rejected', label: 'Rejected', icon: '❌', bg: 'linear-gradient(135deg, #fee2e2 0%, #fef2f2 100%)', border: '#ef4444', color: '#991b1b' }
+                            ];
+                            const sampleResume = { resumeId: 'sample', candidateName: 'Sarah Johnson', position: 'Senior Software Engineer', department: 'Engineering', email: 'sarah.johnson@email.com', stage: 'New', receivedDate: '2026-03-09', isSample: true };
+                            const allResumes = [sampleResume, ...filteredResumes];
+                            return (
+                                <div style={{ overflowX: 'auto', paddingBottom: '1rem' }}>
+                                    <div style={{ display: 'flex', gap: '1rem', minWidth: '900px' }}>
+                                        {stages.map(stage => {
+                                            const stageResumes = allResumes.filter(r => (r.stage || 'New') === stage.key);
+                                            return (
+                                                <div key={stage.key} style={{ flex: 1, minWidth: '170px' }}>
+                                                    <div style={{ background: stage.bg, padding: '1rem', borderRadius: '10px 10px 0 0', border: `2px solid ${stage.border}`, borderBottom: 'none', textAlign: 'center' }}>
+                                                        <div style={{ fontSize: '1.5rem' }}>{stage.icon}</div>
+                                                        <div style={{ fontSize: '1.5rem', fontWeight: '700', color: stage.color }}>{stageResumes.length}</div>
+                                                        <div style={{ fontSize: '0.8rem', fontWeight: '600', color: stage.color }}>{stage.label}</div>
+                                                    </div>
+                                                    <div style={{ background: '#f8fafc', border: `2px solid ${stage.border}`, borderTop: `3px solid ${stage.border}`, borderRadius: '0 0 10px 10px', padding: '0.5rem', minHeight: '200px', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                                        {stageResumes.map((resume, idx) => (
+                                                            <div key={resume.resumeId || idx} style={{ background: 'white', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', fontSize: '0.8rem' }}>
+                                                                <div style={{ fontWeight: '700', color: '#1e3a8a', marginBottom: '0.25rem', fontSize: '0.85rem' }}>{resume.candidateName || 'Unknown'}</div>
+                                                                <div style={{ color: '#64748b', marginBottom: '0.15rem' }}>{resume.position || 'No position'}</div>
+                                                                <div style={{ color: '#64748b', marginBottom: '0.15rem' }}>{resume.department || ''}</div>
+                                                                <div style={{ color: '#94a3b8', fontSize: '0.7rem', marginBottom: '0.5rem' }}>{resume.receivedDate ? new Date(resume.receivedDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : ''}</div>
+                                                                <div style={{ display: 'flex', gap: '0.25rem', flexWrap: 'wrap' }}>
+                                                                    {!resume.isSample && <button onClick={() => viewResume(resume.s3Key, resume.candidateName)} style={{ background: '#1e3a8a', color: 'white', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', fontWeight: '600' }}>📄 View</button>}
+                                                                    <select value={resume.stage || 'New'} onChange={(e) => { if (resume.isSample) { alert('Demo resume.'); return; } updateResumeStage(resume.resumeId, e.target.value); }} style={{ padding: '0.25rem', borderRadius: '4px', border: '1px solid #d4af37', fontSize: '0.7rem', cursor: 'pointer', flex: 1, minWidth: 0 }}>
+                                                                        <option value="New">→ New</option><option value="Screening">→ Screening</option><option value="Interview">→ Interview</option><option value="Offer">→ Offer</option><option value="Rejected">→ Rejected</option>
+                                                                    </select>
+                                                                    {!resume.isSample && <button onClick={() => deleteResume(resume.resumeId, resume.candidateName)} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem' }}>🗑️</button>}
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                        {stageResumes.length === 0 && <div style={{ textAlign: 'center', padding: '1rem', color: '#94a3b8', fontSize: '0.75rem', fontStyle: 'italic' }}>No resumes</div>}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 </div>
-                            )}
-
-                            {/* Resume Cards */}
-                            {!isLoadingResumes && filteredResumes.map((resume, index) => (
-                                <div key={resume.resumeId || index} style={{
-                                    background: '#f8fafc',
-                                    padding: 'clamp(0.75rem, 2vw, 1.5rem)',
-                                    borderRadius: '8px',
-                                    border: '2px solid #e2e8f0',
-                                    marginBottom: '1rem',
-                                    overflow: 'hidden'
-                                }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
-                                        <h4 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.2rem' }}>
-                                            {resume.candidateName || 'Unknown Candidate'}
-                                        </h4>
-                                        <span style={{
-                                            background: resume.stage === 'New' ? '#dbeafe' : 
-                                                       resume.stage === 'Screening' ? '#fef3c7' :
-                                                       resume.stage === 'Interview' ? '#ddd6fe' :
-                                                       resume.stage === 'Offer' ? '#dcfce7' : '#fee2e2',
-                                            color: resume.stage === 'New' ? '#1e40af' :
-                                                  resume.stage === 'Screening' ? '#92400e' :
-                                                  resume.stage === 'Interview' ? '#5b21b6' :
-                                                  resume.stage === 'Offer' ? '#166534' : '#991b1b',
-                                            padding: '0.25rem 0.75rem',
-                                            borderRadius: '12px',
-                                            fontSize: '0.75rem',
-                                            fontWeight: '600'
-                                        }}>
-                                            {resume.stage || 'New'}
-                                        </span>
-                                    </div>
-                                    <p style={{ color: '#64748b', margin: '0.25rem 0', fontSize: '0.9rem' }}>
-                                        <strong>Position:</strong> {resume.position || 'Not specified'}
-                                    </p>
-                                    <p style={{ color: '#64748b', margin: '0.25rem 0', fontSize: '0.9rem' }}>
-                                        <strong>Department:</strong> {resume.department || 'Not specified'}
-                                    </p>
-                                    <p style={{ color: '#64748b', margin: '0.25rem 0', fontSize: '0.9rem', wordBreak: 'break-word' }}>
-                                        <strong>Email:</strong> {resume.email || 'Not provided'}
-                                    </p>
-                                    {resume.phone && (
-                                        <p style={{ color: '#64748b', margin: '0.25rem 0', fontSize: '0.9rem' }}>
-                                            <strong>Phone:</strong> {resume.phone}
-                                        </p>
-                                    )}
-                                    <p style={{ color: '#64748b', margin: '0.25rem 0', fontSize: '0.9rem' }}>
-                                        <strong>Received:</strong> {resume.receivedDate ? new Date(resume.receivedDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Unknown'}
-                                    </p>
-                                    {resume.experience && (
-                                        <p style={{ color: '#64748b', margin: '0.25rem 0 0.75rem', fontSize: '0.85rem', fontStyle: 'italic' }}>
-                                            {resume.experience}
-                                        </p>
-                                    )}
-                                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center', marginTop: '0.75rem' }}>
-                                        <button 
-                                            onClick={() => viewResume(resume.s3Key, resume.candidateName)}
-                                            style={{
-                                                background: '#1e3a8a',
-                                                color: 'white',
-                                                border: 'none',
-                                                padding: '0.5rem 1rem',
-                                                borderRadius: '6px',
-                                                cursor: 'pointer',
-                                                fontSize: '0.85rem',
-                                                fontWeight: '600'
-                                            }}>
-                                            📄 View Resume
-                                        </button>
-                                        {(userRole === 'hr' || userRole === 'admin' || userRole === 'security' || userRole === 'superadmin') && (
-                                            <>
-                                                <select
-                                                    value={resume.stage || 'New'}
-                                                    onChange={(e) => updateResumeStage(resume.resumeId, e.target.value)}
-                                                    style={{
-                                                        padding: '0.5rem',
-                                                        borderRadius: '6px',
-                                                        border: '2px solid #d4af37',
-                                                        fontSize: '0.85rem',
-                                                        cursor: 'pointer'
-                                                    }}>
-                                                    <option value="New">New</option>
-                                                    <option value="Screening">Screening</option>
-                                                    <option value="Interview">Interview</option>
-                                                    <option value="Offer">Offer</option>
-                                                    <option value="Rejected">Rejected / Archived</option>
-                                                </select>
-                                                <button
-                                                    onClick={() => deleteResume(resume.resumeId, resume.candidateName)}
-                                                    style={{
-                                                        background: '#ef4444',
-                                                        color: 'white',
-                                                        border: 'none',
-                                                        padding: '0.5rem 1rem',
-                                                        borderRadius: '6px',
-                                                        cursor: 'pointer',
-                                                        fontSize: '0.85rem',
-                                                        fontWeight: '600'
-                                                    }}>
-                                                    🗑️ Delete
-                                                </button>
-                                            </>
-                                        )}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-
-                        {/* Resume Statistics - Bottom of Page */}
-                        <div style={{
-                            background: 'white',
-                            padding: '2rem',
-                            borderRadius: '12px',
-                            border: '2px solid #d4af37',
-                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-                        }}>
-                            <h3 style={{ color: '#1e3a8a', marginBottom: '1.5rem', fontSize: '1.3rem', textAlign: 'center' }}>
-                                📊 Resume Statistics
-                            </h3>
-                            <div style={{
-                                display: 'grid',
-                                gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-                                gap: '1rem'
-                            }}>
-                                <div style={{
-                                    background: 'linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%)',
-                                    padding: '1.5rem',
-                                    borderRadius: '8px',
-                                    border: '2px solid #3b82f6',
-                                    textAlign: 'center'
-                                }}>
-                                    <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>📥</div>
-                                    <div style={{ fontSize: '2rem', fontWeight: '700', color: '#1e40af' }}>
-                                        {filteredResumes.filter(r => r.stage === 'New').length + 1}
-                                    </div>
-                                    <div style={{ fontSize: '0.9rem', color: '#1e40af', marginTop: '0.5rem', fontWeight: '600' }}>
-                                        New Applications
-                                    </div>
-                                    <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.25rem' }}>
-                                        Recently submitted
-                                    </div>
-                                </div>
-                                <div style={{
-                                    background: 'linear-gradient(135deg, #fef3c7 0%, #fefce8 100%)',
-                                    padding: '1.5rem',
-                                    borderRadius: '8px',
-                                    border: '2px solid #f59e0b',
-                                    textAlign: 'center'
-                                }}>
-                                    <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>🔍</div>
-                                    <div style={{ fontSize: '2rem', fontWeight: '700', color: '#92400e' }}>
-                                        {filteredResumes.filter(r => r.stage === 'Screening').length}
-                                    </div>
-                                    <div style={{ fontSize: '0.9rem', color: '#92400e', marginTop: '0.5rem', fontWeight: '600' }}>
-                                        Screening
-                                    </div>
-                                    <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.25rem' }}>
-                                        Under review
-                                    </div>
-                                </div>
-                                <div style={{
-                                    background: 'linear-gradient(135deg, #ddd6fe 0%, #ede9fe 100%)',
-                                    padding: '1.5rem',
-                                    borderRadius: '8px',
-                                    border: '2px solid #8b5cf6',
-                                    textAlign: 'center'
-                                }}>
-                                    <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>📝</div>
-                                    <div style={{ fontSize: '2rem', fontWeight: '700', color: '#5b21b6' }}>
-                                        {filteredResumes.filter(r => r.stage === 'Interview').length}
-                                    </div>
-                                    <div style={{ fontSize: '0.9rem', color: '#5b21b6', marginTop: '0.5rem', fontWeight: '600' }}>
-                                        Interview
-                                    </div>
-                                    <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.25rem' }}>
-                                        Active interviews
-                                    </div>
-                                </div>
-                                <div style={{
-                                    background: 'linear-gradient(135deg, #dcfce7 0%, #f0fdf4 100%)',
-                                    padding: '1.5rem',
-                                    borderRadius: '8px',
-                                    border: '2px solid #10b981',
-                                    textAlign: 'center'
-                                }}>
-                                    <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>✅</div>
-                                    <div style={{ fontSize: '2rem', fontWeight: '700', color: '#166534' }}>
-                                        {filteredResumes.filter(r => r.stage === 'Offer').length}
-                                    </div>
-                                    <div style={{ fontSize: '0.9rem', color: '#166534', marginTop: '0.5rem', fontWeight: '600' }}>
-                                        Offers
-                                    </div>
-                                    <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.25rem' }}>
-                                        Offers extended
-                                    </div>
-                                </div>
-                                <div style={{
-                                    background: 'linear-gradient(135deg, #fee2e2 0%, #fef2f2 100%)',
-                                    padding: '1.5rem',
-                                    borderRadius: '8px',
-                                    border: '2px solid #ef4444',
-                                    textAlign: 'center'
-                                }}>
-                                    <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>❌</div>
-                                    <div style={{ fontSize: '2rem', fontWeight: '700', color: '#991b1b' }}>
-                                        {filteredResumes.filter(r => r.stage === 'Rejected').length}
-                                    </div>
-                                    <div style={{ fontSize: '0.9rem', color: '#991b1b', marginTop: '0.5rem', fontWeight: '600' }}>
-                                        Rejected
-                                    </div>
-                                    <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.25rem' }}>
-                                        Not moving forward
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                            );
+                        })()}
                     </div>
                 </section>
             )}
