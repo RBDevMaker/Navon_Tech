@@ -11821,9 +11821,27 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                         <div style={{ fontSize: '1.5rem', fontWeight: '700', color: stage.color }}>{stageResumes.length}</div>
                                                         <div style={{ fontSize: '0.8rem', fontWeight: '600', color: stage.color }}>{stage.label}</div>
                                                     </div>
-                                                    <div style={{ background: '#f8fafc', border: `2px solid ${stage.border}`, borderTop: `3px solid ${stage.border}`, borderRadius: '0 0 10px 10px', padding: '0.5rem', minHeight: '200px', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                                    <div
+                                                        onDragOver={(e) => { e.preventDefault(); e.currentTarget.style.background = '#e0f2fe'; }}
+                                                        onDragLeave={(e) => { e.currentTarget.style.background = '#f8fafc'; }}
+                                                        onDrop={(e) => {
+                                                            e.preventDefault();
+                                                            e.currentTarget.style.background = '#f8fafc';
+                                                            const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+                                                            if (data.isSample) return;
+                                                            if (data.stage !== stage.key) updateResumeStage(data.resumeId, stage.key);
+                                                        }}
+                                                        style={{ background: '#f8fafc', border: `2px solid ${stage.border}`, borderTop: `3px solid ${stage.border}`, borderRadius: '0 0 10px 10px', padding: '0.5rem', minHeight: '200px', display: 'flex', flexDirection: 'column', gap: '0.5rem', transition: 'background 0.2s' }}>
                                                         {stageResumes.map((resume, idx) => (
-                                                            <div key={resume.resumeId || idx} style={{ background: 'white', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', fontSize: '0.8rem' }}>
+                                                            <div
+                                                                key={resume.resumeId || idx}
+                                                                draggable={!resume.isSample}
+                                                                onDragStart={(e) => {
+                                                                    e.dataTransfer.setData('text/plain', JSON.stringify({ resumeId: resume.resumeId, stage: resume.stage, isSample: resume.isSample }));
+                                                                    e.currentTarget.style.opacity = '0.5';
+                                                                }}
+                                                                onDragEnd={(e) => { e.currentTarget.style.opacity = '1'; }}
+                                                                style={{ background: 'white', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', fontSize: '0.8rem', cursor: resume.isSample ? 'default' : 'grab' }}>
                                                                 <div style={{ fontWeight: '700', color: '#1e3a8a', marginBottom: '0.25rem', fontSize: '0.85rem' }}>{resume.candidateName || 'Unknown'}</div>
                                                                 <div style={{ color: '#64748b', marginBottom: '0.15rem' }}>{resume.position || 'No position'}</div>
                                                                 <div style={{ color: '#64748b', marginBottom: '0.15rem' }}>{resume.department || ''}</div>
