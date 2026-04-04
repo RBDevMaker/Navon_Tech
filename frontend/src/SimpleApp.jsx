@@ -4300,7 +4300,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 }
                                 
                                 // Validate all required fields
-                                if (!name || !email || !position) {
+                                if (!name || !email) {
                                     alert('Please fill out all required fields');
                                     return;
                                 }
@@ -4334,7 +4334,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     }
 
                                     // Send to API
-                                    const apiEndpoint = 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/prod/api/apply';
+                                    const apiEndpoint = 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api/apply';
                                     const response = await fetch(apiEndpoint, {
                                         method: 'POST',
                                         headers: {
@@ -4483,7 +4483,50 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         }}
                                     />
                                 </div>
+
+                                {/* Current State and Relocate */}
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                    <div>
+                                        <label style={{ display: 'block', color: '#0f172a', fontWeight: '600', marginBottom: '0.5rem', fontSize: '1rem' }}>
+                                            Current State<span style={{ color: '#ef4444' }}>*</span>
+                                        </label>
+                                        <input 
+                                            type="text"
+                                            name="currentState"
+                                            required
+                                            placeholder="e.g., Virginia, Maryland, etc."
+                                            style={{ width: '100%', padding: '0.75rem', border: '2px solid #e2e8f0', borderRadius: '8px', fontSize: '1rem', fontFamily: 'inherit' }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', color: '#0f172a', fontWeight: '600', marginBottom: '0.5rem', fontSize: '1rem' }}>
+                                            Are you willing to relocate?<span style={{ color: '#ef4444' }}>*</span>
+                                        </label>
+                                        <select name="willingToRelocate" required style={{ width: '100%', padding: '0.75rem', border: '2px solid #e2e8f0', borderRadius: '8px', fontSize: '1rem', fontFamily: 'inherit' }}>
+                                            <option value="">Select</option>
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+                                            <option value="Open to Discussion">Open to Discussion</option>
+                                        </select>
+                                    </div>
+                                </div>
                                 
+                                {/* Phone Number */}
+                                <div>
+                                    <label style={{ display: 'block', color: '#0f172a', fontWeight: '600', marginBottom: '0.5rem', fontSize: '1rem' }}>
+                                        Phone Number
+                                    </label>
+                                    <input type="tel" name="phone" placeholder="(555) 123-4567" style={{ width: '100%', padding: '0.75rem', border: '2px solid #e2e8f0', borderRadius: '8px', fontSize: '1rem', fontFamily: 'inherit' }} />
+                                </div>
+
+                                {/* Experience */}
+                                <div>
+                                    <label style={{ display: 'block', color: '#0f172a', fontWeight: '600', marginBottom: '0.5rem', fontSize: '1rem' }}>
+                                        Experience
+                                    </label>
+                                    <textarea name="experience" rows={3} placeholder="Briefly describe your relevant experience..." style={{ width: '100%', padding: '0.75rem', border: '2px solid #e2e8f0', borderRadius: '8px', fontSize: '1rem', fontFamily: 'inherit', resize: 'vertical' }} />
+                                </div>
+
                                 <div>
                                     <label style={{ 
                                         display: 'block', 
@@ -4492,7 +4535,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         marginBottom: '0.5rem',
                                         fontSize: '1rem'
                                     }}>
-                                        Resume<span style={{ color: '#ef4444' }}>*</span>
+                                        Resume
                                     </label>
                                     <div style={{
                                         border: '2px dashed #d4af37',
@@ -4506,7 +4549,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         <input 
                                             type="file"
                                             name="resume"
-                                            required
                                             accept=".pdf,.doc,.docx"
                                             style={{ display: 'none' }}
                                             id="resume-upload"
@@ -4532,6 +4574,14 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             <small style={{ color: '#64748b' }}>PDF, DOC, or DOCX (max 5MB)</small>
                                         </label>
                                     </div>
+                                </div>
+
+                                {/* Applicant's Comments */}
+                                <div>
+                                    <label style={{ display: 'block', color: '#0f172a', fontWeight: '600', marginBottom: '0.5rem', fontSize: '1rem' }}>
+                                        Applicant's Comments
+                                    </label>
+                                    <textarea name="comments" rows={3} placeholder="Any additional information you'd like to share..." style={{ width: '100%', padding: '0.75rem', border: '2px solid #e2e8f0', borderRadius: '8px', fontSize: '1rem', fontFamily: 'inherit', resize: 'vertical' }} />
                                 </div>
                                 
                                 <div style={{ textAlign: 'center', marginTop: '1rem' }}>
@@ -12845,7 +12895,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         }
 
                                         // Send to API (using same endpoint as job applications)
-                                        const apiEndpoint = 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/prod/api/apply';
+                                        const apiEndpoint = 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api/apply';
                                         const response = await fetch(apiEndpoint, {
                                             method: 'POST',
                                             headers: {
@@ -15158,6 +15208,10 @@ Please review and approve this request.
                                     <input value={editingResume[f.key] || ''} onChange={(e) => setEditingResume({...editingResume, [f.key]: e.target.value})} style={{ width: '100%', padding: '0.6rem', border: '2px solid #e2e8f0', borderRadius: '8px', fontSize: '0.9rem', boxSizing: 'border-box' }} />
                                 </div>
                             ))}
+                            <div>
+                                <label style={{ display: 'block', fontWeight: '600', color: '#1e3a8a', marginBottom: '0.25rem', fontSize: '0.85rem' }}>Received Date</label>
+                                <input type="date" value={editingResume.receivedDate ? editingResume.receivedDate.split('T')[0] : ''} onChange={(e) => setEditingResume({...editingResume, receivedDate: e.target.value})} style={{ width: '100%', padding: '0.6rem', border: '2px solid #e2e8f0', borderRadius: '8px', fontSize: '0.9rem', boxSizing: 'border-box' }} />
+                            </div>
                             <div>
                                 <label style={{ display: 'block', fontWeight: '600', color: '#1e3a8a', marginBottom: '0.25rem', fontSize: '0.85rem' }}>Department</label>
                                 <select value={editingResume.department || ''} onChange={(e) => setEditingResume({...editingResume, department: e.target.value})} style={{ width: '100%', padding: '0.6rem', border: '2px solid #e2e8f0', borderRadius: '8px', fontSize: '0.9rem', boxSizing: 'border-box' }}>

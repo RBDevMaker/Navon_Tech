@@ -121,14 +121,14 @@ exports.handler = async (event) => {
         const sanitizedPosition = sanitizeInput(position);
 
         // Validate required fields
-        if (!sanitizedName || !sanitizedEmail || !sanitizedPosition) {
-            console.warn('Missing required fields', { name: !!name, email: !!email, position: !!position });
+        if (!sanitizedName || !sanitizedEmail) {
+            console.warn('Missing required fields', { name: !!name, email: !!email });
             return {
                 statusCode: 400,
                 headers: CORS_HEADERS,
                 body: JSON.stringify({ 
                     error: 'Missing required fields',
-                    message: 'Name, email, and position are required'
+                    message: 'Name and email are required'
                 })
             };
         }
