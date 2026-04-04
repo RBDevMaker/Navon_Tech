@@ -1230,7 +1230,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             
             // First upload file to S3
             const fileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-            const s3Key = `resumes/${fileName}`;
+            const s3Key = `Resumes/${fileName}`;
             
             // Convert file to base64
             const base64File = await new Promise((resolve, reject) => {
@@ -1247,7 +1247,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 body: JSON.stringify({
                     action: 'upload',
                     fileName: fileName,
-                    folder: 'resumes',
+                    folder: 'Resumes',
                     fileContent: base64File,
                     contentType: file.type
                 })
