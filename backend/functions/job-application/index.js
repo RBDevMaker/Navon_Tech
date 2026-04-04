@@ -262,15 +262,15 @@ exports.handler = async (event) => {
             // The resume is still in S3 (if uploaded) and email will be sent
         }
 
-        // Send email to HR via SES
+        // Send email to HR via SES (application info only, no resume)
         const hrEmailParams = {
-            Source: 'hr@navontech.com', // Must be verified in SES
+            Source: 'hr@navontech.com',
             Destination: {
                 ToAddresses: ['hr@navontech.com']
             },
             Message: {
                 Subject: {
-                    Data: `New Job Application: ${sanitizedPosition}`,
+                    Data: `New Job Application: ${sanitizedPosition || 'General'}`,
                     Charset: 'UTF-8'
                 },
                 Body: {
@@ -282,9 +282,52 @@ exports.handler = async (event) => {
                                     <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
                                         <p><strong>Name:</strong> ${sanitizedName}</p>
                                         <p><strong>Email:</strong> <a href="mailto:${sanitizedEmail}">${sanitizedEmail}</a></p>
-                                        <p><strong>Position/Skillset:</strong> ${sanitizedPosition}</p>
+                                        <p><strong>Position/Skillset:</strong> ${sanitizedPosition || 'Not specified'}</p>
                                         <p><strong>IP Address:</strong> ${ipAddress}</p>
+                                    </div>
+                                    <p style="color: #64748b; font-size: 0.9em;">
+                                        This application was submitted through the Navon Technologies career portal.<br>
+                                        Resume has been sent to the Security team for review.
+                                    </p>
+                                </body>
+                            </html>
+                        `,
+                        Charset: 'UTF-8'
+                    },
+                    Text: {
+                        Data: `New Job Application Received\n\nName: ${sanitizedName}\nEmail: ${sanitizedEmail}\nPosition/Skillset: ${sanitizedPosition || 'Not specified'}\nIP Address: ${ipAddress}\n\nResume has been sent to the Security team for review.`,
+                        Charset: 'UTF-8'
+                    }
+                }
+            },
+            ReplyToAddresses: [sanitizedEmail]
+        };
+
+        // Send email to Security via SES (with resume)
+        const securityEmailParams = {
+            Source: 'hr@navontech.com',
+            Destination: {
+                ToAddresses: ['security@navontech.com']
+            },
+            Message: {
+                Subject: {
+                    Data: `New Applicant Resume: ${sanitizedName} - ${sanitizedPosition || 'General'}`,
+                    Charset: 'UTF-8'
+                },
+                Body: {
+                    Html: {
+                        Data: `
+                            <html>
+                                <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                                    <h2 style="color: #d4af37;">New Applicant Resume</h2>
+                                    <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                                        <p><strong>Name:</strong> ${sanitizedName}</p>
+                                        <p><strong>Email:</strong> <a href="mailto:${sanitizedEmail}">${sanitizedEmail}</a></p>
+                                        <p><strong>Position/Skillset:</strong> ${sanitizedPosition || 'Not specified'}</p>
                                         ${resumeUrl ? `<p><strong>Resume:</strong> <a href="${resumeUrl}">Download Resume</a></p>` : '<p><strong>Resume:</strong> Not provided</p>'}
+                                    </div>
+                                    <div style="background: #fffbeb; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #d4af37;">
+                                        <p style="margin: 0; font-weight: 600; color: #92400e;">Please reach out to applicant for further steps.</p>
                                     </div>
                                     <p style="color: #64748b; font-size: 0.9em;">
                                         This application was submitted through the Navon Technologies career portal.
@@ -295,17 +338,7 @@ exports.handler = async (event) => {
                         Charset: 'UTF-8'
                     },
                     Text: {
-                        Data: `
-New Job Application Received
-
-Name: ${sanitizedName}
-Email: ${sanitizedEmail}
-Position/Skillset: ${sanitizedPosition}
-IP Address: ${ipAddress}
-${resumeUrl ? `Resume: ${resumeUrl}` : 'Resume: Not provided'}
-
-This application was submitted through the Navon Technologies career portal.
-                        `,
+                        Data: `New Applicant Resume\n\nName: ${sanitizedName}\nEmail: ${sanitizedEmail}\nPosition/Skillset: ${sanitizedPosition || 'Not specified'}\n${resumeUrl ? `Resume: ${resumeUrl}` : 'Resume: Not provided'}\n\nPlease reach out to applicant for further steps.`,
                         Charset: 'UTF-8'
                     }
                 }
@@ -390,12 +423,14 @@ www.navontech.com
             ReplyToAddresses: ['hr@navontech.com']
         };
 
-        // Send both emails in parallel for faster response
+        // Send all emails in parallel
         console.log('Sending HR notification email to: hr@navontech.com');
+        console.log('Sending Security notification email to: security@navontech.com');
         console.log('Sending applicant confirmation email to:', sanitizedEmail);
         
-        const [hrEmailResult, applicantEmailResult] = await Promise.all([
+        const [hrEmailResult, securityEmailResult, applicantEmailResult] = await Promise.all([
             sesClient.send(new SendEmailCommand(hrEmailParams)),
+            sesClient.send(new SendEmailCommand(securityEmailParams)),
             sesClient.send(new SendEmailCommand(applicantEmailParams))
         ]);
 
