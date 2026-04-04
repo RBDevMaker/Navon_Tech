@@ -15,6 +15,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [showSecureModal, setShowSecureModal] = useState(false);
     const [showTimeOffModal, setShowTimeOffModal] = useState(false);
     const [userRole, setUserRole] = useState(authenticatedUserRole || 'employee'); // Use authenticated role
+    const [userGroups, setUserGroups] = useState([]); // All Cognito groups for multi-role support
     const [selectedJob, setSelectedJob] = useState(''); // For prefilling job application
     const [showReferralForm, setShowReferralForm] = useState(false); // For referral form modal
     const [profileData, setProfileData] = useState({
@@ -130,12 +131,14 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                     
                     let role = 'employee';
                     if (groups.includes('SuperAdmin')) role = 'superadmin';
-                    else if (groups.includes('Admin')) role = 'admin';
+                    else if (groups.includes('security')) role = 'security';
                     else if (groups.includes('HR')) role = 'hr';
+                    else if (groups.includes('Admin')) role = 'admin';
                     
                     if (email) {
                         setLoginEmail(email);
                         setUserRole(role);
+                        setUserGroups(groups.map(g => g.toLowerCase()));
                     }
                 }
             } catch (err) {
@@ -187,7 +190,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     
     // Fetch resumes when on resumes page
     useEffect(() => {
-        if (currentPage === 'resumes' && (userRole === 'hr' || userRole === 'admin' || userRole === 'security' || userRole === 'superadmin')) {
+        if (currentPage === 'resumes' && userGroups.includes('security')) {
             fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
         }
     }, [currentPage, userRole]);
@@ -11626,8 +11629,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 </button>
                             </div>
                             
-                            {/* Resumes & Applications - HR/Admin/SuperAdmin Only */}
-                            {(userRole === 'hr' || userRole === 'admin' || userRole === 'security' || userRole === 'superadmin') && isAdminView && (
+                            {/* Application Tracking System - Security Only */}
+                            {userGroups.includes('security') && isAdminView && (
                                 <div className="hover-lift animate-scale-in" style={{
                                     background: 'white',
                                     padding: '2rem',
@@ -11646,13 +11649,10 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             📄
                                         </div>
                                         <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
-                                            Resumes
+                                            Application Tracking System (ATS)
                                         </h3>
                                     </div>
                                     <div style={{ marginBottom: '1rem', flex: 1 }}>
-                                        <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                            • Candidate resumes
-                                        </p>
                                         <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
                                             • Job applications
                                         </p>
@@ -11679,7 +11679,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             width: '100%',
                                             marginTop: 'auto'
                                         }}>
-                                        View Resumes
+                                        View Applicants
                                     </button>
                                 </div>
                             )}
@@ -11818,8 +11818,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 </section>
             )}
 
-            {/* RESUMES & APPLICATIONS PAGE - HR/Admin/SuperAdmin Only */}
-            {currentPage === 'resumes' && (userRole === 'hr' || userRole === 'admin' || userRole === 'security' || userRole === 'superadmin') && (
+            {/* APPLICATION TRACKING SYSTEM - Security Only */}
+            {currentPage === 'resumes' && userGroups.includes('security') && (
                 <section style={{ 
                     padding: 'clamp(1rem, 3vw, 4rem) clamp(0.5rem, 2vw, 2rem)', 
                     background: '#f1f5f9',
@@ -11834,7 +11834,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 color: '#1e3a8a',
                                 fontWeight: '800'
                             }}>
-                                📄 Resumes
+                                📄 Application Tracking System (ATS)
                             </h2>
                             <p style={{
                                 fontSize: '1.2rem',
@@ -11842,7 +11842,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 maxWidth: '800px',
                                 margin: '0 auto 2rem auto'
                             }}>
-                                Review candidate resumes and interview materials
+                                Track applicants and manage the hiring pipeline
                             </p>
                             <button 
                                 onClick={() => {
@@ -11878,7 +11878,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 <>
                                 {/* Toolbar */}
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.75rem', background: 'white', padding: '1rem 1.5rem', borderRadius: '12px', border: '2px solid #d4af37' }}>
-                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.3rem' }}>Resumes ({allResumes.length})</h3>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.3rem' }}>Applicants ({allResumes.length})</h3>
                                     <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
                                         <button onClick={() => setShowUploadModal(true)} style={{ background: '#10b981', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600' }}>📤 Upload Resume</button>
                                         <button onClick={exportToExcel} style={{ background: '#059669', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600' }}>Export Excel</button>
@@ -11900,10 +11900,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             <option value="Sales">Sales</option>
                                             <option value="Services">Services</option>
                                             <option value="Software Engineering">Software Engineering</option>
-                                        </select>
-                                        <select value={resumeFilter.sort} onChange={(e) => { const f = { ...resumeFilter, sort: e.target.value }; setResumeFilter(f); fetchResumes(f.department, f.stage, f.sort); }} style={{ padding: '0.5rem', borderRadius: '6px', border: '2px solid #d4af37', fontSize: '0.85rem', cursor: 'pointer' }}>
-                                            <option value="newest">Newest First</option>
-                                            <option value="oldest">Oldest First</option>
                                         </select>
                                     </div>
                                 </div>
@@ -11950,7 +11946,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                                 <div style={{ color: '#64748b', marginBottom: '0.25rem' }}><strong>Received:</strong> {resume.receivedDate ? new Date(resume.receivedDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Unknown'}</div>
                                                                 {resume.experience && <div style={{ color: '#64748b', fontSize: '0.7rem', marginBottom: '0.25rem', fontStyle: 'italic' }}>{resume.experience}</div>}
                                                                 {resume.notes && <div style={{ color: '#64748b', fontSize: '0.7rem', marginBottom: '0.25rem', fontStyle: 'italic', background: '#fffbeb', padding: '0.25rem 0.4rem', borderRadius: '4px', border: '1px solid #fde68a' }}>Additional Info: {resume.notes}</div>}
-                                                                {resume.interviewerNotes && (userRole === 'security' || userRole === 'superadmin') && <div style={{ color: '#64748b', fontSize: '0.7rem', marginBottom: '0.25rem', fontStyle: 'italic', background: '#eff6ff', padding: '0.25rem 0.4rem', borderRadius: '4px', border: '1px solid #bfdbfe' }}>Interviewer: {resume.interviewerNotes}</div>}
+                                                                {resume.interviewerNotes && (userGroups.includes('security') || userRole === 'superadmin') && <div style={{ color: '#64748b', fontSize: '0.7rem', marginBottom: '0.25rem', fontStyle: 'italic', background: '#eff6ff', padding: '0.25rem 0.4rem', borderRadius: '4px', border: '1px solid #bfdbfe' }}>Interviewer: {resume.interviewerNotes}</div>}
                                                                 </div>
                                                                 <div style={{ display: 'flex', gap: '0.25rem', flexWrap: 'wrap' }}>
                                                                     <button onClick={(e) => { e.stopPropagation(); setEditingResume({...resume}); }} style={{ background: '#f59e0b', color: '#0f172a', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', fontWeight: '600' }}>Edit</button>
@@ -13951,10 +13947,12 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             const groups = session.tokens?.accessToken?.payload['cognito:groups'] || [];
                                             let role = 'employee';
                                             if (groups.includes('SuperAdmin')) role = 'superadmin';
-                                            else if (groups.includes('Admin')) role = 'admin';
+                                            else if (groups.includes('security')) role = 'security';
                                             else if (groups.includes('HR')) role = 'hr';
+                                            else if (groups.includes('Admin')) role = 'admin';
                                             
                                             setUserRole(role);
+                                            setUserGroups(groups.map(g => g.toLowerCase()));
                                             setRequiresNewPassword(false);
                                             setNewPassword('');
                                             setConfirmNewPassword('');
@@ -14157,10 +14155,12 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     // Determine role
                                     let role = 'employee';
                                     if (groups.includes('SuperAdmin')) role = 'superadmin';
-                                    else if (groups.includes('Admin')) role = 'admin';
+                                    else if (groups.includes('security')) role = 'security';
                                     else if (groups.includes('HR')) role = 'hr';
+                                    else if (groups.includes('Admin')) role = 'admin';
                                     
                                     setUserRole(role);
+                                    setUserGroups(groups.map(g => g.toLowerCase()));
                                     
                                     // Get email for profile lookups
                                     let email = loginEmail;
@@ -15192,7 +15192,7 @@ Please review and approve this request.
                                 <label style={{ display: 'block', fontWeight: '600', color: '#1e3a8a', marginBottom: '0.25rem', fontSize: '0.85rem' }}>Additional Info (Applicant)</label>
                                 <textarea value={editingResume.notes || ''} onChange={(e) => setEditingResume({...editingResume, notes: e.target.value})} rows={2} style={{ width: '100%', padding: '0.6rem', border: '2px solid #fde68a', borderRadius: '8px', fontSize: '0.9rem', boxSizing: 'border-box', resize: 'vertical', background: '#fffbeb' }} />
                             </div>
-                            {(userRole === 'security' || userRole === 'superadmin') && (
+                            {(userGroups.includes('security')) && (
                             <div>
                                 <label style={{ display: 'block', fontWeight: '600', color: '#1e3a8a', marginBottom: '0.25rem', fontSize: '0.85rem' }}>Interviewer Notes (Security Only)</label>
                                 <textarea value={editingResume.interviewerNotes || ''} onChange={(e) => setEditingResume({...editingResume, interviewerNotes: e.target.value})} rows={3} style={{ width: '100%', padding: '0.6rem', border: '2px solid #bfdbfe', borderRadius: '8px', fontSize: '0.9rem', boxSizing: 'border-box', resize: 'vertical', background: '#eff6ff' }} />
