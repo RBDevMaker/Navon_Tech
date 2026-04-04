@@ -69,7 +69,8 @@ exports.handler = async (event) => {
                 Bucket: BUCKET_NAME,
                 Key: s3Key,
                 Body: fileBuffer,
-                ContentType: contentType
+                ContentType: contentType,
+                ContentDisposition: contentType === 'application/pdf' ? 'inline' : undefined
             };
 
             await s3Client.send(new PutObjectCommand(uploadParams));

@@ -237,7 +237,7 @@ async function updateResume(resumeId, data) {
         const expressionAttributeNames = {};
         const expressionAttributeValues = {};
 
-        const updatableFields = ['candidateName', 'email', 'phone', 'position', 'department', 'stage', 's3Key', 'notes', 'experience'];
+        const updatableFields = ['candidateName', 'email', 'phone', 'position', 'department', 'stage', 's3Key', 'notes', 'experience', 'interviewerNotes'];
 
         updatableFields.forEach(field => {
             if (data[field] !== undefined) {

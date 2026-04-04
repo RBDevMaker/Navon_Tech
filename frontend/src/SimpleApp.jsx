@@ -65,6 +65,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [resumeFilter, setResumeFilter] = useState({ department: 'all', stage: 'all', sort: 'newest' });
     const [isLoadingResumes, setIsLoadingResumes] = useState(false);
     const [showUploadModal, setShowUploadModal] = useState(false);
+    const [editingResume, setEditingResume] = useState(null);
     
     // User management states
     const [showManageUsersModal, setShowManageUsersModal] = useState(false);
@@ -1289,7 +1290,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             });
             
             if (!response.ok) throw new Error('Failed to update resume');
-            alert(`✅ Resume moved to ${newStage} stage`);
             await fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
         } catch (error) {
             console.error('Error updating resume:', error);
@@ -1327,8 +1327,21 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         // Construct S3 URL
         const s3Url = `${s3BaseUrl}/${s3Key}`;
         
-        // Open in new window
-        window.open(s3Url, '_blank');
+        // Use Google Docs viewer to display PDF inline in new tab
+        const viewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(s3Url)}&embedded=false`;
+        window.open(viewerUrl, '_blank');
+    };
+
+    const downloadResume = (s3Key, candidateName) => {
+        if (!s3Key) { alert('Resume file not available'); return; }
+        const s3Url = `${s3BaseUrl}/${s3Key}`;
+        const a = document.createElement('a');
+        a.href = s3Url;
+        a.download = candidateName ? `${candidateName.replace(/\s+/g, '_')}_Resume` : 'Resume';
+        a.target = '_blank';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
     };
 
     // Export resumes to Excel/CSV
@@ -1367,6 +1380,58 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         document.body.removeChild(link);
         
         alert(`✅ Exported ${filteredResumes.length} resume(s) to Excel/CSV format!`);
+    };
+
+    const exportToPDF = () => {
+        const rows = filteredResumes.map(r => `
+            <tr>
+                <td style="padding:6px;border:1px solid #ddd">${r.candidateName||''}</td>
+                <td style="padding:6px;border:1px solid #ddd">${r.email||''}</td>
+                <td style="padding:6px;border:1px solid #ddd">${r.position||''}</td>
+                <td style="padding:6px;border:1px solid #ddd">${r.department||''}</td>
+                <td style="padding:6px;border:1px solid #ddd">${r.stage||''}</td>
+                <td style="padding:6px;border:1px solid #ddd">${r.receivedDate ? new Date(r.receivedDate).toLocaleDateString() : ''}</td>
+                <td style="padding:6px;border:1px solid #ddd">${r.notes||''}</td>
+            </tr>`).join('');
+        const html = `<html><head><title>Resumes Export</title></head><body style="font-family:Arial,sans-serif">
+            <h2 style="color:#1e3a8a">Navon Technologies - Resume Report</h2>
+            <p>Generated: ${new Date().toLocaleDateString()}</p>
+            <table style="border-collapse:collapse;width:100%;font-size:12px">
+                <tr style="background:#1e3a8a;color:white"><th style="padding:8px">Name</th><th style="padding:8px">Email</th><th style="padding:8px">Position</th><th style="padding:8px">Department</th><th style="padding:8px">Stage</th><th style="padding:8px">Received</th><th style="padding:8px">Notes</th></tr>
+                ${rows}
+            </table></body></html>`;
+        const w = window.open('', '_blank');
+        w.document.write(html);
+        w.document.close();
+        w.print();
+    };
+
+    const exportToWord = () => {
+        const rows = filteredResumes.map(r => `
+            <tr>
+                <td style="padding:6px;border:1px solid #ddd">${r.candidateName||''}</td>
+                <td style="padding:6px;border:1px solid #ddd">${r.email||''}</td>
+                <td style="padding:6px;border:1px solid #ddd">${r.position||''}</td>
+                <td style="padding:6px;border:1px solid #ddd">${r.department||''}</td>
+                <td style="padding:6px;border:1px solid #ddd">${r.stage||''}</td>
+                <td style="padding:6px;border:1px solid #ddd">${r.receivedDate ? new Date(r.receivedDate).toLocaleDateString() : ''}</td>
+                <td style="padding:6px;border:1px solid #ddd">${r.notes||''}</td>
+            </tr>`).join('');
+        const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+            <head><meta charset="utf-8"><title>Resumes Export</title></head><body style="font-family:Arial,sans-serif">
+            <h2 style="color:#1e3a8a">Navon Technologies - Resume Report</h2>
+            <p>Generated: ${new Date().toLocaleDateString()}</p>
+            <table style="border-collapse:collapse;width:100%;font-size:12px">
+                <tr style="background:#1e3a8a;color:white"><th style="padding:8px">Name</th><th style="padding:8px">Email</th><th style="padding:8px">Position</th><th style="padding:8px">Department</th><th style="padding:8px">Stage</th><th style="padding:8px">Received</th><th style="padding:8px">Notes</th></tr>
+                ${rows}
+            </table></body></html>`;
+        const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `resumes_export_${new Date().toISOString().split('T')[0]}.doc`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
 
     // Role switcher for demo
@@ -11801,15 +11866,48 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                         {/* Kanban Board */}
                         {(() => {
                             const stages = [
-                                { key: 'New', label: 'New', icon: '📥', bg: 'linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%)', border: '#3b82f6', color: '#1e40af' },
-                                { key: 'Screening', label: 'Screening', icon: '🔍', bg: 'linear-gradient(135deg, #fef3c7 0%, #fefce8 100%)', border: '#f59e0b', color: '#92400e' },
-                                { key: 'Interview', label: 'Interview', icon: '📝', bg: 'linear-gradient(135deg, #ddd6fe 0%, #ede9fe 100%)', border: '#8b5cf6', color: '#5b21b6' },
-                                { key: 'Offer', label: 'Offer', icon: '✅', bg: 'linear-gradient(135deg, #dcfce7 0%, #f0fdf4 100%)', border: '#10b981', color: '#166534' },
-                                { key: 'Rejected', label: 'Rejected', icon: '❌', bg: 'linear-gradient(135deg, #fee2e2 0%, #fef2f2 100%)', border: '#ef4444', color: '#991b1b' }
+                                { key: 'New', label: 'New Applications', sub: 'Recently Submitted', icon: '📥', bg: 'linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%)', border: '#3b82f6', color: '#1e40af' },
+                                { key: 'Screening', label: 'Screening', sub: 'Under Review', icon: '🔍', bg: 'linear-gradient(135deg, #fef3c7 0%, #fefce8 100%)', border: '#f59e0b', color: '#92400e' },
+                                { key: 'Interview', label: 'Interview', sub: 'Active Interviews', icon: '📝', bg: 'linear-gradient(135deg, #ddd6fe 0%, #ede9fe 100%)', border: '#8b5cf6', color: '#5b21b6' },
+                                { key: 'Offer', label: 'Offer', sub: 'Offers Extended', icon: '✅', bg: 'linear-gradient(135deg, #dcfce7 0%, #f0fdf4 100%)', border: '#10b981', color: '#166534' },
+                                { key: 'Rejected', label: 'Rejected', sub: 'Not Moving Forward', icon: '❌', bg: 'linear-gradient(135deg, #fee2e2 0%, #fef2f2 100%)', border: '#ef4444', color: '#991b1b' }
                             ];
-                            const sampleResume = { resumeId: 'sample', candidateName: 'Sarah Johnson', position: 'Senior Software Engineer', department: 'Engineering', email: 'sarah.johnson@email.com', stage: 'New', receivedDate: '2026-03-09', isSample: true };
+                            const sampleResume = { resumeId: 'sample', candidateName: 'Sarah Johnson', position: 'Senior Software Engineer', department: 'Engineering', email: 'sarah.johnson@email.com', stage: 'New', receivedDate: '2026-03-09' };
                             const allResumes = [sampleResume, ...filteredResumes];
                             return (
+                                <>
+                                {/* Toolbar */}
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.75rem', background: 'white', padding: '1rem 1.5rem', borderRadius: '12px', border: '2px solid #d4af37' }}>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.3rem' }}>Resumes ({allResumes.length})</h3>
+                                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                                        <button onClick={() => setShowUploadModal(true)} style={{ background: '#10b981', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600' }}>📤 Upload Resume</button>
+                                        <button onClick={exportToExcel} style={{ background: '#059669', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600' }}>Export Excel</button>
+                                        <button onClick={exportToPDF} style={{ background: '#dc2626', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600' }}>Export PDF</button>
+                                        <button onClick={exportToWord} style={{ background: '#2563eb', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600' }}>Export Word</button>
+                                        <select value={resumeFilter.department} onChange={(e) => { const f = { ...resumeFilter, department: e.target.value }; setResumeFilter(f); fetchResumes(f.department, f.stage, f.sort); }} style={{ padding: '0.5rem', borderRadius: '6px', border: '2px solid #d4af37', fontSize: '0.85rem', cursor: 'pointer' }}>
+                                            <option value="all">All Departments</option>
+                                            <option value="Administration">Administration</option>
+                                            <option value="Architect">Architect</option>
+                                            <option value="Business Development">Business Development</option>
+                                            <option value="Cyber Security Engineer">Cyber Security Engineer</option>
+                                            <option value="Engineering">Engineering</option>
+                                            <option value="Finance">Finance</option>
+                                            <option value="Human Resources">Human Resources</option>
+                                            <option value="Marketing">Marketing</option>
+                                            <option value="Network Engineering">Network Engineering</option>
+                                            <option value="Overhead">Overhead</option>
+                                            <option value="Project Management">Project Management</option>
+                                            <option value="Sales">Sales</option>
+                                            <option value="Services">Services</option>
+                                            <option value="Software Engineering">Software Engineering</option>
+                                        </select>
+                                        <select value={resumeFilter.sort} onChange={(e) => { const f = { ...resumeFilter, sort: e.target.value }; setResumeFilter(f); fetchResumes(f.department, f.stage, f.sort); }} style={{ padding: '0.5rem', borderRadius: '6px', border: '2px solid #d4af37', fontSize: '0.85rem', cursor: 'pointer' }}>
+                                            <option value="newest">Newest First</option>
+                                            <option value="oldest">Oldest First</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                {isLoadingResumes && <div style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>Loading resumes...</div>}
                                 <div style={{ overflowX: 'auto', paddingBottom: '1rem' }}>
                                     <div style={{ display: 'flex', gap: '1rem', minWidth: '900px' }}>
                                         {stages.map(stage => {
@@ -11820,6 +11918,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                         <div style={{ fontSize: '1.5rem' }}>{stage.icon}</div>
                                                         <div style={{ fontSize: '1.5rem', fontWeight: '700', color: stage.color }}>{stageResumes.length}</div>
                                                         <div style={{ fontSize: '0.8rem', fontWeight: '600', color: stage.color }}>{stage.label}</div>
+                                                        <div style={{ fontSize: '0.65rem', color: stage.color, opacity: 0.7, marginTop: '0.15rem' }}>{stage.sub}</div>
                                                     </div>
                                                     <div
                                                         onDragOver={(e) => { e.preventDefault(); e.currentTarget.style.background = '#e0f2fe'; }}
@@ -11828,30 +11927,63 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                             e.preventDefault();
                                                             e.currentTarget.style.background = '#f8fafc';
                                                             const data = JSON.parse(e.dataTransfer.getData('text/plain'));
-                                                            if (data.isSample) return;
+                                                            if (data.resumeId === 'sample') { alert('Demo resume — drag works but stage won\'t save.'); return; }
                                                             if (data.stage !== stage.key) updateResumeStage(data.resumeId, stage.key);
                                                         }}
                                                         style={{ background: '#f8fafc', border: `2px solid ${stage.border}`, borderTop: `3px solid ${stage.border}`, borderRadius: '0 0 10px 10px', padding: '0.5rem', minHeight: '200px', display: 'flex', flexDirection: 'column', gap: '0.5rem', transition: 'background 0.2s' }}>
                                                         {stageResumes.map((resume, idx) => (
                                                             <div
                                                                 key={resume.resumeId || idx}
-                                                                draggable={!resume.isSample}
+                                                                draggable
                                                                 onDragStart={(e) => {
-                                                                    e.dataTransfer.setData('text/plain', JSON.stringify({ resumeId: resume.resumeId, stage: resume.stage, isSample: resume.isSample }));
+                                                                    e.dataTransfer.setData('text/plain', JSON.stringify({ resumeId: resume.resumeId, stage: resume.stage }));
                                                                     e.currentTarget.style.opacity = '0.5';
                                                                 }}
                                                                 onDragEnd={(e) => { e.currentTarget.style.opacity = '1'; }}
-                                                                style={{ background: 'white', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', fontSize: '0.8rem', cursor: resume.isSample ? 'default' : 'grab' }}>
+                                                                style={{ background: 'white', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', fontSize: '0.8rem', cursor: 'grab' }}>
+                                                                <div onClick={() => setEditingResume({...resume})} style={{ cursor: 'pointer' }}>
                                                                 <div style={{ fontWeight: '700', color: '#1e3a8a', marginBottom: '0.25rem', fontSize: '0.85rem' }}>{resume.candidateName || 'Unknown'}</div>
-                                                                <div style={{ color: '#64748b', marginBottom: '0.15rem' }}>{resume.position || 'No position'}</div>
-                                                                <div style={{ color: '#64748b', marginBottom: '0.15rem' }}>{resume.department || ''}</div>
-                                                                <div style={{ color: '#94a3b8', fontSize: '0.7rem', marginBottom: '0.5rem' }}>{resume.receivedDate ? new Date(resume.receivedDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : ''}</div>
+                                                                <div style={{ color: '#64748b', marginBottom: '0.15rem' }}><strong>Position:</strong> {resume.position || 'Not specified'}</div>
+                                                                <div style={{ color: '#64748b', marginBottom: '0.15rem' }}><strong>Department:</strong> {resume.department || 'Not specified'}</div>
+                                                                <div style={{ color: '#64748b', marginBottom: '0.15rem' }}><strong>Email:</strong> {resume.email || 'Not provided'}</div>
+                                                                {resume.phone && <div style={{ color: '#64748b', marginBottom: '0.15rem' }}><strong>Phone:</strong> {resume.phone}</div>}
+                                                                <div style={{ color: '#64748b', marginBottom: '0.25rem' }}><strong>Received:</strong> {resume.receivedDate ? new Date(resume.receivedDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Unknown'}</div>
+                                                                {resume.experience && <div style={{ color: '#64748b', fontSize: '0.7rem', marginBottom: '0.25rem', fontStyle: 'italic' }}>{resume.experience}</div>}
+                                                                {resume.notes && <div style={{ color: '#64748b', fontSize: '0.7rem', marginBottom: '0.25rem', fontStyle: 'italic', background: '#fffbeb', padding: '0.25rem 0.4rem', borderRadius: '4px', border: '1px solid #fde68a' }}>Additional Info: {resume.notes}</div>}
+                                                                {resume.interviewerNotes && (userRole === 'security' || userRole === 'superadmin') && <div style={{ color: '#64748b', fontSize: '0.7rem', marginBottom: '0.25rem', fontStyle: 'italic', background: '#eff6ff', padding: '0.25rem 0.4rem', borderRadius: '4px', border: '1px solid #bfdbfe' }}>Interviewer: {resume.interviewerNotes}</div>}
+                                                                </div>
                                                                 <div style={{ display: 'flex', gap: '0.25rem', flexWrap: 'wrap' }}>
-                                                                    {!resume.isSample && <button onClick={() => viewResume(resume.s3Key, resume.candidateName)} style={{ background: '#1e3a8a', color: 'white', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', fontWeight: '600' }}>📄 View</button>}
-                                                                    <select value={resume.stage || 'New'} onChange={(e) => { if (resume.isSample) { alert('Demo resume.'); return; } updateResumeStage(resume.resumeId, e.target.value); }} style={{ padding: '0.25rem', borderRadius: '4px', border: '1px solid #d4af37', fontSize: '0.7rem', cursor: 'pointer', flex: 1, minWidth: 0 }}>
+                                                                    <button onClick={(e) => { e.stopPropagation(); setEditingResume({...resume}); }} style={{ background: '#f59e0b', color: '#0f172a', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', fontWeight: '600' }}>Edit</button>
+                                                                    <button onClick={() => resume.resumeId === 'sample' ? alert('This is a demo resume card showing how real resumes will appear.') : viewResume(resume.s3Key, resume.candidateName)} style={{ background: '#1e3a8a', color: 'white', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', fontWeight: '600' }}>View</button>
+                                                                    {resume.resumeId !== 'sample' && <button onClick={() => downloadResume(resume.s3Key, resume.candidateName)} style={{ background: '#059669', color: 'white', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', fontWeight: '600' }}>Download</button>}
+                                                                    <button onClick={() => {
+                                                                        const r = resume;
+                                                                        const html = `<html><head><title>${r.candidateName || 'Resume'}</title></head><body style="font-family:Arial,sans-serif;max-width:700px;margin:0 auto;padding:40px">
+                                                                            <div style="border-bottom:3px solid #1e3a8a;padding-bottom:15px;margin-bottom:20px">
+                                                                                <h1 style="color:#1e3a8a;margin:0">${r.candidateName || 'Unknown'}</h1>
+                                                                                <p style="color:#64748b;margin:5px 0 0">${r.position || ''} ${r.department ? '| ' + r.department : ''}</p>
+                                                                            </div>
+                                                                            <table style="width:100%;font-size:14px;line-height:2">
+                                                                                <tr><td style="color:#64748b;width:130px"><strong>Email:</strong></td><td>${r.email || 'N/A'}</td></tr>
+                                                                                <tr><td style="color:#64748b"><strong>Phone:</strong></td><td>${r.phone || 'N/A'}</td></tr>
+                                                                                <tr><td style="color:#64748b"><strong>Position:</strong></td><td>${r.position || 'N/A'}</td></tr>
+                                                                                <tr><td style="color:#64748b"><strong>Department:</strong></td><td>${r.department || 'N/A'}</td></tr>
+                                                                                <tr><td style="color:#64748b"><strong>Stage:</strong></td><td>${r.stage || 'New'}</td></tr>
+                                                                                <tr><td style="color:#64748b"><strong>Received:</strong></td><td>${r.receivedDate ? new Date(r.receivedDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'Unknown'}</td></tr>
+                                                                            </table>
+                                                                            ${r.experience ? '<div style="margin-top:20px"><strong style="color:#1e3a8a">Experience:</strong><p style="color:#334155">' + r.experience + '</p></div>' : ''}
+                                                                            ${r.notes ? '<div style="margin-top:15px;background:#fffbeb;padding:12px;border-radius:8px;border:1px solid #fde68a"><strong style="color:#92400e">Additional Info:</strong><p style="color:#334155;margin:5px 0 0">' + r.notes + '</p></div>' : ''}
+                                                                            <div style="margin-top:30px;color:#94a3b8;font-size:11px;border-top:1px solid #e2e8f0;padding-top:10px">Navon Technologies | Generated ${new Date().toLocaleDateString()}</div>
+                                                                        </body></html>`;
+                                                                        const w = window.open('', '_blank');
+                                                                        w.document.write(html);
+                                                                        w.document.close();
+                                                                        w.print();
+                                                                    }} style={{ background: '#dc2626', color: 'white', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', fontWeight: '600' }}>PDF</button>
+                                                                    <select value={resume.stage || 'New'} onChange={(e) => { if (resume.resumeId === 'sample') { alert('Demo resume — use a real resume to change stages.'); return; } updateResumeStage(resume.resumeId, e.target.value); }} style={{ padding: '0.25rem', borderRadius: '4px', border: '1px solid #d4af37', fontSize: '0.7rem', cursor: 'pointer', flex: 1, minWidth: 0 }}>
                                                                         <option value="New">→ New</option><option value="Screening">→ Screening</option><option value="Interview">→ Interview</option><option value="Offer">→ Offer</option><option value="Rejected">→ Rejected</option>
                                                                     </select>
-                                                                    {!resume.isSample && <button onClick={() => deleteResume(resume.resumeId, resume.candidateName)} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem' }}>🗑️</button>}
+                                                                    <button onClick={() => resume.resumeId === 'sample' ? alert('Demo resume cannot be deleted.') : deleteResume(resume.resumeId, resume.candidateName)} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem' }}>Delete</button>
                                                                 </div>
                                                             </div>
                                                         ))}
@@ -11862,6 +11994,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         })}
                                     </div>
                                 </div>
+                                </>
                             );
                         })()}
                     </div>
@@ -14990,6 +15123,90 @@ Please review and approve this request.
                 </div>
             )}
             
+            {/* Edit Resume Modal */}
+            {editingResume && (
+                <div onClick={() => setEditingResume(null)} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+                    <div onClick={(e) => e.stopPropagation()} style={{ background: 'white', borderRadius: '16px', maxWidth: '500px', width: '100%', maxHeight: '85vh', overflow: 'auto', boxShadow: '0 25px 50px rgba(0,0,0,0.25)' }}>
+                        <div style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)', padding: '1.5rem', borderRadius: '16px 16px 0 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <h3 style={{ color: '#d4af37', margin: 0, fontSize: '1.3rem' }}>✏️ Edit Resume</h3>
+                            <button onClick={() => setEditingResume(null)} style={{ background: 'transparent', border: 'none', color: 'white', fontSize: '1.5rem', cursor: 'pointer' }}>✕</button>
+                        </div>
+                        <form onSubmit={async (e) => {
+                            e.preventDefault();
+                            if (editingResume.resumeId === 'sample') { alert('Demo resume cannot be saved.'); return; }
+                            try {
+                                const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                                const res = await fetch(`${apiUrl}/resume/${editingResume.resumeId}`, {
+                                    method: 'PUT',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify(editingResume)
+                                });
+                                if (!res.ok) throw new Error('Failed to update');
+                                setEditingResume(null);
+                                await fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
+                            } catch (err) { alert('❌ Failed to save: ' + err.message); }
+                        }} style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            {[
+                                { label: 'Candidate Name', key: 'candidateName' },
+                                { label: 'Email', key: 'email' },
+                                { label: 'Phone', key: 'phone' },
+                                { label: 'Position', key: 'position' },
+                                { label: 'Experience', key: 'experience' }
+                            ].map(f => (
+                                <div key={f.key}>
+                                    <label style={{ display: 'block', fontWeight: '600', color: '#1e3a8a', marginBottom: '0.25rem', fontSize: '0.85rem' }}>{f.label}</label>
+                                    <input value={editingResume[f.key] || ''} onChange={(e) => setEditingResume({...editingResume, [f.key]: e.target.value})} style={{ width: '100%', padding: '0.6rem', border: '2px solid #e2e8f0', borderRadius: '8px', fontSize: '0.9rem', boxSizing: 'border-box' }} />
+                                </div>
+                            ))}
+                            <div>
+                                <label style={{ display: 'block', fontWeight: '600', color: '#1e3a8a', marginBottom: '0.25rem', fontSize: '0.85rem' }}>Department</label>
+                                <select value={editingResume.department || ''} onChange={(e) => setEditingResume({...editingResume, department: e.target.value})} style={{ width: '100%', padding: '0.6rem', border: '2px solid #e2e8f0', borderRadius: '8px', fontSize: '0.9rem', boxSizing: 'border-box' }}>
+                                    <option value="">Select</option>
+                                    <option value="Administration">Administration</option>
+                                    <option value="Architect">Architect</option>
+                                    <option value="Business Development">Business Development</option>
+                                    <option value="Cyber Security Engineer">Cyber Security Engineer</option>
+                                    <option value="Engineering">Engineering</option>
+                                    <option value="Finance">Finance</option>
+                                    <option value="Human Resources">Human Resources</option>
+                                    <option value="Marketing">Marketing</option>
+                                    <option value="Network Engineering">Network Engineering</option>
+                                    <option value="Overhead">Overhead</option>
+                                    <option value="Project Management">Project Management</option>
+                                    <option value="Sales">Sales</option>
+                                    <option value="Services">Services</option>
+                                    <option value="Software Engineering">Software Engineering</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style={{ display: 'block', fontWeight: '600', color: '#1e3a8a', marginBottom: '0.25rem', fontSize: '0.85rem' }}>Stage</label>
+                                <select value={editingResume.stage || 'New'} onChange={(e) => setEditingResume({...editingResume, stage: e.target.value})} style={{ width: '100%', padding: '0.6rem', border: '2px solid #e2e8f0', borderRadius: '8px', fontSize: '0.9rem', boxSizing: 'border-box' }}>
+                                    <option value="New">New</option>
+                                    <option value="Screening">Screening</option>
+                                    <option value="Interview">Interview</option>
+                                    <option value="Offer">Offer</option>
+                                    <option value="Rejected">Rejected</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style={{ display: 'block', fontWeight: '600', color: '#1e3a8a', marginBottom: '0.25rem', fontSize: '0.85rem' }}>Additional Info (Applicant)</label>
+                                <textarea value={editingResume.notes || ''} onChange={(e) => setEditingResume({...editingResume, notes: e.target.value})} rows={2} style={{ width: '100%', padding: '0.6rem', border: '2px solid #fde68a', borderRadius: '8px', fontSize: '0.9rem', boxSizing: 'border-box', resize: 'vertical', background: '#fffbeb' }} />
+                            </div>
+                            {(userRole === 'security' || userRole === 'superadmin') && (
+                            <div>
+                                <label style={{ display: 'block', fontWeight: '600', color: '#1e3a8a', marginBottom: '0.25rem', fontSize: '0.85rem' }}>Interviewer Notes (Security Only)</label>
+                                <textarea value={editingResume.interviewerNotes || ''} onChange={(e) => setEditingResume({...editingResume, interviewerNotes: e.target.value})} rows={3} style={{ width: '100%', padding: '0.6rem', border: '2px solid #bfdbfe', borderRadius: '8px', fontSize: '0.9rem', boxSizing: 'border-box', resize: 'vertical', background: '#eff6ff' }} />
+                            </div>
+                            )}
+                            <div style={{ display: 'flex', gap: '0.75rem' }}>
+                                <button type="submit" style={{ flex: 1, background: '#1e3a8a', color: 'white', border: 'none', padding: '0.75rem', borderRadius: '8px', cursor: 'pointer', fontWeight: '700', fontSize: '1rem' }}>💾 Save</button>
+                                <button type="button" onClick={() => setEditingResume(null)} style={{ flex: 1, background: '#e5e7eb', color: '#374151', border: 'none', padding: '0.75rem', borderRadius: '8px', cursor: 'pointer', fontWeight: '600', fontSize: '1rem' }}>Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
             {/* Upload Resume Modal */}
             {showUploadModal && (
                 <div onClick={() => setShowUploadModal(false)} style={{
@@ -15204,11 +15421,20 @@ Please review and approve this request.
                                                 background: '#eff6ff'
                                             }}>
                                             <option value="">Select</option>
+                                            <option value="Administration">Administration</option>
+                                            <option value="Architect">Architect</option>
+                                            <option value="Business Development">Business Development</option>
+                                            <option value="Cyber Security Engineer">Cyber Security Engineer</option>
                                             <option value="Engineering">Engineering</option>
-                                            <option value="Sales">Sales</option>
+                                            <option value="Finance">Finance</option>
+                                            <option value="Human Resources">Human Resources</option>
                                             <option value="Marketing">Marketing</option>
-                                            <option value="HR">HR</option>
-                                            <option value="Operations">Operations</option>
+                                            <option value="Network Engineering">Network Engineering</option>
+                                            <option value="Overhead">Overhead</option>
+                                            <option value="Project Management">Project Management</option>
+                                            <option value="Sales">Sales</option>
+                                            <option value="Services">Services</option>
+                                            <option value="Software Engineering">Software Engineering</option>
                                         </select>
                                     </div>
                                 </div>
