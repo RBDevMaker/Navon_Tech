@@ -129,6 +129,8 @@ Resources:
             BucketName: navon-tech-images
         - DynamoDBCrudPolicy:
             TableName: !Ref RateLimitTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ResumeMetadataTable
         - Statement:
             - Effect: Allow
               Action:
