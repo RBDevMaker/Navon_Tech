@@ -190,7 +190,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     
     // Fetch resumes when on resumes page
     useEffect(() => {
-        if (currentPage === 'resumes' && userGroups.includes('security')) {
+        if (currentPage === 'resumes' && (userGroups.includes('security') || userRole === 'hr' || userRole === 'superadmin')) {
             fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
         }
     }, [currentPage, userRole]);
@@ -11629,8 +11629,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 </button>
                             </div>
                             
-                            {/* Application Tracking System - Security Only */}
-                            {userGroups.includes('security') && isAdminView && (
+                            {/* Application Tracking System - Security, HR, SuperAdmin */}
+                            {(userGroups.includes('security') || userRole === 'hr' || userRole === 'superadmin') && isAdminView && (
                                 <div className="hover-lift animate-scale-in" style={{
                                     background: 'white',
                                     padding: '2rem',
@@ -11818,8 +11818,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 </section>
             )}
 
-            {/* APPLICATION TRACKING SYSTEM - Security Only */}
-            {currentPage === 'resumes' && userGroups.includes('security') && (
+            {/* APPLICATION TRACKING SYSTEM */}
+            {currentPage === 'resumes' && (userGroups.includes('security') || userRole === 'hr' || userRole === 'superadmin') && (
                 <section style={{ 
                     padding: 'clamp(1rem, 3vw, 4rem) clamp(0.5rem, 2vw, 2rem)', 
                     background: '#f1f5f9',
@@ -11880,7 +11880,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.75rem', background: 'white', padding: '1rem 1.5rem', borderRadius: '12px', border: '2px solid #d4af37' }}>
                                     <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.3rem' }}>Applicants ({allResumes.length})</h3>
                                     <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                                        <button onClick={() => setShowUploadModal(true)} style={{ background: '#10b981', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600' }}>📤 Upload Resume</button>
+                                        {userGroups.includes('security') && <button onClick={() => setShowUploadModal(true)} style={{ background: '#10b981', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600' }}>Upload Resume</button>}
                                         <button onClick={exportToExcel} style={{ background: '#059669', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600' }}>Export Excel</button>
                                         <button onClick={exportToPDF} style={{ background: '#dc2626', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600' }}>Export PDF</button>
                                         <button onClick={exportToWord} style={{ background: '#2563eb', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600' }}>Export Word</button>
@@ -11950,8 +11950,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                                 </div>
                                                                 <div style={{ display: 'flex', gap: '0.25rem', flexWrap: 'wrap' }}>
                                                                     <button onClick={(e) => { e.stopPropagation(); setEditingResume({...resume}); }} style={{ background: '#f59e0b', color: '#0f172a', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', fontWeight: '600' }}>Edit</button>
-                                                                    <button onClick={() => resume.resumeId === 'sample' ? alert('This is a demo resume card showing how real resumes will appear.') : viewResume(resume.s3Key, resume.candidateName)} style={{ background: '#1e3a8a', color: 'white', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', fontWeight: '600' }}>View</button>
-                                                                    {resume.resumeId !== 'sample' && <button onClick={() => downloadResume(resume.s3Key, resume.candidateName)} style={{ background: '#059669', color: 'white', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', fontWeight: '600' }}>Download</button>}
+                                                                    {userGroups.includes('security') && <button onClick={() => resume.resumeId === 'sample' ? alert('This is a demo resume card showing how real resumes will appear.') : viewResume(resume.s3Key, resume.candidateName)} style={{ background: '#1e3a8a', color: 'white', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', fontWeight: '600' }}>View</button>}
+                                                                    {userGroups.includes('security') && resume.resumeId !== 'sample' && <button onClick={() => downloadResume(resume.s3Key, resume.candidateName)} style={{ background: '#059669', color: 'white', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', fontWeight: '600' }}>Download</button>}
                                                                     <button onClick={() => {
                                                                         const r = resume;
                                                                         const html = `<html><head><title>${r.candidateName || 'Resume'}</title></head><body style="font-family:Arial,sans-serif;max-width:700px;margin:0 auto;padding:40px">
