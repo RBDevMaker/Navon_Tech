@@ -1,10 +1,13 @@
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
 const { DynamoDBDocumentClient, PutCommand, GetCommand, QueryCommand, UpdateCommand, DeleteCommand, ScanCommand } = require('@aws-sdk/lib-dynamodb');
+const { S3Client, DeleteObjectCommand } = require('@aws-sdk/client-s3');
 
 const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
+const s3Client = new S3Client({});
 
 const TABLE_NAME = 'ResumeMetadata';
+const S3_BUCKET = process.env.S3_BUCKET || 'navon-tech-images';
 
 // CORS headers
 const headers = {
@@ -44,7 +47,7 @@ exports.handler = async (event) => {
             return await updateResume(resumeId, body);
         } else if (method === 'DELETE' && path.includes('/resume/')) {
             const resumeId = path.split('/').pop();
-            return await deleteResume(resumeId);
+            return await deleteResume(resumeId, event.queryStringParameters);
         }
 
         return {
@@ -290,7 +293,7 @@ async function updateResume(resumeId, data) {
 }
 
 // Delete a resume entry
-async function deleteResume(resumeId) {
+async function deleteResume(resumeId, queryParams) {
     try {
         // First get the resume to get the receivedDate (sort key)
         const getCommand = new QueryCommand({
@@ -312,6 +315,19 @@ async function deleteResume(resumeId) {
         }
 
         const existingResume = getResponse.Items[0];
+
+        // Delete file from S3 only if deleteFile=true (security users)
+        if (existingResume.s3Key && queryParams?.deleteFile === 'true') {
+            try {
+                await s3Client.send(new DeleteObjectCommand({
+                    Bucket: S3_BUCKET,
+                    Key: existingResume.s3Key
+                }));
+                console.log('Deleted S3 file:', existingResume.s3Key);
+            } catch (s3Error) {
+                console.error('Failed to delete S3 file:', s3Error);
+            }
+        }
 
         const command = new DeleteCommand({
             TableName: TABLE_NAME,

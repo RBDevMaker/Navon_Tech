@@ -1308,7 +1308,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         try {
             const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
             
-            const response = await fetch(`${apiUrl}/resume/${resumeId}`, {
+            const deleteS3 = userGroups.includes('security') ? '?deleteFile=true' : '';
+            const response = await fetch(`${apiUrl}/resume/${resumeId}${deleteS3}`, {
                 method: 'DELETE'
             });
             
