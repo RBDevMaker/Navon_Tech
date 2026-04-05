@@ -12841,7 +12841,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     }
                                     
                                     // Validate all required fields
-                                    if (!referrerName || !referrerEmail || !candidateName || !candidateEmail || !candidatePhone || !position) {
+                                    if (!referrerName || !referrerEmail || !candidateName || !candidateEmail) {
                                         alert('Please fill out all required fields');
                                         return;
                                     }
@@ -15763,7 +15763,12 @@ Please review and approve this request.
                                                             borderRadius: '12px',
                                                             fontWeight: '600'
                                                         }}>
-                                                            {user.role.toUpperCase()}
+                                                            {(() => {
+                                                                const roleGroups = (user.groups || []).filter(g => g.toLowerCase() !== 'navon_employees');
+                                                                return roleGroups.length > 1 
+                                                                    ? roleGroups.map(g => g.toUpperCase()).join(' + ')
+                                                                    : user.role.toUpperCase();
+                                                            })()}
                                                         </span>
                                                     </div>
                                                 </div>
