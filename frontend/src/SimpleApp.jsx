@@ -4353,27 +4353,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     const result = await response.json();
 
                                     if (response.ok) {
-                                        // Also upload resume to Resume Portal if resume was provided
-                                        if (resume && resume.size > 0) {
-                                            try {
-                                                const resumePortalData = {
-                                                    candidateName: name,
-                                                    email: email,
-                                                    phone: formData.get('phone') || '',
-                                                    position: position,
-                                                    department: 'Engineering', // Default, can be updated later
-                                                    experience: '',
-                                                    stage: 'New',
-                                                    receivedDate: new Date().toISOString(),
-                                                    notes: `Applied via Careers page for ${position}`
-                                                };
-                                                await uploadResume(resumePortalData, resume);
-                                            } catch (resumeError) {
-                                                console.error('Resume upload to portal failed:', resumeError);
-                                                // Don't fail the whole application if resume portal upload fails
-                                            }
-                                        }
-                                        
                                         alert('✅ Application submitted successfully! We will review your application and get back to you soon.');
                                         e.target.reset();
                                         // Reset file upload display

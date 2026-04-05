@@ -286,8 +286,7 @@ exports.handler = async (event) => {
                                         <p><strong>IP Address:</strong> ${ipAddress}</p>
                                     </div>
                                     <p style="color: #64748b; font-size: 0.9em;">
-                                        This application was submitted through the Navon Technologies career portal.<br>
-                                        Resume has been sent to the Security team for review.
+                                        This application was submitted through the Navon Technologies career portal.
                                     </p>
                                 </body>
                             </html>
@@ -295,7 +294,7 @@ exports.handler = async (event) => {
                         Charset: 'UTF-8'
                     },
                     Text: {
-                        Data: `New Job Application Received\n\nName: ${sanitizedName}\nEmail: ${sanitizedEmail}\nPosition/Skillset: ${sanitizedPosition || 'Not specified'}\nIP Address: ${ipAddress}\n\nResume has been sent to the Security team for review.`,
+                        Data: `New Job Application Received\n\nName: ${sanitizedName}\nEmail: ${sanitizedEmail}\nPosition/Skillset: ${sanitizedPosition || 'Not specified'}\nIP Address: ${ipAddress}\n\nThis application was submitted through the Navon Technologies career portal.`,
                         Charset: 'UTF-8'
                     }
                 }
