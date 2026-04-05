@@ -1782,19 +1782,19 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                     <a href="#home" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500', transition: 'all 0.3s ease', position: 'relative', display: 'inline-block' }} 
                        onMouseOver={(e) => { e.target.style.color = '#d4af37'; e.target.style.transform = 'translateY(-3px) scale(1.1)'; }}
                        onMouseOut={(e) => { e.target.style.color = 'white'; e.target.style.transform = 'translateY(0) scale(1)'; }}>Home</a>
-                    <a href="#about" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500', transition: 'all 0.3s ease', display: 'inline-block' }}
+                    <a href="#about" onClick={() => setCurrentPage('about')} style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500', transition: 'all 0.3s ease', display: 'inline-block' }}
                        onMouseOver={(e) => { e.target.style.color = '#d4af37'; e.target.style.transform = 'translateY(-3px) scale(1.1)'; }}
                        onMouseOut={(e) => { e.target.style.color = 'white'; e.target.style.transform = 'translateY(0) scale(1)'; }}>About</a>
-                    <a href="#capabilities" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500', transition: 'all 0.3s ease', display: 'inline-block' }}
+                    <a href="#capabilities" onClick={() => setCurrentPage('capabilities')} style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500', transition: 'all 0.3s ease', display: 'inline-block' }}
                        onMouseOver={(e) => { e.target.style.color = '#d4af37'; e.target.style.transform = 'translateY(-3px) scale(1.1)'; }}
                        onMouseOut={(e) => { e.target.style.color = 'white'; e.target.style.transform = 'translateY(0) scale(1)'; }}>Services</a>
-                    <a href="#aws" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500', transition: 'all 0.3s ease', display: 'inline-block' }}
+                    <a href="#aws" onClick={() => setCurrentPage('aws')} style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500', transition: 'all 0.3s ease', display: 'inline-block' }}
                        onMouseOver={(e) => { e.target.style.color = '#d4af37'; e.target.style.transform = 'translateY(-3px) scale(1.1)'; }}
                        onMouseOut={(e) => { e.target.style.color = 'white'; e.target.style.transform = 'translateY(0) scale(1)'; }}>Cloud Services</a>
-                    <a href="#careers" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500', transition: 'all 0.3s ease', display: 'inline-block' }}
+                    <a href="#careers" onClick={() => setCurrentPage('careers')} style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500', transition: 'all 0.3s ease', display: 'inline-block' }}
                        onMouseOver={(e) => { e.target.style.color = '#d4af37'; e.target.style.transform = 'translateY(-3px) scale(1.1)'; }}
                        onMouseOut={(e) => { e.target.style.color = 'white'; e.target.style.transform = 'translateY(0) scale(1)'; }}>Careers</a>
-                    <a href="#contact" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500', transition: 'all 0.3s ease', display: 'inline-block' }}
+                    <a href="#contact" onClick={() => setCurrentPage('contact')} style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500', transition: 'all 0.3s ease', display: 'inline-block' }}
                        onMouseOver={(e) => { e.target.style.color = '#d4af37'; e.target.style.transform = 'translateY(-3px) scale(1.1)'; }}
                        onMouseOut={(e) => { e.target.style.color = 'white'; e.target.style.transform = 'translateY(0) scale(1)'; }}>Contact</a>
                 </nav>
