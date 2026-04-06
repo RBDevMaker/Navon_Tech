@@ -520,24 +520,12 @@ async function inviteUser(username, data, requesterRole) {
 
         const userDetails = await getUserDetails(username);
         
-        // Look up employee's start date from DynamoDB for temp password
+        // Look up employee name for initials-based temp password
         const empEmail = userDetails.email || username;
-        let hireYear = new Date().getFullYear();
-        try {
-            const profileResult = await docClient.send(new GetCommand({
-                TableName: process.env.DYNAMODB_TABLE || 'CompanyDataTable',
-                Key: { PK: `EMPLOYEE#${empEmail}`, SK: 'PROFILE' }
-            }));
-            if (profileResult.Item && profileResult.Item.startDate) {
-                const parsed = new Date(profileResult.Item.startDate);
-                if (!isNaN(parsed.getTime())) {
-                    hireYear = parsed.getFullYear();
-                }
-            }
-        } catch (err) {
-            console.log('Could not fetch employee profile for hire year:', err);
-        }
-        const tempPassword = data.tempPassword || `NavonTemp${hireYear}!`;
+        const employeeName = userDetails.attributes?.name || username.split('@')[0];
+        const initials = employeeName.split(/\s+/).map(w => w.charAt(0).toUpperCase()).join('');
+        const currentYear = new Date().getFullYear();
+        const tempPassword = data.tempPassword || `Navon${initials}${currentYear}!`;
         const portalUrl = data.portalUrl || 'https://navontech.com/#login';
 
         // Set a new temporary password so user is forced to change on login
@@ -710,24 +698,11 @@ async function resetUserPassword(username, data, requesterRole) {
 
         const userDetails = await getUserDetails(username);
         
-        // Look up employee's start date from DynamoDB for temp password
-        const empEmail2 = userDetails.email || username;
-        let hireYear2 = new Date().getFullYear();
-        try {
-            const profileResult2 = await docClient.send(new GetCommand({
-                TableName: process.env.DYNAMODB_TABLE || 'CompanyDataTable',
-                Key: { PK: `EMPLOYEE#${empEmail2}`, SK: 'PROFILE' }
-            }));
-            if (profileResult2.Item && profileResult2.Item.startDate) {
-                const parsed2 = new Date(profileResult2.Item.startDate);
-                if (!isNaN(parsed2.getTime())) {
-                    hireYear2 = parsed2.getFullYear();
-                }
-            }
-        } catch (err) {
-            console.log('Could not fetch employee profile for hire year:', err);
-        }
-        const tempPassword = data.tempPassword || `NavonTemp${hireYear2}!`;
+        // Generate temp password with initials pattern
+        const employeeName = userDetails.attributes?.name || username.split('@')[0];
+        const initials = employeeName.split(/\s+/).map(w => w.charAt(0).toUpperCase()).join('');
+        const currentYear = new Date().getFullYear();
+        const tempPassword = data.tempPassword || `Navon${initials}${currentYear}!`;
         const portalUrl = data.portalUrl || 'https://navontech.com/#login';
 
         // Set a new temporary password
@@ -737,8 +712,6 @@ async function resetUserPassword(username, data, requesterRole) {
             Password: tempPassword,
             Permanent: false
         }));
-
-        const employeeName = userDetails.attributes?.name || username.split('@')[0];
 
         const htmlBody = `
 <!DOCTYPE html>

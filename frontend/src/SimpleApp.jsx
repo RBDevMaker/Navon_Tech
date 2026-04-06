@@ -67,6 +67,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [isLoadingResumes, setIsLoadingResumes] = useState(false);
     const [showUploadModal, setShowUploadModal] = useState(false);
     const [editingResume, setEditingResume] = useState(null);
+    const [showRolePermissions, setShowRolePermissions] = useState(false);
     
     // User management states
     const [showManageUsersModal, setShowManageUsersModal] = useState(false);
@@ -5641,8 +5642,35 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 <section style={{ 
                     padding: '4rem 2rem', 
                     background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-                    minHeight: '100vh'
+                    minHeight: '100vh',
+                    position: 'relative'
                 }}>
+                    <button
+                        onClick={async () => {
+                            try {
+                                await signOut();
+                                window.location.hash = 'home';
+                                window.location.reload();
+                            } catch (err) {
+                                console.error('Sign out error:', err);
+                            }
+                        }}
+                        style={{
+                            position: 'absolute',
+                            top: '1.5rem',
+                            right: '1.5rem',
+                            background: '#ef4444',
+                            color: 'white',
+                            border: 'none',
+                            padding: '0.5rem 1.25rem',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            fontWeight: '600',
+                            fontSize: '0.85rem',
+                            zIndex: 10
+                        }}>
+                        Logout
+                    </button>
                     <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
                         <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
                             <h2 style={{
@@ -6560,6 +6588,47 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     Manage Security
                                 </button>
                             </div>
+
+                            {/* Assigned Duties Per Role - SuperAdmin Only */}
+                            {userRole === 'superadmin' && (
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.5s',
+                                display: 'flex',
+                                flexDirection: 'column'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{ fontSize: '2.5rem', marginRight: '1rem' }}>📋</div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        Assigned Duties Per Role
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem', flex: 1 }}>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• View permissions matrix</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Role assignments</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Access level comparison</p>
+                                </div>
+                                <button
+                                    onClick={() => setShowRolePermissions(true)}
+                                    style={{
+                                        background: '#1e3a8a',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '0.75rem 1.5rem',
+                                        borderRadius: '6px',
+                                        cursor: 'pointer',
+                                        fontWeight: '600',
+                                        width: '100%',
+                                        marginTop: 'auto'
+                                    }}>
+                                    View Permissions
+                                </button>
+                            </div>
+                            )}
                         </div>
 
                         {/* Current Users Overview - HR and SuperAdmin only */}
@@ -8718,7 +8787,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Export audit reports</p>
                                 </div>
                                 <button 
-                                    onClick={() => setShowAuditLogsModal(true)}
+                                    onClick={() => { setShowAuditLogsModal(true); fetchAuditLogs(); }}
                                     style={{
                                         background: '#1e3a8a', color: 'white', border: 'none',
                                         padding: '0.75rem 1.5rem', borderRadius: '6px',
@@ -15658,6 +15727,112 @@ Please review and approve this request.
                 }
             `}</style>
             
+            {/* Role Permissions Modal - SuperAdmin Only */}
+            {showRolePermissions && (
+                <div onClick={() => setShowRolePermissions(false)} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+                    <div onClick={(e) => e.stopPropagation()} style={{ background: 'white', borderRadius: '16px', maxWidth: '900px', width: '100%', maxHeight: '90vh', overflow: 'auto', boxShadow: '0 25px 50px rgba(0,0,0,0.25)' }}>
+                        <div style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)', padding: '1.5rem 2rem', borderRadius: '16px 16px 0 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <h2 style={{ color: '#d4af37', margin: 0, fontSize: '1.3rem' }}>Assigned Duties Per Role</h2>
+                            <button onClick={() => setShowRolePermissions(false)} style={{ background: 'transparent', border: 'none', color: 'white', fontSize: '1.5rem', cursor: 'pointer' }}>✕</button>
+                        </div>
+                        <div style={{ padding: '1.5rem', overflowX: 'auto' }}>
+                            <button onClick={() => {
+                                const tableEl = document.querySelector('[data-role-table]');
+                                const rolesEl = document.querySelector('[data-role-users]');
+                                const html = `<html><head><title>Role Permissions</title></head><body style="font-family:Arial,sans-serif;max-width:900px;margin:0 auto;padding:30px">
+                                    <h2 style="color:#1e3a8a">Navon Technologies - Assigned Duties Per Role</h2>
+                                    <p>Generated: ${new Date().toLocaleDateString()}</p>
+                                    <h3 style="color:#1e3a8a">Users Assigned to Roles</h3>
+                                    ${rolesEl?.outerHTML || ''}
+                                    ${tableEl?.outerHTML || ''}
+                                    <div style="margin-top:20px;color:#94a3b8;font-size:11px;border-top:1px solid #e2e8f0;padding-top:10px">Navon Technologies | Confidential</div>
+                                </body></html>`;
+                                const w = window.open('', '_blank');
+                                w.document.write(html);
+                                w.document.close();
+                                w.print();
+                            }} style={{ background: '#dc2626', color: 'white', border: 'none', padding: '0.4rem 1rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.8rem', marginBottom: '1.5rem' }}>Export as PDF</button>
+
+                            <h3 style={{ color: '#1e3a8a', marginBottom: '1rem', fontSize: '1.1rem' }}>Users Assigned to Roles</h3>
+                            <div data-role-users style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+                                {[
+                                    { role: 'SuperAdmin', color: '#92400e', bg: '#fef3c7', border: '#fbbf24' },
+                                    { role: 'Security', color: '#5b21b6', bg: '#ede9fe', border: '#8b5cf6' },
+                                    { role: 'HR', color: '#1e40af', bg: '#dbeafe', border: '#3b82f6' },
+                                    { role: 'Admin', color: '#4338ca', bg: '#e0e7ff', border: '#6366f1' }
+                                ].map(({ role, color, bg, border }) => (
+                                    <div key={role} style={{ background: bg, padding: '1rem', borderRadius: '8px', border: `2px solid ${border}` }}>
+                                        <div style={{ fontWeight: '700', color, marginBottom: '0.5rem', fontSize: '0.9rem' }}>{role}</div>
+                                        {users.filter(u => {
+                                            const groups = (u.groups || []).map(g => g.toLowerCase());
+                                            return groups.includes(role.toLowerCase());
+                                        }).map((u, i) => {
+                                            const name = u.attributes?.name || u.email?.split('@')[0].split('.').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                                            return <div key={i} style={{ fontSize: '0.8rem', color: '#334155', marginBottom: '0.2rem' }}>{name}</div>;
+                                        })}
+                                        {users.filter(u => (u.groups || []).map(g => g.toLowerCase()).includes(role.toLowerCase())).length === 0 && (
+                                            <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontStyle: 'italic' }}>None assigned</div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+
+                            <table data-role-table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem' }}>
+                                <thead>
+                                    <tr style={{ background: '#1e3a8a', color: 'white' }}>
+                                        <th style={{ padding: '0.6rem', textAlign: 'left', borderBottom: '2px solid #d4af37' }}>Permission</th>
+                                        {['Employee', 'Admin', 'HR', 'Security', 'SuperAdmin'].map(r => (
+                                            <th key={r} style={{ padding: '0.6rem', textAlign: 'center', borderBottom: '2px solid #d4af37', minWidth: '70px' }}>{r}</th>
+                                        ))}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {[
+                                        ['View Public Site', true, true, true, true, true],
+                                        ['Access Portal', true, true, true, true, true],
+                                        ['View/Edit Own Profile', true, true, true, true, true],
+                                        ['View Directory (opted-in)', true, true, true, true, true],
+                                        ['View Directory (all)', false, true, true, true, true],
+                                        ['View Employee Details', false, true, true, true, true],
+                                        ['View Salary', false, false, true, true, true],
+                                        ['Edit Other Profiles', false, false, true, true, true],
+                                        ['View HR-Only Section', false, true, true, true, true],
+                                        ['Upload Documents', false, true, true, true, true],
+                                        ['View ATS Kanban', false, false, true, true, true],
+                                        ['Upload Resumes to ATS', false, false, false, true, false],
+                                        ['View/Download Resumes', false, false, false, true, false],
+                                        ['Delete Resume Files (S3)', false, false, false, true, false],
+                                        ['Interviewer Notes', false, false, false, true, false],
+                                        ['Delete ATS Cards', false, false, true, true, true],
+                                        ['Export ATS Reports', false, false, true, true, true],
+                                        ['View User Management', false, true, true, true, true],
+                                        ['Create/Invite Users', false, false, true, true, true],
+                                        ['Reset Passwords', false, false, true, true, true],
+                                        ['Delete Users', false, false, true, true, true],
+                                        ['Assign Employee Role', false, false, true, true, true],
+                                        ['Assign Admin/HR/Security', false, false, false, true, true],
+                                        ['Assign SuperAdmin', false, false, false, false, true],
+                                        ['Modify SuperAdmin Accounts', false, false, false, false, true],
+                                        ['View Security Settings', false, true, true, true, true],
+                                        ['View Login History', false, true, true, true, true],
+                                        ['Security Assessment', false, true, true, true, true],
+                                        ['View Audit Logs', false, false, false, false, true],
+                                        ['CSV Employee Import', false, false, true, true, true],
+                                    ].map(([perm, ...checks], i) => (
+                                        <tr key={i} style={{ background: i % 2 === 0 ? '#f8fafc' : 'white' }}>
+                                            <td style={{ padding: '0.5rem 0.6rem', borderBottom: '1px solid #e2e8f0', fontWeight: '500' }}>{perm}</td>
+                                            {checks.map((c, j) => (
+                                                <td key={j} style={{ padding: '0.5rem', textAlign: 'center', borderBottom: '1px solid #e2e8f0', color: c ? '#16a34a' : '#e2e8f0', fontSize: '1rem' }}>{c ? '✓' : '—'}</td>
+                                            ))}
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Manage Users Modal */}
             {showManageUsersModal && (
                 <div style={{
@@ -16116,7 +16291,7 @@ Please review and approve this request.
                                 <div style={{ textAlign: 'center', padding: '3rem', color: '#64748b' }}>
                                     <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>📊</div>
                                     <p style={{ fontSize: '1.2rem', fontWeight: '600' }}>No audit logs loaded</p>
-                                    <p>Click "Apply Filters" to load audit logs</p>
+                                    <p>Click "Apply Filters" to filter audit logs</p>
                                 </div>
                             )}
                             

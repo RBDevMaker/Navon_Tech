@@ -1,0 +1,60 @@
+ROLE PERMISSIONS MATRIX
+,Employee,Admin,HR,Security,SuperAdmin
+View Public Site,✓,✓,✓,✓,✓
+Access Portal,✓,✓,✓,✓,✓
+View Own Profile,✓,✓,✓,✓,✓
+Edit Own Profile,✓,✓,✓,✓,✓
+View Team Directory (opted-in only),✓,✓,✓,✓,✓
+View Team Directory (all employees),,✓,✓,✓,✓
+View Employee Details,,✓,✓,✓,✓
+View Salary,,,✓,✓,✓
+Edit Other Profiles,,,✓,✓,✓
+View HR-Only Section,,✓,✓,✓,✓
+View Document Management,✓,✓,✓,✓,✓
+Upload Documents,,✓,✓,✓,✓
+View ATS (Kanban Board),,,✓,✓,✓
+Upload Resumes to ATS,,,,✓,
+View/Download Resume Files,,,,✓,
+Delete Resume Files from S3,,,,✓,
+Interviewer Notes (View/Edit),,,,✓,
+Delete ATS Cards,,,✓,✓,✓
+Export ATS (Excel/PDF/Word),,,✓,✓,✓
+View User Management,,✓,✓,✓,✓
+List/View Users,,✓,✓,✓,✓
+Create/Invite Users,,,✓,✓,✓
+Send Invitations,,,✓,✓,✓
+Reset Passwords,,,✓,✓,✓
+Delete Users,,,✓,✓,✓
+Assign Employee Role,,,✓,✓,✓
+Assign Admin/HR/Security Roles,,,,✓,✓
+Assign SuperAdmin Role,,,,,✓
+Modify SuperAdmin Accounts,,,,,✓
+Delete SuperAdmin Accounts,,,,,✓
+View Security Settings,,✓,✓,✓,✓
+View Login History,,✓,✓,✓,✓
+Run Security Assessment,,✓,✓,✓,✓
+View Audit Logs,,,,,✓
+CSV Employee Import,,,✓,✓,✓
+Admin/Employee View Toggle,,✓,✓,✓,✓
+
+ROLE ASSIGNMENTS
+Name,Email,Role(s)
+brianroot,brianroot@navontech.com,SuperAdmin
+rachelleroot,rachelleroot@navontech.com,SuperAdmin
+Brian Briscoe,brian.briscoe@navontech.com,"HR, Security"
+Rachelle Briscoe,rachelle.briscoe@navontech.com,HR
+Yahvinah Bryant,yahvinah.bryant@navontech.com,HR
+Veronica Hill,veronica.hill@navontech.com,Security
+Gregory Bryant,gregory.bryant@navontech.com,Admin
+Brian Baltimore,brian.baltimore@navontech.com,Employee
+Clinton Elleby,clinton.elleby@navontech.com,Employee
+Donnell Fuell,donnell.fuell@navontech.com,Employee
+Jay Brown,jay.brown@navontech.com,Employee
+Kashif Brown,kashif.brown@navontech.com,Employee
+Marcus Collier,marcus.collier@navontech.com,Employee
+Naquishba Porter,naquishba.porter@navontech.com,Employee
+Roland Dupree,roland.dupree@navontech.com,Employee
+Steffen Thomas,steffen.thomas@navontech.com,Employee
+Tammy Thompson,tammy.thompson@navontech.com,Employee
+Teddy Fekade,teddy.fekade@navontech.com,Employee
+Zane Johnson,zane.johnson@navontech.com,Employee
