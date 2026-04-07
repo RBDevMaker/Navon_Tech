@@ -537,7 +537,6 @@ async function inviteUser(username, data, requesterRole) {
         }));
 
         // Build the invitation email
-        const employeeName = userDetails.attributes?.name || username.split('@')[0];
         const roleName = userDetails.role === 'superadmin' ? 'Super Administrator' :
                          userDetails.role === 'security' ? 'Security' :
                          userDetails.role === 'hr' ? 'Human Resources' :

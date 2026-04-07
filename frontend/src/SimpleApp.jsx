@@ -87,6 +87,12 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [isLoadingAssessment, setIsLoadingAssessment] = useState(false);
     const [showSecurityAssessment, setShowSecurityAssessment] = useState(false);
     const [uploadCategory, setUploadCategory] = useState('HR-Documents');
+    
+    // Compliance & Security / Shared Resources file states
+    const [complianceFiles, setComplianceFiles] = useState([]);
+    const [sharedResourceFiles, setSharedResourceFiles] = useState([]);
+    const [isLoadingCompliance, setIsLoadingCompliance] = useState(false);
+    const [isLoadingSharedResources, setIsLoadingSharedResources] = useState(false);
 
     // Handle hash changes for navigation
     useEffect(() => {
@@ -254,6 +260,20 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         }
     }, [currentPage]);
 
+    // Fetch Compliance & Security files from S3
+    useEffect(() => {
+        if (currentPage === 'compliancesecurity') {
+            fetchComplianceFiles();
+        }
+    }, [currentPage]);
+
+    // Fetch Shared Resources files from S3
+    useEffect(() => {
+        if (currentPage === 'sharedresources') {
+            fetchSharedResourceFiles();
+        }
+    }, [currentPage]);
+
     // Fetch HR documents from S3
     const fetchHRDocuments = async () => {
         try {
@@ -310,6 +330,52 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             console.log('HR documents loaded:', { handbookData, benefitsData, hrFormsData });
         } catch (error) {
             console.error('Error fetching HR documents:', error);
+        }
+    };
+
+    // Fetch Compliance & Security files from S3
+    const fetchComplianceFiles = async () => {
+        setIsLoadingCompliance(true);
+        try {
+            const result = await listS3Contents('Documents/Compliance-Security/');
+            const files = (result.files || [])
+                .filter(file => file.name && file.name.trim() !== '')
+                .map(file => ({
+                    id: file.key,
+                    name: file.name,
+                    size: file.size,
+                    lastModified: file.lastModified,
+                    type: file.name.split('.').pop(),
+                    url: file.url
+                }));
+            setComplianceFiles(files);
+        } catch (error) {
+            console.error('Error fetching compliance files:', error);
+        } finally {
+            setIsLoadingCompliance(false);
+        }
+    };
+
+    // Fetch Shared Resources files from S3
+    const fetchSharedResourceFiles = async () => {
+        setIsLoadingSharedResources(true);
+        try {
+            const result = await listS3Contents('Documents/Shared-Resources/');
+            const files = (result.files || [])
+                .filter(file => file.name && file.name.trim() !== '')
+                .map(file => ({
+                    id: file.key,
+                    name: file.name,
+                    size: file.size,
+                    lastModified: file.lastModified,
+                    type: file.name.split('.').pop(),
+                    url: file.url
+                }));
+            setSharedResourceFiles(files);
+        } catch (error) {
+            console.error('Error fetching shared resource files:', error);
+        } finally {
+            setIsLoadingSharedResources(false);
         }
     };
 
@@ -597,14 +663,20 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         setIsLoadingUsers(true);
         try {
             const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
-            const session = await fetchAuthSession();
+            let session;
+            try {
+                session = await fetchAuthSession({ forceRefresh: true });
+            } catch (sessionErr) {
+                console.error('Session refresh failed:', sessionErr);
+                throw new Error('Session expired. Please sign out and sign back in.');
+            }
             const token = session.tokens?.idToken?.toString();
             
             console.log('Fetching users from:', `${apiUrl}/users`);
             console.log('Token available:', !!token);
             
             if (!token) {
-                throw new Error('No authentication token found');
+                throw new Error('No authentication token found. Please sign out and sign back in.');
             }
             
             const response = await fetch(`${apiUrl}/users`, {
@@ -619,6 +691,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
                 console.error('Error response:', errorData);
+                if (response.status === 401) {
+                    throw new Error('Session expired. Please sign out and sign back in.');
+                }
                 throw new Error(errorData.message || errorData.error || `Failed to fetch users: ${response.status}`);
             }
             
@@ -627,7 +702,11 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             setUsers(data.users || []);
         } catch (error) {
             console.error('Error fetching users:', error);
-            alert(`Failed to load users: ${error.message}`);
+            if (error.message === 'Failed to fetch') {
+                alert('Failed to load users: Network error. Your session may have expired — please sign out and sign back in.');
+            } else {
+                alert(`Failed to load users: ${error.message}`);
+            }
         } finally {
             setIsLoadingUsers(false);
         }
@@ -6309,10 +6388,10 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 </div>
                                 <div style={{ marginBottom: '1rem', flex: 1 }}>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Change user roles (Employee/Admin/HR/Security{userRole === 'superadmin' ? '/SuperAdmin' : ''})
+                                        • Change user roles ({userRole === 'hr' ? 'Employee only' : userRole === 'admin' ? 'View only (cannot change roles)' : `Employee/Admin/HR/Security${userRole === 'superadmin' ? '/SuperAdmin' : ''}`})
                                     </p>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Promote or demote users{userRole === 'hr' ? ' (cannot modify SuperAdmins)' : ''}
+                                        • {userRole === 'hr' ? 'Assign Employee role (cannot modify SuperAdmins)' : userRole === 'admin' ? 'View user accounts' : 'Promote or demote users'}
                                     </p>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
                                         • Send portal invitations
@@ -11609,7 +11688,12 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         • Training materials
                                     </p>
                                 </div>
-                                <button style={{
+                                <button 
+                                    onClick={() => {
+                                        setCurrentPage('compliancesecurity');
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }}
+                                    style={{
                                     background: '#1e3a8a',
                                     color: 'white',
                                     border: 'none',
@@ -11660,7 +11744,12 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         • Knowledge base articles
                                     </p>
                                 </div>
-                                <button style={{
+                                <button 
+                                    onClick={() => {
+                                        setCurrentPage('sharedresources');
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }}
+                                    style={{
                                     background: '#1e3a8a',
                                     color: 'white',
                                     border: 'none',
@@ -11765,6 +11854,22 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             <p style={{ color: '#64748b', marginBottom: '1.5rem' }}>
                                 All uploads are encrypted and scanned for security compliance
                             </p>
+                            {/* Accepted File Types Info */}
+                            <div style={{
+                                background: '#f0f9ff',
+                                border: '1px solid #bae6fd',
+                                borderRadius: '8px',
+                                padding: '0.75rem 1rem',
+                                marginBottom: '1.5rem',
+                                textAlign: 'left'
+                            }}>
+                                <p style={{ color: '#0369a1', fontWeight: '600', fontSize: '0.85rem', margin: '0 0 0.25rem 0' }}>
+                                    📎 Accepted File Types:
+                                </p>
+                                <p style={{ color: '#475569', fontSize: '0.8rem', margin: 0, lineHeight: '1.5' }}>
+                                    PDF, DOC, DOCX, TXT, XLS, XLSX, PPT, PPTX, JPG, JPEG, PNG, GIF
+                                </p>
+                            </div>
                             {/* Category Dropdown */}
                             <div style={{ marginBottom: '1.5rem' }}>
                                 <label style={{ display: 'block', fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem', fontSize: '0.95rem' }}>
@@ -11797,6 +11902,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 type="file"
                                 id="documentUpload"
                                 multiple
+                                accept=".pdf,.doc,.docx,.txt,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.gif"
                                 disabled={!canUploadDoc}
                                 style={{ display: 'none' }}
                                 onChange={async (e) => {
@@ -11860,6 +11966,196 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                         </div>
                             );
                         })()}
+                    </div>
+                </section>
+            )}
+
+            {/* COMPLIANCE & SECURITY PAGE */}
+            {currentPage === 'compliancesecurity' && (
+                <section style={{ padding: '4rem 2rem', background: '#f1f5f9', minHeight: '100vh' }}>
+                    <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                        <div style={{
+                            background: 'linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%)',
+                            padding: '1rem',
+                            borderRadius: '8px',
+                            marginBottom: '2rem',
+                            fontSize: '0.9rem',
+                            color: '#475569'
+                        }}>
+                            🏠 Home → 🔐 Secure Employee Portal → 📁 Document Management → <strong style={{ color: '#1e3a8a' }}>🛡️ Compliance & Security</strong>
+                        </div>
+                        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                            <h2 style={{ fontSize: '3rem', marginBottom: '1rem', color: '#1e3a8a', fontWeight: '800' }}>
+                                🛡️ Compliance & Security
+                            </h2>
+                            <p style={{ fontSize: '1.2rem', color: '#475569', maxWidth: '800px', margin: '0 auto 2rem auto' }}>
+                                Security policies, compliance certificates, audit reports, and training materials
+                            </p>
+                            <button
+                                onClick={() => { setCurrentPage('documentmanagement'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                                style={{ background: '#d4af37', color: '#0f172a', border: 'none', padding: '1rem 2rem', borderRadius: '8px', cursor: 'pointer', fontWeight: '700', fontSize: '1rem' }}>
+                                ← Back to Document Management
+                            </button>
+                        </div>
+
+                        {isLoadingCompliance ? (
+                            <div style={{ textAlign: 'center', padding: '3rem' }}>
+                                <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>⏳</div>
+                                <p style={{ color: '#475569', fontSize: '1.1rem' }}>Loading compliance files...</p>
+                            </div>
+                        ) : complianceFiles.length === 0 ? (
+                            <div style={{ textAlign: 'center', padding: '3rem', background: 'white', borderRadius: '12px', border: '2px solid #e2e8f0' }}>
+                                <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📭</div>
+                                <h3 style={{ color: '#1e3a8a', marginBottom: '0.5rem' }}>No Files Yet</h3>
+                                <p style={{ color: '#64748b' }}>Upload compliance & security documents using the Upload Documents section on the Document Management page.</p>
+                            </div>
+                        ) : (
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(350px, 100%), 1fr))', gap: '1.5rem' }}>
+                                {complianceFiles.map((file) => {
+                                    const badge = getFileTypeBadge(file.name);
+                                    const modParts = file.lastModified ? String(file.lastModified).split('T')[0].split('-') : null;
+                                    const displayDate = modParts && modParts.length === 3
+                                        ? new Date(Number(modParts[0]), Number(modParts[1]) - 1, Number(modParts[2])).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+                                        : '';
+                                    return (
+                                        <div key={file.id} className="hover-lift" style={{
+                                            background: 'white', padding: '1.5rem', borderRadius: '12px',
+                                            border: '2px solid #d4af37', boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                                        }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+                                                <span style={{
+                                                    background: badge.color, color: 'white', padding: '0.3rem 0.6rem',
+                                                    borderRadius: '4px', fontSize: '0.75rem', fontWeight: '600', marginRight: '0.75rem'
+                                                }}>{badge.label}</span>
+                                                <div style={{ flex: 1, minWidth: 0 }}>
+                                                    <h4 style={{ color: '#1e3a8a', margin: 0, fontSize: '1rem', fontWeight: '600', wordBreak: 'break-word' }}>
+                                                        {file.name}
+                                                    </h4>
+                                                    <p style={{ color: '#94a3b8', fontSize: '0.8rem', margin: '0.25rem 0 0 0' }}>
+                                                        {formatFileSize(file.size)}{displayDate ? ` • ${displayDate}` : ''}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                                <button
+                                                    onClick={() => handleViewDocument(file.name, { name: file.name, s3Url: file.url })}
+                                                    style={{
+                                                        background: '#1e3a8a', color: 'white', border: 'none',
+                                                        padding: '0.6rem 1rem', borderRadius: '6px', cursor: 'pointer',
+                                                        fontWeight: '600', fontSize: '0.85rem', flex: 1
+                                                    }}>
+                                                    👁️ View
+                                                </button>
+                                                <a href={file.url} download={file.name} target="_blank" rel="noopener noreferrer"
+                                                    style={{
+                                                        background: '#d4af37', color: '#0f172a', border: 'none',
+                                                        padding: '0.6rem 1rem', borderRadius: '6px', cursor: 'pointer',
+                                                        fontWeight: '600', fontSize: '0.85rem', flex: 1,
+                                                        textDecoration: 'none', textAlign: 'center', display: 'inline-block'
+                                                    }}>
+                                                    ⬇️ Download
+                                                </a>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </div>
+                </section>
+            )}
+
+            {/* SHARED RESOURCES PAGE */}
+            {currentPage === 'sharedresources' && (
+                <section style={{ padding: '4rem 2rem', background: '#f1f5f9', minHeight: '100vh' }}>
+                    <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                        <div style={{
+                            background: 'linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%)',
+                            padding: '1rem',
+                            borderRadius: '8px',
+                            marginBottom: '2rem',
+                            fontSize: '0.9rem',
+                            color: '#475569'
+                        }}>
+                            🏠 Home → 🔐 Secure Employee Portal → 📁 Document Management → <strong style={{ color: '#1e3a8a' }}>🗂️ Shared Resources</strong>
+                        </div>
+                        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                            <h2 style={{ fontSize: '3rem', marginBottom: '1rem', color: '#1e3a8a', fontWeight: '800' }}>
+                                🗂️ Shared Resources
+                            </h2>
+                            <p style={{ fontSize: '1.2rem', color: '#475569', maxWidth: '800px', margin: '0 auto 2rem auto' }}>
+                                Templates, forms, company presentations, marketing materials, and knowledge base articles
+                            </p>
+                            <button
+                                onClick={() => { setCurrentPage('documentmanagement'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                                style={{ background: '#d4af37', color: '#0f172a', border: 'none', padding: '1rem 2rem', borderRadius: '8px', cursor: 'pointer', fontWeight: '700', fontSize: '1rem' }}>
+                                ← Back to Document Management
+                            </button>
+                        </div>
+
+                        {isLoadingSharedResources ? (
+                            <div style={{ textAlign: 'center', padding: '3rem' }}>
+                                <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>⏳</div>
+                                <p style={{ color: '#475569', fontSize: '1.1rem' }}>Loading shared resources...</p>
+                            </div>
+                        ) : sharedResourceFiles.length === 0 ? (
+                            <div style={{ textAlign: 'center', padding: '3rem', background: 'white', borderRadius: '12px', border: '2px solid #e2e8f0' }}>
+                                <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📭</div>
+                                <h3 style={{ color: '#1e3a8a', marginBottom: '0.5rem' }}>No Files Yet</h3>
+                                <p style={{ color: '#64748b' }}>Upload shared resources using the Upload Documents section on the Document Management page.</p>
+                            </div>
+                        ) : (
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(350px, 100%), 1fr))', gap: '1.5rem' }}>
+                                {sharedResourceFiles.map((file) => {
+                                    const badge = getFileTypeBadge(file.name);
+                                    const modParts = file.lastModified ? String(file.lastModified).split('T')[0].split('-') : null;
+                                    const displayDate = modParts && modParts.length === 3
+                                        ? new Date(Number(modParts[0]), Number(modParts[1]) - 1, Number(modParts[2])).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+                                        : '';
+                                    return (
+                                        <div key={file.id} className="hover-lift" style={{
+                                            background: 'white', padding: '1.5rem', borderRadius: '12px',
+                                            border: '2px solid #d4af37', boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                                        }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+                                                <span style={{
+                                                    background: badge.color, color: 'white', padding: '0.3rem 0.6rem',
+                                                    borderRadius: '4px', fontSize: '0.75rem', fontWeight: '600', marginRight: '0.75rem'
+                                                }}>{badge.label}</span>
+                                                <div style={{ flex: 1, minWidth: 0 }}>
+                                                    <h4 style={{ color: '#1e3a8a', margin: 0, fontSize: '1rem', fontWeight: '600', wordBreak: 'break-word' }}>
+                                                        {file.name}
+                                                    </h4>
+                                                    <p style={{ color: '#94a3b8', fontSize: '0.8rem', margin: '0.25rem 0 0 0' }}>
+                                                        {formatFileSize(file.size)}{displayDate ? ` • ${displayDate}` : ''}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                                <button
+                                                    onClick={() => handleViewDocument(file.name, { name: file.name, s3Url: file.url })}
+                                                    style={{
+                                                        background: '#1e3a8a', color: 'white', border: 'none',
+                                                        padding: '0.6rem 1rem', borderRadius: '6px', cursor: 'pointer',
+                                                        fontWeight: '600', fontSize: '0.85rem', flex: 1
+                                                    }}>
+                                                    👁️ View
+                                                </button>
+                                                <a href={file.url} download={file.name} target="_blank" rel="noopener noreferrer"
+                                                    style={{
+                                                        background: '#d4af37', color: '#0f172a', border: 'none',
+                                                        padding: '0.6rem 1rem', borderRadius: '6px', cursor: 'pointer',
+                                                        fontWeight: '600', fontSize: '0.85rem', flex: 1,
+                                                        textDecoration: 'none', textAlign: 'center', display: 'inline-block'
+                                                    }}>
+                                                    ⬇️ Download
+                                                </a>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
                     </div>
                 </section>
             )}

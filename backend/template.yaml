@@ -36,8 +36,40 @@ Resources:
         AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
         AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
         AllowOrigin: "'*'"
+      GatewayResponses:
+        UNAUTHORIZED:
+          StatusCode: 401
+          ResponseParameters:
+            Headers:
+              Access-Control-Allow-Origin: "'*'"
+              Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
+          ResponseTemplates:
+            application/json: '{"message":"Unauthorized - token may be expired. Please sign out and sign back in."}'
+        ACCESS_DENIED:
+          StatusCode: 403
+          ResponseParameters:
+            Headers:
+              Access-Control-Allow-Origin: "'*'"
+              Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
+          ResponseTemplates:
+            application/json: '{"message":"Access denied"}'
+        DEFAULT_4XX:
+          ResponseParameters:
+            Headers:
+              Access-Control-Allow-Origin: "'*'"
+              Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
+        DEFAULT_5XX:
+          ResponseParameters:
+            Headers:
+              Access-Control-Allow-Origin: "'*'"
+              Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
       Auth:
         DefaultAuthorizer: CognitoAuthorizer
+        AddDefaultAuthorizerToCorsPreflight: false
         Authorizers:
           CognitoAuthorizer:
             UserPoolArn: !GetAtt UserPool.Arn
@@ -80,14 +112,6 @@ Resources:
             RestApiId: !Ref CompanyApi
             Path: /api/employee/{proxy+}
             Method: ANY
-            Auth:
-              Authorizer: NONE
-        EmployeeApiOptions:
-          Type: Api
-          Properties:
-            RestApiId: !Ref CompanyApi
-            Path: /api/employee/{proxy+}
-            Method: OPTIONS
             Auth:
               Authorizer: NONE
 
@@ -152,14 +176,6 @@ Resources:
             Method: POST
             Auth:
               Authorizer: NONE
-        SubmitApplicationOptions:
-          Type: Api
-          Properties:
-            RestApiId: !Ref CompanyApi
-            Path: /api/apply
-            Method: OPTIONS
-            Auth:
-              Authorizer: NONE
 
   S3UploadFunction:
     Type: AWS::Serverless::Function
@@ -186,14 +202,6 @@ Resources:
             RestApiId: !Ref CompanyApi
             Path: /api/upload-to-s3
             Method: POST
-            Auth:
-              Authorizer: NONE
-        UploadToS3Options:
-          Type: Api
-          Properties:
-            RestApiId: !Ref CompanyApi
-            Path: /api/upload-to-s3
-            Method: OPTIONS
             Auth:
               Authorizer: NONE
 
@@ -254,22 +262,6 @@ Resources:
             RestApiId: !Ref CompanyApi
             Path: /api/profiles/{employeeId}
             Method: DELETE
-            Auth:
-              Authorizer: NONE
-        ProfileOptionsRoot:
-          Type: Api
-          Properties:
-            RestApiId: !Ref CompanyApi
-            Path: /api/profiles
-            Method: OPTIONS
-            Auth:
-              Authorizer: NONE
-        ProfileOptionsId:
-          Type: Api
-          Properties:
-            RestApiId: !Ref CompanyApi
-            Path: /api/profiles/{employeeId}
-            Method: OPTIONS
             Auth:
               Authorizer: NONE
 
@@ -358,22 +350,6 @@ Resources:
             Method: DELETE
             Auth:
               Authorizer: CognitoAuthorizer
-        UsersOptions:
-          Type: Api
-          Properties:
-            RestApiId: !Ref CompanyApi
-            Path: /api/users
-            Method: OPTIONS
-            Auth:
-              Authorizer: NONE
-        UserOptions:
-          Type: Api
-          Properties:
-            RestApiId: !Ref CompanyApi
-            Path: /api/users/{username}
-            Method: OPTIONS
-            Auth:
-              Authorizer: NONE
 
   AuditLogsFunction:
     Type: AWS::Serverless::Function
@@ -413,14 +389,6 @@ Resources:
             Method: POST
             Auth:
               Authorizer: CognitoAuthorizer
-        AuditLogsOptions:
-          Type: Api
-          Properties:
-            RestApiId: !Ref CompanyApi
-            Path: /api/audit-logs
-            Method: OPTIONS
-            Auth:
-              Authorizer: NONE
 
   ResumeManagementFunction:
     Type: AWS::Serverless::Function
@@ -484,30 +452,6 @@ Resources:
             RestApiId: !Ref CompanyApi
             Path: /api/resume/{id}
             Method: DELETE
-            Auth:
-              Authorizer: NONE
-        ResumeIdOptions:
-          Type: Api
-          Properties:
-            RestApiId: !Ref CompanyApi
-            Path: /api/resume/{id}
-            Method: OPTIONS
-            Auth:
-              Authorizer: NONE
-        ResumeOptions:
-          Type: Api
-          Properties:
-            RestApiId: !Ref CompanyApi
-            Path: /api/resume
-            Method: OPTIONS
-            Auth:
-              Authorizer: NONE
-        ResumesOptions:
-          Type: Api
-          Properties:
-            RestApiId: !Ref CompanyApi
-            Path: /api/resumes
-            Method: OPTIONS
             Auth:
               Authorizer: NONE
 
