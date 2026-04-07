@@ -25,7 +25,7 @@ const Footer = () => {
                             color: '#666',
                             lineHeight: '1.4'
                         }}>
-                            <div>A wiser technology solutions,</div>
+                            <div>Wiser technology solutions,</div>
                             <div>we take technology higher!</div>
                         </div>
                     </div>

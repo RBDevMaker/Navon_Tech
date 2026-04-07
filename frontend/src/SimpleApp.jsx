@@ -2926,11 +2926,12 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         gap: '0.75rem',
                                         listStyle: 'none'
                                     }}>
-                                        <li style={{ marginBottom: '0.5rem', wordBreak: 'break-word' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> Reliability - Delivering consistent, dependable solutions</li>
-                                        <li style={{ marginBottom: '0.5rem', wordBreak: 'break-word' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> Security - Protecting mission-critical data and systems</li>
-                                        <li style={{ marginBottom: '0.5rem', wordBreak: 'break-word' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> Innovation - Embracing cutting-edge technology</li>
-                                        <li style={{ marginBottom: '0.5rem', wordBreak: 'break-word' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> Excellence - Exceeding the highest standards</li>
-                                        <li style={{ marginBottom: '0.5rem', wordBreak: 'break-word' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> Integrity - Operating with transparency and trust</li>
+                                        <li style={{ marginBottom: '0.5rem', wordBreak: 'break-word' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> <strong style={{ color: '#d4af37', fontSize: '1.1em' }}>I</strong>ntegrity - Operating with transparency and trust</li>
+                                        <li style={{ height: '0.5rem' }}></li>
+                                        <li style={{ marginBottom: '0.5rem', wordBreak: 'break-word' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> <strong style={{ color: '#d4af37', fontSize: '1.1em' }}>R</strong>eliability - Delivering consistent, dependable solutions</li>
+                                        <li style={{ marginBottom: '0.5rem', wordBreak: 'break-word' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> <strong style={{ color: '#d4af37', fontSize: '1.1em' }}>I</strong>nnovation - Embracing cutting-edge technology</li>
+                                        <li style={{ marginBottom: '0.5rem', wordBreak: 'break-word' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> <strong style={{ color: '#d4af37', fontSize: '1.1em' }}>S</strong>ecurity - Protecting mission-critical data and systems</li>
+                                        <li style={{ marginBottom: '0.5rem', wordBreak: 'break-word' }}><span style={{ color: '#d4af37', fontWeight: '700' }}>★</span> <strong style={{ color: '#d4af37', fontSize: '1.1em' }}>E</strong>xcellence - Exceeding the highest standards</li>
                                     </ul>
                                 </div>
                                 
@@ -14880,7 +14881,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 color: '#cbd5e1',
                                 lineHeight: '1.5'
                             }}>
-                                <div>A wiser technology solutions,</div>
+                                <div>Wiser technology solutions,</div>
                                 <div>we take technology higher!</div>
                             </div>
                         </div>
