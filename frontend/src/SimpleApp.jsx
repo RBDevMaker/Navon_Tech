@@ -5950,7 +5950,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 </div>
                             </div>
 
-                            {/* Card 4: Time Card Management */}
+                            {/* Card 4: Time Card Management - HR/Security/SuperAdmin only */}
+                            {(userRole === 'hr' || userRole === 'security' || userRole === 'superadmin') && (
                             <div 
                                 className="hover-lift animate-scale-in" 
                                 onClick={() => {
@@ -5958,16 +5959,17 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     window.scrollTo({ top: 0, behavior: 'smooth' });
                                 }}
                                 style={{
-                                    background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
+                                    background: 'linear-gradient(135deg, #64748b 0%, #94a3b8 100%)',
                                     padding: '3rem 2rem',
                                     borderRadius: '20px',
                                     textAlign: 'center',
                                     cursor: 'pointer',
-                                    border: '3px solid #d4af37',
+                                    border: '3px solid #94a3b8',
                                     boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
                                     transition: 'all 0.4s ease',
                                     position: 'relative',
                                     overflow: 'hidden',
+                                    opacity: 0.6,
                                     animationDelay: '0.3s',
                                     display: 'flex',
                                     flexDirection: 'column',
@@ -5987,7 +5989,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
                                     zIndex: 10
                                 }}>
-                                    Coming Soon
+                                    NOT ACTIVE
                                 </div>
                                 <div>
                                     <div style={{
@@ -6028,6 +6030,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     Enter
                                 </div>
                             </div>
+                            )}
 
                             {/* Card 5: Internal Career Hub */}
                             <div 
@@ -8970,62 +8973,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         📊 View Full Report
                                     </button>
                                 )}
-                            </div>
-                        </div>
-
-                        {/* Emergency Actions */}
-                        <div style={{
-                            background: 'white',
-                            padding: '2rem',
-                            borderRadius: '12px',
-                            border: '2px solid #ef4444',
-                            marginBottom: '2rem'
-                        }}>
-                            <h3 style={{ color: '#dc2626', marginBottom: '1.5rem', fontSize: '1.5rem', textAlign: 'center' }}>
-                                🚨 Emergency Security Actions
-                                <span style={{ display: 'block', fontSize: '0.85rem', color: '#94a3b8', fontWeight: '400', marginTop: '0.25rem' }}>(Not Active)</span>
-                            </h3>
-                            <div style={{
-                                display: 'grid',
-                                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                                gap: '1rem'
-                            }}>
-                                <button style={{
-                                    background: '#dc2626',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '1rem',
-                                    borderRadius: '8px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600',
-                                    fontSize: '0.9rem'
-                                }}>
-                                    🔒 Lock Account
-                                </button>
-                                <button style={{
-                                    background: '#ea580c',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '1rem',
-                                    borderRadius: '8px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600',
-                                    fontSize: '0.9rem'
-                                }}>
-                                    📱 Revoke All Sessions
-                                </button>
-                                <button style={{
-                                    background: '#7c2d12',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '1rem',
-                                    borderRadius: '8px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600',
-                                    fontSize: '0.9rem'
-                                }}>
-                                    🚨 Report Security Issue
-                                </button>
                             </div>
                         </div>
 
