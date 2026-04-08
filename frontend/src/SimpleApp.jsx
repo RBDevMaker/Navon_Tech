@@ -11896,7 +11896,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     <option value="HR-Documents">📁 HR Documents</option>
                                     <option value="Compliance-Security">🔒 Compliance & Security</option>
                                     <option value="Shared-Resources">📂 Shared Resources</option>
-                                    <option value="Resumes">📄 Resumes</option>
+                                    {(userGroups.includes('security') || userRole === 'security' || userRole === 'superadmin') && (
+                                        <option value="Resumes">📄 Resumes</option>
+                                    )}
                                 </select>
                             </div>
                             <input
