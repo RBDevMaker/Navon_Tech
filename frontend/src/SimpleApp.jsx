@@ -3075,6 +3075,11 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     title: 'Artificial Intelligence & Machine Learning',
                                     image: 'AI.png',
                                     description: 'Advanced AI/ML solutions for data analysis, automation, and intelligent decision-making systems.'
+                                },
+                                {
+                                    title: 'And So Much More',
+                                    image: null,
+                                    description: 'Share your needs and we\'ll provide the solutions.'
                                 }
                             ].map((capability, index) => {
                                 // Alternate animation directions: left, left, top, top, right, right pattern
@@ -3102,6 +3107,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         overflow: 'hidden',
                                         borderBottom: '2px solid #d4af37'
                                     }}>
+                                        {capability.image ? (
                                         <img
                                             src={capability.image === 'AI.png' ? `${s3BaseUrl}/images/solutions/${capability.image}` : `${s3BaseUrl}/public/images/solutions/${capability.image}`}
                                             alt={capability.title}
@@ -3115,6 +3121,42 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             }}
                                             onError={(e) => { e.target.style.display = 'none'; }}
                                         />
+                                        ) : (
+                                        <div style={{
+                                            width: '100%',
+                                            height: '220px',
+                                            background: '#0f172a',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            overflow: 'hidden',
+                                            fontFamily: '"Courier New", monospace',
+                                            fontSize: '0.7rem',
+                                            color: '#d4af37',
+                                            lineHeight: '1.4',
+                                            padding: '1rem',
+                                            whiteSpace: 'pre-wrap',
+                                            wordBreak: 'break-all',
+                                            opacity: 0.85,
+                                            textAlign: 'left'
+                                        }}>
+{`const deploy = async () => {
+  await cloud.init({ region: 'us-east-1' });
+  const stack = new Stack('prod');
+  stack.addLambda({ runtime: 'node20' });
+  stack.addAPI({ auth: 'cognito' });
+  stack.addDB({ type: 'dynamodb' });
+  return stack.deploy();
+};
+// AI pipeline
+model.train(data, { epochs: 100 });
+const result = model.predict(input);
+// Network config
+firewall.setRules(policies);
+vpn.connect({ encryption: 'AES-256' });
+loadBalancer.distribute(traffic);`}
+                                        </div>
+                                        )}
                                     </div>
                                     <div style={{ padding: '2rem' }}>
                                         <h3 style={{ 
