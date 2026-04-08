@@ -16460,21 +16460,30 @@ Please review and approve this request.
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.5rem', color: '#475569' }}>
-                                            User ID:
+                                            User:
                                         </label>
-                                        <input
-                                            type="text"
+                                        <select
                                             value={logFilters.userId}
                                             onChange={(e) => setLogFilters({ ...logFilters, userId: e.target.value })}
-                                            placeholder="Filter by user ID"
                                             style={{
                                                 width: '100%',
                                                 padding: '0.5rem',
                                                 borderRadius: '6px',
                                                 border: '2px solid #e2e8f0',
                                                 fontSize: '1rem'
-                                            }}
-                                        />
+                                            }}>
+                                            <option value="">All Users</option>
+                                            {[...users].sort((a, b) => {
+                                                const aNoName = !a.attributes?.name;
+                                                const bNoName = !b.attributes?.name;
+                                                if (aNoName !== bNoName) return aNoName ? 1 : -1;
+                                                return (a.attributes?.name || a.email || '').localeCompare(b.attributes?.name || b.email || '');
+                                            }).map(u => (
+                                                <option key={u.username} value={u.username}>
+                                                    {u.attributes?.name || u.email || u.username}{u.attributes?.name ? ` (${u.email})` : ''}
+                                                </option>
+                                            ))}
+                                        </select>
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.5rem', color: '#475569' }}>
