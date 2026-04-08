@@ -3883,7 +3883,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             fontSize: '1.5rem',
                                             fontWeight: '700'
                                         }}>
-                                            Cloud Services
+                                            Cloud & Application Development Services
                                         </h3>
                                         <p style={{
                                             color: '#64748b',
@@ -3891,7 +3891,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                             margin: '0',
                                             fontSize: '1.05rem'
                                         }}>
-                                            Our Cloud Services provide a reliable and scalable solution for your business needs. We offer cloud migration, secure data storage, and cloud-based software solutions to help your business operate more efficiently and effectively.
+                                            Our Cloud and Application Development Services provide reliable, scalable solutions for your business. We offer cloud migration, secure data storage, and custom application and software development using modern frameworks and cloud-native architectures.
                                         </p>
                                     </div>
 
