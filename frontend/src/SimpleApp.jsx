@@ -4870,7 +4870,7 @@ loadBalancer.distribute(traffic);`}
             {currentPage === 'contact' && (
                 <section style={{
                     padding: '4rem 2rem',
-                    background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.50) 0%, rgba(30, 41, 59, 0.45) 50%, rgba(51, 65, 85, 0.50) 100%), url("https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1920&q=80") center/cover',
+                    background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.80) 50%, rgba(51, 65, 85, 0.85) 100%), url("https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1920&q=80") center/cover',
                     position: 'relative',
                     overflow: 'hidden'
                 }}>
@@ -4914,7 +4914,7 @@ loadBalancer.distribute(traffic);`}
                         }}>
                             <div className="hover-lift" style={{ 
                                 textAlign: 'center', 
-                                maxWidth: 'min(600px, 85vw)',
+                                maxWidth: 'min(800px, 90vw)',
                                 background: 'linear-gradient(135deg, #f5f5dc 0%, #ede0c8 100%)',
                                 padding: 'clamp(1rem, 2.5vw, 3rem)',
                                 borderRadius: '8px',
@@ -4965,15 +4965,14 @@ loadBalancer.distribute(traffic);`}
                                     clipPath: 'polygon(100% 0, 100% 100%, 0 100%)'
                                 }}></div>
                                 
-                                <h3 style={{ marginBottom: 'clamp(0.5rem, 1.5vw, 2rem)', fontSize: 'clamp(1rem, 2.5vw, 2rem)', fontWeight: '800', color: '#0f172a', position: 'relative', zIndex: 1 }}>Contact Information</h3>
-                                <p style={{ marginBottom: 'clamp(0.5rem, 1.5vw, 1.5rem)', fontSize: 'clamp(0.75rem, 1.8vw, 1.3rem)', lineHeight: '1.7', color: '#1e293b', position: 'relative', zIndex: 1, wordBreak: 'break-word' }}>
+                                <h3 style={{ marginBottom: 'clamp(0.5rem, 1.5vw, 2rem)', fontSize: 'clamp(1.2rem, 3vw, 2.5rem)', fontWeight: '800', color: '#0f172a', position: 'relative', zIndex: 1 }}>Contact Information</h3>
+                                <p style={{ marginBottom: 'clamp(0.5rem, 1.5vw, 1.5rem)', fontSize: 'clamp(0.95rem, 2.2vw, 1.6rem)', lineHeight: '1.8', color: '#1e293b', position: 'relative', zIndex: 1, wordBreak: 'break-word' }}>
                                     <strong>Address:</strong><br />
-                                    161 Fort Evans Rd NE STE 210<br />
+                                    161 Fort Evans Rd NE, STE 210,<br />
                                     Leesburg, VA 20176<br /><br />
                                     <strong>Email:</strong> info@navontech.com<br />
-                                    <strong>Phone:</strong> 571-477-2727<br />
-                                    <strong>Fax:</strong> 571-477-2727<br />
-                                    <strong>Response Time:</strong> 24 hours
+                                    <strong>Phone:</strong> 571-477-2727 | <strong>Fax:</strong> 571-477-2727<br />
+                                    <strong>Response Time:</strong> Within 24 hours
                                 </p>
                                 
                                 <div style={{
