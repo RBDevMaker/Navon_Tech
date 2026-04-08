@@ -4219,7 +4219,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             {currentPage === 'careers' && (
                 <section style={{ 
                     padding: '4rem 2rem', 
-                    background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.50) 0%, rgba(30, 41, 59, 0.45) 50%, rgba(51, 65, 85, 0.50) 100%), url("https://images.unsplash.com/photo-1556761175-b413da4baf72?w=1920&q=80") center/cover',
+                    background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.35) 0%, rgba(30, 41, 59, 0.30) 50%, rgba(51, 65, 85, 0.35) 100%), url("https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=70") center/cover',
                     position: 'relative',
                     overflow: 'hidden'
                 }}>
