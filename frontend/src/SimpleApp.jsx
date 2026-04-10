@@ -10,6 +10,8 @@ Amplify.configure(awsConfig);
 
 function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const s3BaseUrl = "https://navon-tech-images.s3.us-east-1.amazonaws.com";
+    // Emails only visible to HR/Admin/Security/SuperAdmin in admin view (never shown to employees)
+    const adminOnlyEmails = ['veronica.hill@navontech.com'];
     const [currentPage, setCurrentPage] = useState('home');
     const [scrollY, setScrollY] = useState(0);
     const [showSecureModal, setShowSecureModal] = useState(false);
@@ -93,6 +95,42 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [sharedResourceFiles, setSharedResourceFiles] = useState([]);
     const [isLoadingCompliance, setIsLoadingCompliance] = useState(false);
     const [isLoadingSharedResources, setIsLoadingSharedResources] = useState(false);
+    
+    // Referral tracking - derived from ATS resumes with "Employee Referral" in notes
+    const getReferralsFromATS = () => {
+        const atsReferrals = resumes.filter(r => r.notes && r.notes.includes('Employee Referral')).map(r => {
+            const referredByMatch = r.notes.match(/Employee Referral from ([^(]+)/);
+            const referredBy = referredByMatch ? referredByMatch[1].trim() : 'Unknown';
+            // Map ATS stage to referral stage
+            const atsToReferralStage = { 'New': 'Submitted', 'Screening': 'Under Review', 'Interview': 'Interview Scheduled', 'Offer': 'Offer Extended', 'Hired': 'Hired', 'Rejected': 'Not Selected' };
+            let stage = atsToReferralStage[r.stage] || r.stage;
+            // Check 90-day bonus eligibility
+            if (stage === 'Hired' && r.hiredDate) {
+                const hp = r.hiredDate.split('-');
+                const hiredMs = new Date(Number(hp[0]), Number(hp[1]) - 1, Number(hp[2])).getTime();
+                const now = Date.now();
+                const daysSinceHired = Math.floor((now - hiredMs) / (1000 * 60 * 60 * 24));
+                if (daysSinceHired >= 90) stage = '90 Days 💸';
+            }
+            return {
+                id: r.resumeId,
+                candidateName: r.candidateName,
+                email: r.email || '',
+                position: r.position,
+                referredBy,
+                referredDate: r.receivedDate ? r.receivedDate.split('T')[0] : '',
+                stage,
+                hiredDate: r.hiredDate || null,
+                notes: r.notes,
+                resumeId: r.resumeId
+            };
+        });
+        // Always include Diana Demo as sample if no real referrals
+        if (atsReferrals.length === 0) {
+            atsReferrals.push({ id: 'demo-1', candidateName: 'Diana Demo', email: 'diana.demo@navontech.com', position: 'Cloud Software Developer', referredBy: 'Rachelle Briscoe', referredDate: '2026-04-01', stage: 'Submitted', hiredDate: null, notes: 'Employee Referral from Rachelle Briscoe. Strong AWS background, 5+ years experience', resumeId: 'demo-1' });
+        }
+        return atsReferrals;
+    };
 
     // Handle hash changes for navigation
     useEffect(() => {
@@ -195,12 +233,51 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
     
-    // Fetch resumes when on resumes page
+    // Fetch resumes when on resumes page or referral tracking pages
     useEffect(() => {
-        if (currentPage === 'resumes' && (userGroups.includes('security') || userRole === 'hr' || userRole === 'superadmin')) {
+        if ((currentPage === 'resumes' || currentPage === 'referraltracking' || currentPage === 'myreferralstatus') && (userGroups.includes('security') || userRole === 'hr' || userRole === 'superadmin' || currentPage === 'myreferralstatus')) {
             fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
         }
     }, [currentPage, userRole]);
+    
+    // Check for 90-day bonus eligibility and send notification
+    useEffect(() => {
+        if (currentPage === 'referraltracking' || currentPage === 'myreferralstatus') {
+            const referrals = getReferralsFromATS();
+            referrals.forEach(async (ref) => {
+                if (ref.stage === '90 Days 💸' && ref.resumeId && ref.resumeId !== 'demo-1') {
+                    try {
+                        const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                        // Check if we already notified
+                        const res = await fetch(`${apiUrl}/resume/${ref.resumeId}`);
+                        const data = await res.json();
+                        if (data.resume && !data.resume.bonusNotified) {
+                            await fetch(`${apiUrl}/apply`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    type: 'referral-bonus-notification',
+                                    candidateName: ref.candidateName,
+                                    position: ref.position,
+                                    referredBy: ref.referredBy,
+                                    hiredDate: ref.hiredDate,
+                                    notifyEmail: 'hr@navontech.com'
+                                })
+                            });
+                            // Mark as notified
+                            await fetch(`${apiUrl}/resume/${ref.resumeId}`, {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ bonusNotified: 'true' })
+                            });
+                        }
+                    } catch (err) {
+                        console.error('Bonus notification check failed:', err);
+                    }
+                }
+            });
+        }
+    }, [currentPage, resumes]);
 
     // Fetch team members when on team directory page
     useEffect(() => {
@@ -1366,13 +1443,59 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         try {
             const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
             
+            const updateBody = { stage: newStage };
+            // Record hiredDate when moving to Hired
+            if (newStage === 'Hired') {
+                updateBody.hiredDate = new Date().toISOString().split('T')[0];
+            }
+            
             const response = await fetch(`${apiUrl}/resume/${resumeId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ stage: newStage })
+                body: JSON.stringify(updateBody)
             });
             
             if (!response.ok) throw new Error('Failed to update resume');
+            
+            // Check if this is a referral and send notification
+            const resume = filteredResumes.find(r => r.resumeId === resumeId) || resumes.find(r => r.resumeId === resumeId);
+            if (resume && resume.notes && resume.notes.includes('Employee Referral')) {
+                try {
+                    const notifyEmail = 'security@navontech.com';
+                    await fetch(`${apiUrl}/apply`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            type: 'referral-stage-notification',
+                            candidateName: resume.candidateName,
+                            position: resume.position,
+                            oldStage: resume.stage,
+                            newStage: newStage,
+                            referredBy: resume.notes.match(/Employee Referral from ([^(]+)/)?.[1]?.trim() || 'Unknown',
+                            notifyEmail
+                        })
+                    });
+                    // Also notify HR when Hired
+                    if (newStage === 'Hired') {
+                        await fetch(`${apiUrl}/apply`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                type: 'referral-stage-notification',
+                                candidateName: resume.candidateName,
+                                position: resume.position,
+                                oldStage: resume.stage,
+                                newStage: newStage,
+                                referredBy: resume.notes.match(/Employee Referral from ([^(]+)/)?.[1]?.trim() || 'Unknown',
+                                notifyEmail: 'hr@navontech.com'
+                            })
+                        });
+                    }
+                } catch (notifyErr) {
+                    console.error('Referral notification failed:', notifyErr);
+                }
+            }
+            
             await fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
         } catch (error) {
             console.error('Error updating resume:', error);
@@ -5579,7 +5702,7 @@ loadBalancer.distribute(traffic);`}
                                         },
                                         {
                                             name: 'Annual Review Survey',
-                                            type: 'PDF',
+                                            type: 'XLSX',
                                             classification: 'Unclassified',
                                             modified: '3 days ago',
                                             size: '425 KB'
@@ -9775,7 +9898,7 @@ loadBalancer.distribute(traffic);`}
                                         fontSize: '0.8rem',
                                         marginRight: '1rem'
                                     }}>
-                                        FORM
+                                        SURVEY
                                     </div>
                                     <div>
                                         <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.3rem', fontWeight: '700' }}>
@@ -9790,7 +9913,7 @@ loadBalancer.distribute(traffic);`}
                                             marginTop: '0.5rem'
                                         }}>
                                             <span style={{
-                                                background: '#ef4444',
+                                                background: '#059669',
                                                 color: 'white',
                                                 padding: '0.25rem 0.75rem',
                                                 borderRadius: '12px',
@@ -9799,7 +9922,7 @@ loadBalancer.distribute(traffic);`}
                                             }}>
                                                 {uploadedFiles.hrForms.length > 0 
                                                     ? uploadedFiles.hrForms[0].name.split('.').pop().toUpperCase()
-                                                    : 'PDF'}
+                                                    : 'EXCEL'}
                                             </span>
                                         </div>
                                     </div>
@@ -9839,7 +9962,7 @@ loadBalancer.distribute(traffic);`}
                                             <input
                                                 type="file"
                                                 multiple
-                                                accept=".pdf,.doc,.docx,.txt"
+                                                accept=".xls,.xlsx,.pdf,.doc,.docx,.txt"
                                                 style={{ display: 'none' }}
                                                 onChange={(e) => handleFileUpload('hrForms', e.target.files)}
                                             />
@@ -10247,6 +10370,7 @@ loadBalancer.distribute(traffic);`}
                             const othersCount = teamMembers.filter(m => {
                                 if (m.employmentType === 'Archived') return false;
                                 if (loginEmail && m.email && m.email.toLowerCase() === loginEmail.toLowerCase()) return false;
+                                if (userRole === 'employee' && adminOnlyEmails.includes(m.email?.toLowerCase())) return false;
                                 if (!isAdminView || userRole === 'employee') { if (!m.showInDirectory) return false; }
                                 if (directoryFilter === 'startDate') {
                                     if (!directorySearch && !directoryMonth) return true;
@@ -10598,6 +10722,8 @@ loadBalancer.distribute(traffic);`}
                                 if (member.employmentType === 'Archived') return false;
                                 // Exclude logged-in user (shown in the "You" card above)
                                 if (loginEmail && member.email && member.email.toLowerCase() === loginEmail.toLowerCase()) return false;
+                                // Exclude admin-only profiles from employee view
+                                if (userRole === 'employee' && adminOnlyEmails.includes(member.email?.toLowerCase())) return false;
                                 // In employee view, only show members who opted into public directory
                                 if (!isAdminView || userRole === 'employee') {
                                     if (!member.showInDirectory) return false;
@@ -11694,7 +11820,8 @@ loadBalancer.distribute(traffic);`}
                                 </button>
                             </div>
 
-                            {/* Compliance & Security */}
+                            {/* Compliance & Security - SuperAdmin only */}
+                            {userRole === 'superadmin' && (
                             <div className="hover-lift animate-scale-in" style={{
                                 background: 'white',
                                 padding: '2rem',
@@ -11749,6 +11876,7 @@ loadBalancer.distribute(traffic);`}
                                     View Compliance
                                 </button>
                             </div>
+                            )}
 
                             {/* Shared Resources */}
                             <div className="hover-lift animate-scale-in" style={{
@@ -11935,7 +12063,9 @@ loadBalancer.distribute(traffic);`}
                                         opacity: canUploadDoc ? 1 : 0.6
                                     }}>
                                     <option value="HR-Documents">📁 HR Documents</option>
-                                    <option value="Compliance-Security">🔒 Compliance & Security</option>
+                                    {userRole === 'superadmin' && (
+                                        <option value="Compliance-Security">🔒 Compliance & Security</option>
+                                    )}
                                     <option value="Shared-Resources">📂 Shared Resources</option>
                                     {(userGroups.includes('security') || userRole === 'security' || userRole === 'superadmin') && (
                                         <option value="Resumes">📄 Resumes</option>
@@ -12015,7 +12145,7 @@ loadBalancer.distribute(traffic);`}
             )}
 
             {/* COMPLIANCE & SECURITY PAGE */}
-            {currentPage === 'compliancesecurity' && (
+            {currentPage === 'compliancesecurity' && userRole === 'superadmin' && (
                 <section style={{ padding: '4rem 2rem', background: '#f1f5f9', minHeight: '100vh' }}>
                     <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
                         <div style={{
@@ -12466,7 +12596,9 @@ loadBalancer.distribute(traffic);`}
                                 { icon: '👥', name: 'Rippling', desc: 'HR, payroll, and benefits management', status: 'Active', link: 'https://app.rippling.com' },
                                 { icon: '☁️', name: 'AWS Console Access', desc: 'Manage cloud infrastructure', status: 'Active', link: 'https://console.aws.amazon.com' },
                                 { icon: '💻', name: 'GitHub', desc: 'Secure Code Repository - Git version control', status: 'Active', link: 'https://github.com' },
-                                { icon: '📊', name: 'Project Management Suite', desc: 'Track tasks and milestones', status: 'Coming Soon' },
+                                { icon: '🎨', name: 'Canva', desc: 'Design platform for presentations, graphics, and marketing materials', status: 'Active', link: 'https://www.canva.com' },
+                                { icon: '📊', name: 'Jira (Atlassian)', desc: 'Project tracking, issue management, and agile workflows', status: 'Active', link: 'https://www.atlassian.com/software/jira' },
+                                { icon: '📚', name: "O'Reilly Media", desc: 'Online learning platform for tech books, courses, and certifications', status: 'Active', link: 'https://www.oreilly.com' },
                                 { icon: '💬', name: 'Encrypted Communications', desc: 'Secure messaging platform', status: 'Coming Soon' }
                             ].map((tool, index) => (
                                 <div key={index} className="hover-lift animate-scale-in" style={{
@@ -12771,9 +12903,11 @@ loadBalancer.distribute(traffic);`}
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
                                         • Submit candidate referrals
                                     </p>
+                                    {(userRole === 'hr' || userRole === 'admin' || userRole === 'security' || userRole === 'superadmin') && (
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
                                         • Track referral status
                                     </p>
+                                    )}
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
                                         • View bonus eligibility
                                     </p>
@@ -12954,7 +13088,8 @@ loadBalancer.distribute(traffic);`}
                                 </button>
                             </div>
 
-                            {/* Track Referral Status */}
+                            {/* Track Referral Status - HR/Admin only */}
+                            {(userRole === 'hr' || userRole === 'admin' || userRole === 'security' || userRole === 'superadmin') && isAdminView && (
                             <div className="hover-lift animate-scale-in" style={{
                                 background: 'white',
                                 padding: '2rem',
@@ -12978,7 +13113,7 @@ loadBalancer.distribute(traffic);`}
                                 </div>
                                 <div style={{ marginBottom: '1rem', flex: 1 }}>
                                     <p style={{ color: '#64748b', marginBottom: '1rem', lineHeight: '1.6' }}>
-                                        Monitor the progress of your referrals through each stage of the hiring process.
+                                        Monitor the progress of referrals through each stage of the hiring process.
                                     </p>
                                     <div style={{
                                         background: '#f8fafc',
@@ -12999,10 +13134,15 @@ loadBalancer.distribute(traffic);`}
                                         </ul>
                                     </div>
                                     <p style={{ color: '#64748b', fontSize: '0.9rem' }}>
-                                        You'll receive email notifications at each stage
+                                        HR receives email notifications at each stage change
                                     </p>
                                 </div>
-                                <button style={{
+                                <button 
+                                    onClick={() => {
+                                        setCurrentPage('referraltracking');
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }}
+                                    style={{
                                     background: '#1e3a8a',
                                     color: 'white',
                                     border: 'none',
@@ -13013,9 +13153,10 @@ loadBalancer.distribute(traffic);`}
                                     width: '100%',
                                     marginTop: 'auto'
                                 }}>
-                                    View My Referrals
+                                    View Referrals
                                 </button>
                             </div>
+                            )}
 
                             {/* View Bonus Eligibility */}
                             <div className="hover-lift animate-scale-in" style={{
@@ -13064,7 +13205,12 @@ loadBalancer.distribute(traffic);`}
                                         Bonuses are paid via payroll after retention period
                                     </p>
                                 </div>
-                                <button style={{
+                                <button 
+                                    onClick={() => {
+                                        setCurrentPage('myreferralstatus');
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }}
+                                    style={{
                                     background: '#1e3a8a',
                                     color: 'white',
                                     border: 'none',
@@ -13093,8 +13239,8 @@ loadBalancer.distribute(traffic);`}
                             </h3>
                             <div style={{
                                 display: 'grid',
-                                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                                gap: '2rem'
+                                gridTemplateColumns: 'repeat(6, 1fr)',
+                                gap: '1rem'
                             }}>
                                 <div style={{ textAlign: 'center' }}>
                                     <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>1️⃣</div>
@@ -13113,6 +13259,16 @@ loadBalancer.distribute(traffic);`}
                                 </div>
                                 <div style={{ textAlign: 'center' }}>
                                     <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>4️⃣</div>
+                                    <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>Hired</div>
+                                    <div style={{ fontSize: '0.9rem', color: '#64748b' }}>Candidate accepts offer and starts</div>
+                                </div>
+                                <div style={{ textAlign: 'center' }}>
+                                    <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>5️⃣</div>
+                                    <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>90-Day Retention</div>
+                                    <div style={{ fontSize: '0.9rem', color: '#64748b' }}>Wait 90 days from hire date</div>
+                                </div>
+                                <div style={{ textAlign: 'center' }}>
+                                    <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>6️⃣</div>
                                     <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>Get Rewarded</div>
                                     <div style={{ fontSize: '0.9rem', color: '#64748b' }}>Earn bonus after 90-day retention</div>
                                 </div>
@@ -13569,6 +13725,183 @@ loadBalancer.distribute(traffic);`}
                             </div>
                         </div>
                     )}
+                </section>
+            )}
+
+            {/* REFERRAL TRACKING PAGE - HR/Admin only */}
+            {currentPage === 'referraltracking' && (userRole === 'hr' || userRole === 'admin' || userRole === 'security' || userRole === 'superadmin') && (
+                <section style={{ padding: '4rem 2rem', background: '#f1f5f9', minHeight: '100vh' }}>
+                    <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                        <div style={{
+                            background: 'linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%)',
+                            padding: '1rem', borderRadius: '8px', marginBottom: '2rem', fontSize: '0.9rem', color: '#475569'
+                        }}>
+                            🏠 Home → 🔐 Secure Employee Portal → 🤝 Employee Referrals → <strong style={{ color: '#1e3a8a' }}>📊 Track Referral Status</strong>
+                        </div>
+                        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                            <h2 style={{ fontSize: '3rem', marginBottom: '1rem', color: '#1e3a8a', fontWeight: '800' }}>📊 Referral Tracking</h2>
+                            <p style={{ fontSize: '1.2rem', color: '#475569', maxWidth: '800px', margin: '0 auto 2rem auto' }}>
+                                Monitor the progress of referrals through each stage of the hiring process
+                            </p>
+                            <button onClick={() => { setCurrentPage('referrals'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                                style={{ background: '#d4af37', color: '#0f172a', border: 'none', padding: '1rem 2rem', borderRadius: '8px', cursor: 'pointer', fontWeight: '700', fontSize: '1rem' }}>
+                                ← Back to Referrals
+                            </button>
+                        </div>
+
+                        {/* Referral Cards */}
+                        <div style={{ display: 'grid', gap: '1.5rem' }}>
+                            {getReferralsFromATS().map(referral => {
+                                const stages = ['Submitted', 'Under Review', 'Interview Scheduled', 'Offer Extended', 'Hired', '90 Days 💸'];
+                                const stageIndex = stages.indexOf(referral.stage);
+                                const stageColors = { 'Submitted': '#6366f1', 'Under Review': '#f59e0b', 'Interview Scheduled': '#3b82f6', 'Offer Extended': '#10b981', 'Hired': '#059669', 'Not Selected': '#ef4444', '90 Days 💸': '#d4af37' };
+                                const daysInfo = referral.hiredDate ? (() => {
+                                    const hp = referral.hiredDate.split('-');
+                                    const days = Math.floor((Date.now() - new Date(Number(hp[0]), Number(hp[1])-1, Number(hp[2])).getTime()) / (1000*60*60*24));
+                                    return days;
+                                })() : null;
+                                return (
+                                    <div key={referral.id} style={{
+                                        background: 'white', padding: '2rem', borderRadius: '12px',
+                                        border: '2px solid #d4af37', boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                                    }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
+                                            <div>
+                                                <h3 style={{ color: '#1e3a8a', margin: '0 0 0.5rem 0', fontSize: '1.4rem' }}>{referral.candidateName}</h3>
+                                                <p style={{ color: '#64748b', margin: '0 0 0.25rem 0' }}>Position: {referral.position}</p>
+                                                <p style={{ color: '#64748b', margin: '0 0 0.25rem 0' }}>Referred by: {referral.referredBy}</p>
+                                                <p style={{ color: '#94a3b8', margin: 0, fontSize: '0.85rem' }}>
+                                                    Date: {(() => { const p = referral.referredDate.split('-'); return p.length === 3 ? new Date(Number(p[0]), Number(p[1])-1, Number(p[2])).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : referral.referredDate; })()}
+                                                </p>
+                                                {daysInfo !== null && referral.stage === 'Hired' && <p style={{ color: '#059669', margin: '0.25rem 0 0 0', fontSize: '0.85rem', fontWeight: '600' }}>📅 {daysInfo} of 90 days completed</p>}
+                                                {referral.stage === '90 Days 💸' && <p style={{ color: '#d4af37', margin: '0.25rem 0 0 0', fontSize: '0.9rem', fontWeight: '700' }}>💸 Bonus eligible</p>}
+                                            </div>
+                                            <span style={{
+                                                background: stageColors[referral.stage] || '#6b7280', color: 'white',
+                                                padding: '0.5rem 1rem', borderRadius: '20px', fontWeight: '600', fontSize: '0.9rem'
+                                            }}>{referral.stage}</span>
+                                        </div>
+
+                                        {/* Stage Progress Bar */}
+                                        <div style={{ display: 'flex', gap: '0.25rem', marginBottom: '1rem' }}>
+                                            {stages.map((s, i) => (
+                                                <div key={s} style={{
+                                                    flex: 1, height: '8px', borderRadius: '4px',
+                                                    background: i <= stageIndex ? (stageColors[referral.stage] || '#6b7280') : '#e2e8f0'
+                                                }} />
+                                            ))}
+                                        </div>
+                                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', fontSize: '0.75rem', color: '#94a3b8' }}>
+                                            {stages.map((s, i) => (
+                                                <span key={s} style={{ color: i <= stageIndex ? stageColors[referral.stage] : '#94a3b8', fontWeight: i === stageIndex ? '700' : '400' }}>{s}</span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                            {getReferralsFromATS().length === 0 && (
+                                <div style={{ textAlign: 'center', padding: '3rem', background: 'white', borderRadius: '12px', border: '2px solid #e2e8f0' }}>
+                                    <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📭</div>
+                                    <h3 style={{ color: '#1e3a8a', marginBottom: '0.5rem' }}>No Referrals</h3>
+                                    <p style={{ color: '#64748b' }}>No employee referrals have been submitted yet.</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {/* MY REFERRAL STATUS PAGE - Employee view */}
+            {currentPage === 'myreferralstatus' && (
+                <section style={{ padding: '4rem 2rem', background: '#f1f5f9', minHeight: '100vh' }}>
+                    <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                        <div style={{
+                            background: 'linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%)',
+                            padding: '1rem', borderRadius: '8px', marginBottom: '2rem', fontSize: '0.9rem', color: '#475569'
+                        }}>
+                            🏠 Home → 🔐 Secure Employee Portal → 🤝 Employee Referrals → <strong style={{ color: '#1e3a8a' }}>🔍 My Referral Status</strong>
+                        </div>
+                        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                            <h2 style={{ fontSize: '3rem', marginBottom: '1rem', color: '#1e3a8a', fontWeight: '800' }}>🔍 My Referral Status</h2>
+                            <p style={{ fontSize: '1.2rem', color: '#475569', maxWidth: '800px', margin: '0 auto 2rem auto' }}>
+                                Track the progress of candidates you've referred
+                            </p>
+                            <button onClick={() => { setCurrentPage('referrals'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                                style={{ background: '#d4af37', color: '#0f172a', border: 'none', padding: '1rem 2rem', borderRadius: '8px', cursor: 'pointer', fontWeight: '700', fontSize: '1rem' }}>
+                                ← Back to Referrals
+                            </button>
+                        </div>
+
+                        {/* Employee's referrals - read-only view */}
+                        <div style={{ display: 'grid', gap: '1.5rem' }}>
+                            {(() => {
+                                const allReferrals = getReferralsFromATS();
+                                const myReferrals = allReferrals.filter(r => r.id === 'demo-1' || (profileData.name && r.referredBy?.toLowerCase() === profileData.name.toLowerCase()));
+                                return myReferrals.length > 0 ? (
+                                myReferrals.map(referral => {
+                                    const stages = ['Submitted', 'Under Review', 'Hired', '90 Days 💸'];
+                                    const stageMap = { 'Submitted': 'Submitted', 'Under Review': 'Under Review', 'Interview Scheduled': 'Under Review', 'Offer Extended': 'Under Review', 'Hired': 'Hired', 'Not Hired': 'Not Hired', '90 Days 💸': '90 Days 💸' };
+                                    const displayStage = stageMap[referral.stage] || referral.stage;
+                                    const isNotHired = displayStage === 'Not Hired';
+                                    const stageIndex = isNotHired ? 1 : stages.indexOf(displayStage);
+                                    const stageColors = { 'Submitted': '#6366f1', 'Under Review': '#f59e0b', 'Hired': '#059669', 'Not Hired': '#ef4444', '90 Days 💸': '#d4af37' };
+                                    return (
+                                        <div key={referral.id} style={{
+                                            background: 'white', padding: '2rem', borderRadius: '12px',
+                                            border: '2px solid #d4af37', boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                                        }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
+                                                <div>
+                                                    <h3 style={{ color: '#1e3a8a', margin: '0 0 0.5rem 0', fontSize: '1.4rem' }}>{referral.candidateName}</h3>
+                                                    <p style={{ color: '#64748b', margin: '0 0 0.25rem 0' }}>Position: {referral.position}</p>
+                                                    <p style={{ color: '#94a3b8', margin: 0, fontSize: '0.85rem' }}>
+                                                        Submitted: {(() => { const p = referral.referredDate.split('-'); return new Date(Number(p[0]), Number(p[1])-1, Number(p[2])).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }); })()}
+                                                    </p>
+                                                </div>
+                                                <span style={{
+                                                    background: stageColors[displayStage] || '#6b7280', color: 'white',
+                                                    padding: '0.5rem 1rem', borderRadius: '20px', fontWeight: '600', fontSize: '0.9rem'
+                                                }}>{displayStage}</span>
+                                            </div>
+                                            <div style={{ display: 'flex', gap: '0.25rem', marginBottom: '1rem' }}>
+                                                {stages.map((s, i) => (
+                                                    <div key={s} style={{
+                                                        flex: 1, height: '8px', borderRadius: '4px',
+                                                        background: isNotHired
+                                                            ? (i <= 1 ? '#ef4444' : '#e2e8f0')
+                                                            : (i <= stageIndex ? (stageColors[displayStage] || '#6b7280') : '#e2e8f0')
+                                                    }} />
+                                                ))}
+                                            </div>
+                                            {isNotHired && (
+                                                <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px', padding: '0.75rem', marginBottom: '1rem', textAlign: 'center' }}>
+                                                    <span style={{ color: '#dc2626', fontWeight: '600' }}>❌ Not Hired</span>
+                                                </div>
+                                            )}
+                                            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                                {stages.map((s, i) => (
+                                                    <span key={s} style={{
+                                                        fontSize: '0.75rem',
+                                                        color: isNotHired
+                                                            ? (i <= 1 ? '#ef4444' : '#94a3b8')
+                                                            : (i <= stageIndex ? stageColors[displayStage] : '#94a3b8'),
+                                                        fontWeight: (!isNotHired && i === stageIndex) || (isNotHired && i === 1) ? '700' : '400'
+                                                    }}>{s}</span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            ) : (
+                                <div style={{ textAlign: 'center', padding: '3rem', background: 'white', borderRadius: '12px', border: '2px solid #e2e8f0' }}>
+                                    <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📭</div>
+                                    <h3 style={{ color: '#1e3a8a', marginBottom: '0.5rem' }}>No Referrals Found</h3>
+                                    <p style={{ color: '#64748b' }}>You haven't submitted any referrals yet. Head back to the Referral Program to submit one.</p>
+                                </div>
+                            );
+                            })()}
+                        </div>
+                    </div>
                 </section>
             )}
 
