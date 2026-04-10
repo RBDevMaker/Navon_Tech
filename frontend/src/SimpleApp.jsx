@@ -12599,7 +12599,7 @@ loadBalancer.distribute(traffic);`}
                                 { icon: '🎨', name: 'Canva', desc: 'Design platform for presentations, graphics, and marketing materials', status: 'Active', link: 'https://www.canva.com' },
                                 { icon: '📊', name: 'Jira (Atlassian)', desc: 'Project tracking, issue management, and agile workflows', status: 'Active', link: 'https://www.atlassian.com/software/jira' },
                                 { icon: '📚', name: "O'Reilly Media", desc: 'Online learning platform for tech books, courses, and certifications', status: 'Active', link: 'https://www.oreilly.com' },
-                                { icon: '💬', name: 'Encrypted Communications', desc: 'Secure messaging platform', status: 'Coming Soon' }
+                                { icon: '📋', name: 'Microsoft Planner', desc: 'Task management and team planning within Microsoft 365', status: 'Active', link: 'https://tasks.office.com' }
                             ].map((tool, index) => (
                                 <div key={index} className="hover-lift animate-scale-in" style={{
                                     background: 'white',
