@@ -6629,7 +6629,7 @@ loadBalancer.distribute(traffic);`}
                                                             if (t.includes('part')) return 'Part-Time';
                                                             return 'Full-Time';
                                                         })(),
-                                                        showInDirectory: !((emp.status || '').toLowerCase().includes('terminat'))
+                                                        showInDirectory: false
                                                     };
                                                     const res = await fetch(`${apiUrl}/profiles`, {
                                                         method: 'POST',
@@ -10222,7 +10222,7 @@ loadBalancer.distribute(traffic);`}
 
                         {/* Showing count */}
                         {(() => {
-                            const youMatches = profileData.name && (isAdminView || userRole !== 'employee' || profileData.showInDirectory) ? (() => {
+                            const youMatches = profileData.name && !loginEmail.toLowerCase().includes('root') && (isAdminView || userRole !== 'employee' || profileData.showInDirectory) ? (() => {
                                 if (directoryFilter === 'startDate' && (directorySearch || directoryMonth)) {
                                     if (!profileData.startDate) return 0;
                                     const [y, mo] = profileData.startDate.split('-');
@@ -10277,7 +10277,7 @@ loadBalancer.distribute(traffic);`}
                             gap: '2rem'
                         }}>
                             {/* Current User's Profile (if they opted in) */}
-                            {profileData.name && (isAdminView || userRole !== 'employee' || profileData.showInDirectory) && (() => {
+                            {profileData.name && !loginEmail.toLowerCase().includes('root') && (isAdminView || userRole !== 'employee' || profileData.showInDirectory) && (() => {
                                 // Apply same filters to YOU card
                                 if (directoryFilter === 'startDate' && (directorySearch || directoryMonth)) {
                                     if (!profileData.startDate) return false;
