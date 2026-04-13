@@ -6260,8 +6260,15 @@ loadBalancer.distribute(traffic);`}
                                 </div>
                             </div>
 
-                            {/* Card 4: Time Card Management - HR/Security/SuperAdmin only */}
-                            {(userRole === 'hr' || userRole === 'security' || userRole === 'superadmin') && (
+                            {/* Card 4: Time Card Management */}
+                            {(() => {
+                                const isBillable = profileData.billableStatus === 'Billable';
+                                const isVeronica = loginEmail?.toLowerCase() === 'veronica.hill@navontech.com';
+                                const isRoot = loginEmail?.toLowerCase().includes('root');
+                                const hasAccess = isBillable || isVeronica || isRoot || userRole === 'hr' || userRole === 'security' || userRole === 'superadmin';
+                                const isActive = isBillable || isVeronica || isRoot;
+                                if (!hasAccess) return null;
+                                return (
                             <div 
                                 className="hover-lift animate-scale-in" 
                                 onClick={() => {
@@ -6269,23 +6276,23 @@ loadBalancer.distribute(traffic);`}
                                     window.scrollTo({ top: 0, behavior: 'smooth' });
                                 }}
                                 style={{
-                                    background: 'linear-gradient(135deg, #64748b 0%, #94a3b8 100%)',
+                                    background: isActive ? 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)' : 'linear-gradient(135deg, #64748b 0%, #94a3b8 100%)',
                                     padding: '3rem 2rem',
                                     borderRadius: '20px',
                                     textAlign: 'center',
                                     cursor: 'pointer',
-                                    border: '3px solid #94a3b8',
-                                    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
+                                    border: isActive ? '3px solid #d4af37' : '3px solid #94a3b8',
+                                    boxShadow: isActive ? '0 10px 30px rgba(30, 58, 138, 0.3)' : '0 10px 30px rgba(0, 0, 0, 0.3)',
                                     transition: 'all 0.4s ease',
                                     position: 'relative',
                                     overflow: 'hidden',
-                                    opacity: 0.6,
+                                    opacity: isActive ? 1 : 0.6,
                                     animationDelay: '0.3s',
                                     display: 'flex',
                                     flexDirection: 'column',
                                     justifyContent: 'space-between'
                                 }}>
-                                {/* Coming Soon Flag */}
+                                {!isActive && (
                                 <div style={{
                                     position: 'absolute',
                                     top: '15px',
@@ -6301,6 +6308,24 @@ loadBalancer.distribute(traffic);`}
                                 }}>
                                     NOT ACTIVE
                                 </div>
+                                )}
+                                {isActive && (
+                                <div style={{
+                                    position: 'absolute',
+                                    top: '15px',
+                                    left: '15px',
+                                    background: '#10b981',
+                                    color: 'white',
+                                    padding: '0.4rem 0.8rem',
+                                    borderRadius: '6px',
+                                    fontSize: '0.75rem',
+                                    fontWeight: '700',
+                                    boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                                    zIndex: 10
+                                }}>
+                                    ACTIVE
+                                </div>
+                                )}
                                 <div>
                                     <div style={{
                                         fontSize: '4rem',
@@ -6340,7 +6365,8 @@ loadBalancer.distribute(traffic);`}
                                     Enter
                                 </div>
                             </div>
-                            )}
+                            );
+                            })()}
 
                             {/* Card 5: Internal Career Hub */}
                             <div 
@@ -11470,7 +11496,7 @@ loadBalancer.distribute(traffic);`}
                                 maxWidth: '800px',
                                 margin: '0 auto 2rem auto'
                             }}>
-                                Track time, submit time-off requests, and manage work schedules
+                                Track time and submit timecards
                             </p>
                             <button 
                                 onClick={() => {
@@ -11562,96 +11588,24 @@ loadBalancer.distribute(traffic);`}
                                 </button>
                             </div>
 
-                            {/* Time-Off Requests */}
-                            <div className="hover-lift animate-scale-in" style={{
-                                background: 'white',
-                                padding: '2rem',
-                                borderRadius: '12px',
-                                border: '2px solid #d4af37',
-                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                animationDelay: '0.1s'
-                            }}>
-                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
-                                    <div style={{
-                                        fontSize: '2.5rem',
-                                        marginRight: '1rem'
-                                    }}>
-                                        🏖️
-                                    </div>
-                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
-                                        Time-Off Requests
-                                    </h3>
-                                </div>
-                                <div style={{ marginBottom: '1rem' }}>
-                                    <div style={{
-                                        background: '#f8fafc',
-                                        padding: '1rem',
-                                        borderRadius: '8px',
-                                        marginBottom: '0.75rem',
-                                        border: '1px solid #e2e8f0'
-                                    }}>
-                                        <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.25rem' }}>
-                                            Vacation Request - March 15-19
-                                        </div>
-                                        <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
-                                            Status: Pending Approval • 5 days
-                                        </div>
-                                    </div>
-                                    <div style={{
-                                        background: '#f8fafc',
-                                        padding: '1rem',
-                                        borderRadius: '8px',
-                                        marginBottom: '0.75rem',
-                                        border: '1px solid #e2e8f0'
-                                    }}>
-                                        <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.25rem' }}>
-                                            Sick Leave - January 8
-                                        </div>
-                                        <div style={{ fontSize: '0.85rem', color: '#15803d' }}>
-                                            Status: Approved • 1 day
-                                        </div>
-                                    </div>
-                                </div>
-                                <div style={{
-                                    background: '#e0f2fe',
-                                    padding: '1rem',
-                                    borderRadius: '8px',
-                                    marginBottom: '1rem',
-                                    border: '1px solid #7dd3fc'
-                                }}>
-                                    <div style={{ fontWeight: '600', color: '#0369a1', marginBottom: '0.5rem' }}>
-                                        📊 Available Balance
-                                    </div>
-                                    <div style={{ fontSize: '0.9rem', color: '#0c4a6e' }}>
-                                        Vacation: 18 days • Sick: 12 days • Personal: 3 days<br />
-                                        Bereavement: 5 days • Leave without Pay: Available
-                                    </div>
-                                </div>
-                                <button 
-                                    onClick={() => setShowTimeOffModal(true)}
-                                    style={{
-                                    background: '#1e3a8a',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '0.75rem 1.5rem',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600',
-                                    width: '100%'
-                                }}>
-                                    Submit New Request
-                                </button>
-                            </div>
+                            {/* Time-Off Requests - Removed */}
 
-                            {/* Schedule Management */}
+                            {/* Schedule Management - Grayed Out */}
                             <div className="hover-lift animate-scale-in" style={{
                                 background: 'white',
                                 padding: '2rem',
                                 borderRadius: '12px',
-                                border: '2px solid #d4af37',
+                                border: '2px solid #94a3b8',
                                 boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                animationDelay: '0.2s'
+                                animationDelay: '0.1s',
+                                opacity: 0.5,
+                                position: 'relative'
                             }}>
+                                <div style={{
+                                    position: 'absolute', top: '10px', right: '10px',
+                                    background: '#94a3b8', color: 'white', padding: '0.25rem 0.5rem',
+                                    borderRadius: '4px', fontSize: '0.7rem', fontWeight: '600'
+                                }}>COMING SOON</div>
                                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
                                     <div style={{
                                         fontSize: '2.5rem',
@@ -11695,18 +11649,58 @@ loadBalancer.distribute(traffic);`}
                                     </div>
                                 </div>
                                 <button style={{
-                                    background: '#1e3a8a',
+                                    background: '#94a3b8',
                                     color: 'white',
                                     border: 'none',
                                     padding: '0.75rem 1.5rem',
                                     borderRadius: '6px',
-                                    cursor: 'pointer',
+                                    cursor: 'not-allowed',
                                     fontWeight: '600',
                                     width: '100%'
                                 }}>
-                                    View Full Calendar
+                                    Coming Soon
                                 </button>
                             </div>
+                        </div>
+
+                        {/* Timecard Links */}
+                        <h3 style={{ color: '#1e3a8a', marginBottom: '1.5rem', fontSize: '1.5rem', textAlign: 'center' }}>
+                            🕐 Submit Your Timecard
+                        </h3>
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                            gap: '1.5rem',
+                            marginBottom: '3rem'
+                        }}>
+                            {(() => {
+                                const isVeronica = loginEmail?.toLowerCase() === 'veronica.hill@navontech.com';
+                                const isRoot = loginEmail?.toLowerCase().includes('root');
+                                const prime = profileData.contractAssignment || '';
+                                const timecards = [
+                                    { name: 'Nightwing', url: 'https://virgo.syndeoconnect.com/login', icon: '🦇', color: '#1e3a8a' },
+                                    { name: 'SAIC', url: 'https://cornerstone.saic.com/', icon: '🏛️', color: '#0369a1' },
+                                    { name: 'GDIT', url: 'https://setris-ne.gdit.com/setris/login.aspx', icon: '🔷', color: '#4338ca' },
+                                    { name: 'Arcfield', url: 'https://myapplications.azure.us/', icon: '🏗️', color: '#7c3aed' }
+                                ];
+                                const visible = (isVeronica || isRoot) ? timecards : timecards.filter(t => t.name === prime);
+                                if (visible.length === 0) return <p style={{ color: '#64748b', textAlign: 'center', gridColumn: '1 / -1' }}>No timecard assigned. Contact HR if you believe this is an error.</p>;
+                                return visible.map(tc => (
+                                    <a key={tc.name} href={tc.url} target="_blank" rel="noopener noreferrer" className="hover-lift" style={{
+                                        background: 'white', padding: '2rem', borderRadius: '12px',
+                                        border: `2px solid ${tc.color}`, boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                        textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center'
+                                    }}>
+                                        <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>{tc.icon}</div>
+                                        <h4 style={{ color: tc.color, margin: '0 0 0.5rem 0', fontSize: '1.3rem', fontWeight: '700' }}>{tc.name}</h4>
+                                        <p style={{ color: '#64748b', fontSize: '0.9rem', margin: '0 0 1rem 0' }}>Submit timecard for {tc.name}</p>
+                                        <div style={{
+                                            background: tc.color, color: 'white', padding: '0.6rem 1.5rem',
+                                            borderRadius: '6px', fontWeight: '600', fontSize: '0.9rem'
+                                        }}>Open Timecard →</div>
+                                    </a>
+                                ));
+                            })()}
                         </div>
 
                         {/* Quick Actions Section */}
