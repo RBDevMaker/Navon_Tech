@@ -1187,7 +1187,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 <li><strong>Alternative:</strong> Convert to PDF for web viewing</li>
                             </ul>
                             <div class="tip">
-                                <strong>� Tip:</strong> For better web compatibility, consider saving Word documents as PDF format when uploading.
+                                <strong>💡 Tip:</strong> For better web compatibility, consider saving Word documents as PDF format when uploading.
                             </div>
                         </div>
                     </div>
@@ -10914,7 +10914,7 @@ loadBalancer.distribute(traffic);`}
                                                     <div style={{ marginBottom: '0.5rem' }}>📋 Prime: {member.contractAssignment}</div>
                                                 )}
                                                 {isAdminView && userRole !== 'employee' && member.department && (
-                                                    <div style={{ marginBottom: '0.5rem' }}>�️ {member.department}</div>
+                                                    <div style={{ marginBottom: '0.5rem' }}>👤 {member.department}</div>
                                                 )}
                                                 {isAdminView && userRole !== 'employee' && member.location && (
                                                     <div style={{ marginBottom: '0.5rem' }}>🏢 {member.location}</div>
@@ -10999,7 +10999,7 @@ loadBalancer.distribute(traffic);`}
                                                     <div style={{ marginBottom: '0.5rem' }}>🏢 Remote - DC Metro Area</div>
                                                     <div style={{ marginBottom: '0.5rem' }}>📅 Start Date: January 15, 2024</div>
                                                     {(userRole === 'hr' || userRole === 'security' || userRole === 'superadmin') && (
-                                                        <div style={{ marginBottom: '0.5rem' }}>� Salary: $95,000</div>
+                                                        <div style={{ marginBottom: '0.5rem' }}>💰 Salary: $95,000</div>
                                                     )}
                                                     <div style={{ marginBottom: '0.5rem' }}>👤 Manager: Sarah Johnson</div>
                                                     <div>🚨 Emergency Contact: Jane Doe - (555) 987-6543</div>
@@ -11323,7 +11323,7 @@ loadBalancer.distribute(traffic);`}
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.85rem', color: '#475569' }}>
                                 <div>📧 {selectedEmployee.email}</div>
                                 {selectedEmployee.department && <div>🏷️ {selectedEmployee.department}</div>}
-                                {selectedEmployee.location && <div>� {selectedEmployee.location}</div>}
+                                {selectedEmployee.location && <div>{selectedEmployee.location.toLowerCase().includes('headquarters') ? '🏢' : '📍'} {selectedEmployee.location}</div>}
                                 {selectedEmployee.phone && isAdminView && <div>📱 {selectedEmployee.phone}</div>}
                                 {selectedEmployee.startDate && isAdminView && <div>📅 Start: {formatDate(selectedEmployee.startDate)}</div>}
                                 {selectedEmployee.manager && isAdminView && <div>👤 Manager: {selectedEmployee.manager}</div>}
