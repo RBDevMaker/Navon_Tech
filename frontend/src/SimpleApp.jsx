@@ -12,6 +12,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const s3BaseUrl = "https://navon-tech-images.s3.us-east-1.amazonaws.com";
     // Emails only visible to HR/Admin/Security/SuperAdmin in admin view (never shown to employees)
     const adminOnlyEmails = ['veronica.hill@navontech.com'];
+    // Emails only visible to HR and Security roles
+    const hrSecurityOnlyEmails = ['veronica.hill@navontech.com'];
     const [currentPage, setCurrentPage] = useState('home');
     const [scrollY, setScrollY] = useState(0);
     const [showSecureModal, setShowSecureModal] = useState(false);
@@ -104,13 +106,14 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             // Map ATS stage to referral stage
             const atsToReferralStage = { 'New': 'Submitted', 'Screening': 'Under Review', 'Interview': 'Interview Scheduled', 'Offer': 'Offer Extended', 'Hired': 'Hired', 'Rejected': 'Not Selected' };
             let stage = atsToReferralStage[r.stage] || r.stage;
-            // Check 90-day bonus eligibility
+            let daysSinceHired = null;
+            // Check 90-day milestones
             if (stage === 'Hired' && r.hiredDate) {
                 const hp = r.hiredDate.split('-');
                 const hiredMs = new Date(Number(hp[0]), Number(hp[1]) - 1, Number(hp[2])).getTime();
-                const now = Date.now();
-                const daysSinceHired = Math.floor((now - hiredMs) / (1000 * 60 * 60 * 24));
-                if (daysSinceHired >= 90) stage = '90 Days 💸';
+                daysSinceHired = Math.floor((Date.now() - hiredMs) / (1000 * 60 * 60 * 24));
+                if (daysSinceHired >= 180) stage = '180 Days 💸💸';
+                else if (daysSinceHired >= 90) stage = '90 Days 💸';
             }
             return {
                 id: r.resumeId,
@@ -121,13 +124,16 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 referredDate: r.receivedDate ? r.receivedDate.split('T')[0] : '',
                 stage,
                 hiredDate: r.hiredDate || null,
+                daysSinceHired,
                 notes: r.notes,
-                resumeId: r.resumeId
+                resumeId: r.resumeId,
+                bonusNotified: r.bonusNotified || null,
+                bonus180Notified: r.bonus180Notified || null
             };
         });
         // Always include Diana Demo as sample if no real referrals
         if (atsReferrals.length === 0) {
-            atsReferrals.push({ id: 'demo-1', candidateName: 'Diana Demo', email: 'diana.demo@navontech.com', position: 'Cloud Software Developer', referredBy: 'Rachelle Briscoe', referredDate: '2026-04-01', stage: 'Submitted', hiredDate: null, notes: 'Employee Referral from Rachelle Briscoe. Strong AWS background, 5+ years experience', resumeId: 'demo-1' });
+            atsReferrals.push({ id: 'demo-1', candidateName: 'Diana Demo', email: 'diana.demo@navontech.com', position: 'Cloud Software Developer', referredBy: 'Rachelle Briscoe', referredDate: '2026-04-01', stage: 'Submitted', hiredDate: null, daysSinceHired: null, notes: 'Employee Referral from Rachelle Briscoe. Strong AWS background, 5+ years experience', resumeId: 'demo-1', bonusNotified: null, bonus180Notified: null });
         }
         return atsReferrals;
     };
@@ -184,6 +190,12 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                         setLoginEmail(email);
                         setUserRole(role);
                         setUserGroups(groups.map(g => g.toLowerCase()));
+                        // Auto-navigate to portal if on login page with valid session
+                        const hash = window.location.hash.slice(1) || 'home';
+                        if (hash === 'login') {
+                            setCurrentPage('secureportal');
+                            window.location.hash = 'secureportal';
+                        }
                     }
                 }
             } catch (err) {
@@ -240,18 +252,21 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         }
     }, [currentPage, userRole]);
     
-    // Check for 90-day bonus eligibility and send notification
+    // Check for 90-day and 180-day bonus eligibility and send HR reminders
     useEffect(() => {
         if (currentPage === 'referraltracking' || currentPage === 'myreferralstatus') {
             const referrals = getReferralsFromATS();
             referrals.forEach(async (ref) => {
-                if (ref.stage === '90 Days 💸' && ref.resumeId && ref.resumeId !== 'demo-1') {
+                if (ref.resumeId && ref.resumeId !== 'demo-1') {
                     try {
                         const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
-                        // Check if we already notified
                         const res = await fetch(`${apiUrl}/resume/${ref.resumeId}`);
                         const data = await res.json();
-                        if (data.resume && !data.resume.bonusNotified) {
+                        const resume = data.resume;
+                        if (!resume) return;
+
+                        // First 90 days — half bonus reminder
+                        if ((ref.stage === '90 Days 💸' || ref.stage === '180 Days 💸💸') && !resume.bonusNotified) {
                             await fetch(`${apiUrl}/apply`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
@@ -261,14 +276,38 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     position: ref.position,
                                     referredBy: ref.referredBy,
                                     hiredDate: ref.hiredDate,
+                                    milestone: '90 days',
+                                    action: 'Pay HALF of referral bonus to the referring employee',
                                     notifyEmail: 'hr@navontech.com'
                                 })
                             });
-                            // Mark as notified
                             await fetch(`${apiUrl}/resume/${ref.resumeId}`, {
                                 method: 'PUT',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({ bonusNotified: 'true' })
+                            });
+                        }
+
+                        // Second 90 days (180 total) — full balance reminder
+                        if (ref.stage === '180 Days 💸💸' && !resume.bonus180Notified) {
+                            await fetch(`${apiUrl}/apply`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    type: 'referral-bonus-notification',
+                                    candidateName: ref.candidateName,
+                                    position: ref.position,
+                                    referredBy: ref.referredBy,
+                                    hiredDate: ref.hiredDate,
+                                    milestone: '180 days',
+                                    action: 'Pay FULL BALANCE of referral bonus to the referring employee',
+                                    notifyEmail: 'hr@navontech.com'
+                                })
+                            });
+                            await fetch(`${apiUrl}/resume/${ref.resumeId}`, {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ bonus180Notified: 'true' })
                             });
                         }
                     } catch (err) {
@@ -329,6 +368,33 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             fetchMyProfile();
         }
     }, [loginEmail, isAddingEmployee, editingEmployeeEmail]);
+
+    // 10-minute inactivity auto-logout
+    useEffect(() => {
+        if (!loginEmail) return; // Only track when logged in
+        let timeout;
+        const INACTIVITY_LIMIT = 10 * 60 * 1000; // 10 minutes
+        const resetTimer = () => {
+            clearTimeout(timeout);
+            timeout = setTimeout(async () => {
+                try {
+                    await signOut();
+                    alert('⏱️ You have been logged out due to 10 minutes of inactivity.');
+                    window.location.hash = 'home';
+                    window.location.reload();
+                } catch (err) {
+                    console.error('Auto-logout error:', err);
+                }
+            }, INACTIVITY_LIMIT);
+        };
+        const events = ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart', 'click'];
+        events.forEach(e => window.addEventListener(e, resetTimer));
+        resetTimer();
+        return () => {
+            clearTimeout(timeout);
+            events.forEach(e => window.removeEventListener(e, resetTimer));
+        };
+    }, [loginEmail]);
 
     // Fetch HR documents from S3 when on HR documents page
     useEffect(() => {
@@ -9875,7 +9941,8 @@ loadBalancer.distribute(traffic);`}
                                 )}
                             </div>
 
-                            {/* Annual Review Survey */}
+                            {/* Annual Review Survey - HR/Admin/Security/SuperAdmin only */}
+                            {(userRole === 'hr' || userRole === 'admin' || userRole === 'security' || userRole === 'superadmin') && (
                             <div className="hover-lift animate-scale-in" style={{
                                 background: 'white',
                                 padding: '2rem',
@@ -10114,6 +10181,7 @@ loadBalancer.distribute(traffic);`}
                                     </div>
                                 )}
                             </div>
+                            )}
                         </div>
                     </div>
                 </section>
@@ -10371,6 +10439,7 @@ loadBalancer.distribute(traffic);`}
                                 if (m.employmentType === 'Archived') return false;
                                 if (loginEmail && m.email && m.email.toLowerCase() === loginEmail.toLowerCase()) return false;
                                 if (userRole === 'employee' && adminOnlyEmails.includes(m.email?.toLowerCase())) return false;
+                                if (hrSecurityOnlyEmails.includes(m.email?.toLowerCase()) && userRole !== 'hr' && userRole !== 'security' && userRole !== 'superadmin') return false;
                                 if (!isAdminView || userRole === 'employee') { if (!m.showInDirectory) return false; }
                                 if (directoryFilter === 'startDate') {
                                     if (!directorySearch && !directoryMonth) return true;
@@ -10724,6 +10793,8 @@ loadBalancer.distribute(traffic);`}
                                 if (loginEmail && member.email && member.email.toLowerCase() === loginEmail.toLowerCase()) return false;
                                 // Exclude admin-only profiles from employee view
                                 if (userRole === 'employee' && adminOnlyEmails.includes(member.email?.toLowerCase())) return false;
+                                // Exclude HR/Security-only profiles from other roles
+                                if (hrSecurityOnlyEmails.includes(member.email?.toLowerCase()) && userRole !== 'hr' && userRole !== 'security' && userRole !== 'superadmin') return false;
                                 // In employee view, only show members who opted into public directory
                                 if (!isAdminView || userRole === 'employee') {
                                     if (!member.showInDirectory) return false;
@@ -12897,7 +12968,7 @@ loadBalancer.distribute(traffic);`}
                                             💰 Referral Bonus Program
                                         </div>
                                         <div style={{ fontSize: '0.9rem', color: '#166534' }}>
-                                            Earn up to $5,000 for successful referrals
+                                            Send inquiries to HR@navontech.com. Referrals are case by case.
                                         </div>
                                     </div>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
@@ -13061,14 +13132,12 @@ loadBalancer.distribute(traffic);`}
                                         <div style={{ fontWeight: '600', color: '#15803d', marginBottom: '0.5rem' }}>
                                             💰 Referral Bonuses:
                                         </div>
-                                        <ul style={{ margin: 0, paddingLeft: '1.5rem', color: '#166534' }}>
-                                            <li>Technical Roles: Up to $5,000</li>
-                                            <li>Management Roles: Up to $3,000</li>
-                                            <li>Entry Level: Up to $1,000</li>
-                                        </ul>
+                                        <div style={{ color: '#166534', fontSize: '0.9rem' }}>
+                                            Send inquiries to HR@navontech.com. Referrals are case by case.
+                                        </div>
                                     </div>
                                     <p style={{ color: '#64748b', fontSize: '0.9rem', fontStyle: 'italic' }}>
-                                        Bonus paid after successful hire and 90-day retention period
+                                        Half of bonus paid after first 90 days of hire and full balance after 2nd 90 days of employment.
                                     </p>
                                 </div>
                                 <button 
@@ -13197,7 +13266,7 @@ loadBalancer.distribute(traffic);`}
                                         <ul style={{ margin: 0, paddingLeft: '1.5rem', color: '#92400e', fontSize: '0.9rem' }}>
                                             <li>Must be active employee</li>
                                             <li>Candidate must be hired</li>
-                                            <li>90-day retention period</li>
+                                            <li>90-day + 90-day retention period</li>
                                             <li>Cannot refer family members</li>
                                         </ul>
                                     </div>
@@ -13265,12 +13334,12 @@ loadBalancer.distribute(traffic);`}
                                 <div style={{ textAlign: 'center' }}>
                                     <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>5️⃣</div>
                                     <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>90-Day Retention</div>
-                                    <div style={{ fontSize: '0.9rem', color: '#64748b' }}>Wait 90 days from hire date</div>
+                                    <div style={{ fontSize: '0.9rem', color: '#64748b' }}>Half of bonus paid after first 90 days</div>
                                 </div>
                                 <div style={{ textAlign: 'center' }}>
                                     <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>6️⃣</div>
                                     <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>Get Rewarded</div>
-                                    <div style={{ fontSize: '0.9rem', color: '#64748b' }}>Earn bonus after 90-day retention</div>
+                                    <div style={{ fontSize: '0.9rem', color: '#64748b' }}>Full balance after 2nd 90 days of employment</div>
                                 </div>
                             </div>
                         </div>
@@ -13329,7 +13398,7 @@ loadBalancer.distribute(traffic);`}
                                     marginBottom: '2rem',
                                     fontSize: '1rem'
                                 }}>
-                                    Refer a qualified candidate and earn up to $5,000
+                                    Refer a qualified candidate. Send inquiries to HR@navontech.com
                                 </p>
 
                                 <form onSubmit={async (e) => {
@@ -13752,14 +13821,10 @@ loadBalancer.distribute(traffic);`}
                         {/* Referral Cards */}
                         <div style={{ display: 'grid', gap: '1.5rem' }}>
                             {getReferralsFromATS().map(referral => {
-                                const stages = ['Submitted', 'Under Review', 'Interview Scheduled', 'Offer Extended', 'Hired', '90 Days 💸'];
+                                const stages = ['Submitted', 'Under Review', 'Interview Scheduled', 'Offer Extended', 'Hired', '90 Days 💸', '180 Days 💸💸'];
                                 const stageIndex = stages.indexOf(referral.stage);
-                                const stageColors = { 'Submitted': '#6366f1', 'Under Review': '#f59e0b', 'Interview Scheduled': '#3b82f6', 'Offer Extended': '#10b981', 'Hired': '#059669', 'Not Selected': '#ef4444', '90 Days 💸': '#d4af37' };
-                                const daysInfo = referral.hiredDate ? (() => {
-                                    const hp = referral.hiredDate.split('-');
-                                    const days = Math.floor((Date.now() - new Date(Number(hp[0]), Number(hp[1])-1, Number(hp[2])).getTime()) / (1000*60*60*24));
-                                    return days;
-                                })() : null;
+                                const stageColors = { 'Submitted': '#6366f1', 'Under Review': '#f59e0b', 'Interview Scheduled': '#3b82f6', 'Offer Extended': '#10b981', 'Hired': '#059669', 'Not Selected': '#ef4444', '90 Days 💸': '#d4af37', '180 Days 💸💸': '#16a34a' };
+                                const daysInfo = referral.daysSinceHired;
                                 return (
                                     <div key={referral.id} style={{
                                         background: 'white', padding: '2rem', borderRadius: '12px',
@@ -13774,7 +13839,8 @@ loadBalancer.distribute(traffic);`}
                                                     Date: {(() => { const p = referral.referredDate.split('-'); return p.length === 3 ? new Date(Number(p[0]), Number(p[1])-1, Number(p[2])).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : referral.referredDate; })()}
                                                 </p>
                                                 {daysInfo !== null && referral.stage === 'Hired' && <p style={{ color: '#059669', margin: '0.25rem 0 0 0', fontSize: '0.85rem', fontWeight: '600' }}>📅 {daysInfo} of 90 days completed</p>}
-                                                {referral.stage === '90 Days 💸' && <p style={{ color: '#d4af37', margin: '0.25rem 0 0 0', fontSize: '0.9rem', fontWeight: '700' }}>💸 Bonus eligible</p>}
+                                                {referral.stage === '90 Days 💸' && <p style={{ color: '#d4af37', margin: '0.25rem 0 0 0', fontSize: '0.9rem', fontWeight: '700' }}>💸 Half bonus eligible — referred by {referral.referredBy}</p>}
+                                                {referral.stage === '180 Days 💸💸' && <p style={{ color: '#16a34a', margin: '0.25rem 0 0 0', fontSize: '0.9rem', fontWeight: '700' }}>💸💸 Full balance eligible — referred by {referral.referredBy}</p>}
                                             </div>
                                             <span style={{
                                                 background: stageColors[referral.stage] || '#6b7280', color: 'white',
@@ -13839,12 +13905,12 @@ loadBalancer.distribute(traffic);`}
                                 const myReferrals = allReferrals.filter(r => r.id === 'demo-1' || (profileData.name && r.referredBy?.toLowerCase() === profileData.name.toLowerCase()));
                                 return myReferrals.length > 0 ? (
                                 myReferrals.map(referral => {
-                                    const stages = ['Submitted', 'Under Review', 'Hired', '90 Days 💸'];
-                                    const stageMap = { 'Submitted': 'Submitted', 'Under Review': 'Under Review', 'Interview Scheduled': 'Under Review', 'Offer Extended': 'Under Review', 'Hired': 'Hired', 'Not Hired': 'Not Hired', '90 Days 💸': '90 Days 💸' };
+                                    const stages = ['Submitted', 'Under Review', 'Hired', '90 Days 💸', '180 Days 💸💸'];
+                                    const stageMap = { 'Submitted': 'Submitted', 'Under Review': 'Under Review', 'Interview Scheduled': 'Under Review', 'Offer Extended': 'Under Review', 'Hired': 'Hired', 'Not Hired': 'Not Hired', '90 Days 💸': '90 Days 💸', '180 Days 💸💸': '180 Days 💸💸' };
                                     const displayStage = stageMap[referral.stage] || referral.stage;
                                     const isNotHired = displayStage === 'Not Hired';
                                     const stageIndex = isNotHired ? 1 : stages.indexOf(displayStage);
-                                    const stageColors = { 'Submitted': '#6366f1', 'Under Review': '#f59e0b', 'Hired': '#059669', 'Not Hired': '#ef4444', '90 Days 💸': '#d4af37' };
+                                    const stageColors = { 'Submitted': '#6366f1', 'Under Review': '#f59e0b', 'Hired': '#059669', 'Not Hired': '#ef4444', '90 Days 💸': '#d4af37', '180 Days 💸💸': '#16a34a' };
                                     return (
                                         <div key={referral.id} style={{
                                             background: 'white', padding: '2rem', borderRadius: '12px',

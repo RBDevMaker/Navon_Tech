@@ -101,6 +101,86 @@ exports.handler = async (event) => {
     try {
         // Parse the multipart form data
         const body = JSON.parse(event.body);
+
+        // Handle referral notifications
+        if (body.type === 'referral-stage-notification' || body.type === 'referral-bonus-notification') {
+            const { candidateName, position, referredBy, notifyEmail, oldStage, newStage, milestone, action, hiredDate } = body;
+            
+            let subject, htmlBody;
+            
+            if (body.type === 'referral-bonus-notification') {
+                const is180 = milestone === '180 days';
+                subject = is180 
+                    ? `💸💸 Referral Bonus Final Payout Due — ${candidateName}`
+                    : `💸 Referral Bonus Half Payment Due — ${candidateName}`;
+                htmlBody = `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+                    <div style="background:linear-gradient(135deg,#1e3a8a,#3b82f6);padding:30px;text-align:center;border-radius:12px 12px 0 0;">
+                        <h1 style="color:#d4af37;margin:0;font-size:24px;">NAVON TECHNOLOGIES</h1>
+                        <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:13px;letter-spacing:2px;">REFERRAL BONUS REMINDER</p>
+                    </div>
+                    <div style="background:#d4af37;height:4px;"></div>
+                    <div style="padding:30px;background:white;border:1px solid #e2e8f0;">
+                        <h2 style="color:#1e3a8a;margin:0 0 16px;">${is180 ? '💸💸 180-Day Milestone Reached' : '💸 90-Day Milestone Reached'}</h2>
+                        <div style="background:#f0fdf4;border:2px solid #86efac;border-radius:8px;padding:20px;margin-bottom:20px;">
+                            <p style="margin:4px 0;"><strong>Hired Employee:</strong> ${candidateName}</p>
+                            <p style="margin:4px 0;"><strong>Position:</strong> ${position}</p>
+                            <p style="margin:4px 0;"><strong>Referred By:</strong> ${referredBy}</p>
+                            <p style="margin:4px 0;"><strong>Hire Date:</strong> ${hiredDate || 'N/A'}</p>
+                            <p style="margin:4px 0;"><strong>Milestone:</strong> ${milestone} completed</p>
+                        </div>
+                        <div style="background:${is180 ? '#dcfce7;border:2px solid #16a34a' : '#fef3c7;border:2px solid #fbbf24'};border-radius:8px;padding:20px;margin-bottom:20px;">
+                            <h3 style="color:${is180 ? '#166534' : '#92400e'};margin:0 0 8px;">⚡ Action Required</h3>
+                            <p style="color:${is180 ? '#166534' : '#92400e'};margin:0;">${action || (is180 ? 'Pay FULL REMAINING BALANCE of referral bonus to ' + referredBy + ' via payroll.' : 'Pay HALF of referral bonus to ' + referredBy + ' via payroll.')}</p>
+                        </div>
+                        <p style="color:#64748b;font-size:13px;">Automated reminder from Navon Technologies Employee Portal.</p>
+                    </div>
+                    <div style="background:#1e293b;padding:20px;text-align:center;border-radius:0 0 12px 12px;">
+                        <p style="color:#d4af37;font-size:12px;margin:0;font-weight:600;">NAVON TECHNOLOGIES</p>
+                        <p style="color:#94a3b8;font-size:11px;margin:4px 0 0;">Leesburg, Virginia | navontech.com</p>
+                    </div>
+                </div>`;
+            } else {
+                subject = `Referral Stage Update: ${candidateName} — ${newStage}`;
+                htmlBody = `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+                    <div style="background:linear-gradient(135deg,#1e3a8a,#3b82f6);padding:30px;text-align:center;border-radius:12px 12px 0 0;">
+                        <h1 style="color:#d4af37;margin:0;font-size:24px;">NAVON TECHNOLOGIES</h1>
+                        <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:13px;letter-spacing:2px;">REFERRAL STATUS UPDATE</p>
+                    </div>
+                    <div style="background:#d4af37;height:4px;"></div>
+                    <div style="padding:30px;background:white;border:1px solid #e2e8f0;">
+                        <h2 style="color:#1e3a8a;margin:0 0 16px;">📊 Referral Stage Changed</h2>
+                        <div style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:8px;padding:20px;margin-bottom:20px;">
+                            <p style="margin:4px 0;"><strong>Candidate:</strong> ${candidateName}</p>
+                            <p style="margin:4px 0;"><strong>Position:</strong> ${position}</p>
+                            <p style="margin:4px 0;"><strong>Referred By:</strong> ${referredBy}</p>
+                            <p style="margin:4px 0;"><strong>Previous Stage:</strong> ${oldStage || 'N/A'}</p>
+                            <p style="margin:4px 0;"><strong>New Stage:</strong> ${newStage}</p>
+                        </div>
+                        <p style="color:#64748b;font-size:13px;">Automated notification from Navon Technologies Employee Portal.</p>
+                    </div>
+                    <div style="background:#1e293b;padding:20px;text-align:center;border-radius:0 0 12px 12px;">
+                        <p style="color:#d4af37;font-size:12px;margin:0;font-weight:600;">NAVON TECHNOLOGIES</p>
+                        <p style="color:#94a3b8;font-size:11px;margin:4px 0 0;">Leesburg, Virginia | navontech.com</p>
+                    </div>
+                </div>`;
+            }
+
+            await sesClient.send(new SendEmailCommand({
+                Source: 'hr@navontech.com',
+                Destination: { ToAddresses: [notifyEmail] },
+                Message: {
+                    Subject: { Data: subject, Charset: 'UTF-8' },
+                    Body: { Html: { Data: htmlBody, Charset: 'UTF-8' } }
+                }
+            }));
+
+            return {
+                statusCode: 200,
+                headers: CORS_HEADERS,
+                body: JSON.stringify({ message: 'Notification sent successfully' })
+            };
+        }
+
         const { name, email, position, resumeData, resumeFileName, resumeContentType, recaptchaToken } = body;
 
         // Security: Validate reCAPTCHA token (if provided)
