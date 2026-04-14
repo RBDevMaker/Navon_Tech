@@ -98,6 +98,10 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [isLoadingCompliance, setIsLoadingCompliance] = useState(false);
     const [isLoadingSharedResources, setIsLoadingSharedResources] = useState(false);
     
+    // Resume files state (S3 Documents/Resumes folder)
+    const [resumeDocFiles, setResumeDocFiles] = useState([]);
+    const [isLoadingResumeDocs, setIsLoadingResumeDocs] = useState(false);
+    
     // Referral tracking - derived from ATS resumes with "Employee Referral" in notes
     const getReferralsFromATS = () => {
         const atsReferrals = resumes.filter(r => r.notes && r.notes.includes('Employee Referral')).map(r => {
@@ -413,6 +417,13 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         }
     }, [currentPage]);
 
+    // Fetch Resume docs when on resume docs page
+    useEffect(() => {
+        if (currentPage === 'resumedocs') {
+            fetchResumeDocs();
+        }
+    }, [currentPage]);
+
     // Fetch HR documents from S3
     const fetchHRDocuments = async () => {
         try {
@@ -515,6 +526,32 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             console.error('Error fetching shared resource files:', error);
         } finally {
             setIsLoadingSharedResources(false);
+        }
+    };
+
+    // Fetch Resume documents from S3 (both folders)
+    const fetchResumeDocs = async () => {
+        setIsLoadingResumeDocs(true);
+        try {
+            const [docsResult, atsResult] = await Promise.all([
+                listS3Contents('Documents/Resumes/'),
+                listS3Contents('Resumes/')
+            ]);
+            const mapFiles = (result) => (result.files || [])
+                .filter(file => file.name && file.name.trim() !== '')
+                .map(file => ({
+                    id: file.key,
+                    name: file.name,
+                    size: file.size,
+                    lastModified: file.lastModified,
+                    type: file.name.split('.').pop(),
+                    url: file.url
+                }));
+            setResumeDocFiles([...mapFiles(docsResult), ...mapFiles(atsResult)]);
+        } catch (error) {
+            console.error('Error fetching resume docs:', error);
+        } finally {
+            setIsLoadingResumeDocs(false);
         }
     };
 
@@ -11814,6 +11851,50 @@ loadBalancer.distribute(traffic);`}
                                     Browse Resources
                                 </button>
                             </div>
+
+                            {/* Resumes - Brian and Veronica only */}
+                            {(loginEmail?.toLowerCase() === 'veronica.hill@navontech.com' || loginEmail?.toLowerCase() === 'brian.briscoe@navontech.com' || loginEmail?.toLowerCase().includes('root') || userRole === 'superadmin') && (
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.15s',
+                                display: 'flex',
+                                flexDirection: 'column'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{ fontSize: '2.5rem', marginRight: '1rem' }}>📄</div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        Resumes
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem', flex: 1 }}>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• View uploaded resumes</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Upload new resumes</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Download and review</p>
+                                </div>
+                                <button 
+                                    onClick={() => {
+                                        setCurrentPage('resumedocs');
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }}
+                                    style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    width: '100%',
+                                    marginTop: 'auto'
+                                }}>
+                                    Access Resumes
+                                </button>
+                            </div>
+                            )}
                             
                             {/* Application Tracking System - Security, HR, SuperAdmin */}
                             {(userGroups.includes('security') || userRole === 'security' || userRole === 'hr' || userRole === 'superadmin') && isAdminView && (
@@ -12203,6 +12284,103 @@ loadBalancer.distribute(traffic);`}
                                                         fontWeight: '600', fontSize: '0.85rem', flex: 1,
                                                         textDecoration: 'none', textAlign: 'center', display: 'inline-block'
                                                     }}>
+                                                    ⬇️ Download
+                                                </a>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </div>
+                </section>
+            )}
+
+            {/* RESUME DOCUMENTS PAGE */}
+            {currentPage === 'resumedocs' && (
+                <section style={{ padding: '4rem 2rem', background: '#f1f5f9', minHeight: '100vh' }}>
+                    <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                        <div style={{
+                            background: 'linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%)',
+                            padding: '1rem', borderRadius: '8px', marginBottom: '2rem', fontSize: '0.9rem', color: '#475569'
+                        }}>
+                            🏠 Home → 🔐 Secure Employee Portal → 📁 Document Management → <strong style={{ color: '#1e3a8a' }}>📄 Resumes</strong>
+                        </div>
+                        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                            <h2 style={{ fontSize: '3rem', marginBottom: '1rem', color: '#1e3a8a', fontWeight: '800' }}>📄 Resumes</h2>
+                            <p style={{ fontSize: '1.2rem', color: '#475569', maxWidth: '800px', margin: '0 auto 1.5rem auto' }}>
+                                Upload, view, and manage candidate resumes
+                            </p>
+                            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                                <button onClick={() => { setCurrentPage('documentmanagement'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                                    style={{ background: '#d4af37', color: '#0f172a', border: 'none', padding: '1rem 2rem', borderRadius: '8px', cursor: 'pointer', fontWeight: '700', fontSize: '1rem' }}>
+                                    ← Back to Document Management
+                                </button>
+                                <label style={{ background: '#10b981', color: 'white', border: 'none', padding: '1rem 2rem', borderRadius: '8px', cursor: 'pointer', fontWeight: '700', fontSize: '1rem' }}>
+                                    📤 Upload Resume
+                                    <input type="file" multiple accept=".pdf,.doc,.docx,.txt" style={{ display: 'none' }} onChange={async (e) => {
+                                        if (e.target.files && e.target.files.length > 0) {
+                                            try {
+                                                for (const file of Array.from(e.target.files)) {
+                                                    await uploadDocument(file, 'Resumes');
+                                                }
+                                                alert(`✅ Uploaded ${e.target.files.length} resume(s)`);
+                                                fetchResumeDocs();
+                                                e.target.value = '';
+                                            } catch (err) {
+                                                alert(`❌ Upload failed: ${err.message}`);
+                                            }
+                                        }
+                                    }} />
+                                </label>
+                            </div>
+                        </div>
+
+                        {isLoadingResumeDocs ? (
+                            <div style={{ textAlign: 'center', padding: '3rem' }}>
+                                <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>⏳</div>
+                                <p style={{ color: '#475569', fontSize: '1.1rem' }}>Loading resumes...</p>
+                            </div>
+                        ) : resumeDocFiles.length === 0 ? (
+                            <div style={{ textAlign: 'center', padding: '3rem', background: 'white', borderRadius: '12px', border: '2px solid #e2e8f0' }}>
+                                <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📭</div>
+                                <h3 style={{ color: '#1e3a8a', marginBottom: '0.5rem' }}>No Resumes Yet</h3>
+                                <p style={{ color: '#64748b' }}>Upload resumes using the button above.</p>
+                            </div>
+                        ) : (
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(350px, 100%), 1fr))', gap: '1.5rem' }}>
+                                {resumeDocFiles.map((file) => {
+                                    const badge = getFileTypeBadge(file.name);
+                                    const modParts = file.lastModified ? String(file.lastModified).split('T')[0].split('-') : null;
+                                    const displayDate = modParts && modParts.length === 3
+                                        ? new Date(Number(modParts[0]), Number(modParts[1]) - 1, Number(modParts[2])).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+                                        : '';
+                                    return (
+                                        <div key={file.id} className="hover-lift" style={{
+                                            background: 'white', padding: '1.5rem', borderRadius: '12px',
+                                            border: '2px solid #d4af37', boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                                        }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+                                                <span style={{
+                                                    background: badge.color, color: 'white', padding: '0.3rem 0.6rem',
+                                                    borderRadius: '4px', fontSize: '0.75rem', fontWeight: '600', marginRight: '0.75rem'
+                                                }}>{badge.label}</span>
+                                                <div style={{ flex: 1, minWidth: 0 }}>
+                                                    <h4 style={{ color: '#1e3a8a', margin: 0, fontSize: '1rem', fontWeight: '600', wordBreak: 'break-word' }}>
+                                                        {file.name}
+                                                    </h4>
+                                                    <p style={{ color: '#94a3b8', fontSize: '0.8rem', margin: '0.25rem 0 0 0' }}>
+                                                        {formatFileSize(file.size)}{displayDate ? ` • ${displayDate}` : ''}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                                <button onClick={() => handleViewDocument(file.name, { name: file.name, s3Url: file.url })}
+                                                    style={{ background: '#1e3a8a', color: 'white', border: 'none', padding: '0.6rem 1rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem', flex: 1 }}>
+                                                    👁️ View
+                                                </button>
+                                                <a href={file.url} download={file.name} target="_blank" rel="noopener noreferrer"
+                                                    style={{ background: '#d4af37', color: '#0f172a', border: 'none', padding: '0.6rem 1rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem', flex: 1, textDecoration: 'none', textAlign: 'center' }}>
                                                     ⬇️ Download
                                                 </a>
                                             </div>
