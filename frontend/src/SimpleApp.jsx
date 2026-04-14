@@ -140,8 +140,24 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
 
     // Handle hash changes for navigation
     useEffect(() => {
-        const handleHashChange = () => {
+        const handleHashChange = async () => {
             const hash = window.location.hash.slice(1) || 'home';
+            // If navigating to login with an existing session, go straight to portal
+            if (hash === 'login' && loginEmail) {
+                setCurrentPage('secureportal');
+                window.location.hash = 'secureportal';
+                return;
+            }
+            if (hash === 'login') {
+                try {
+                    const session = await fetchAuthSession();
+                    if (session.tokens?.idToken) {
+                        setCurrentPage('secureportal');
+                        window.location.hash = 'secureportal';
+                        return;
+                    }
+                } catch (e) { /* no session */ }
+            }
             setCurrentPage(hash);
             // Clear editing state when navigating away from profile form
             if (hash !== 'myprofile' && editingEmployeeEmail) {
@@ -161,7 +177,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         window.addEventListener('hashchange', handleHashChange);
 
         return () => window.removeEventListener('hashchange', handleHashChange);
-    }, []);
+    }, [loginEmail]);
 
     // Update userRole when authenticated role changes
     useEffect(() => {
@@ -2539,7 +2555,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     { file: 'archfield.jpeg', name: 'Archfield' },
                                     { file: 'SAIC_Logo.svg', name: 'SAIC' },
                                     { file: 'Amentum.svg', name: 'Amentum' },
-                                    { file: 'nightwing.jpg', name: 'Nightwing' },
+                                    { file: 'nightwing.png', name: 'Nightwing' },
                                     { file: 'BAE SYSTEMS.JPG', name: 'BAE Systems' },
                                     { file: 'versa-networks-logo.svg', name: 'Versa' }
                                 ].map((partner, index) => (
@@ -6307,23 +6323,6 @@ loadBalancer.distribute(traffic);`}
                                     zIndex: 10
                                 }}>
                                     NOT ACTIVE
-                                </div>
-                                )}
-                                {isActive && (
-                                <div style={{
-                                    position: 'absolute',
-                                    top: '15px',
-                                    left: '15px',
-                                    background: '#10b981',
-                                    color: 'white',
-                                    padding: '0.4rem 0.8rem',
-                                    borderRadius: '6px',
-                                    fontSize: '0.75rem',
-                                    fontWeight: '700',
-                                    boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-                                    zIndex: 10
-                                }}>
-                                    ACTIVE
                                 </div>
                                 )}
                                 <div>
@@ -11524,143 +11523,7 @@ loadBalancer.distribute(traffic);`}
                             gap: '2rem',
                             marginBottom: '3rem'
                         }}>
-                            {/* Time Tracking System */}
-                            <div className="hover-lift animate-scale-in" style={{
-                                background: 'white',
-                                padding: '2rem',
-                                borderRadius: '12px',
-                                border: '2px solid #d4af37',
-                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-                            }}>
-                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
-                                    <div style={{
-                                        fontSize: '2.5rem',
-                                        marginRight: '1rem'
-                                    }}>
-                                        ⏱️
-                                    </div>
-                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
-                                        Time Tracking System
-                                    </h3>
-                                </div>
-                                <div style={{ marginBottom: '1rem' }}>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Clock in/out functionality
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Project time allocation
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Weekly timesheet review
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Overtime tracking
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Billable hours reporting
-                                    </p>
-                                </div>
-                                <div style={{
-                                    background: '#f0fdf4',
-                                    padding: '1rem',
-                                    borderRadius: '8px',
-                                    marginBottom: '1rem',
-                                    border: '1px solid #86efac'
-                                }}>
-                                    <div style={{ fontWeight: '600', color: '#15803d', marginBottom: '0.5rem' }}>
-                                        ✅ Status: Active
-                                    </div>
-                                    <div style={{ fontSize: '0.9rem', color: '#166534' }}>
-                                        Currently clocked in - Project: AWS Migration
-                                    </div>
-                                </div>
-                                <button style={{
-                                    background: '#1e3a8a',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '0.75rem 1.5rem',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600',
-                                    width: '100%'
-                                }}>
-                                    Access Time Tracker
-                                </button>
-                            </div>
-
                             {/* Time-Off Requests - Removed */}
-
-                            {/* Schedule Management - Grayed Out */}
-                            <div className="hover-lift animate-scale-in" style={{
-                                background: 'white',
-                                padding: '2rem',
-                                borderRadius: '12px',
-                                border: '2px solid #94a3b8',
-                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                animationDelay: '0.1s',
-                                opacity: 0.5,
-                                position: 'relative'
-                            }}>
-                                <div style={{
-                                    position: 'absolute', top: '10px', right: '10px',
-                                    background: '#94a3b8', color: 'white', padding: '0.25rem 0.5rem',
-                                    borderRadius: '4px', fontSize: '0.7rem', fontWeight: '600'
-                                }}>COMING SOON</div>
-                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
-                                    <div style={{
-                                        fontSize: '2.5rem',
-                                        marginRight: '1rem'
-                                    }}>
-                                        📅
-                                    </div>
-                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
-                                        Schedule Management
-                                    </h3>
-                                </div>
-                                <div style={{ marginBottom: '1rem' }}>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • View work schedule
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Request schedule changes
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Team calendar view
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Meeting scheduling
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Holiday calendar
-                                    </p>
-                                </div>
-                                <div style={{
-                                    background: '#fef3c7',
-                                    padding: '1rem',
-                                    borderRadius: '8px',
-                                    marginBottom: '1rem',
-                                    border: '1px solid #fbbf24'
-                                }}>
-                                    <div style={{ fontWeight: '600', color: '#d97706', marginBottom: '0.5rem' }}>
-                                        📋 This Week's Schedule
-                                    </div>
-                                    <div style={{ fontSize: '0.9rem', color: '#92400e' }}>
-                                        Mon-Fri: 8:00 AM - 5:00 PM • 40 hours scheduled
-                                    </div>
-                                </div>
-                                <button style={{
-                                    background: '#94a3b8',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '0.75rem 1.5rem',
-                                    borderRadius: '6px',
-                                    cursor: 'not-allowed',
-                                    fontWeight: '600',
-                                    width: '100%'
-                                }}>
-                                    Coming Soon
-                                </button>
-                            </div>
                         </div>
 
                         {/* Timecard Links */}
@@ -11678,12 +11541,14 @@ loadBalancer.distribute(traffic);`}
                                 const isRoot = loginEmail?.toLowerCase().includes('root');
                                 const prime = profileData.contractAssignment || '';
                                 const timecards = [
-                                    { name: 'Nightwing', url: 'https://virgo.syndeoconnect.com/login', icon: '🦇', color: '#1e3a8a' },
-                                    { name: 'SAIC', url: 'https://cornerstone.saic.com/', icon: '🏛️', color: '#0369a1' },
-                                    { name: 'GDIT', url: 'https://setris-ne.gdit.com/setris/login.aspx', icon: '🔷', color: '#4338ca' },
-                                    { name: 'Arcfield', url: 'https://myapplications.azure.us/', icon: '🏗️', color: '#7c3aed' }
+                                    { name: 'Nightwing', url: 'https://virgo.syndeoconnect.com/login', logo: 'nightwing.png', color: '#1e3a8a', scale: 1.5 },
+                                    { name: 'SAIC', url: 'https://cornerstone.saic.com/', logo: 'SAIC_Logo.svg', color: '#0369a1', scale: 1 },
+                                    { name: 'GDIT', url: 'https://setris-ne.gdit.com/setris/login.aspx', logo: 'gdit.jpeg', color: '#4338ca', scale: 1 },
+                                    { name: 'Arcfield', url: 'https://myapplications.azure.us/', logo: 'archfield.jpeg', color: '#7c3aed', scale: 1.5 }
                                 ];
                                 const visible = (isVeronica || isRoot) ? timecards : timecards.filter(t => t.name === prime);
+                                // Always add Rippling for all users
+                                visible.push({ name: 'Rippling', url: 'https://app.rippling.com/time-products/dashboard/my-time/timeclock', logo: 'rippling_logo.jpeg', logoPath: 'images/partners', icon: '👥', color: '#10b981' });
                                 if (visible.length === 0) return <p style={{ color: '#64748b', textAlign: 'center', gridColumn: '1 / -1' }}>No timecard assigned. Contact HR if you believe this is an error.</p>;
                                 return visible.map(tc => (
                                     <a key={tc.name} href={tc.url} target="_blank" rel="noopener noreferrer" className="hover-lift" style={{
@@ -11691,9 +11556,13 @@ loadBalancer.distribute(traffic);`}
                                         border: `2px solid ${tc.color}`, boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
                                         textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center'
                                     }}>
-                                        <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>{tc.icon}</div>
-                                        <h4 style={{ color: tc.color, margin: '0 0 0.5rem 0', fontSize: '1.3rem', fontWeight: '700' }}>{tc.name}</h4>
-                                        <p style={{ color: '#64748b', fontSize: '0.9rem', margin: '0 0 1rem 0' }}>Submit timecard for {tc.name}</p>
+                                        <div style={{ width: '120px', height: '120px', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            {tc.logo ? (
+                                                <img src={`${s3BaseUrl}/${tc.logoPath || 'public/images/partners'}/${tc.logo}`} alt={tc.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', transform: `scale(${tc.scale || 1})` }} onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }} />
+                                            ) : null}
+                                            {tc.icon && <span style={{ fontSize: '4rem', display: tc.logo ? 'none' : 'block' }}>{tc.icon}</span>}
+                                        </div>
+                                        <p style={{ color: '#64748b', fontSize: '0.9rem', margin: '0 0 1rem 0' }}>Submit timecard</p>
                                         <div style={{
                                             background: tc.color, color: 'white', padding: '0.6rem 1.5rem',
                                             borderRadius: '6px', fontWeight: '600', fontSize: '0.9rem'
@@ -11703,71 +11572,22 @@ loadBalancer.distribute(traffic);`}
                             })()}
                         </div>
 
-                        {/* Quick Actions Section */}
+                        {/* Schedule Management - Coming Soon */}
                         <div style={{
-                            background: 'white',
-                            padding: '2rem',
-                            borderRadius: '12px',
-                            border: '2px solid #d4af37',
-                            marginBottom: '2rem'
+                            background: 'white', padding: '2rem', borderRadius: '12px',
+                            border: '2px solid #94a3b8', boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                            opacity: 0.5, position: 'relative', marginBottom: '2rem'
                         }}>
-                            <h3 style={{ color: '#1e3a8a', marginBottom: '1.5rem', fontSize: '1.5rem', textAlign: 'center' }}>
-                                ⚡ Quick Actions
-                            </h3>
                             <div style={{
-                                display: 'grid',
-                                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                                gap: '1.5rem'
-                            }}>
-                                <button style={{
-                                    background: '#15803d',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '1rem',
-                                    borderRadius: '8px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600',
-                                    textAlign: 'center'
-                                }}>
-                                    🟢 Clock In
-                                </button>
-                                <button style={{
-                                    background: '#dc2626',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '1rem',
-                                    borderRadius: '8px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600',
-                                    textAlign: 'center'
-                                }}>
-                                    🔴 Clock Out
-                                </button>
-                                <button style={{
-                                    background: '#d97706',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '1rem',
-                                    borderRadius: '8px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600',
-                                    textAlign: 'center'
-                                }}>
-                                    ⏸️ Break Time
-                                </button>
-                                <button style={{
-                                    background: '#7c3aed',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '1rem',
-                                    borderRadius: '8px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600',
-                                    textAlign: 'center'
-                                }}>
-                                    📊 View Reports
-                                </button>
+                                position: 'absolute', top: '10px', right: '10px',
+                                background: '#94a3b8', color: 'white', padding: '0.25rem 0.5rem',
+                                borderRadius: '4px', fontSize: '0.7rem', fontWeight: '600'
+                            }}>COMING SOON</div>
+                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+                                <div style={{ fontSize: '2.5rem', marginRight: '1rem' }}>📅</div>
+                                <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>Schedule Management</h3>
                             </div>
+                            <p style={{ color: '#64748b', margin: 0 }}>View work schedule, request changes, team calendar, and holiday calendar</p>
                         </div>
                     </div>
                 </section>
