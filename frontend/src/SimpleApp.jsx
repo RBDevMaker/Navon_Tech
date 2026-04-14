@@ -4,6 +4,8 @@ import { Amplify } from 'aws-amplify';
 import { signIn, signOut, getCurrentUser, fetchAuthSession, confirmSignIn } from 'aws-amplify/auth';
 import awsConfig from './aws-config';
 import * as XLSX from 'xlsx';
+import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, BorderStyle, Table, TableRow, TableCell, WidthType, CheckBox } from 'docx';
+import { saveAs } from 'file-saver';
 
 // Configure Amplify
 Amplify.configure(awsConfig);
@@ -11888,6 +11890,50 @@ loadBalancer.distribute(traffic);`}
                             
                             {/* Application Tracking System - Security, HR, SuperAdmin */}
                             {(userGroups.includes('security') || userRole === 'security' || userRole === 'hr' || userRole === 'superadmin') && isAdminView && (
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.25s',
+                                display: 'flex',
+                                flexDirection: 'column'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{ fontSize: '2.5rem', marginRight: '1rem' }}>📝</div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        Cleared Candidate Summary
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem', flex: 1 }}>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Fill out candidate intake form</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Auto-generates Word document</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Saves to Compliance & Security</p>
+                                </div>
+                                <button 
+                                    onClick={() => {
+                                        setCurrentPage('candidatesummary');
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }}
+                                    style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    width: '100%',
+                                    marginTop: 'auto'
+                                }}>
+                                    Open Form
+                                </button>
+                            </div>
+                            )}
+
+                            {/* Application Tracking System - Security, HR, SuperAdmin */}
+                            {(userGroups.includes('security') || userRole === 'security' || userRole === 'hr' || userRole === 'superadmin') && isAdminView && (
                                 <div className="hover-lift animate-scale-in" style={{
                                     background: 'white',
                                     padding: '2rem',
@@ -12282,6 +12328,307 @@ loadBalancer.distribute(traffic);`}
                                 })}
                             </div>
                         )}
+                    </div>
+                </section>
+            )}
+
+            {/* CLEARED CANDIDATE SUMMARY FORM */}
+            {currentPage === 'candidatesummary' && (
+                <section style={{ padding: '4rem 2rem', background: '#f1f5f9', minHeight: '100vh' }}>
+                    <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+                        <div style={{ background: 'linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%)', padding: '1rem', borderRadius: '8px', marginBottom: '2rem', fontSize: '0.9rem', color: '#475569' }}>
+                            🏠 Home → 🔐 Secure Employee Portal → 📁 Document Management → <strong style={{ color: '#1e3a8a' }}>📝 Cleared Candidate Summary</strong>
+                        </div>
+                        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                            <h2 style={{ fontSize: '2.5rem', marginBottom: '0.5rem', color: '#1e3a8a', fontWeight: '800' }}>📝 Cleared Candidate Summary</h2>
+                            <p style={{ color: '#475569', fontSize: '1.1rem' }}>Fill out the form below. It will generate a Word document and save to Compliance & Security.</p>
+                            <button onClick={() => { setCurrentPage('documentmanagement'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                                style={{ background: '#d4af37', color: '#0f172a', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '8px', cursor: 'pointer', fontWeight: '700', marginTop: '1rem' }}>
+                                ← Back to Document Management
+                            </button>
+                        </div>
+
+                        <form onSubmit={async (e) => {
+                            e.preventDefault();
+                            const fd = new FormData(e.target);
+                            const g = (n) => fd.get(n) || '';
+                            const c = (n) => fd.get(n) === 'on' ? '☑' : '☐';
+
+                            try {
+                                const doc = new Document({
+                                    sections: [{
+                                        properties: {},
+                                        children: [
+                                            new Paragraph({ children: [new TextRun({ text: 'NAVON TECHNOLOGIES', bold: true, size: 32, color: '1e3a8a' })], alignment: AlignmentType.CENTER }),
+                                            new Paragraph({ children: [new TextRun({ text: 'Cleared Candidate Summary', bold: true, size: 24, italics: true })], alignment: AlignmentType.CENTER, spacing: { after: 300 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Candidate Name: ${g('candidateName')}`, size: 22 })], spacing: { after: 100 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Date of Conversation: ${g('conversationDate')}`, size: 22 })], spacing: { after: 100 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Recruiter: ${g('recruiter')}`, size: 22 })], spacing: { after: 200 } }),
+
+                                            new Paragraph({ children: [new TextRun({ text: '1. Clearance Info', bold: true, size: 24, color: '1e3a8a' })], spacing: { before: 200, after: 100 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Current Level: ${g('clearanceLevel')}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Willingness to Upgrade: ${g('upgradeWillingness') || 'N/A'}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Last Background Investigation: ${g('lastInvestigation')}`, size: 22 })], spacing: { after: 200 } }),
+
+                                            new Paragraph({ children: [new TextRun({ text: '2. Location & Mobility', bold: true, size: 24, color: '1e3a8a' })], spacing: { before: 200, after: 100 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Current Location: ${g('currentLocation')}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Willingness to Relocate: ${g('relocateWillingness') || 'N/A'}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Relocation Timeline: ${g('relocationTimeline')}`, size: 22 })], spacing: { after: 200 } }),
+
+                                            new Paragraph({ children: [new TextRun({ text: '3. Compensation', bold: true, size: 24, color: '1e3a8a' })], spacing: { before: 200, after: 100 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Current Compensation: ${g('currentComp')}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Target Range: ${g('targetComp')}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Flexibility Notes: ${g('compNotes')}`, size: 22 })], spacing: { after: 200 } }),
+
+                                            new Paragraph({ children: [new TextRun({ text: '4. Benefits Requirements', bold: true, size: 24, color: '1e3a8a' })], spacing: { before: 200, after: 100 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Coverage: ${g('benefitsCoverage') || 'N/A'}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Additional Notes: ${g('benefitsNotes')}`, size: 22 })], spacing: { after: 200 } }),
+
+                                            new Paragraph({ children: [new TextRun({ text: '5. Experience Overview', bold: true, size: 24, color: '1e3a8a' })], spacing: { before: 200, after: 100 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Ticketing Systems: ${g('ticketingSystems')}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Hardware: ${g('hardwareExp')}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Software: ${g('softwareExp')}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Programming Languages: ${g('programmingLangs')}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `End-User Support: ${g('endUserSupport')}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Troubleshooting Strengths: ${g('troubleshooting')}`, size: 22 })], spacing: { after: 200 } }),
+
+                                            new Paragraph({ children: [new TextRun({ text: '6. Role Preferences', bold: true, size: 24, color: '1e3a8a' })], spacing: { before: 200, after: 100 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Preferred IT Functions: ${g('preferredFunctions')}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Preferred Work Environments: ${g('preferredEnvironments')}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Preferred Work Locations: ${g('preferredLocations')}`, size: 22 })], spacing: { after: 200 } }),
+
+                                            new Paragraph({ children: [new TextRun({ text: '7. Certifications', bold: true, size: 24, color: '1e3a8a' })], spacing: { before: 200, after: 100 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Current Certifications: ${g('currentCerts')}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Expiration/Renewal: ${g('certExpiry')}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Planned Certifications: ${g('plannedCerts')}`, size: 22 })], spacing: { after: 200 } }),
+
+                                            new Paragraph({ children: [new TextRun({ text: '8. Current Job Search Status', bold: true, size: 24, color: '1e3a8a' })], spacing: { before: 200, after: 100 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Active Interviews: ${g('activeInterviews') || 'N/A'}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Organizations/Stages: ${g('interviewDetails')}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Offers Received: ${g('offersReceived')}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Urgency: ${g('searchUrgency')}`, size: 22 })], spacing: { after: 200 } }),
+
+                                            new Paragraph({ children: [new TextRun({ text: '9. Availability', bold: true, size: 24, color: '1e3a8a' })], spacing: { before: 200, after: 100 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Follow-up Availability: ${g('followupAvailability')}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Earliest Start Date: ${g('earliestStart')}`, size: 22 })], spacing: { after: 200 } }),
+
+                                            new Paragraph({ children: [new TextRun({ text: '10. Additional Notes', bold: true, size: 24, color: '1e3a8a' })], spacing: { before: 200, after: 100 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Strengths: ${g('strengths')}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Concerns/Risks: ${g('concerns')}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Additional Info: ${g('additionalInfo')}`, size: 22 })], spacing: { after: 200 } }),
+
+                                            new Paragraph({ children: [new TextRun({ text: '11-16. Additional Details', bold: true, size: 24, color: '1e3a8a' })], spacing: { before: 200, after: 100 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Notice Period: ${g('noticePeriod') || 'N/A'}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Resume Format: ${g('resumeFormat') || 'N/A'}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Employment Type: ${g('employmentType') || 'N/A'}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Schedule Preference: ${g('schedulePreference')}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Travel Capability: ${g('travelCapability') || 'N/A'}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Travel Limits: ${g('travelLimits')}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Referral Source: ${g('referralSource') || 'N/A'}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Referral Details: ${g('referralDetails')}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Notes: ${g('extraNotes')}`, size: 22 })], spacing: { after: 200 } }),
+
+                                            new Paragraph({ children: [new TextRun({ text: '_______________________________________________', color: '1e3a8a' })], alignment: AlignmentType.CENTER, spacing: { before: 300 } }),
+                                            new Paragraph({ children: [new TextRun({ text: 'Navon Technologies LLC', bold: true, size: 20, color: '1e3a8a' })], alignment: AlignmentType.CENTER }),
+                                            new Paragraph({ children: [new TextRun({ text: '161 Fort Evans Rd NE ◊ Suite 210 ◊ Leesburg, VA 20176', size: 18 })], alignment: AlignmentType.CENTER }),
+                                            new Paragraph({ children: [new TextRun({ text: 'Phone (571) 477-2727 ◊ Fax (571) 477-2727 ◊ www.navontech.com', size: 18 })], alignment: AlignmentType.CENTER }),
+                                        ]
+                                    }]
+                                });
+
+                                const blob = await Packer.toBlob(doc);
+                                const candidateName = g('candidateName') || 'Unknown';
+                                const fileName = `ClearedCandidateSummary-${candidateName.replace(/\s+/g, '_')}-${Date.now()}.docx`;
+
+                                // Upload to S3 Compliance-Security folder
+                                const base64 = await new Promise((resolve) => {
+                                    const reader = new FileReader();
+                                    reader.onload = () => resolve(reader.result.split(',')[1]);
+                                    reader.readAsDataURL(blob);
+                                });
+
+                                const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                                await fetch(`${apiUrl}/upload-to-s3`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        action: 'upload',
+                                        fileName: fileName,
+                                        folder: 'Documents/Compliance-Security',
+                                        fileContent: base64,
+                                        contentType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                                    })
+                                });
+
+                                // Also save locally
+                                saveAs(blob, fileName);
+                                alert(`✅ Cleared Candidate Summary for ${candidateName} saved to Compliance & Security and downloaded locally.`);
+                            } catch (err) {
+                                console.error('Error generating document:', err);
+                                alert(`❌ Error: ${err.message}`);
+                            }
+                        }} style={{ background: 'white', padding: '2rem', borderRadius: '12px', border: '2px solid #d4af37' }}>
+                            {/* Form fields */}
+                            {(() => {
+                                const inputStyle = { width: '100%', padding: '0.6rem', border: '2px solid #e2e8f0', borderRadius: '6px', fontSize: '0.95rem', fontFamily: 'inherit' };
+                                const labelStyle = { display: 'block', fontWeight: '600', color: '#1e3a8a', marginBottom: '0.4rem', fontSize: '0.9rem' };
+                                const sectionStyle = { marginBottom: '2rem', padding: '1.5rem', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' };
+                                const headingStyle = { color: '#1e3a8a', fontSize: '1.2rem', fontWeight: '700', marginBottom: '1rem', borderBottom: '2px solid #d4af37', paddingBottom: '0.5rem' };
+                                const rowStyle = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '0.75rem' };
+                                const fieldStyle = { marginBottom: '0.75rem' };
+                                return (
+                                    <>
+                                    {/* Header Fields */}
+                                    <div style={sectionStyle}>
+                                        <div style={rowStyle}>
+                                            <div><label style={labelStyle}>Candidate Name *</label><input name="candidateName" required style={inputStyle} /></div>
+                                            <div><label style={labelStyle}>Date of Conversation</label><input name="conversationDate" type="date" style={inputStyle} /></div>
+                                        </div>
+                                        <div style={fieldStyle}><label style={labelStyle}>Recruiter</label><input name="recruiter" style={inputStyle} /></div>
+                                    </div>
+
+                                    {/* 1. Clearance Info */}
+                                    <div style={sectionStyle}>
+                                        <h3 style={headingStyle}>1. Clearance Info</h3>
+                                        <div style={fieldStyle}><label style={labelStyle}>Current Level (FSP, CI, TS, Secret, Public Trust)</label><input name="clearanceLevel" style={inputStyle} /></div>
+                                        <div style={fieldStyle}><label style={labelStyle}>Willingness to Upgrade Clearance</label>
+                                            <select name="upgradeWillingness" style={inputStyle}><option value="">Select...</option><option>Yes</option><option>No</option><option>Possibly</option></select></div>
+                                        <div style={fieldStyle}><label style={labelStyle}>Last Background Investigation</label><input name="lastInvestigation" style={inputStyle} /></div>
+                                    </div>
+
+                                    {/* 2. Location & Mobility */}
+                                    <div style={sectionStyle}>
+                                        <h3 style={headingStyle}>2. Location & Mobility</h3>
+                                        <div style={fieldStyle}><label style={labelStyle}>Current Location</label><input name="currentLocation" style={inputStyle} /></div>
+                                        <div style={rowStyle}>
+                                            <div><label style={labelStyle}>Willingness to Relocate</label>
+                                                <select name="relocateWillingness" style={inputStyle}><option value="">Select...</option><option>Yes</option><option>No</option><option>Possibly</option></select></div>
+                                            <div><label style={labelStyle}>Relocation Timeline</label><input name="relocationTimeline" style={inputStyle} /></div>
+                                        </div>
+                                    </div>
+
+                                    {/* 3. Compensation */}
+                                    <div style={sectionStyle}>
+                                        <h3 style={headingStyle}>3. Compensation</h3>
+                                        <div style={rowStyle}>
+                                            <div><label style={labelStyle}>Current Compensation</label><input name="currentComp" style={inputStyle} /></div>
+                                            <div><label style={labelStyle}>Target Range</label><input name="targetComp" style={inputStyle} /></div>
+                                        </div>
+                                        <div style={fieldStyle}><label style={labelStyle}>Notes on Flexibility</label><input name="compNotes" style={inputStyle} /></div>
+                                    </div>
+
+                                    {/* 4. Benefits */}
+                                    <div style={sectionStyle}>
+                                        <h3 style={headingStyle}>4. Benefits Requirements</h3>
+                                        <div style={fieldStyle}><label style={labelStyle}>Coverage Needed</label>
+                                            <select name="benefitsCoverage" style={inputStyle}><option value="">Select...</option><option>Single</option><option>Employee + Spouse</option><option>Family</option><option>Other</option></select></div>
+                                        <div style={fieldStyle}><label style={labelStyle}>Additional Notes</label><input name="benefitsNotes" style={inputStyle} /></div>
+                                    </div>
+
+                                    {/* 5. Experience */}
+                                    <div style={sectionStyle}>
+                                        <h3 style={headingStyle}>5. Experience Overview — IT Background</h3>
+                                        <div style={rowStyle}>
+                                            <div><label style={labelStyle}>Ticketing Systems Used</label><input name="ticketingSystems" style={inputStyle} /></div>
+                                            <div><label style={labelStyle}>Hardware Experience</label><input name="hardwareExp" style={inputStyle} /></div>
+                                        </div>
+                                        <div style={rowStyle}>
+                                            <div><label style={labelStyle}>Software Experience</label><input name="softwareExp" style={inputStyle} /></div>
+                                            <div><label style={labelStyle}>Programming Languages</label><input name="programmingLangs" style={inputStyle} /></div>
+                                        </div>
+                                        <div style={rowStyle}>
+                                            <div><label style={labelStyle}>End-User Support</label><input name="endUserSupport" style={inputStyle} /></div>
+                                            <div><label style={labelStyle}>Troubleshooting Strengths</label><input name="troubleshooting" style={inputStyle} /></div>
+                                        </div>
+                                    </div>
+
+                                    {/* 6. Role Preferences */}
+                                    <div style={sectionStyle}>
+                                        <h3 style={headingStyle}>6. Role Preferences</h3>
+                                        <div style={fieldStyle}><label style={labelStyle}>Preferred IT Functions</label><input name="preferredFunctions" style={inputStyle} /></div>
+                                        <div style={fieldStyle}><label style={labelStyle}>Preferred Work Environments (corporate, MSP, hybrid, etc.)</label><input name="preferredEnvironments" style={inputStyle} /></div>
+                                        <div style={fieldStyle}><label style={labelStyle}>Preferred Work Locations (NOVA, MD, DC)</label><input name="preferredLocations" style={inputStyle} placeholder="e.g. Chantilly, McLean, Tysons, Herndon, Ft. Meade, Bethesda..." /></div>
+                                    </div>
+
+                                    {/* 7. Certifications */}
+                                    <div style={sectionStyle}>
+                                        <h3 style={headingStyle}>7. Certifications</h3>
+                                        <div style={fieldStyle}><label style={labelStyle}>Current Certifications</label><input name="currentCerts" style={inputStyle} /></div>
+                                        <div style={rowStyle}>
+                                            <div><label style={labelStyle}>Expiration / Renewal Dates</label><input name="certExpiry" style={inputStyle} /></div>
+                                            <div><label style={labelStyle}>Planned Certifications</label><input name="plannedCerts" style={inputStyle} /></div>
+                                        </div>
+                                    </div>
+
+                                    {/* 8. Job Search Status */}
+                                    <div style={sectionStyle}>
+                                        <h3 style={headingStyle}>8. Current Job Search Status</h3>
+                                        <div style={rowStyle}>
+                                            <div><label style={labelStyle}>Active Interviews</label>
+                                                <select name="activeInterviews" style={inputStyle}><option value="">Select...</option><option>Yes</option><option>No</option></select></div>
+                                            <div><label style={labelStyle}>Organizations & Stages</label><input name="interviewDetails" style={inputStyle} /></div>
+                                        </div>
+                                        <div style={rowStyle}>
+                                            <div><label style={labelStyle}>Offers Received</label><input name="offersReceived" style={inputStyle} /></div>
+                                            <div><label style={labelStyle}>Urgency of Job Search</label><input name="searchUrgency" style={inputStyle} /></div>
+                                        </div>
+                                    </div>
+
+                                    {/* 9. Availability */}
+                                    <div style={sectionStyle}>
+                                        <h3 style={headingStyle}>9. Availability</h3>
+                                        <div style={rowStyle}>
+                                            <div><label style={labelStyle}>Follow-up Availability</label><input name="followupAvailability" style={inputStyle} /></div>
+                                            <div><label style={labelStyle}>Earliest Start Date</label><input name="earliestStart" type="date" style={inputStyle} /></div>
+                                        </div>
+                                    </div>
+
+                                    {/* 10. Additional Notes */}
+                                    <div style={sectionStyle}>
+                                        <h3 style={headingStyle}>10. Additional Notes</h3>
+                                        <div style={fieldStyle}><label style={labelStyle}>Strengths Observed</label><textarea name="strengths" rows="2" style={inputStyle} /></div>
+                                        <div style={fieldStyle}><label style={labelStyle}>Concerns or Risks</label><textarea name="concerns" rows="2" style={inputStyle} /></div>
+                                        <div style={fieldStyle}><label style={labelStyle}>Additional Information</label><textarea name="additionalInfo" rows="2" style={inputStyle} /></div>
+                                    </div>
+
+                                    {/* 11-16. Additional Details */}
+                                    <div style={sectionStyle}>
+                                        <h3 style={headingStyle}>11-16. Additional Candidate Details</h3>
+                                        <div style={rowStyle}>
+                                            <div><label style={labelStyle}>Notice Period</label>
+                                                <select name="noticePeriod" style={inputStyle}><option value="">Select...</option><option>Two weeks</option><option>No notice required</option><option>Longer than two weeks</option></select></div>
+                                            <div><label style={labelStyle}>Resume Format</label>
+                                                <select name="resumeFormat" style={inputStyle}><option value="">Select...</option><option>Word format</option><option>Not in Word — request conversion</option></select></div>
+                                        </div>
+                                        <div style={rowStyle}>
+                                            <div><label style={labelStyle}>Employment Type</label>
+                                                <select name="employmentType" style={inputStyle}><option value="">Select...</option><option>Full-time</option><option>Part-time</option></select></div>
+                                            <div><label style={labelStyle}>Schedule Preference</label><input name="schedulePreference" style={inputStyle} /></div>
+                                        </div>
+                                        <div style={rowStyle}>
+                                            <div><label style={labelStyle}>Travel Capability</label>
+                                                <select name="travelCapability" style={inputStyle}><option value="">Select...</option><option>Yes</option><option>No</option><option>Limited</option></select></div>
+                                            <div><label style={labelStyle}>Travel Limits (if limited)</label><input name="travelLimits" style={inputStyle} /></div>
+                                        </div>
+                                        <div style={rowStyle}>
+                                            <div><label style={labelStyle}>Referral Source</label>
+                                                <select name="referralSource" style={inputStyle}><option value="">Select...</option><option>Referral</option><option>LinkedIn</option><option>Google</option><option>Job Board (Indeed, ZipRecruiter)</option><option>Other</option></select></div>
+                                            <div><label style={labelStyle}>Referral Name / Details</label><input name="referralDetails" style={inputStyle} /></div>
+                                        </div>
+                                        <div style={fieldStyle}><label style={labelStyle}>Notes</label><textarea name="extraNotes" rows="3" style={inputStyle} /></div>
+                                    </div>
+
+                                    {/* Submit */}
+                                    <button type="submit" style={{
+                                        background: '#1e3a8a', color: 'white', border: 'none', padding: '1rem 3rem',
+                                        borderRadius: '8px', cursor: 'pointer', fontWeight: '700', fontSize: '1.1rem', width: '100%'
+                                    }}>
+                                        📤 Generate & Send to Compliance & Security
+                                    </button>
+                                    </>
+                                );
+                            })()}
+                        </form>
                     </div>
                 </section>
             )}
