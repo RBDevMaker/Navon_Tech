@@ -11816,7 +11816,7 @@ loadBalancer.distribute(traffic);`}
                             </div>
                             
                             {/* Application Tracking System - Security, HR, SuperAdmin */}
-                            {(userGroups.includes('security') || userRole === 'hr' || userRole === 'superadmin') && isAdminView && (
+                            {(userGroups.includes('security') || userRole === 'security' || userRole === 'hr' || userRole === 'superadmin') && isAdminView && (
                                 <div className="hover-lift animate-scale-in" style={{
                                     background: 'white',
                                     padding: '2rem',
