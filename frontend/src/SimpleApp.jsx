@@ -6563,7 +6563,44 @@ loadBalancer.distribute(traffic);`}
                                     </p>
                                 </div>
                                 <button 
-                                    onClick={() => alert('🚧 Create User Feature\n\nThis feature will integrate with AWS Cognito to create new user accounts.\n\nComing soon after backend deployment!')}
+                                    onClick={() => {
+                                        const email = prompt('Enter new user email (e.g. john.doe@navontech.com):');
+                                        if (!email || !email.includes('@')) return;
+                                        const name = prompt('Enter full name:');
+                                        if (!name) return;
+                                        const role = prompt('Enter role (employee, admin, hr, security):', 'employee');
+                                        if (!['employee', 'admin', 'hr', 'security'].includes(role)) { alert('Invalid role'); return; }
+                                        
+                                        (async () => {
+                                            try {
+                                                const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                                                const session = await fetchAuthSession();
+                                                const token = session.tokens?.idToken?.toString();
+                                                
+                                                // Create user via invite endpoint
+                                                const res = await fetch(`${apiUrl}/users/${email}`, {
+                                                    method: 'POST',
+                                                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                                                    body: JSON.stringify({ action: 'invite', newRole: role, portalUrl: 'https://navontech.com/#login' })
+                                                });
+                                                const data = await res.json();
+                                                if (res.ok) {
+                                                    // Set name attribute
+                                                    await fetch(`${apiUrl}/users/${email}`, {
+                                                        method: 'PUT',
+                                                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                                                        body: JSON.stringify({ attributes: { name: name } })
+                                                    });
+                                                    alert(`✅ User ${name} (${email}) created with ${role} role.\nInvitation email sent with temporary password.`);
+                                                    fetchUsers();
+                                                } else {
+                                                    alert(`❌ Failed: ${data.error || data.message}`);
+                                                }
+                                            } catch (err) {
+                                                alert(`❌ Error: ${err.message}`);
+                                            }
+                                        })();
+                                    }}
                                     style={{
                                         background: '#10b981',
                                         color: 'white',
