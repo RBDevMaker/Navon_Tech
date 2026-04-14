@@ -5460,7 +5460,7 @@ loadBalancer.distribute(traffic);`}
                                         🛠️
                                     </div>
                                     <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.3rem' }}>
-                                        Secure Tools & Applications
+                                        Tools & Applications
                                     </h3>
                                 </div>
                                 <div style={{ marginBottom: '1.5rem' }}>
@@ -5487,16 +5487,6 @@ loadBalancer.distribute(traffic);`}
                                                     {tool.name}
                                                 </div>
                                             </div>
-                                            <span style={{
-                                                background: '#10b981',
-                                                color: 'white',
-                                                padding: '0.25rem 0.5rem',
-                                                borderRadius: '12px',
-                                                fontSize: '0.75rem',
-                                                fontWeight: '600'
-                                            }}>
-                                                {tool.status}
-                                            </span>
                                         </div>
                                     ))}
                                 </div>
@@ -6167,7 +6157,7 @@ loadBalancer.distribute(traffic);`}
                                 </div>
                             </div>
 
-                            {/* Card 2: Secure Tools & Applications */}
+                            {/* Card 2: Tools & Applications */}
                             <div 
                                 className="hover-lift animate-scale-in" 
                                 onClick={() => {
@@ -6204,7 +6194,7 @@ loadBalancer.distribute(traffic);`}
                                         fontWeight: '700',
                                         marginBottom: '1rem'
                                     }}>
-                                        Secure Tools & Applications
+                                        Tools & Applications
                                     </h3>
                                     <p style={{
                                         color: '#cbd5e1',
@@ -12614,7 +12604,7 @@ loadBalancer.distribute(traffic);`}
                                 color: '#1e3a8a',
                                 fontWeight: '800'
                             }}>
-                                🛠️ Secure Tools & Applications
+                                🛠️ Tools & Applications
                             </h2>
                             <p style={{
                                 fontSize: '1.2rem',
@@ -12680,16 +12670,6 @@ loadBalancer.distribute(traffic);`}
                                         }}>
                                             {tool.icon}
                                         </div>
-                                        <span style={{
-                                            background: '#10b981',
-                                            color: 'white',
-                                            padding: '0.25rem 0.75rem',
-                                            borderRadius: '12px',
-                                            fontSize: '0.75rem',
-                                            fontWeight: '600'
-                                        }}>
-                                            {tool.status}
-                                        </span>
                                     </div>
                                     <h3 style={{
                                         color: '#1e3a8a',
