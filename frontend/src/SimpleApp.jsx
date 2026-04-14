@@ -186,16 +186,12 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                     else if (groups.includes('HR')) role = 'hr';
                     else if (groups.includes('Admin')) role = 'admin';
                     
-                    if (email) {
+                    // Only restore session if not on login page
+                    const hash = window.location.hash.slice(1) || 'home';
+                    if (email && hash !== 'login') {
                         setLoginEmail(email);
                         setUserRole(role);
                         setUserGroups(groups.map(g => g.toLowerCase()));
-                        // Auto-navigate to portal if on login page with valid session
-                        const hash = window.location.hash.slice(1) || 'home';
-                        if (hash === 'login') {
-                            setCurrentPage('secureportal');
-                            window.location.hash = 'secureportal';
-                        }
                     }
                 }
             } catch (err) {
