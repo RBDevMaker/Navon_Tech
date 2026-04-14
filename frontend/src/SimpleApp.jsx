@@ -670,7 +670,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     // Handle file deletion
     const handleFileDelete = async (category, fileId, fileName) => {
         if (!canDeleteHandbook()) {
-            alert(`❌ Access Denied: Only HR and Admin users can delete files from the Employee Handbook.\n\nCurrent Role: ${userRole.toUpperCase()}\nRequired Role: HR or ADMIN`);
+            alert(`❌ Access Denied: Only HR and Admin users can delete files from the Employee Handbook.\n\nCurrent Role: ${userRole.toUpperCase()}\nRequired Role: HR, ADMIN, or SECURITY`);
             return;
         }
 
@@ -11962,7 +11962,7 @@ loadBalancer.distribute(traffic);`}
                                 style={{ display: 'none' }}
                                 onChange={async (e) => {
                                     if (!canUploadDoc) {
-                                        alert('❌ Access Denied: Only HR and Admin users can upload documents.\n\nCurrent Role: ' + displayRole + '\nRequired Role: HR or ADMIN');
+                                        alert('❌ Access Denied: Only HR, Admin, and Security users can upload documents.\n\nCurrent Role: ' + displayRole + '\nRequired Role: HR, ADMIN, or SECURITY');
                                         e.target.value = '';
                                         return;
                                     }
@@ -11999,7 +11999,7 @@ loadBalancer.distribute(traffic);`}
                             />
                             <label
                                 htmlFor={canUploadDoc ? 'documentUpload' : undefined}
-                                onClick={!canUploadDoc ? () => alert('❌ Access Denied: Only HR and Admin users can upload documents.\n\nCurrent Role: ' + displayRole + '\nRequired Role: HR or ADMIN') : undefined}
+                                onClick={!canUploadDoc ? () => alert('❌ Access Denied: Only HR, Admin, and Security users can upload documents.\n\nCurrent Role: ' + displayRole + '\nRequired Role: HR, ADMIN, or SECURITY') : undefined}
                                 style={{
                                 background: canUploadDoc ? '#d4af37' : '#94a3b8',
                                 color: canUploadDoc ? '#0f172a' : '#e2e8f0',

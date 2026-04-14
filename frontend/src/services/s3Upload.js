@@ -198,8 +198,8 @@ export function canUpload(userRole, uploadType) {
     }
     
     if (uploadType === 'document') {
-        // Only HR, Admin, and SuperAdmin can upload documents
-        return userRole === 'hr' || userRole === 'admin' || userRole === 'superadmin';
+        // Only HR, Admin, Security, and SuperAdmin can upload documents
+        return userRole === 'hr' || userRole === 'admin' || userRole === 'security' || userRole === 'superadmin';
     }
     
     return false;
