@@ -6261,9 +6261,6 @@ loadBalancer.distribute(traffic);`}
                                 const isBillable = profileData.billableStatus === 'Billable';
                                 const isVeronica = loginEmail?.toLowerCase() === 'veronica.hill@navontech.com';
                                 const isRoot = loginEmail?.toLowerCase().includes('root');
-                                const hasAccess = isBillable || isVeronica || isRoot || userRole === 'hr' || userRole === 'security' || userRole === 'superadmin';
-                                const isActive = isBillable || isVeronica || isRoot;
-                                if (!hasAccess) return null;
                                 return (
                             <div 
                                 className="hover-lift animate-scale-in" 
@@ -6272,39 +6269,21 @@ loadBalancer.distribute(traffic);`}
                                     window.scrollTo({ top: 0, behavior: 'smooth' });
                                 }}
                                 style={{
-                                    background: isActive ? 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)' : 'linear-gradient(135deg, #64748b 0%, #94a3b8 100%)',
+                                    background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
                                     padding: '3rem 2rem',
                                     borderRadius: '20px',
                                     textAlign: 'center',
                                     cursor: 'pointer',
-                                    border: isActive ? '3px solid #d4af37' : '3px solid #94a3b8',
-                                    boxShadow: isActive ? '0 10px 30px rgba(30, 58, 138, 0.3)' : '0 10px 30px rgba(0, 0, 0, 0.3)',
+                                    border: '3px solid #d4af37',
+                                    boxShadow: '0 10px 30px rgba(30, 58, 138, 0.3)',
                                     transition: 'all 0.4s ease',
                                     position: 'relative',
                                     overflow: 'hidden',
-                                    opacity: isActive ? 1 : 0.6,
                                     animationDelay: '0.3s',
                                     display: 'flex',
                                     flexDirection: 'column',
                                     justifyContent: 'space-between'
                                 }}>
-                                {!isActive && (
-                                <div style={{
-                                    position: 'absolute',
-                                    top: '15px',
-                                    left: '15px',
-                                    background: '#ef4444',
-                                    color: 'white',
-                                    padding: '0.4rem 0.8rem',
-                                    borderRadius: '6px',
-                                    fontSize: '0.75rem',
-                                    fontWeight: '700',
-                                    boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-                                    zIndex: 10
-                                }}>
-                                    NOT ACTIVE
-                                </div>
-                                )}
                                 <div>
                                     <div style={{
                                         fontSize: '4rem',
