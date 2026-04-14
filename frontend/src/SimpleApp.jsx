@@ -142,22 +142,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     useEffect(() => {
         const handleHashChange = async () => {
             const hash = window.location.hash.slice(1) || 'home';
-            // If navigating to login with an existing session, go straight to portal
-            if (hash === 'login' && loginEmail) {
-                setCurrentPage('secureportal');
-                window.location.hash = 'secureportal';
-                return;
-            }
-            if (hash === 'login') {
-                try {
-                    const session = await fetchAuthSession();
-                    if (session.tokens?.idToken) {
-                        setCurrentPage('secureportal');
-                        window.location.hash = 'secureportal';
-                        return;
-                    }
-                } catch (e) { /* no session */ }
-            }
             setCurrentPage(hash);
             // Clear editing state when navigating away from profile form
             if (hash !== 'myprofile' && editingEmployeeEmail) {
@@ -177,7 +161,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         window.addEventListener('hashchange', handleHashChange);
 
         return () => window.removeEventListener('hashchange', handleHashChange);
-    }, [loginEmail]);
+    }, []);
 
     // Update userRole when authenticated role changes
     useEffect(() => {
