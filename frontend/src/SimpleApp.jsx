@@ -11888,8 +11888,8 @@ loadBalancer.distribute(traffic);`}
                             </div>
                             )}
                             
-                            {/* Application Tracking System - Security, HR, SuperAdmin */}
-                            {(userGroups.includes('security') || userRole === 'security' || userRole === 'hr' || userRole === 'superadmin') && isAdminView && (
+                            {/* Cleared Candidate Summary - Security and SuperAdmin only */}
+                            {(userRole === 'security' || userRole === 'superadmin') && isAdminView && (
                             <div className="hover-lift animate-scale-in" style={{
                                 background: 'white',
                                 padding: '2rem',
@@ -12333,7 +12333,7 @@ loadBalancer.distribute(traffic);`}
             )}
 
             {/* CLEARED CANDIDATE SUMMARY FORM */}
-            {currentPage === 'candidatesummary' && (
+            {currentPage === 'candidatesummary' && (userRole === 'security' || userRole === 'superadmin') && (
                 <section style={{ padding: '4rem 2rem', background: '#f1f5f9', minHeight: '100vh' }}>
                     <div style={{ maxWidth: '900px', margin: '0 auto' }}>
                         <div style={{ background: 'linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%)', padding: '1rem', borderRadius: '8px', marginBottom: '2rem', fontSize: '0.9rem', color: '#475569' }}>
