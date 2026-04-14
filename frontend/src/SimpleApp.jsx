@@ -11664,8 +11664,8 @@ loadBalancer.distribute(traffic);`}
                                 </button>
                             </div>
 
-                            {/* Compliance & Security - SuperAdmin only */}
-                            {userRole === 'superadmin' && (
+                            {/* Compliance & Security - SuperAdmin and Security only */}
+                            {(userRole === 'superadmin' || userRole === 'security') && (
                             <div className="hover-lift animate-scale-in" style={{
                                 background: 'white',
                                 padding: '2rem',
@@ -11907,7 +11907,7 @@ loadBalancer.distribute(traffic);`}
                                         opacity: canUploadDoc ? 1 : 0.6
                                     }}>
                                     <option value="HR-Documents">📁 HR Documents</option>
-                                    {userRole === 'superadmin' && (
+                                    {(userRole === 'superadmin' || userRole === 'security') && (
                                         <option value="Compliance-Security">🔒 Compliance & Security</option>
                                     )}
                                     <option value="Shared-Resources">📂 Shared Resources</option>
@@ -11989,7 +11989,7 @@ loadBalancer.distribute(traffic);`}
             )}
 
             {/* COMPLIANCE & SECURITY PAGE */}
-            {currentPage === 'compliancesecurity' && userRole === 'superadmin' && (
+            {currentPage === 'compliancesecurity' && (userRole === 'superadmin' || userRole === 'security') && (
                 <section style={{ padding: '4rem 2rem', background: '#f1f5f9', minHeight: '100vh' }}>
                     <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
                         <div style={{
