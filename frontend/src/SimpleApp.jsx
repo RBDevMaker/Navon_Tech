@@ -243,7 +243,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     
     // Fetch resumes when on resumes page or referral tracking pages
     useEffect(() => {
-        if ((currentPage === 'resumes' || currentPage === 'referraltracking' || currentPage === 'myreferralstatus') && (userGroups.includes('security') || userRole === 'hr' || userRole === 'superadmin' || currentPage === 'myreferralstatus')) {
+        if ((currentPage === 'resumes' || currentPage === 'referraltracking' || currentPage === 'myreferralstatus') && (userGroups.includes('security') || userRole === 'security' || userRole === 'hr' || userRole === 'superadmin' || currentPage === 'myreferralstatus')) {
             fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
         }
     }, [currentPage, userRole]);
@@ -11948,7 +11948,7 @@ loadBalancer.distribute(traffic);`}
                                         <option value="Compliance-Security">🔒 Compliance & Security</option>
                                     )}
                                     <option value="Shared-Resources">📂 Shared Resources</option>
-                                    {(userGroups.includes('security') || userRole === 'security' || userRole === 'superadmin') && (
+                                    {(userGroups.includes('security') || userRole === 'security' || userRole === 'superadmin' || loginEmail?.toLowerCase() === 'veronica.hill@navontech.com') && (
                                         <option value="Resumes">📄 Resumes</option>
                                     )}
                                 </select>
@@ -12216,7 +12216,7 @@ loadBalancer.distribute(traffic);`}
             )}
 
             {/* APPLICATION TRACKING SYSTEM */}
-            {currentPage === 'resumes' && (userGroups.includes('security') || userRole === 'hr' || userRole === 'superadmin') && (
+            {currentPage === 'resumes' && (userGroups.includes('security') || userRole === 'security' || userRole === 'hr' || userRole === 'superadmin') && (
                 <section style={{ 
                     padding: 'clamp(1rem, 3vw, 4rem) clamp(0.5rem, 2vw, 2rem)', 
                     background: '#f1f5f9',
