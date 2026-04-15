@@ -361,6 +361,33 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 ...data,
                                 employeeId: data.employeeId || data.email
                             }));
+                            
+                            // Auto-link profile picture from S3 if not set
+                            if (!data.profilePicture && data.name) {
+                                const nameParts = data.name.split(' ');
+                                const possibleNames = [
+                                    nameParts.join('_'),
+                                    `${nameParts[0]}_${nameParts[nameParts.length - 1]}`
+                                ];
+                                for (const tryName of possibleNames) {
+                                    for (const ext of ['png', 'jpg', 'jpeg']) {
+                                        const photoUrl = `${s3BaseUrl}/Employee-Photos/${tryName}.${ext}`;
+                                        try {
+                                            const imgCheck = await fetch(photoUrl, { method: 'HEAD' });
+                                            if (imgCheck.ok) {
+                                                await fetch(`${apiUrl}/profiles/${loginEmail}`, {
+                                                    method: 'PUT',
+                                                    headers: { 'Content-Type': 'application/json' },
+                                                    body: JSON.stringify({ profilePicture: photoUrl })
+                                                });
+                                                setProfileData(prev => ({ ...prev, profilePicture: photoUrl }));
+                                                console.log('Auto-linked profile picture:', photoUrl);
+                                                return;
+                                            }
+                                        } catch (e) { /* photo not found, try next */ }
+                                    }
+                                }
+                            }
                         }
                     }
                 } catch (err) {
@@ -607,7 +634,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 businessLegalName: profile.businessLegalName || '',
                 dbaName: profile.dbaName || '',
                 usPersonOrCompany: profile.usPersonOrCompany || '',
-                showInDirectory: profile.showInDirectory || false
+                showInDirectory: profile.showInDirectory || false,
+                showTitleInDirectory: profile.showTitleInDirectory || false
             }));
             
             setTeamMembers(formattedProfiles.sort((a, b) => {
@@ -7656,6 +7684,7 @@ loadBalancer.distribute(traffic);`}
                                     dietaryAllergy: profileData.dietaryAllergy || '',
                                     shirtSize: profileData.shirtSize || '',
                                     showInDirectory: profileData.showInDirectory || false,
+                                    showTitleInDirectory: profileData.showTitleInDirectory || false,
                                     employeeId: profileData.employeeId || profileData.email,
                                     startDate: normalizeDate(profileData.startDate),
                                     salary: profileData.salary || '',
@@ -8344,6 +8373,39 @@ loadBalancer.distribute(traffic);`}
                                             <div style={{ fontSize: '0.9rem', color: '#64748b', lineHeight: '1.5' }}>
                                                 When enabled, other employees can see your <strong>Name</strong> and <strong>Email</strong> in the team directory. 
                                                 All other information remains private. Leave unchecked to keep your profile completely private.
+                                            </div>
+                                        </div>
+                                    </label>
+                                    
+                                    {/* Show Title checkbox */}
+                                    <label style={{
+                                        display: 'flex',
+                                        alignItems: 'flex-start',
+                                        cursor: 'pointer',
+                                        fontSize: '1rem',
+                                        color: '#334155',
+                                        marginTop: '1rem'
+                                    }}>
+                                        <input
+                                            type="checkbox"
+                                            name="showTitleInDirectory"
+                                            checked={profileData.showTitleInDirectory || false}
+                                            onChange={(e) => setProfileData(prev => ({ ...prev, showTitleInDirectory: e.target.checked }))}
+                                            style={{
+                                                width: '20px',
+                                                height: '20px',
+                                                marginRight: '1rem',
+                                                marginTop: '0.25rem',
+                                                cursor: 'pointer',
+                                                accentColor: '#1e3a8a'
+                                            }}
+                                        />
+                                        <div>
+                                            <div style={{ fontWeight: '600', marginBottom: '0.5rem' }}>
+                                                Show Job Title in Directory
+                                            </div>
+                                            <div style={{ fontSize: '0.9rem', color: '#64748b', lineHeight: '1.5' }}>
+                                                When enabled, your <strong>Job Title</strong> will also be visible to other employees in the directory.
                                             </div>
                                         </div>
                                     </label>
@@ -10937,9 +10999,11 @@ loadBalancer.distribute(traffic);`}
                                                 </div>
                                                 <div>
                                                     <div style={{ fontWeight: '600', color: '#1e3a8a' }}>{member.name || member.email}</div>
-                                                    {isAdminView && userRole !== 'employee' && (
+                                                    {(isAdminView && userRole !== 'employee') ? (
                                                         <div style={{ color: '#64748b', fontSize: '0.9rem' }}>{member.title || 'Employee'}</div>
-                                                    )}
+                                                    ) : member.showTitleInDirectory && member.title ? (
+                                                        <div style={{ color: '#64748b', fontSize: '0.9rem' }}>{member.title}</div>
+                                                    ) : null}
                                                 </div>
                                             </div>
                                             {(userRole === 'hr' || userRole === 'admin' || userRole === 'security' || userRole === 'superadmin') && isAdminView && (
