@@ -12176,123 +12176,120 @@ loadBalancer.distribute(traffic);`}
                                 <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>⏳</div>
                                 <p style={{ color: '#475569', fontSize: '1.1rem' }}>Loading compliance files...</p>
                             </div>
-                        ) : complianceFiles.length === 0 ? (
-                            <div style={{ textAlign: 'center', padding: '3rem', background: 'white', borderRadius: '12px', border: '2px solid #e2e8f0' }}>
-                                <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📭</div>
-                                <h3 style={{ color: '#1e3a8a', marginBottom: '0.5rem' }}>No Files Yet</h3>
-                                <p style={{ color: '#64748b' }}>Upload compliance & security documents using the Upload Documents section on the Document Management page.</p>
-                            </div>
                         ) : (
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(350px, 100%), 1fr))', gap: '1.5rem' }}>
-                                {complianceFiles.filter(file => {
-                                    // Hide .docx if matching .pdf.html exists (show only the viewable version)
-                                    if (file.name.endsWith('.docx')) {
-                                        const pdfVersion = file.name.replace('.docx', '.pdf.html');
-                                        return !complianceFiles.some(f => f.name === pdfVersion);
-                                    }
-                                    return true;
-                                }).map((file) => {
-                                    const badge = getFileTypeBadge(file.name);
-                                    const modParts = file.lastModified ? String(file.lastModified).split('T')[0].split('-') : null;
-                                    const displayDate = modParts && modParts.length === 3
-                                        ? new Date(Number(modParts[0]), Number(modParts[1]) - 1, Number(modParts[2])).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
-                                        : '';
-                                    return (
-                                        <div key={file.id} className="hover-lift" style={{
-                                            background: 'white', padding: '1.5rem', borderRadius: '12px',
-                                            border: '2px solid #d4af37', boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-                                        }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
-                                                <span style={{
-                                                    background: badge.color, color: 'white', padding: '0.3rem 0.6rem',
-                                                    borderRadius: '4px', fontSize: '0.75rem', fontWeight: '600', marginRight: '0.75rem'
-                                                }}>{badge.label}</span>
-                                                <div style={{ flex: 1, minWidth: 0 }}>
-                                                    <h4 style={{ color: '#1e3a8a', margin: 0, fontSize: '1rem', fontWeight: '600', wordBreak: 'break-word' }}>
-                                                        {file.name}
-                                                    </h4>
-                                                    <p style={{ color: '#94a3b8', fontSize: '0.8rem', margin: '0.25rem 0 0 0' }}>
-                                                        {formatFileSize(file.size)}{displayDate ? ` • ${displayDate}` : ''}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                                                <button
-                                                    onClick={() => {
-                                                        if (file.name.endsWith('.pdf.html')) {
-                                                            window.open(file.url, '_blank');
-                                                        } else {
-                                                            handleViewDocument(file.name, { name: file.name, s3Url: file.url });
-                                                        }
-                                                    }}
-                                                    style={{
-                                                        background: '#1e3a8a', color: 'white', border: 'none',
-                                                        padding: '0.6rem 1rem', borderRadius: '6px', cursor: 'pointer',
-                                                        fontWeight: '600', fontSize: '0.85rem', flex: 1
+                            <>
+                            {/* Cleared Candidate Summaries Card */}
+                            {(() => {
+                                const summaries = complianceFiles.filter(f => f.name.includes('ClearedCandidateSummary') && f.name.endsWith('.pdf.html'));
+                                return summaries.length > 0 && (
+                                    <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', border: '2px solid #d4af37', marginBottom: '2rem' }}>
+                                        <h3 style={{ color: '#1e3a8a', marginBottom: '1.5rem', fontSize: '1.3rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                            📝 Cleared Candidate Summaries ({summaries.length})
+                                        </h3>
+                                        <div style={{ display: 'grid', gap: '1rem' }}>
+                                            {summaries.map(file => {
+                                                const candidateName = file.name.replace('ClearedCandidateSummary-', '').replace(/-\d+\.pdf\.html$/, '').replace(/_/g, ' ');
+                                                const modParts = file.lastModified ? String(file.lastModified).split('T')[0].split('-') : null;
+                                                const displayDate = modParts && modParts.length === 3
+                                                    ? new Date(Number(modParts[0]), Number(modParts[1]) - 1, Number(modParts[2])).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+                                                    : '';
+                                                return (
+                                                    <div key={file.id} style={{
+                                                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                                                        padding: '1rem', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0',
+                                                        flexWrap: 'wrap', gap: '0.75rem'
                                                     }}>
-                                                    👁️ View
-                                                </button>
-                                                {file.name.endsWith('.pdf.html') && (
-                                                    <button
-                                                        onClick={() => { const w = window.open(file.url, '_blank'); setTimeout(() => { try { w.print(); } catch(e) {} }, 1000); }}
-                                                        style={{
-                                                            background: '#dc2626', color: 'white', border: 'none',
-                                                            padding: '0.6rem 1rem', borderRadius: '6px', cursor: 'pointer',
-                                                            fontWeight: '600', fontSize: '0.85rem'
-                                                        }}>
-                                                        📕 PDF
-                                                    </button>
-                                                )}
-                                                {file.name.endsWith('.pdf.html') ? (
-                                                    <a href={file.url.replace('.pdf.html', '.docx')} download target="_blank" rel="noopener noreferrer"
-                                                        style={{
-                                                            background: '#2563eb', color: 'white', border: 'none',
-                                                            padding: '0.6rem 1rem', borderRadius: '6px', cursor: 'pointer',
-                                                            fontWeight: '600', fontSize: '0.85rem',
-                                                            textDecoration: 'none', textAlign: 'center'
-                                                        }}>
-                                                        📄 DOCX
-                                                    </a>
-                                                ) : (
-                                                    <a href={file.url} download={file.name} target="_blank" rel="noopener noreferrer"
-                                                        style={{
-                                                            background: '#d4af37', color: '#0f172a', border: 'none',
-                                                            padding: '0.6rem 1rem', borderRadius: '6px', cursor: 'pointer',
-                                                            fontWeight: '600', fontSize: '0.85rem',
-                                                            textDecoration: 'none', textAlign: 'center'
-                                                        }}>
-                                                        ⬇️ Download
-                                                    </a>
-                                                )}
-                                                <button
-                                                    onClick={async () => {
-                                                        if (!confirm(`🗑️ Delete "${file.name}"?\n\nThis cannot be undone.`)) return;
-                                                        try {
-                                                            await deleteFromS3(file.url);
-                                                            // Also delete the matching pair
-                                                            if (file.name.endsWith('.pdf.html')) {
-                                                                try { await deleteFromS3(file.url.replace('.pdf.html', '.docx')); } catch(e) {}
-                                                            } else if (file.name.endsWith('.docx')) {
-                                                                try { await deleteFromS3(file.url.replace('.docx', '.pdf.html')); } catch(e) {}
-                                                            }
-                                                            alert(`✅ "${file.name}" deleted.`);
-                                                            fetchComplianceFiles();
-                                                        } catch (err) {
-                                                            alert(`❌ Delete failed: ${err.message}`);
-                                                        }
-                                                    }}
-                                                    style={{
-                                                        background: '#ef4444', color: 'white', border: 'none',
-                                                        padding: '0.6rem 1rem', borderRadius: '6px', cursor: 'pointer',
-                                                        fontWeight: '600', fontSize: '0.85rem'
-                                                    }}>
-                                                    🗑️
-                                                </button>
-                                            </div>
+                                                        <div>
+                                                            <div style={{ fontWeight: '600', color: '#1e3a8a', fontSize: '1rem' }}>👤 {candidateName}</div>
+                                                            <div style={{ color: '#94a3b8', fontSize: '0.8rem' }}>{displayDate}{file.size ? ` • ${formatFileSize(file.size)}` : ''}</div>
+                                                        </div>
+                                                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                                            <button onClick={() => window.open(file.url, '_blank')}
+                                                                style={{ background: '#1e3a8a', color: 'white', border: 'none', padding: '0.5rem 0.75rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.8rem' }}>
+                                                                👁️ View
+                                                            </button>
+                                                            <a href={file.url.replace('.pdf.html', '.docx')} download target="_blank" rel="noopener noreferrer"
+                                                                style={{ background: '#2563eb', color: 'white', border: 'none', padding: '0.5rem 0.75rem', borderRadius: '6px', fontWeight: '600', fontSize: '0.8rem', textDecoration: 'none', textAlign: 'center' }}>
+                                                                ⬇️ Download as Word
+                                                            </a>
+                                                            <button onClick={async () => {
+                                                                if (!confirm(`🗑️ Delete summary for "${candidateName}"?`)) return;
+                                                                try {
+                                                                    await deleteFromS3(file.url);
+                                                                    try { await deleteFromS3(file.url.replace('.pdf.html', '.docx')); } catch(e) {}
+                                                                    alert('✅ Deleted.'); fetchComplianceFiles();
+                                                                } catch (err) { alert(`❌ ${err.message}`); }
+                                                            }} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '0.5rem 0.75rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.8rem' }}>
+                                                                🗑️
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
-                                    );
-                                })}
-                            </div>
+                                    </div>
+                                );
+                            })()}
+
+                            {/* Other Compliance Files */}
+                            {(() => {
+                                const otherFiles = complianceFiles.filter(f => !f.name.includes('ClearedCandidateSummary'));
+                                return otherFiles.length > 0 ? (
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(350px, 100%), 1fr))', gap: '1.5rem' }}>
+                                        {otherFiles.map((file) => {
+                                            const badge = getFileTypeBadge(file.name);
+                                            const modParts = file.lastModified ? String(file.lastModified).split('T')[0].split('-') : null;
+                                            const displayDate = modParts && modParts.length === 3
+                                                ? new Date(Number(modParts[0]), Number(modParts[1]) - 1, Number(modParts[2])).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+                                                : '';
+                                            return (
+                                                <div key={file.id} className="hover-lift" style={{
+                                                    background: 'white', padding: '1.5rem', borderRadius: '12px',
+                                                    border: '2px solid #d4af37', boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                                                }}>
+                                                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+                                                        <span style={{
+                                                            background: badge.color, color: 'white', padding: '0.3rem 0.6rem',
+                                                            borderRadius: '4px', fontSize: '0.75rem', fontWeight: '600', marginRight: '0.75rem'
+                                                        }}>{badge.label}</span>
+                                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                                            <h4 style={{ color: '#1e3a8a', margin: 0, fontSize: '1rem', fontWeight: '600', wordBreak: 'break-word' }}>
+                                                                {file.name}
+                                                            </h4>
+                                                            <p style={{ color: '#94a3b8', fontSize: '0.8rem', margin: '0.25rem 0 0 0' }}>
+                                                                {formatFileSize(file.size)}{displayDate ? ` • ${displayDate}` : ''}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                                        <button onClick={() => handleViewDocument(file.name, { name: file.name, s3Url: file.url })}
+                                                            style={{ background: '#1e3a8a', color: 'white', border: 'none', padding: '0.6rem 1rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem', flex: 1 }}>
+                                                            👁️ View
+                                                        </button>
+                                                        <a href={file.url} download={file.name} target="_blank" rel="noopener noreferrer"
+                                                            style={{ background: '#d4af37', color: '#0f172a', border: 'none', padding: '0.6rem 1rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem', flex: 1, textDecoration: 'none', textAlign: 'center' }}>
+                                                            ⬇️ Download
+                                                        </a>
+                                                        <button onClick={async () => {
+                                                            if (!confirm(`🗑️ Delete "${file.name}"?`)) return;
+                                                            try { await deleteFromS3(file.url); alert('✅ Deleted.'); fetchComplianceFiles(); } catch (err) { alert(`❌ ${err.message}`); }
+                                                        }} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '0.6rem 1rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem' }}>
+                                                            🗑️
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                ) : complianceFiles.filter(f => f.name.includes('ClearedCandidateSummary')).length === 0 && (
+                                    <div style={{ textAlign: 'center', padding: '3rem', background: 'white', borderRadius: '12px', border: '2px solid #e2e8f0' }}>
+                                        <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📭</div>
+                                        <h3 style={{ color: '#1e3a8a', marginBottom: '0.5rem' }}>No Files Yet</h3>
+                                        <p style={{ color: '#64748b' }}>Upload compliance & security documents using the Upload Documents section on the Document Management page.</p>
+                                    </div>
+                                );
+                            })()}
+                            </>
                         )}
                     </div>
                 </section>
@@ -15240,11 +15237,15 @@ loadBalancer.distribute(traffic);`}
                                             try {
                                                 const token = session.tokens?.idToken?.toString();
                                                 const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                                                let loginReason = '';
+                                                if (email.toLowerCase().includes('root')) {
+                                                    loginReason = prompt('🔐 Root Account Login\n\nPlease provide a reason for this login:') || 'No reason provided';
+                                                }
                                                 if (token) {
                                                     fetch(`${apiUrl}/audit-logs`, {
                                                         method: 'POST',
                                                         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                                                        body: JSON.stringify({ eventType: 'FIRST_LOGIN', action: 'User completed first login and set new password', userEmail: email })
+                                                        body: JSON.stringify({ eventType: 'FIRST_LOGIN', action: loginReason ? `User completed first login — Reason: ${loginReason}` : 'User completed first login and set new password', userEmail: email, metadata: loginReason ? { loginReason } : {} })
                                                     });
                                                 }
                                             } catch (logErr) { console.log('Audit log failed:', logErr); }
@@ -15447,11 +15448,15 @@ loadBalancer.distribute(traffic);`}
                                     try {
                                         const token = session.tokens?.idToken?.toString();
                                         const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                                        let loginReason = '';
+                                        if (email.toLowerCase().includes('root')) {
+                                            loginReason = prompt('🔐 Root Account Login\n\nPlease provide a reason for this login:') || 'No reason provided';
+                                        }
                                         if (token) {
                                             fetch(`${apiUrl}/audit-logs`, {
                                                 method: 'POST',
                                                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                                                body: JSON.stringify({ eventType: 'LOGIN', action: 'User logged in', userEmail: email })
+                                                body: JSON.stringify({ eventType: 'LOGIN', action: loginReason ? `User logged in — Reason: ${loginReason}` : 'User logged in', userEmail: email, metadata: loginReason ? { loginReason } : {} })
                                             });
                                         }
                                     } catch (logErr) { console.log('Audit log failed:', logErr); }
