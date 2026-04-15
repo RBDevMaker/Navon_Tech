@@ -13744,15 +13744,20 @@ loadBalancer.distribute(traffic);`}
                             )}
 
                             {/* View Bonus Eligibility */}
+                            {(() => {
+                                const isRachelle = loginEmail?.toLowerCase() === 'rachelle.briscoe@navontech.com' || loginEmail?.toLowerCase() === 'rachelleroot@navontech.com';
+                                return (
                             <div className="hover-lift animate-scale-in" style={{
-                                background: 'white',
+                                background: isRachelle ? '#f1f5f9' : 'white',
                                 padding: '2rem',
                                 borderRadius: '12px',
-                                border: '2px solid #d4af37',
+                                border: isRachelle ? '2px solid #94a3b8' : '2px solid #d4af37',
                                 boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
                                 animationDelay: '0.2s',
                                 display: 'flex',
-                                flexDirection: 'column'
+                                flexDirection: 'column',
+                                opacity: isRachelle ? 0.5 : 1,
+                                pointerEvents: isRachelle ? 'none' : 'auto'
                             }}>
                                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
                                     <div style={{
@@ -13809,6 +13814,8 @@ loadBalancer.distribute(traffic);`}
                                     Check Bonus Status
                                 </button>
                             </div>
+                            );
+                            })()}
                         </div>
 
                         {/* Program Information */}
