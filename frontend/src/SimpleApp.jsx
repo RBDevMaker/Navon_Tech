@@ -12701,7 +12701,25 @@ loadBalancer.distribute(traffic);`}
                                     })
                                 });
 
-                                alert(`✅ Cleared Candidate Summary for ${candidateName} saved to Compliance & Security.`);
+                                // Send notification email to security
+                                try {
+                                    await fetch(`${apiUrl}/apply`, {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                            type: 'candidate-summary-notification',
+                                            candidateName: candidateName,
+                                            clearanceLevel: g('clearanceLevel'),
+                                            recruiter: g('recruiter'),
+                                            conversationDate: g('conversationDate'),
+                                            notifyEmail: 'security@navontech.com'
+                                        })
+                                    });
+                                } catch (notifyErr) {
+                                    console.error('Notification failed:', notifyErr);
+                                }
+
+                                alert(`✅ Cleared Candidate Summary for ${candidateName} saved to Compliance & Security. Notification sent to Security.`);
                                 setCurrentPage('compliancesecurity');
                                 window.scrollTo({ top: 0, behavior: 'smooth' });
                                 fetchComplianceFiles();

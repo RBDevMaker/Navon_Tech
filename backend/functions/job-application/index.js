@@ -102,6 +102,53 @@ exports.handler = async (event) => {
         // Parse the multipart form data
         const body = JSON.parse(event.body);
 
+        // Handle Cleared Candidate Summary notification
+        if (body.type === 'candidate-summary-notification') {
+            const { candidateName, clearanceLevel, recruiter, conversationDate, notifyEmail } = body;
+            
+            const subject = `📝 Cleared Candidate Summary for Review — ${candidateName}`;
+            const htmlBody = `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+                <div style="background:linear-gradient(135deg,#1e3a8a,#3b82f6);padding:30px;text-align:center;border-radius:12px 12px 0 0;">
+                    <h1 style="color:#d4af37;margin:0;font-size:24px;">NAVON TECHNOLOGIES</h1>
+                    <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:13px;letter-spacing:2px;">CLEARED CANDIDATE SUMMARY FOR REVIEW</p>
+                </div>
+                <div style="background:#d4af37;height:4px;"></div>
+                <div style="padding:30px;background:white;border:1px solid #e2e8f0;">
+                    <h2 style="color:#1e3a8a;margin:0 0 16px;">📝 New Cleared Candidate Summary</h2>
+                    <p style="color:#334155;font-size:15px;line-height:1.6;margin:0 0 20px;">A new Cleared Candidate Summary has been submitted and is ready for your review in the Compliance & Security section of the Employee Portal.</p>
+                    <div style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:8px;padding:20px;margin-bottom:20px;">
+                        <p style="margin:4px 0;font-size:14px;"><strong>Candidate Name:</strong> ${candidateName}</p>
+                        <p style="margin:4px 0;font-size:14px;"><strong>Clearance Level:</strong> ${clearanceLevel || 'Not specified'}</p>
+                        <p style="margin:4px 0;font-size:14px;"><strong>Recruiter:</strong> ${recruiter || 'Not specified'}</p>
+                        <p style="margin:4px 0;font-size:14px;"><strong>Date of Conversation:</strong> ${conversationDate || 'Not specified'}</p>
+                    </div>
+                    <div style="text-align:center;margin-bottom:20px;">
+                        <a href="https://navontech.com/#login" style="display:inline-block;background:linear-gradient(135deg,#1e3a8a,#3b82f6);color:white;text-decoration:none;padding:12px 30px;border-radius:8px;font-size:15px;font-weight:700;">Review in Portal →</a>
+                    </div>
+                    <p style="color:#64748b;font-size:13px;">Navigate to Compliance & Security to view, download, or print the full summary.</p>
+                </div>
+                <div style="background:#1e293b;padding:20px;text-align:center;border-radius:0 0 12px 12px;">
+                    <p style="color:#d4af37;font-size:12px;margin:0;font-weight:600;">NAVON TECHNOLOGIES</p>
+                    <p style="color:#94a3b8;font-size:11px;margin:4px 0 0;">Leesburg, Virginia | navontech.com</p>
+                </div>
+            </div>`;
+
+            await sesClient.send(new SendEmailCommand({
+                Source: 'hr@navontech.com',
+                Destination: { ToAddresses: [notifyEmail] },
+                Message: {
+                    Subject: { Data: subject, Charset: 'UTF-8' },
+                    Body: { Html: { Data: htmlBody, Charset: 'UTF-8' } }
+                }
+            }));
+
+            return {
+                statusCode: 200,
+                headers: CORS_HEADERS,
+                body: JSON.stringify({ message: 'Candidate summary notification sent successfully' })
+            };
+        }
+
         // Handle referral notifications
         if (body.type === 'referral-stage-notification' || body.type === 'referral-bonus-notification') {
             const { candidateName, position, referredBy, notifyEmail, oldStage, newStage, milestone, action, hiredDate } = body;
