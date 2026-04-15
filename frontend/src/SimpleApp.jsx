@@ -1114,6 +1114,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             } else if (extension === 'pdf') {
                 // Handle PDF files - open S3 URL directly
                 showDocumentWindow(fileName, s3Url, 'pdf', s3Url);
+            } else if (['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg'].includes(extension)) {
+                // Handle image files - display inline
+                showDocumentWindow(fileName, s3Url, 'image', s3Url);
             } else if (extension === 'docx' || extension === 'doc') {
                 // Handle Word documents - show download option
                 showDocumentWindow(fileName, null, 'word', s3Url);
@@ -1196,6 +1199,23 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                     </div>
                     <div class="actions">
                         <a href="${downloadUrl}" download="${fileName}" class="download-btn">📥 Download PDF</a>
+                        <button onclick="window.print()" class="download-btn print-btn">🖨️ Print</button>
+                    </div>
+                </div>
+            `;
+        } else if (type === 'image' && content) {
+            bodyContent = `
+                <div class="content">
+                    <h2>🖼️ ${fileName}</h2>
+                    <div class="file-info">
+                        <span class="badge" style="background:#7c3aed;color:white">IMAGE</span>
+                        <span>Image preview</span>
+                    </div>
+                    <div style="text-align:center;padding:20px;">
+                        <img src="${content}" alt="${fileName}" style="max-width:100%;max-height:600px;border-radius:8px;border:1px solid #e2e8f0;box-shadow:0 4px 12px rgba(0,0,0,0.1);" />
+                    </div>
+                    <div class="actions">
+                        <a href="${downloadUrl}" download="${fileName}" class="download-btn">📥 Download Image</a>
                         <button onclick="window.print()" class="download-btn print-btn">🖨️ Print</button>
                     </div>
                 </div>
@@ -12268,7 +12288,12 @@ loadBalancer.distribute(traffic);`}
                             {/* Other Compliance Files */}
                             {(() => {
                                 const otherFiles = complianceFiles.filter(f => !f.name.includes('ClearedCandidateSummary'));
-                                return otherFiles.length > 0 ? (
+                                return (
+                                    <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', border: '2px solid #d4af37' }}>
+                                        <h3 style={{ color: '#1e3a8a', marginBottom: '1.5rem', fontSize: '1.3rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                            📁 Compliance Documents ({otherFiles.length})
+                                        </h3>
+                                        {otherFiles.length > 0 ? (
                                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(350px, 100%), 1fr))', gap: '1.5rem' }}>
                                         {otherFiles.map((file) => {
                                             const badge = getFileTypeBadge(file.name);
@@ -12315,11 +12340,12 @@ loadBalancer.distribute(traffic);`}
                                             );
                                         })}
                                     </div>
-                                ) : complianceFiles.filter(f => f.name.includes('ClearedCandidateSummary')).length === 0 && (
-                                    <div style={{ textAlign: 'center', padding: '3rem', background: 'white', borderRadius: '12px', border: '2px solid #e2e8f0' }}>
-                                        <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📭</div>
-                                        <h3 style={{ color: '#1e3a8a', marginBottom: '0.5rem' }}>No Files Yet</h3>
-                                        <p style={{ color: '#64748b' }}>Upload compliance & security documents using the Upload Documents section on the Document Management page.</p>
+                                ) : (
+                                    <div style={{ textAlign: 'center', padding: '2rem', color: '#94a3b8' }}>
+                                        <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📭</div>
+                                        <p>No compliance documents uploaded yet. Use the Upload Documents section to add files.</p>
+                                    </div>
+                                )}
                                     </div>
                                 );
                             })()}
@@ -12414,6 +12440,16 @@ loadBalancer.distribute(traffic);`}
                                                     }}>
                                                     ⬇️ Download
                                                 </a>
+                                                {userRole !== 'employee' && (
+                                                <button
+                                                    onClick={async () => {
+                                                        if (!confirm(`🗑️ Delete "${file.name}"?`)) return;
+                                                        try { await deleteFromS3(file.url); alert('✅ Deleted.'); fetchSharedResourceFiles(); } catch (err) { alert(`❌ ${err.message}`); }
+                                                    }}
+                                                    style={{ background: '#ef4444', color: 'white', border: 'none', padding: '0.6rem 1rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem' }}>
+                                                    🗑️
+                                                </button>
+                                                )}
                                             </div>
                                         </div>
                                     );
