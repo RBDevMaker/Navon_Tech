@@ -6000,32 +6000,6 @@ loadBalancer.distribute(traffic);`}
                     minHeight: '100vh',
                     position: 'relative'
                 }}>
-                    <button
-                        onClick={async () => {
-                            try {
-                                await signOut();
-                                window.location.hash = 'home';
-                                window.location.reload();
-                            } catch (err) {
-                                console.error('Sign out error:', err);
-                            }
-                        }}
-                        style={{
-                            position: 'absolute',
-                            top: '1.5rem',
-                            right: '1.5rem',
-                            background: '#ef4444',
-                            color: 'white',
-                            border: 'none',
-                            padding: '0.5rem 1.25rem',
-                            borderRadius: '8px',
-                            cursor: 'pointer',
-                            fontWeight: '600',
-                            fontSize: '0.85rem',
-                            zIndex: 10
-                        }}>
-                        Logout
-                    </button>
                     <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
                         <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
                             <h2 style={{
