@@ -12184,7 +12184,14 @@ loadBalancer.distribute(traffic);`}
                             </div>
                         ) : (
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(350px, 100%), 1fr))', gap: '1.5rem' }}>
-                                {complianceFiles.map((file) => {
+                                {complianceFiles.filter(file => {
+                                    // Hide .docx if matching .pdf.html exists (show only the viewable version)
+                                    if (file.name.endsWith('.docx')) {
+                                        const pdfVersion = file.name.replace('.docx', '.pdf.html');
+                                        return !complianceFiles.some(f => f.name === pdfVersion);
+                                    }
+                                    return true;
+                                }).map((file) => {
                                     const badge = getFileTypeBadge(file.name);
                                     const modParts = file.lastModified ? String(file.lastModified).split('T')[0].split('-') : null;
                                     const displayDate = modParts && modParts.length === 3
@@ -12209,9 +12216,15 @@ loadBalancer.distribute(traffic);`}
                                                     </p>
                                                 </div>
                                             </div>
-                                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                                                 <button
-                                                    onClick={() => handleViewDocument(file.name, { name: file.name, s3Url: file.url })}
+                                                    onClick={() => {
+                                                        if (file.name.endsWith('.pdf.html')) {
+                                                            window.open(file.url, '_blank');
+                                                        } else {
+                                                            handleViewDocument(file.name, { name: file.name, s3Url: file.url });
+                                                        }
+                                                    }}
                                                     style={{
                                                         background: '#1e3a8a', color: 'white', border: 'none',
                                                         padding: '0.6rem 1rem', borderRadius: '6px', cursor: 'pointer',
@@ -12219,20 +12232,49 @@ loadBalancer.distribute(traffic);`}
                                                     }}>
                                                     👁️ View
                                                 </button>
-                                                <a href={file.url} download={file.name} target="_blank" rel="noopener noreferrer"
-                                                    style={{
-                                                        background: '#d4af37', color: '#0f172a', border: 'none',
-                                                        padding: '0.6rem 1rem', borderRadius: '6px', cursor: 'pointer',
-                                                        fontWeight: '600', fontSize: '0.85rem', flex: 1,
-                                                        textDecoration: 'none', textAlign: 'center', display: 'inline-block'
-                                                    }}>
-                                                    ⬇️ Download
-                                                </a>
+                                                {file.name.endsWith('.pdf.html') && (
+                                                    <button
+                                                        onClick={() => { const w = window.open(file.url, '_blank'); setTimeout(() => { try { w.print(); } catch(e) {} }, 1000); }}
+                                                        style={{
+                                                            background: '#dc2626', color: 'white', border: 'none',
+                                                            padding: '0.6rem 1rem', borderRadius: '6px', cursor: 'pointer',
+                                                            fontWeight: '600', fontSize: '0.85rem'
+                                                        }}>
+                                                        📕 PDF
+                                                    </button>
+                                                )}
+                                                {file.name.endsWith('.pdf.html') ? (
+                                                    <a href={file.url.replace('.pdf.html', '.docx')} download target="_blank" rel="noopener noreferrer"
+                                                        style={{
+                                                            background: '#2563eb', color: 'white', border: 'none',
+                                                            padding: '0.6rem 1rem', borderRadius: '6px', cursor: 'pointer',
+                                                            fontWeight: '600', fontSize: '0.85rem',
+                                                            textDecoration: 'none', textAlign: 'center'
+                                                        }}>
+                                                        📄 DOCX
+                                                    </a>
+                                                ) : (
+                                                    <a href={file.url} download={file.name} target="_blank" rel="noopener noreferrer"
+                                                        style={{
+                                                            background: '#d4af37', color: '#0f172a', border: 'none',
+                                                            padding: '0.6rem 1rem', borderRadius: '6px', cursor: 'pointer',
+                                                            fontWeight: '600', fontSize: '0.85rem',
+                                                            textDecoration: 'none', textAlign: 'center'
+                                                        }}>
+                                                        ⬇️ Download
+                                                    </a>
+                                                )}
                                                 <button
                                                     onClick={async () => {
                                                         if (!confirm(`🗑️ Delete "${file.name}"?\n\nThis cannot be undone.`)) return;
                                                         try {
                                                             await deleteFromS3(file.url);
+                                                            // Also delete the matching pair
+                                                            if (file.name.endsWith('.pdf.html')) {
+                                                                try { await deleteFromS3(file.url.replace('.pdf.html', '.docx')); } catch(e) {}
+                                                            } else if (file.name.endsWith('.docx')) {
+                                                                try { await deleteFromS3(file.url.replace('.docx', '.pdf.html')); } catch(e) {}
+                                                            }
                                                             alert(`✅ "${file.name}" deleted.`);
                                                             fetchComplianceFiles();
                                                         } catch (err) {
@@ -12468,6 +12510,7 @@ loadBalancer.distribute(traffic);`}
                                             new Paragraph({ children: [new TextRun({ text: `${g('referralSource') === 'LinkedIn' ? '☑' : '☐'} LinkedIn`, size: 22 })], spacing: { after: 60 } }),
                                             new Paragraph({ children: [new TextRun({ text: `${g('referralSource') === 'Google' ? '☑' : '☐'} Google`, size: 22 })], spacing: { after: 60 } }),
                                             new Paragraph({ children: [new TextRun({ text: `${g('referralSource') === 'Job Board (Indeed, ZipRecruiter)' ? '☑' : '☐'} Job Board (Indeed, ZipRecruiter, etc)`, size: 22 })], spacing: { after: 60 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `${g('referralSource') === 'Cleared Jobs' ? '☑' : '☐'} Cleared Jobs`, size: 22 })], spacing: { after: 60 } }),
                                             new Paragraph({ children: [new TextRun({ text: `${g('referralSource') === 'Other' ? '☑' : '☐'} Other: ${g('referralDetails') || '___'}`, size: 22 })], spacing: { after: 200 } }),
 
                                             new Paragraph({ children: [new TextRun({ text: '_______________________________________________', color: '1e3a8a' })], alignment: AlignmentType.CENTER, spacing: { before: 300 } }),
@@ -12503,7 +12546,47 @@ loadBalancer.distribute(traffic);`}
                                 });
 
                                 // Upload only — no auto download
+                                // Also generate and upload PDF version
+                                const pdfHtml = `<html><head><style>body{font-family:Arial,sans-serif;max-width:700px;margin:0 auto;padding:30px}h1{color:#1e3a8a;text-align:center;font-size:22px}h2{color:#1e3a8a;font-size:16px;border-bottom:2px solid #d4af37;padding-bottom:4px;margin-top:20px}p{margin:4px 0;font-size:13px}.footer{text-align:center;margin-top:30px;border-top:1px solid #1e3a8a;padding-top:10px;font-size:11px;color:#666}</style></head><body>
+                                <h1>NAVON TECHNOLOGIES<br><em>Cleared Candidate Summary</em></h1>
+                                <p><strong>Candidate:</strong> ${g('candidateName')} | <strong>Date:</strong> ${g('conversationDate')} | <strong>Recruiter:</strong> ${g('recruiter')}</p>
+                                <h2>1. Clearance Info</h2><p>Level: ${g('clearanceLevel')} | Upgrade: ${g('upgradeWillingness')} | Last Investigation: ${g('lastInvestigation')}</p>
+                                <h2>2. Location & Mobility</h2><p>Location: ${g('currentLocation')} | Relocate: ${g('relocateWillingness')} | Timeline: ${g('relocationTimeline')}</p>
+                                <h2>3. Compensation</h2><p>Current: ${g('currentComp')} | Target: ${g('targetComp')} | Notes: ${g('compNotes')}</p>
+                                <h2>4. Benefits</h2><p>Coverage: ${g('benefitsCoverage')} | Notes: ${g('benefitsNotes')}</p>
+                                <h2>5. Experience</h2><p>Ticketing: ${g('ticketingSystems')} | Hardware: ${g('hardwareExp')} | Software: ${g('softwareExp')}</p><p>Languages: ${g('programmingLangs')} | End-User: ${g('endUserSupport')} | Troubleshooting: ${g('troubleshooting')}</p>
+                                <h2>6. Role Preferences</h2><p>Functions: ${g('preferredFunctions')} | Environments: ${g('preferredEnvironments')}</p><p>Locations: ${['Chantilly','McLean','Tysons','Herndon','Reston','Springfield','Other_NOVA','Ft._Meade','Laurel','Bethesda','Other_MD','DC'].filter(l => fd.get('loc_' + l) === 'on').map(l => l.replace(/_/g,' ')).join(', ')}${g('preferredLocations') ? ' | ' + g('preferredLocations') : ''}</p>
+                                <h2>7. Certifications</h2><p>Current: ${g('currentCerts')} | Expiry: ${g('certExpiry')} | Planned: ${g('plannedCerts')}</p>
+                                <h2>8. Job Search</h2><p>Interviews: ${g('activeInterviews')} | Details: ${g('interviewDetails')} | Offers: ${g('offersReceived')} | Urgency: ${g('searchUrgency')}</p>
+                                <h2>9. Availability</h2><p>Follow-up: ${g('followupAvailability')} | Start: ${g('earliestStart')}</p>
+                                <h2>10. Notes</h2><p>Strengths: ${g('strengths')}</p><p>Concerns: ${g('concerns')}</p><p>Additional: ${g('additionalInfo')}</p>
+                                <h2>11. Notice</h2><p>${g('noticePeriod')}${g('noticePeriodLength') ? ' — ' + g('noticePeriodLength') : ''}</p>
+                                <h2>12. Resume Format</h2><p>${g('resumeFormat')}</p>
+                                <h2>13. Employment</h2><p>${g('employmentType')} | Notes: ${g('extraNotes')}</p>
+                                <h2>14. Schedule</h2><p>${g('schedulePreference')}</p>
+                                <h2>15. Travel</h2><p>${g('travelCapability')}${g('travelLimits') ? ' — ' + g('travelLimits') : ''}</p>
+                                <h2>16. Referral</h2><p>${g('referralSource')}${g('referralDetails') ? ' — ' + g('referralDetails') : ''}</p>
+                                <div class="footer">Navon Technologies LLC | 161 Fort Evans Rd NE, Suite 210, Leesburg, VA 20176 | (571) 477-2727</div>
+                                </body></html>`;
+
+                                const pdfFileName = fileName.replace('.docx', '.pdf.html');
+                                const pdfBase64 = btoa(unescape(encodeURIComponent(pdfHtml)));
+                                await fetch(`${apiUrl}/upload-to-s3`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        action: 'upload',
+                                        fileName: pdfFileName,
+                                        folder: 'Documents/Compliance-Security',
+                                        fileContent: pdfBase64,
+                                        contentType: 'text/html'
+                                    })
+                                });
+
                                 alert(`✅ Cleared Candidate Summary for ${candidateName} saved to Compliance & Security.`);
+                                setCurrentPage('compliancesecurity');
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                                fetchComplianceFiles();
                             } catch (err) {
                                 console.error('Error generating document:', err);
                                 alert(`❌ Error: ${err.message}`);
@@ -12690,7 +12773,7 @@ loadBalancer.distribute(traffic);`}
                                     <div style={sectionStyle}>
                                         <h3 style={headingStyle}>16. Referral Source</h3>
                                         <div style={rowStyle}>
-                                            <div><select name="referralSource" style={inputStyle}><option value="">Select...</option><option>Referral</option><option>LinkedIn</option><option>Google</option><option>Job Board (Indeed, ZipRecruiter)</option><option>Other</option></select></div>
+                                            <div><select name="referralSource" style={inputStyle}><option value="">Select...</option><option>Referral</option><option>LinkedIn</option><option>Google</option><option>Job Board (Indeed, ZipRecruiter)</option><option>Cleared Jobs</option><option>Other</option></select></div>
                                             <div><label style={labelStyle}>Name / Details</label><input name="referralDetails" style={inputStyle} /></div>
                                         </div>
                                     </div>
