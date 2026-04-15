@@ -11568,7 +11568,7 @@ loadBalancer.distribute(traffic);`}
                                 ];
                                 const visible = (isVeronica || isBrian || isRoot) ? timecards : timecards.filter(t => t.name === prime);
                                 // Always add Rippling for all users
-                                visible.push({ name: 'Rippling', url: 'https://app.rippling.com/time-products/dashboard/my-time/timeclock', logo: 'rippling_logo.jpeg', logoPath: 'images/partners', icon: '👥', color: '#10b981' });
+                                visible.push({ name: 'Rippling', url: 'https://app.rippling.com/time-products/dashboard/my-time/timecards', logo: 'rippling_logo.jpeg', logoPath: 'images/partners', icon: '👥', color: '#10b981' });
                                 if (visible.length === 0) return <p style={{ color: '#64748b', textAlign: 'center', gridColumn: '1 / -1' }}>No timecard assigned. Contact HR if you believe this is an error.</p>;
                                 return visible.map(tc => (
                                     <a key={tc.name} href={tc.url} target="_blank" rel="noopener noreferrer" className="hover-lift" style={{
