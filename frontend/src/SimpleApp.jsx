@@ -17613,6 +17613,37 @@ Please review and approve this request.
                     </div>
                 </div>
             )}
+
+            {/* Floating Logout Button - shows on all portal pages when logged in */}
+            {loginEmail && !['home','about','solutions','careers','partners','contact'].includes(currentPage) && currentPage !== 'login' && (
+                <button
+                    onClick={async () => {
+                        try {
+                            await signOut();
+                            window.location.hash = 'home';
+                            window.location.reload();
+                        } catch (err) {
+                            console.error('Sign out error:', err);
+                        }
+                    }}
+                    style={{
+                        position: 'fixed',
+                        bottom: '1.5rem',
+                        right: '1.5rem',
+                        background: '#ef4444',
+                        color: 'white',
+                        border: 'none',
+                        padding: '0.75rem 1.25rem',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        fontWeight: '600',
+                        fontSize: '0.9rem',
+                        zIndex: 9999,
+                        boxShadow: '0 4px 12px rgba(239, 68, 68, 0.4)'
+                    }}>
+                    🔒 Logout
+                </button>
+            )}
         </div>
     );
 }
