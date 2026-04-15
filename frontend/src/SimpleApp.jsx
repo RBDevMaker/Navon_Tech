@@ -12395,12 +12395,17 @@ loadBalancer.distribute(traffic);`}
                                             new Paragraph({ children: [new TextRun({ text: '6. Role Preferences', bold: true, size: 24, color: '1e3a8a' })], spacing: { before: 200, after: 100 } }),
                                             new Paragraph({ children: [new TextRun({ text: `Preferred IT Functions: ${g('preferredFunctions')}`, size: 22 })], spacing: { after: 80 } }),
                                             new Paragraph({ children: [new TextRun({ text: `Preferred Work Environments: ${g('preferredEnvironments')}`, size: 22 })], spacing: { after: 80 } }),
-                                            new Paragraph({ children: [new TextRun({ text: `Preferred Work Locations: ${g('preferredLocations')}`, size: 22 })], spacing: { after: 200 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Preferred Work Locations: ${
+                                                ['Chantilly','McLean','Tysons','Herndon','Reston','Springfield','Other_NOVA','Ft._Meade','Laurel','Bethesda','Other_MD','DC']
+                                                .filter(l => fd.get('loc_' + l) === 'on')
+                                                .map(l => l.replace(/_/g, ' '))
+                                                .join(', ')
+                                            }${g('preferredLocations') ? ' | ' + g('preferredLocations') : ''}`, size: 22 })], spacing: { after: 200 } }),
 
                                             new Paragraph({ children: [new TextRun({ text: '7. Certifications', bold: true, size: 24, color: '1e3a8a' })], spacing: { before: 200, after: 100 } }),
                                             new Paragraph({ children: [new TextRun({ text: `Current Certifications: ${g('currentCerts')}`, size: 22 })], spacing: { after: 80 } }),
                                             new Paragraph({ children: [new TextRun({ text: `Expiration/Renewal: ${g('certExpiry')}`, size: 22 })], spacing: { after: 80 } }),
-                                            new Paragraph({ children: [new TextRun({ text: `Planned Certifications: ${g('plannedCerts')}`, size: 22 })], spacing: { after: 200 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Planned Certifications or Training: ${g('plannedCerts')}`, size: 22 })], spacing: { after: 200 } }),
 
                                             new Paragraph({ children: [new TextRun({ text: '8. Current Job Search Status', bold: true, size: 24, color: '1e3a8a' })], spacing: { before: 200, after: 100 } }),
                                             new Paragraph({ children: [new TextRun({ text: `Active Interviews: ${g('activeInterviews') || 'N/A'}`, size: 22 })], spacing: { after: 80 } }),
@@ -12417,16 +12422,34 @@ loadBalancer.distribute(traffic);`}
                                             new Paragraph({ children: [new TextRun({ text: `Concerns/Risks: ${g('concerns')}`, size: 22 })], spacing: { after: 80 } }),
                                             new Paragraph({ children: [new TextRun({ text: `Additional Info: ${g('additionalInfo')}`, size: 22 })], spacing: { after: 200 } }),
 
-                                            new Paragraph({ children: [new TextRun({ text: '11-16. Additional Details', bold: true, size: 24, color: '1e3a8a' })], spacing: { before: 200, after: 100 } }),
-                                            new Paragraph({ children: [new TextRun({ text: `Notice Period: ${g('noticePeriod') || 'N/A'}`, size: 22 })], spacing: { after: 80 } }),
-                                            new Paragraph({ children: [new TextRun({ text: `Resume Format: ${g('resumeFormat') || 'N/A'}`, size: 22 })], spacing: { after: 80 } }),
-                                            new Paragraph({ children: [new TextRun({ text: `Employment Type: ${g('employmentType') || 'N/A'}`, size: 22 })], spacing: { after: 80 } }),
-                                            new Paragraph({ children: [new TextRun({ text: `Schedule Preference: ${g('schedulePreference')}`, size: 22 })], spacing: { after: 80 } }),
-                                            new Paragraph({ children: [new TextRun({ text: `Travel Capability: ${g('travelCapability') || 'N/A'}`, size: 22 })], spacing: { after: 80 } }),
-                                            new Paragraph({ children: [new TextRun({ text: `Travel Limits: ${g('travelLimits')}`, size: 22 })], spacing: { after: 80 } }),
-                                            new Paragraph({ children: [new TextRun({ text: `Referral Source: ${g('referralSource') || 'N/A'}`, size: 22 })], spacing: { after: 80 } }),
-                                            new Paragraph({ children: [new TextRun({ text: `Referral Details: ${g('referralDetails')}`, size: 22 })], spacing: { after: 80 } }),
+                                            new Paragraph({ children: [new TextRun({ text: '11. Additional Candidate Information', bold: true, size: 24, color: '1e3a8a' })], spacing: { before: 200, after: 100 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `${g('noticePeriod') === 'Two weeks' ? '☑' : '☐'} Two weeks' notice`, size: 22 })], spacing: { after: 60 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `${g('noticePeriod') === 'No notice required' ? '☑' : '☐'} No notice required`, size: 22 })], spacing: { after: 60 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `${g('noticePeriod') === 'Longer than two weeks' ? '☑' : '☐'} Longer than two weeks preferred — If so, how long? ${g('noticePeriodLength') || '___'}`, size: 22 })], spacing: { after: 200 } }),
+
+                                            new Paragraph({ children: [new TextRun({ text: '12. Resume Format', bold: true, size: 24, color: '1e3a8a' })], spacing: { before: 200, after: 100 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `${g('resumeFormat') === 'Word format' ? '☑' : '☐'} Resume provided in Word format`, size: 22 })], spacing: { after: 60 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `${g('resumeFormat') === 'Not in Word — request conversion' ? '☑' : '☐'} Resume not in Word format — request candidate to convert and resend`, size: 22 })], spacing: { after: 200 } }),
+
+                                            new Paragraph({ children: [new TextRun({ text: '13. Employment Type', bold: true, size: 24, color: '1e3a8a' })], spacing: { before: 200, after: 100 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `${g('employmentType') === 'Full-time' ? '☑' : '☐'} Full-time`, size: 22 })], spacing: { after: 60 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `${g('employmentType') === 'Part-time' ? '☑' : '☐'} Part-time`, size: 22 })], spacing: { after: 60 } }),
                                             new Paragraph({ children: [new TextRun({ text: `Notes: ${g('extraNotes')}`, size: 22 })], spacing: { after: 200 } }),
+
+                                            new Paragraph({ children: [new TextRun({ text: '14. Schedule Preference', bold: true, size: 24, color: '1e3a8a' })], spacing: { before: 200, after: 100 } }),
+                                            new Paragraph({ children: [new TextRun({ text: g('schedulePreference') || '___', size: 22 })], spacing: { after: 200 } }),
+
+                                            new Paragraph({ children: [new TextRun({ text: '15. Travel Capability', bold: true, size: 24, color: '1e3a8a' })], spacing: { before: 200, after: 100 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `${g('travelCapability') === 'Yes' ? '☑' : '☐'} Yes`, size: 22 })], spacing: { after: 60 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `${g('travelCapability') === 'No' ? '☑' : '☐'} No`, size: 22 })], spacing: { after: 60 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `${g('travelCapability') === 'Limited' ? '☑' : '☐'} Limited — specify: ${g('travelLimits') || '___'}`, size: 22 })], spacing: { after: 200 } }),
+
+                                            new Paragraph({ children: [new TextRun({ text: '16. Referral Source', bold: true, size: 24, color: '1e3a8a' })], spacing: { before: 200, after: 100 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `${g('referralSource') === 'Referral' ? '☑' : '☐'} Referral – Name: ${g('referralDetails') || '___'}`, size: 22 })], spacing: { after: 60 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `${g('referralSource') === 'LinkedIn' ? '☑' : '☐'} LinkedIn`, size: 22 })], spacing: { after: 60 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `${g('referralSource') === 'Google' ? '☑' : '☐'} Google`, size: 22 })], spacing: { after: 60 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `${g('referralSource') === 'Job Board (Indeed, ZipRecruiter)' ? '☑' : '☐'} Job Board (Indeed, ZipRecruiter, etc)`, size: 22 })], spacing: { after: 60 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `${g('referralSource') === 'Other' ? '☑' : '☐'} Other: ${g('referralDetails') || '___'}`, size: 22 })], spacing: { after: 200 } }),
 
                                             new Paragraph({ children: [new TextRun({ text: '_______________________________________________', color: '1e3a8a' })], alignment: AlignmentType.CENTER, spacing: { before: 300 } }),
                                             new Paragraph({ children: [new TextRun({ text: 'Navon Technologies LLC', bold: true, size: 20, color: '1e3a8a' })], alignment: AlignmentType.CENTER }),
@@ -12547,7 +12570,27 @@ loadBalancer.distribute(traffic);`}
                                         <h3 style={headingStyle}>6. Role Preferences</h3>
                                         <div style={fieldStyle}><label style={labelStyle}>Preferred IT Functions</label><input name="preferredFunctions" style={inputStyle} /></div>
                                         <div style={fieldStyle}><label style={labelStyle}>Preferred Work Environments (corporate, MSP, hybrid, etc.)</label><input name="preferredEnvironments" style={inputStyle} /></div>
-                                        <div style={fieldStyle}><label style={labelStyle}>Preferred Work Locations (NOVA, MD, DC)</label><input name="preferredLocations" style={inputStyle} placeholder="e.g. Chantilly, McLean, Tysons, Herndon, Ft. Meade, Bethesda..." /></div>
+                                        <div style={fieldStyle}><label style={labelStyle}>Preferred Work Locations</label>
+                                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                                                <div style={{ fontWeight: '600', color: '#475569', fontSize: '0.85rem', gridColumn: '1 / -1' }}>NOVA:</div>
+                                                {['Chantilly', 'McLean', 'Tysons', 'Herndon', 'Reston', 'Springfield', 'Other NOVA'].map(loc => (
+                                                    <label key={loc} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.9rem', color: '#334155' }}>
+                                                        <input type="checkbox" name={`loc_${loc.replace(/\s/g,'_')}`} /> {loc}
+                                                    </label>
+                                                ))}
+                                                <div style={{ fontWeight: '600', color: '#475569', fontSize: '0.85rem', gridColumn: '1 / -1', marginTop: '0.5rem' }}>MD:</div>
+                                                {['Ft. Meade', 'Laurel', 'Bethesda', 'Other MD'].map(loc => (
+                                                    <label key={loc} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.9rem', color: '#334155' }}>
+                                                        <input type="checkbox" name={`loc_${loc.replace(/\s/g,'_')}`} /> {loc}
+                                                    </label>
+                                                ))}
+                                                <div style={{ fontWeight: '600', color: '#475569', fontSize: '0.85rem', gridColumn: '1 / -1', marginTop: '0.5rem' }}>DC:</div>
+                                                <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.9rem', color: '#334155' }}>
+                                                    <input type="checkbox" name="loc_DC" /> Washington, DC
+                                                </label>
+                                            </div>
+                                            <input name="preferredLocations" style={inputStyle} placeholder="Other locations or notes..." />
+                                        </div>
                                     </div>
 
                                     {/* 7. Certifications */}
@@ -12556,7 +12599,7 @@ loadBalancer.distribute(traffic);`}
                                         <div style={fieldStyle}><label style={labelStyle}>Current Certifications</label><input name="currentCerts" style={inputStyle} /></div>
                                         <div style={rowStyle}>
                                             <div><label style={labelStyle}>Expiration / Renewal Dates</label><input name="certExpiry" style={inputStyle} /></div>
-                                            <div><label style={labelStyle}>Planned Certifications</label><input name="plannedCerts" style={inputStyle} /></div>
+                                            <div><label style={labelStyle}>Planned Certifications or Training</label><input name="plannedCerts" style={inputStyle} /></div>
                                         </div>
                                     </div>
 
@@ -12593,29 +12636,45 @@ loadBalancer.distribute(traffic);`}
 
                                     {/* 11-16. Additional Details */}
                                     <div style={sectionStyle}>
-                                        <h3 style={headingStyle}>11-16. Additional Candidate Details</h3>
+                                        <h3 style={headingStyle}>11. Additional Candidate Information</h3>
+                                        <div style={fieldStyle}><label style={labelStyle}>Notice Period</label>
+                                            <select name="noticePeriod" style={inputStyle}><option value="">Select...</option><option>Two weeks</option><option>No notice required</option><option>Longer than two weeks</option></select></div>
+                                        <div style={fieldStyle}><label style={labelStyle}>If longer than two weeks, how long?</label><input name="noticePeriodLength" style={inputStyle} /></div>
+                                    </div>
+
+                                    <div style={sectionStyle}>
+                                        <h3 style={headingStyle}>12. Resume Format</h3>
+                                        <div style={fieldStyle}>
+                                            <select name="resumeFormat" style={inputStyle}><option value="">Select...</option><option>Word format</option><option>Not in Word — request conversion</option></select></div>
+                                    </div>
+
+                                    <div style={sectionStyle}>
+                                        <h3 style={headingStyle}>13. Employment Type</h3>
                                         <div style={rowStyle}>
-                                            <div><label style={labelStyle}>Notice Period</label>
-                                                <select name="noticePeriod" style={inputStyle}><option value="">Select...</option><option>Two weeks</option><option>No notice required</option><option>Longer than two weeks</option></select></div>
-                                            <div><label style={labelStyle}>Resume Format</label>
-                                                <select name="resumeFormat" style={inputStyle}><option value="">Select...</option><option>Word format</option><option>Not in Word — request conversion</option></select></div>
+                                            <div><select name="employmentType" style={inputStyle}><option value="">Select...</option><option>Full-time</option><option>Part-time</option></select></div>
+                                            <div><label style={labelStyle}>Notes</label><input name="extraNotes" style={inputStyle} /></div>
                                         </div>
+                                    </div>
+
+                                    <div style={sectionStyle}>
+                                        <h3 style={headingStyle}>14. Schedule Preference</h3>
+                                        <div style={fieldStyle}><input name="schedulePreference" style={inputStyle} /></div>
+                                    </div>
+
+                                    <div style={sectionStyle}>
+                                        <h3 style={headingStyle}>15. Travel Capability</h3>
                                         <div style={rowStyle}>
-                                            <div><label style={labelStyle}>Employment Type</label>
-                                                <select name="employmentType" style={inputStyle}><option value="">Select...</option><option>Full-time</option><option>Part-time</option></select></div>
-                                            <div><label style={labelStyle}>Schedule Preference</label><input name="schedulePreference" style={inputStyle} /></div>
+                                            <div><select name="travelCapability" style={inputStyle}><option value="">Select...</option><option>Yes</option><option>No</option><option>Limited</option></select></div>
+                                            <div><label style={labelStyle}>If limited, specify</label><input name="travelLimits" style={inputStyle} /></div>
                                         </div>
+                                    </div>
+
+                                    <div style={sectionStyle}>
+                                        <h3 style={headingStyle}>16. Referral Source</h3>
                                         <div style={rowStyle}>
-                                            <div><label style={labelStyle}>Travel Capability</label>
-                                                <select name="travelCapability" style={inputStyle}><option value="">Select...</option><option>Yes</option><option>No</option><option>Limited</option></select></div>
-                                            <div><label style={labelStyle}>Travel Limits (if limited)</label><input name="travelLimits" style={inputStyle} /></div>
+                                            <div><select name="referralSource" style={inputStyle}><option value="">Select...</option><option>Referral</option><option>LinkedIn</option><option>Google</option><option>Job Board (Indeed, ZipRecruiter)</option><option>Other</option></select></div>
+                                            <div><label style={labelStyle}>Name / Details</label><input name="referralDetails" style={inputStyle} /></div>
                                         </div>
-                                        <div style={rowStyle}>
-                                            <div><label style={labelStyle}>Referral Source</label>
-                                                <select name="referralSource" style={inputStyle}><option value="">Select...</option><option>Referral</option><option>LinkedIn</option><option>Google</option><option>Job Board (Indeed, ZipRecruiter)</option><option>Other</option></select></div>
-                                            <div><label style={labelStyle}>Referral Name / Details</label><input name="referralDetails" style={inputStyle} /></div>
-                                        </div>
-                                        <div style={fieldStyle}><label style={labelStyle}>Notes</label><textarea name="extraNotes" rows="3" style={inputStyle} /></div>
                                     </div>
 
                                     {/* Submit */}
