@@ -11563,6 +11563,7 @@ loadBalancer.distribute(traffic);`}
                         }}>
                             {(() => {
                                 const isVeronica = loginEmail?.toLowerCase() === 'veronica.hill@navontech.com';
+                                const isBrian = loginEmail?.toLowerCase() === 'brian.briscoe@navontech.com';
                                 const isRoot = loginEmail?.toLowerCase().includes('root');
                                 const prime = profileData.contractAssignment || '';
                                 const timecards = [
@@ -11571,7 +11572,7 @@ loadBalancer.distribute(traffic);`}
                                     { name: 'GDIT', url: 'https://setris-ne.gdit.com/setris/login.aspx', logo: 'gdit.jpeg', color: '#4338ca', scale: 1 },
                                     { name: 'Arcfield', url: 'https://myapplications.azure.us/', logo: 'archfield.jpeg', color: '#7c3aed', scale: 1.5 }
                                 ];
-                                const visible = (isVeronica || isRoot) ? timecards : timecards.filter(t => t.name === prime);
+                                const visible = (isVeronica || isBrian || isRoot) ? timecards : timecards.filter(t => t.name === prime);
                                 // Always add Rippling for all users
                                 visible.push({ name: 'Rippling', url: 'https://app.rippling.com/time-products/dashboard/my-time/timeclock', logo: 'rippling_logo.jpeg', logoPath: 'images/partners', icon: '👥', color: '#10b981' });
                                 if (visible.length === 0) return <p style={{ color: '#64748b', textAlign: 'center', gridColumn: '1 / -1' }}>No timecard assigned. Contact HR if you believe this is an error.</p>;
@@ -12227,6 +12228,24 @@ loadBalancer.distribute(traffic);`}
                                                     }}>
                                                     ⬇️ Download
                                                 </a>
+                                                <button
+                                                    onClick={async () => {
+                                                        if (!confirm(`🗑️ Delete "${file.name}"?\n\nThis cannot be undone.`)) return;
+                                                        try {
+                                                            await deleteFromS3(file.url);
+                                                            alert(`✅ "${file.name}" deleted.`);
+                                                            fetchComplianceFiles();
+                                                        } catch (err) {
+                                                            alert(`❌ Delete failed: ${err.message}`);
+                                                        }
+                                                    }}
+                                                    style={{
+                                                        background: '#ef4444', color: 'white', border: 'none',
+                                                        padding: '0.6rem 1rem', borderRadius: '6px', cursor: 'pointer',
+                                                        fontWeight: '600', fontSize: '0.85rem'
+                                                    }}>
+                                                    🗑️
+                                                </button>
                                             </div>
                                         </div>
                                     );
@@ -12483,9 +12502,8 @@ loadBalancer.distribute(traffic);`}
                                     })
                                 });
 
-                                // Also save locally
-                                saveAs(blob, fileName);
-                                alert(`✅ Cleared Candidate Summary for ${candidateName} saved to Compliance & Security and downloaded locally.`);
+                                // Upload only — no auto download
+                                alert(`✅ Cleared Candidate Summary for ${candidateName} saved to Compliance & Security.`);
                             } catch (err) {
                                 console.error('Error generating document:', err);
                                 alert(`❌ Error: ${err.message}`);
