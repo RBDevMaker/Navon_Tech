@@ -6589,6 +6589,10 @@ loadBalancer.distribute(traffic);`}
                                     onClick={() => {
                                         const email = prompt('Enter new user email (e.g. john.doe@navontech.com):');
                                         if (!email || !email.includes('@')) return;
+                                        if (!email.toLowerCase().endsWith('@navontech.com')) {
+                                            alert('❌ Only @navontech.com email addresses are allowed.');
+                                            return;
+                                        }
                                         const name = prompt('Enter full name:');
                                         if (!name) return;
                                         const role = prompt('Enter role (employee, admin, hr, security):', 'employee');
@@ -6864,6 +6868,10 @@ loadBalancer.distribute(traffic);`}
                                                         })(),
                                                         showInDirectory: false
                                                     };
+                                                    if (!profilePayload.email?.toLowerCase().endsWith('@navontech.com')) {
+                                                        failed++;
+                                                        continue;
+                                                    }
                                                     const res = await fetch(`${apiUrl}/profiles`, {
                                                         method: 'POST',
                                                         headers: { 'Content-Type': 'application/json' },
@@ -7698,6 +7706,11 @@ loadBalancer.distribute(traffic);`}
                                     
                                     if (!employeeIdToSave) {
                                         alert(`⚠️ Email is required to save profile.`);
+                                        return;
+                                    }
+                                    
+                                    if (!employeeIdToSave.toLowerCase().endsWith('@navontech.com')) {
+                                        alert(`❌ Only @navontech.com email addresses are allowed.`);
                                         return;
                                     }
                                     
@@ -13748,17 +13761,25 @@ loadBalancer.distribute(traffic);`}
                                 const isRachelle = loginEmail?.toLowerCase() === 'rachelle.briscoe@navontech.com' || loginEmail?.toLowerCase() === 'rachelleroot@navontech.com';
                                 return (
                             <div className="hover-lift animate-scale-in" style={{
-                                background: isRachelle ? '#f1f5f9' : 'white',
+                                background: isRachelle ? '#e2e8f0' : 'white',
                                 padding: '2rem',
                                 borderRadius: '12px',
-                                border: isRachelle ? '2px solid #94a3b8' : '2px solid #d4af37',
+                                border: isRachelle ? '2px solid #64748b' : '2px solid #d4af37',
                                 boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
                                 animationDelay: '0.2s',
                                 display: 'flex',
                                 flexDirection: 'column',
-                                opacity: isRachelle ? 0.5 : 1,
-                                pointerEvents: isRachelle ? 'none' : 'auto'
+                                opacity: isRachelle ? 0.4 : 1,
+                                pointerEvents: isRachelle ? 'none' : 'auto',
+                                position: 'relative'
                             }}>
+                                {isRachelle && (
+                                    <div style={{
+                                        position: 'absolute', top: '10px', right: '10px',
+                                        background: '#64748b', color: 'white', padding: '0.25rem 0.75rem',
+                                        borderRadius: '4px', fontSize: '0.75rem', fontWeight: '600'
+                                    }}>DISABLED</div>
+                                )}
                                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
                                     <div style={{
                                         fontSize: '2.5rem',
