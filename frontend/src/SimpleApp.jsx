@@ -2191,12 +2191,12 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         fontSize: '1rem',
                                         fontStyle: 'italic'
                                     }}>
-                                        Pronounced: NAH-vahn
+                                        Pronounced: nuh-VON
                                     </span>
                                     <button
                                         onClick={() => {
-                                            const utterance = new SpeechSynthesisUtterance('na von');
-                                            utterance.rate = 0.9;
+                                            const utterance = new SpeechSynthesisUtterance('nuh von');
+                                            utterance.rate = 0.8;
                                             utterance.pitch = 1;
                                             window.speechSynthesis.speak(utterance);
                                         }}
@@ -12181,12 +12181,44 @@ loadBalancer.distribute(traffic);`}
                             {/* Cleared Candidate Summaries Card */}
                             {(() => {
                                 const summaries = complianceFiles.filter(f => f.name.includes('ClearedCandidateSummary') && f.name.endsWith('.pdf.html'));
-                                return summaries.length > 0 && (
+                                return (
                                     <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', border: '2px solid #d4af37', marginBottom: '2rem' }}>
                                         <h3 style={{ color: '#1e3a8a', marginBottom: '1.5rem', fontSize: '1.3rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                            📝 Cleared Candidate Summaries ({summaries.length})
+                                            📝 Cleared Candidate Summaries ({summaries.length + 2})
                                         </h3>
-                                        <div style={{ display: 'grid', gap: '1rem' }}>
+                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
+                                            {/* Demo Record */}
+                                            <div className="hover-lift" style={{
+                                                padding: '1.5rem', background: '#fffbeb', borderRadius: '12px', border: '2px dashed #fbbf24',
+                                                display: 'flex', flexDirection: 'column', textAlign: 'center'
+                                            }}>
+                                                <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>👤</div>
+                                                <div style={{ fontWeight: '600', color: '#1e3a8a', fontSize: '1.1rem', marginBottom: '0.25rem' }}>Diana Demo</div>
+                                                <div style={{ color: '#d97706', fontSize: '0.75rem', fontWeight: '600', marginBottom: '0.25rem' }}>SAMPLE RECORD</div>
+                                                <div style={{ color: '#94a3b8', fontSize: '0.8rem', marginBottom: '1rem' }}>Apr 14, 2026</div>
+                                                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center', marginTop: 'auto' }}>
+                                                    <button onClick={() => alert('📋 Diana Demo — Sample Record\n\nClearance: TS/SCI\nLocation: Herndon, VA\nPosition: Cloud Software Developer\nCertifications: AWS SAA, Security+\nReferral: LinkedIn\n\nThis is a demo record for preview purposes.')}
+                                                        style={{ background: '#1e3a8a', color: 'white', border: 'none', padding: '0.5rem 0.75rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.8rem' }}>
+                                                        👁️ View
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            {/* Demo Record 2 */}
+                                            <div className="hover-lift" style={{
+                                                padding: '1.5rem', background: '#fffbeb', borderRadius: '12px', border: '2px dashed #fbbf24',
+                                                display: 'flex', flexDirection: 'column', textAlign: 'center'
+                                            }}>
+                                                <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>👤</div>
+                                                <div style={{ fontWeight: '600', color: '#1e3a8a', fontSize: '1.1rem', marginBottom: '0.25rem' }}>James Sample</div>
+                                                <div style={{ color: '#d97706', fontSize: '0.75rem', fontWeight: '600', marginBottom: '0.25rem' }}>SAMPLE RECORD</div>
+                                                <div style={{ color: '#94a3b8', fontSize: '0.8rem', marginBottom: '1rem' }}>Apr 10, 2026</div>
+                                                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center', marginTop: 'auto' }}>
+                                                    <button onClick={() => alert('📋 James Sample — Sample Record\n\nClearance: Secret\nLocation: Ft. Meade, MD\nPosition: Network Engineer\nCertifications: CCNA, CompTIA Net+\nReferral: Cleared Jobs\n\nThis is a demo record for preview purposes.')}
+                                                        style={{ background: '#1e3a8a', color: 'white', border: 'none', padding: '0.5rem 0.75rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.8rem' }}>
+                                                        👁️ View
+                                                    </button>
+                                                </div>
+                                            </div>
                                             {summaries.map(file => {
                                                 const candidateName = file.name.replace('ClearedCandidateSummary-', '').replace(/-\d+\.pdf\.html$/, '').replace(/_/g, ' ');
                                                 const modParts = file.lastModified ? String(file.lastModified).split('T')[0].split('-') : null;
@@ -12194,19 +12226,21 @@ loadBalancer.distribute(traffic);`}
                                                     ? new Date(Number(modParts[0]), Number(modParts[1]) - 1, Number(modParts[2])).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
                                                     : '';
                                                 return (
-                                                    <div key={file.id} style={{
-                                                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                                                        padding: '1rem', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0',
-                                                        flexWrap: 'wrap', gap: '0.75rem'
+                                                    <div key={file.id} className="hover-lift" style={{
+                                                        padding: '1.5rem', background: '#f8fafc', borderRadius: '12px', border: '2px solid #e2e8f0',
+                                                        display: 'flex', flexDirection: 'column', textAlign: 'center'
                                                     }}>
-                                                        <div>
-                                                            <div style={{ fontWeight: '600', color: '#1e3a8a', fontSize: '1rem' }}>👤 {candidateName}</div>
-                                                            <div style={{ color: '#94a3b8', fontSize: '0.8rem' }}>{displayDate}{file.size ? ` • ${formatFileSize(file.size)}` : ''}</div>
-                                                        </div>
-                                                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                                        <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>👤</div>
+                                                        <div style={{ fontWeight: '600', color: '#1e3a8a', fontSize: '1.1rem', marginBottom: '0.25rem' }}>{candidateName}</div>
+                                                        <div style={{ color: '#94a3b8', fontSize: '0.8rem', marginBottom: '1rem' }}>{displayDate}</div>
+                                                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center', marginTop: 'auto' }}>
                                                             <button onClick={() => window.open(file.url, '_blank')}
                                                                 style={{ background: '#1e3a8a', color: 'white', border: 'none', padding: '0.5rem 0.75rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.8rem' }}>
                                                                 👁️ View
+                                                            </button>
+                                                            <button onClick={() => { const w = window.open(file.url, '_blank'); setTimeout(() => { try { w.print(); } catch(e) {} }, 1000); }}
+                                                                style={{ background: '#6b7280', color: 'white', border: 'none', padding: '0.5rem 0.75rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.8rem' }}>
+                                                                🖨️ Print
                                                             </button>
                                                             <a href={file.url.replace('.pdf.html', '.docx')} download target="_blank" rel="noopener noreferrer"
                                                                 style={{ background: '#2563eb', color: 'white', border: 'none', padding: '0.5rem 0.75rem', borderRadius: '6px', fontWeight: '600', fontSize: '0.8rem', textDecoration: 'none', textAlign: 'center' }}>
