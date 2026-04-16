@@ -75,6 +75,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [isLoadingResumes, setIsLoadingResumes] = useState(false);
     const [showUploadModal, setShowUploadModal] = useState(false);
     const [editingResume, setEditingResume] = useState(null);
+    const [showArchivedResumes, setShowArchivedResumes] = useState(false);
     const [showRolePermissions, setShowRolePermissions] = useState(false);
     
     // User management states
@@ -116,7 +117,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             const referredByMatch = r.notes.match(/Employee Referral from ([^(]+)/);
             const referredBy = referredByMatch ? referredByMatch[1].trim() : 'Unknown';
             // Map ATS stage to referral stage
-            const atsToReferralStage = { 'New': 'Submitted', 'Screening': 'Under Review', 'Interview': 'Interview Scheduled', 'Offer': 'Offer Extended', 'Pending': 'Offer Extended', 'Hired': 'Hired', 'Rejected': 'Not Selected' };
+            const atsToReferralStage = { 'New': 'Submitted', 'Screening': 'Under Review', 'Interview': 'Interview Scheduled', 'Offer': 'Offer Extended', 'Pending': 'Offer Extended', 'Hired': 'Hired', 'Archived': 'Hired', 'Rejected': 'Not Selected' };
             let stage = atsToReferralStage[r.stage] || r.stage;
             let daysSinceHired = null;
             // Check 90-day milestones
@@ -1717,8 +1718,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             
             // When moving to Hired, use existing hiredDate or set today
             if (newStage === 'Hired') {
-                const resume = filteredResumes.find(r => r.resumeId === resumeId) || resumes.find(r => r.resumeId === resumeId);
-                if (!resume?.hiredDate) {
+                const existingResume = filteredResumes.find(r => r.resumeId === resumeId) || resumes.find(r => r.resumeId === resumeId);
+                if (!existingResume?.hiredDate) {
                     updateBody.hiredDate = new Date().toISOString().split('T')[0];
                 }
             }
@@ -12383,6 +12384,31 @@ loadBalancer.distribute(traffic);`}
                                             
                                             for (const file of files) {
                                                 await uploadDocument(file, uploadCategory);
+                                                
+                                                // If uploading to Resumes, also create ATS entry
+                                                if (uploadCategory === 'Resumes') {
+                                                    try {
+                                                        const candidateName = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+                                                        const atsApiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                                                        await fetch(`${atsApiUrl}/resume`, {
+                                                            method: 'POST',
+                                                            headers: { 'Content-Type': 'application/json' },
+                                                            body: JSON.stringify({
+                                                                candidateName: candidateName,
+                                                                email: '',
+                                                                phone: '',
+                                                                position: 'Not specified',
+                                                                department: 'Not specified',
+                                                                stage: 'New',
+                                                                s3Key: `Documents/Resumes/${uploadCategory}-${Date.now()}-${file.name}`,
+                                                                notes: `Uploaded via Document Management by ${profileData.name || loginEmail}`,
+                                                                receivedDate: new Date().toISOString().split('T')[0]
+                                                            })
+                                                        });
+                                                    } catch (atsErr) {
+                                                        console.error('ATS entry creation failed:', atsErr);
+                                                    }
+                                                }
                                             }
                                             
                                             alert(`✅ Successfully uploaded ${files.length} file(s) to ${categoryLabels[uploadCategory] || uploadCategory}!`);
@@ -13397,7 +13423,8 @@ loadBalancer.distribute(traffic);`}
                                 { key: 'Offer', label: 'Offer', sub: 'Offers Extended', icon: '✅', bg: 'linear-gradient(135deg, #dcfce7 0%, #f0fdf4 100%)', border: '#10b981', color: '#166534' },
                                 { key: 'Pending', label: 'Pending Start', sub: 'Awaiting Start Date', icon: '⏳', bg: 'linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%)', border: '#0ea5e9', color: '#0c4a6e' },
                                 { key: 'Hired', label: 'Hired', sub: 'Active Employees', icon: '🎉', bg: 'linear-gradient(135deg, #d1fae5 0%, #ecfdf5 100%)', border: '#059669', color: '#065f46' },
-                                { key: 'Rejected', label: 'Rejected', sub: 'Not Moving Forward', icon: '❌', bg: 'linear-gradient(135deg, #fee2e2 0%, #fef2f2 100%)', border: '#ef4444', color: '#991b1b' }
+                                { key: 'Rejected', label: 'Rejected', sub: 'Not Moving Forward', icon: '❌', bg: 'linear-gradient(135deg, #fee2e2 0%, #fef2f2 100%)', border: '#ef4444', color: '#991b1b' },
+                                { key: 'Archived', label: 'Archived', sub: 'Completed Hires', icon: '📦', bg: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)', border: '#94a3b8', color: '#475569' }
                             ];
                             const sampleResume = { resumeId: 'sample', candidateName: 'Sarah Johnson', position: 'Senior Software Engineer', department: 'Engineering', email: 'sarah.johnson@email.com', stage: 'New', receivedDate: '2026-03-09' };
                             const allResumes = [sampleResume, ...filteredResumes];
@@ -13405,8 +13432,9 @@ loadBalancer.distribute(traffic);`}
                                 <>
                                 {/* Toolbar */}
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.75rem', background: 'white', padding: '1rem 1.5rem', borderRadius: '12px', border: '2px solid #d4af37' }}>
-                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.3rem' }}>Applicants ({allResumes.length})</h3>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.3rem' }}>Applicants ({allResumes.filter(r => showArchivedResumes || r.stage !== 'Archived').length})</h3>
                                     <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                                        <button onClick={() => setShowArchivedResumes(!showArchivedResumes)} style={{ background: showArchivedResumes ? '#475569' : '#94a3b8', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600' }}>{showArchivedResumes ? '📦 Hide Archived' : '📦 Show Archived'}</button>
                                         {userGroups.includes('security') && <button onClick={() => setShowUploadModal(true)} style={{ background: '#10b981', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600' }}>Upload Resume</button>}
                                         <button onClick={exportToExcel} style={{ background: '#059669', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600' }}>Export Excel</button>
                                         <button onClick={exportToPDF} style={{ background: '#dc2626', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600' }}>Export PDF</button>
@@ -13433,7 +13461,7 @@ loadBalancer.distribute(traffic);`}
                                 {isLoadingResumes && <div style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>Loading resumes...</div>}
                                 <div style={{ overflowX: 'auto', paddingBottom: '1rem' }}>
                                     <div style={{ display: 'flex', gap: '1rem', minWidth: '900px' }}>
-                                        {stages.map(stage => {
+                                        {stages.filter(s => showArchivedResumes || s.key !== 'Archived').map(stage => {
                                             const stageResumes = allResumes.filter(r => (r.stage || 'New') === stage.key);
                                             return (
                                                 <div key={stage.key} style={{ flex: 1, minWidth: '170px' }}>
@@ -13510,9 +13538,13 @@ loadBalancer.distribute(traffic);`}
                                                                         w.print();
                                                                     }} style={{ background: '#dc2626', color: 'white', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', fontWeight: '600' }}>PDF</button>
                                                                     <select value={resume.stage || 'New'} onChange={(e) => { if (resume.resumeId === 'sample') { alert('Demo resume — use a real resume to change stages.'); return; } updateResumeStage(resume.resumeId, e.target.value); }} style={{ padding: '0.25rem', borderRadius: '4px', border: '1px solid #d4af37', fontSize: '0.7rem', cursor: 'pointer', flex: 1, minWidth: 0 }}>
-                                                                        <option value="New">→ New</option><option value="Screening">→ Screening</option><option value="Interview">→ Interview</option><option value="Offer">→ Offer</option><option value="Pending">→ Pending</option><option value="Hired">→ Hired</option><option value="Rejected">→ Rejected</option>
+                                                                        <option value="New">→ New</option><option value="Screening">→ Screening</option><option value="Interview">→ Interview</option><option value="Offer">→ Offer</option><option value="Pending">→ Pending</option><option value="Hired">→ Hired</option><option value="Archived">→ Archive</option><option value="Rejected">→ Rejected</option>
                                                                     </select>
-                                                                    <button onClick={() => resume.resumeId === 'sample' ? alert('Demo resume cannot be deleted.') : deleteResume(resume.resumeId, resume.candidateName)} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem' }}>Delete</button>
+                                                                    <button onClick={() => resume.resumeId === 'sample' ? alert('Demo resume cannot be deleted.') : deleteResume(resume.resumeId, resume.candidateName)} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', display: (loginEmail?.toLowerCase() === 'brian.briscoe@navontech.com' || loginEmail?.toLowerCase().includes('root')) ? 'inline-block' : 'none' }}>Delete</button>
+                                                                    {resume.stage === 'Hired' && resume.resumeId !== 'sample' && (
+                                                                        <button onClick={() => { if (window.confirm(`📦 Archive ${resume.candidateName}?\n\nThis will move them out of the active board. Resume is retained.`)) updateResumeStage(resume.resumeId, 'Archived'); }}
+                                                                            style={{ background: '#6b7280', color: 'white', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', fontWeight: '600' }}>📦 Archive</button>
+                                                                    )}
                                                                 </div>
                                                             </div>
                                                         ))}
@@ -14808,9 +14840,9 @@ loadBalancer.distribute(traffic);`}
                                                 }} />
                                             ))}
                                         </div>
-                                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', fontSize: '0.75rem', color: '#94a3b8' }}>
+                                        <div style={{ display: 'flex', gap: '0.25rem', fontSize: '0.75rem', color: '#94a3b8' }}>
                                             {stages.map((s, i) => (
-                                                <span key={s} style={{ color: i <= stageIndex ? stageColors[referral.stage] : '#94a3b8', fontWeight: i === stageIndex ? '700' : '400' }}>{s}</span>
+                                                <span key={s} style={{ flex: 1, textAlign: 'center', color: i <= stageIndex ? stageColors[referral.stage] : '#94a3b8', fontWeight: i === stageIndex ? '700' : '400' }}>{s}</span>
                                             ))}
                                         </div>
                                     </div>
