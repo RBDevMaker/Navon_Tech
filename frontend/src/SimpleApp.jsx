@@ -11750,7 +11750,7 @@ loadBalancer.distribute(traffic);`}
                                     { name: 'GDIT', url: 'https://setris-ne.gdit.com/setris/login.aspx', logo: 'gdit.jpeg', color: '#4338ca', scale: 1 },
                                     { name: 'Arcfield', url: 'https://myapplications.azure.us/', logo: 'archfield.jpeg', color: '#7c3aed', scale: 1.5 }
                                 ];
-                                const visible = (isVeronica || isBrian || isRoot) ? timecards : timecards.filter(t => t.name === prime);
+                                const visible = (isVeronica || isBrian || isRoot || userRole === 'hr') ? timecards : timecards.filter(t => t.name === prime);
                                 // Always add Rippling for all users
                                 visible.push({ name: 'Rippling', url: 'https://app.rippling.com/time-products/dashboard/my-time/timecards', logo: 'rippling_logo.jpeg', logoPath: 'images/partners', icon: '👥', color: '#10b981' });
                                 if (visible.length === 0) return <p style={{ color: '#64748b', textAlign: 'center', gridColumn: '1 / -1' }}>No timecard assigned. Contact HR if you believe this is an error.</p>;
