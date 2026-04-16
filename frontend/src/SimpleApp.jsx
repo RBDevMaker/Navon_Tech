@@ -12658,7 +12658,7 @@ loadBalancer.distribute(traffic);`}
                                                             alert('✅ Deleted.');
                                                             fetchSharedResourceFiles();
                                                         }).catch(err => { alert(`❌ ${err.message}`); });
-                                                    }}}
+                                                    }}
                                                     style={{ background: '#ef4444', color: 'white', border: 'none', padding: '0.6rem 1rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem' }}>
                                                     🗑️
                                                 </button>
