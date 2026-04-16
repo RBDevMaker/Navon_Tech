@@ -462,8 +462,12 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             const [handbookFiles, benefitsFiles, hrFormsFiles] = await Promise.all([
                 listS3Contents('Documents/EmployeeHandbook/'),
                 listS3Contents('Documents/Benefits/'),
-                listS3Contents('Documents/HRForms/')
+                listS3Contents('Documents/HRForms/'),
             ]);
+            
+            // Also fetch from HR-Documents (upload dropdown destination)
+            let hrDocsFiles = { files: [] };
+            try { hrDocsFiles = await listS3Contents('Documents/HR-Documents/'); } catch(e) {}
             
             console.log('Fetched files:', { handbookFiles, benefitsFiles, hrFormsFiles });
             
@@ -500,8 +504,19 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 s3Url: file.url
             })) || [];
             
+            // Process HR-Documents uploads
+            const hrDocsData = hrDocsFiles.files?.filter(file => file.name && file.name.trim() !== '').map(file => ({
+                id: file.key,
+                name: file.name,
+                size: file.size,
+                type: file.name.split('.').pop(),
+                uploadDate: file.lastModified,
+                uploadedBy: 'HR',
+                s3Url: file.url
+            })) || [];
+            
             setUploadedFiles({
-                employeeHandbook: handbookData,
+                employeeHandbook: [...handbookData, ...hrDocsData],
                 benefits: benefitsData,
                 hrForms: hrFormsData
             });
