@@ -12746,7 +12746,15 @@ loadBalancer.distribute(traffic);`}
                                                 </a>
                                                 <button onClick={async () => {
                                                     if (!confirm(`🗑️ Delete "${file.name}"?\n\nThis action cannot be undone.`)) return;
-                                                    try { await deleteFromS3(file.url); alert('✅ Deleted.'); fetchHrConfidentialFiles(); } catch (err) { alert(`❌ ${err.message}`); }
+                                                    try {
+                                                        console.log('Deleting file URL:', file.url);
+                                                        await deleteFromS3(file.url);
+                                                        alert('✅ Deleted.');
+                                                        fetchHrConfidentialFiles();
+                                                    } catch (err) {
+                                                        console.error('Delete error:', err);
+                                                        alert(`❌ Delete failed: ${err.message}`);
+                                                    }
                                                 }} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '0.6rem 1rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem' }}>
                                                     🗑️
                                                 </button>
