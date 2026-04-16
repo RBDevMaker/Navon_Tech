@@ -116,7 +116,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             const referredByMatch = r.notes.match(/Employee Referral from ([^(]+)/);
             const referredBy = referredByMatch ? referredByMatch[1].trim() : 'Unknown';
             // Map ATS stage to referral stage
-            const atsToReferralStage = { 'New': 'Submitted', 'Screening': 'Under Review', 'Interview': 'Interview Scheduled', 'Offer': 'Offer Extended', 'Hired': 'Hired', 'Rejected': 'Not Selected' };
+            const atsToReferralStage = { 'New': 'Submitted', 'Screening': 'Under Review', 'Interview': 'Interview Scheduled', 'Offer': 'Offer Extended', 'Pending': 'Offer Extended', 'Hired': 'Hired', 'Rejected': 'Not Selected' };
             let stage = atsToReferralStage[r.stage] || r.stage;
             let daysSinceHired = null;
             // Check 90-day milestones
@@ -259,6 +259,49 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
         }
     }, [currentPage, userRole]);
+
+    // Auto-move Pending resumes to Hired when start date arrives
+    useEffect(() => {
+        if (currentPage === 'resumes' && resumes.length > 0) {
+            const today = new Date().toISOString().split('T')[0];
+            resumes.forEach(async (r) => {
+                if (r.stage === 'Pending' && r.hiredDate) {
+                    const hp = r.hiredDate.split('-');
+                    const startDate = `${hp[0]}-${hp[1]}-${hp[2]}`;
+                    if (startDate <= today) {
+                        try {
+                            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                            await fetch(`${apiUrl}/resume/${r.resumeId}`, {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ stage: 'Hired' })
+                            });
+                            console.log(`Auto-moved ${r.candidateName} to Hired (start date: ${startDate})`);
+                            
+                            // Send notification if referral
+                            if (r.notes && r.notes.includes('Employee Referral')) {
+                                const referredBy = r.notes.match(/Employee Referral from ([^(]+)/)?.[1]?.trim() || 'Unknown';
+                                await fetch(`${apiUrl}/apply`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ type: 'referral-stage-notification', candidateName: r.candidateName, position: r.position, oldStage: 'Pending', newStage: 'Hired', referredBy, notifyEmail: 'security@navontech.com' })
+                                });
+                                await fetch(`${apiUrl}/apply`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ type: 'referral-stage-notification', candidateName: r.candidateName, position: r.position, oldStage: 'Pending', newStage: 'Hired', referredBy, notifyEmail: 'hr@navontech.com' })
+                                });
+                            }
+                            
+                            fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
+                        } catch (err) {
+                            console.error('Auto-move to Hired failed:', err);
+                        }
+                    }
+                }
+            });
+        }
+    }, [resumes]);
     
     // Check for 90-day and 180-day bonus eligibility and send HR reminders
     useEffect(() => {
@@ -1661,9 +1704,23 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
             
             const updateBody = { stage: newStage };
-            // Record hiredDate when moving to Hired
+            
+            // Prompt for start date when moving to Pending
+            if (newStage === 'Pending') {
+                const startDate = prompt('📅 Enter start date for this candidate (YYYY-MM-DD):');
+                if (!startDate || !/^\d{4}-\d{2}-\d{2}$/.test(startDate)) {
+                    alert('❌ Valid start date required (YYYY-MM-DD format) to move to Pending.');
+                    return;
+                }
+                updateBody.hiredDate = startDate;
+            }
+            
+            // When moving to Hired, use existing hiredDate or set today
             if (newStage === 'Hired') {
-                updateBody.hiredDate = new Date().toISOString().split('T')[0];
+                const resume = filteredResumes.find(r => r.resumeId === resumeId) || resumes.find(r => r.resumeId === resumeId);
+                if (!resume?.hiredDate) {
+                    updateBody.hiredDate = new Date().toISOString().split('T')[0];
+                }
             }
             
             const response = await fetch(`${apiUrl}/resume/${resumeId}`, {
@@ -13289,12 +13346,12 @@ loadBalancer.distribute(traffic);`}
             {/* APPLICATION TRACKING SYSTEM */}
             {currentPage === 'resumes' && (userGroups.includes('security') || userRole === 'security' || userRole === 'hr' || userRole === 'superadmin') && (
                 <section style={{ 
-                    padding: 'clamp(1rem, 3vw, 4rem) clamp(0.5rem, 2vw, 2rem)', 
+                    padding: 'clamp(0.5rem, 2vw, 2rem) clamp(0.25rem, 1vw, 1rem)', 
                     background: '#f1f5f9',
                     minHeight: '100vh',
                     overflow: 'hidden'
                 }}>
-                    <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+                    <div style={{ maxWidth: '1600px', margin: '0 auto' }}>
                         <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
                             <h2 style={{
                                 fontSize: '3rem',
@@ -13338,6 +13395,8 @@ loadBalancer.distribute(traffic);`}
                                 { key: 'Screening', label: 'Screening', sub: 'Under Review', icon: '🔍', bg: 'linear-gradient(135deg, #fef3c7 0%, #fefce8 100%)', border: '#f59e0b', color: '#92400e' },
                                 { key: 'Interview', label: 'Interview', sub: 'Active Interviews', icon: '📝', bg: 'linear-gradient(135deg, #ddd6fe 0%, #ede9fe 100%)', border: '#8b5cf6', color: '#5b21b6' },
                                 { key: 'Offer', label: 'Offer', sub: 'Offers Extended', icon: '✅', bg: 'linear-gradient(135deg, #dcfce7 0%, #f0fdf4 100%)', border: '#10b981', color: '#166534' },
+                                { key: 'Pending', label: 'Pending Start', sub: 'Awaiting Start Date', icon: '⏳', bg: 'linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%)', border: '#0ea5e9', color: '#0c4a6e' },
+                                { key: 'Hired', label: 'Hired', sub: 'Active Employees', icon: '🎉', bg: 'linear-gradient(135deg, #d1fae5 0%, #ecfdf5 100%)', border: '#059669', color: '#065f46' },
                                 { key: 'Rejected', label: 'Rejected', sub: 'Not Moving Forward', icon: '❌', bg: 'linear-gradient(135deg, #fee2e2 0%, #fef2f2 100%)', border: '#ef4444', color: '#991b1b' }
                             ];
                             const sampleResume = { resumeId: 'sample', candidateName: 'Sarah Johnson', position: 'Senior Software Engineer', department: 'Engineering', email: 'sarah.johnson@email.com', stage: 'New', receivedDate: '2026-03-09' };
@@ -13404,11 +13463,17 @@ loadBalancer.distribute(traffic);`}
                                                                     e.currentTarget.style.opacity = '0.5';
                                                                 }}
                                                                 onDragEnd={(e) => { e.currentTarget.style.opacity = '1'; }}
-                                                                style={{ background: 'white', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', fontSize: '0.8rem', cursor: 'grab' }}>
+                                                                style={{ background: 'white', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', fontSize: '0.8rem', cursor: 'grab', overflow: 'hidden', wordBreak: 'break-word' }}>
                                                                 <div onClick={() => setEditingResume({...resume})} style={{ cursor: 'pointer' }}>
                                                                 <div style={{ fontWeight: '700', color: '#1e3a8a', marginBottom: '0.25rem', fontSize: '0.85rem' }}>{resume.candidateName || 'Unknown'}</div>
                                                                 <div style={{ color: '#64748b', marginBottom: '0.15rem' }}><strong>Position:</strong> {resume.position || 'Not specified'}</div>
                                                                 <div style={{ color: '#64748b', marginBottom: '0.15rem' }}><strong>Department:</strong> {resume.department || 'Not specified'}</div>
+                                                                {resume.stage === 'Pending' && resume.hiredDate && (
+                                                                    <div style={{ color: '#0c4a6e', marginBottom: '0.15rem', fontWeight: '600' }}>📅 Start Date: {resume.hiredDate}</div>
+                                                                )}
+                                                                {resume.stage === 'Hired' && resume.hiredDate && (
+                                                                    <div style={{ color: '#065f46', marginBottom: '0.15rem', fontWeight: '600' }}>🎉 Hired: {resume.hiredDate}</div>
+                                                                )}
                                                                 <div style={{ color: '#64748b', marginBottom: '0.15rem' }}><strong>Email:</strong> {resume.email || 'Not provided'}</div>
                                                                 {resume.phone && <div style={{ color: '#64748b', marginBottom: '0.15rem' }}><strong>Phone:</strong> {resume.phone}</div>}
                                                                 <div style={{ color: '#64748b', marginBottom: '0.25rem' }}><strong>Received:</strong> {resume.receivedDate ? new Date(resume.receivedDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Unknown'}</div>
@@ -13445,7 +13510,7 @@ loadBalancer.distribute(traffic);`}
                                                                         w.print();
                                                                     }} style={{ background: '#dc2626', color: 'white', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', fontWeight: '600' }}>PDF</button>
                                                                     <select value={resume.stage || 'New'} onChange={(e) => { if (resume.resumeId === 'sample') { alert('Demo resume — use a real resume to change stages.'); return; } updateResumeStage(resume.resumeId, e.target.value); }} style={{ padding: '0.25rem', borderRadius: '4px', border: '1px solid #d4af37', fontSize: '0.7rem', cursor: 'pointer', flex: 1, minWidth: 0 }}>
-                                                                        <option value="New">→ New</option><option value="Screening">→ Screening</option><option value="Interview">→ Interview</option><option value="Offer">→ Offer</option><option value="Rejected">→ Rejected</option>
+                                                                        <option value="New">→ New</option><option value="Screening">→ Screening</option><option value="Interview">→ Interview</option><option value="Offer">→ Offer</option><option value="Pending">→ Pending</option><option value="Hired">→ Hired</option><option value="Rejected">→ Rejected</option>
                                                                     </select>
                                                                     <button onClick={() => resume.resumeId === 'sample' ? alert('Demo resume cannot be deleted.') : deleteResume(resume.resumeId, resume.candidateName)} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem' }}>Delete</button>
                                                                 </div>
