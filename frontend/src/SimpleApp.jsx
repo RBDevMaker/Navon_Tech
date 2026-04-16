@@ -144,10 +144,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 bonus180Notified: r.bonus180Notified || null
             };
         });
-        // Always include Diana Demo as sample if no real referrals
-        if (atsReferrals.length === 0) {
-            atsReferrals.push({ id: 'demo-1', candidateName: 'Diana Demo', email: 'diana.demo@navontech.com', position: 'Cloud Software Developer', referredBy: 'Rachelle Briscoe', referredDate: '2026-04-01', stage: 'Submitted', hiredDate: null, daysSinceHired: null, notes: 'Employee Referral from Rachelle Briscoe. Strong AWS background, 5+ years experience', resumeId: 'demo-1', bonusNotified: null, bonus180Notified: null });
-        }
         return atsReferrals;
     };
 
@@ -12496,41 +12492,9 @@ loadBalancer.distribute(traffic);`}
                                 return (
                                     <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', border: '2px solid #d4af37', marginBottom: '2rem' }}>
                                         <h3 style={{ color: '#1e3a8a', marginBottom: '1.5rem', fontSize: '1.3rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                            📝 Cleared Candidate Summaries ({summaries.length + 2})
+                                            📝 Cleared Candidate Summaries ({summaries.length})
                                         </h3>
                                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
-                                            {/* Demo Record */}
-                                            <div className="hover-lift" style={{
-                                                padding: '1.5rem', background: '#fffbeb', borderRadius: '12px', border: '2px dashed #fbbf24',
-                                                display: 'flex', flexDirection: 'column', textAlign: 'center'
-                                            }}>
-                                                <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>👤</div>
-                                                <div style={{ fontWeight: '600', color: '#1e3a8a', fontSize: '1.1rem', marginBottom: '0.25rem' }}>Diana Demo</div>
-                                                <div style={{ color: '#d97706', fontSize: '0.75rem', fontWeight: '600', marginBottom: '0.25rem' }}>SAMPLE RECORD</div>
-                                                <div style={{ color: '#94a3b8', fontSize: '0.8rem', marginBottom: '1rem' }}>Apr 14, 2026</div>
-                                                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center', marginTop: 'auto' }}>
-                                                    <button onClick={() => alert('📋 Diana Demo — Sample Record\n\nClearance: TS/SCI\nLocation: Herndon, VA\nPosition: Cloud Software Developer\nCertifications: AWS SAA, Security+\nReferral: LinkedIn\n\nThis is a demo record for preview purposes.')}
-                                                        style={{ background: '#1e3a8a', color: 'white', border: 'none', padding: '0.5rem 0.75rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.8rem' }}>
-                                                        👁️ View
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            {/* Demo Record 2 */}
-                                            <div className="hover-lift" style={{
-                                                padding: '1.5rem', background: '#fffbeb', borderRadius: '12px', border: '2px dashed #fbbf24',
-                                                display: 'flex', flexDirection: 'column', textAlign: 'center'
-                                            }}>
-                                                <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>👤</div>
-                                                <div style={{ fontWeight: '600', color: '#1e3a8a', fontSize: '1.1rem', marginBottom: '0.25rem' }}>James Sample</div>
-                                                <div style={{ color: '#d97706', fontSize: '0.75rem', fontWeight: '600', marginBottom: '0.25rem' }}>SAMPLE RECORD</div>
-                                                <div style={{ color: '#94a3b8', fontSize: '0.8rem', marginBottom: '1rem' }}>Apr 10, 2026</div>
-                                                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center', marginTop: 'auto' }}>
-                                                    <button onClick={() => alert('📋 James Sample — Sample Record\n\nClearance: Secret\nLocation: Ft. Meade, MD\nPosition: Network Engineer\nCertifications: CCNA, CompTIA Net+\nReferral: Cleared Jobs\n\nThis is a demo record for preview purposes.')}
-                                                        style={{ background: '#1e3a8a', color: 'white', border: 'none', padding: '0.5rem 0.75rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.8rem' }}>
-                                                        👁️ View
-                                                    </button>
-                                                </div>
-                                            </div>
                                             {summaries.map(file => {
                                                 const candidateName = file.name.replace('ClearedCandidateSummary-', '').replace(/-\d+\.pdf\.html$/, '').replace(/_/g, ' ');
                                                 const modParts = file.lastModified ? String(file.lastModified).split('T')[0].split('-') : null;
@@ -13426,8 +13390,7 @@ loadBalancer.distribute(traffic);`}
                                 { key: 'Rejected', label: 'Rejected', sub: 'Not Moving Forward', icon: '❌', bg: 'linear-gradient(135deg, #fee2e2 0%, #fef2f2 100%)', border: '#ef4444', color: '#991b1b' },
                                 { key: 'Archived', label: 'Archived', sub: 'Completed Hires', icon: '📦', bg: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)', border: '#94a3b8', color: '#475569' }
                             ];
-                            const sampleResume = { resumeId: 'sample', candidateName: 'Sarah Johnson', position: 'Senior Software Engineer', department: 'Engineering', email: 'sarah.johnson@email.com', stage: 'New', receivedDate: '2026-03-09' };
-                            const allResumes = [sampleResume, ...filteredResumes];
+                            const allResumes = [...filteredResumes];
                             return (
                                 <>
                                 {/* Toolbar */}
@@ -14885,7 +14848,7 @@ loadBalancer.distribute(traffic);`}
                         <div style={{ display: 'grid', gap: '1.5rem' }}>
                             {(() => {
                                 const allReferrals = getReferralsFromATS();
-                                const myReferrals = allReferrals.filter(r => r.id === 'demo-1' || (profileData.name && r.referredBy?.toLowerCase() === profileData.name.toLowerCase()));
+                                const myReferrals = allReferrals.filter(r => profileData.name && r.referredBy?.toLowerCase() === profileData.name.toLowerCase());
                                 return myReferrals.length > 0 ? (
                                 myReferrals.map(referral => {
                                     const stages = ['Submitted', 'Under Review', 'Hired', '90 Days 💸', '180 Days 💸💸'];
