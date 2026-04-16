@@ -45,7 +45,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [uploadedFiles, setUploadedFiles] = useState({
         employeeHandbook: [],
         benefits: [],
-        hrForms: []
+        hrForms: [],
+        hrDocuments: [],
+        hrConfidential: []
     });
     const [pendingProfilePicture, setPendingProfilePicture] = useState(null);
     const [loginEmail, setLoginEmail] = useState('');
@@ -469,6 +471,10 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             let hrDocsFiles = { files: [] };
             try { hrDocsFiles = await listS3Contents('Documents/HR-Documents/'); } catch(e) {}
             
+            // Fetch HR Confidential
+            let hrConfFiles = { files: [] };
+            try { hrConfFiles = await listS3Contents('Documents/HR-Confidential/'); } catch(e) {}
+            
             console.log('Fetched files:', { handbookFiles, benefitsFiles, hrFormsFiles });
             
             // Process handbook files - filter out items without name
@@ -515,10 +521,23 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 s3Url: file.url
             })) || [];
             
+            // Process HR Confidential files
+            const hrConfData = hrConfFiles.files?.filter(file => file.name && file.name.trim() !== '').map(file => ({
+                id: file.key,
+                name: file.name,
+                size: file.size,
+                type: file.name.split('.').pop(),
+                uploadDate: file.lastModified,
+                uploadedBy: 'HR',
+                s3Url: file.url
+            })) || [];
+            
             setUploadedFiles({
-                employeeHandbook: [...handbookData, ...hrDocsData],
+                employeeHandbook: handbookData,
                 benefits: benefitsData,
-                hrForms: hrFormsData
+                hrForms: hrFormsData,
+                hrDocuments: hrDocsData,
+                hrConfidential: hrConfData
             });
             
             console.log('HR documents loaded:', { handbookData, benefitsData, hrFormsData });
@@ -726,7 +745,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                     size: file.size,
                     type: file.type,
                     uploadDate: new Date().toISOString(),
-                    uploadedBy: userRole.toUpperCase(),
+                    uploadedBy: profileData.name || loginEmail || userRole.toUpperCase(),
                     s3Url: s3Url
                 };
             });
@@ -10316,6 +10335,81 @@ loadBalancer.distribute(traffic);`}
                                 )}
                             </div>
                             )}
+
+                            {/* HR Documents Card */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white', padding: '2rem', borderRadius: '12px',
+                                border: '2px solid #d4af37', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', animationDelay: '0.3s'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{ fontSize: '2.5rem', marginRight: '1rem' }}>📁</div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.3rem', fontWeight: '700' }}>
+                                        HR Documents ({uploadedFiles.hrDocuments.length})
+                                    </h3>
+                                </div>
+                                {uploadedFiles.hrDocuments.length > 0 ? (
+                                    <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                                        {uploadedFiles.hrDocuments.map((file) => {
+                                            const badge = getFileTypeBadge(file.name);
+                                            return (
+                                                <div key={file.id} style={{ display: 'flex', alignItems: 'center', padding: '0.75rem', background: '#f8fafc', borderRadius: '6px', marginBottom: '0.5rem', border: '1px solid #e2e8f0' }}>
+                                                    <span style={{ background: badge.color, color: 'white', padding: '0.25rem 0.5rem', borderRadius: '4px', fontSize: '0.7rem', fontWeight: '600', marginRight: '0.75rem' }}>{badge.label}</span>
+                                                    <div style={{ flex: 1 }}>
+                                                        <div style={{ fontSize: '0.9rem', fontWeight: '500', color: '#374151' }}>{file.name.length > 40 ? file.name.substring(0, 40) + '...' : file.name}</div>
+                                                        <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>{formatFileSize(file.size)} • by {file.uploadedBy}</div>
+                                                        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                                                            <button onClick={() => handleViewDocument(file.name, file)} style={{ background: '#1e3a8a', border: 'none', color: 'white', cursor: 'pointer', padding: '0.4rem 0.75rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: '600' }}>View</button>
+                                                            {canDeleteHandbook() && <button onClick={() => handleFileDelete('hrDocuments', file.id, file.name)} style={{ background: '#ef4444', border: 'none', color: 'white', cursor: 'pointer', padding: '0.4rem 0.75rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: '600' }}>Delete</button>}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                ) : (
+                                    <p style={{ color: '#94a3b8', textAlign: 'center' }}>No HR documents uploaded yet.</p>
+                                )}
+                            </div>
+
+                            {/* HR Confidential - HR and SuperAdmin only */}
+                            {(userRole === 'hr' || userRole === 'superadmin') && (
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white', padding: '2rem', borderRadius: '12px',
+                                border: '2px solid #ef4444', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', animationDelay: '0.4s'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{ fontSize: '2.5rem', marginRight: '1rem' }}>🔐</div>
+                                    <h3 style={{ color: '#dc2626', margin: 0, fontSize: '1.3rem', fontWeight: '700' }}>
+                                        HR Confidential ({uploadedFiles.hrConfidential.length})
+                                    </h3>
+                                </div>
+                                <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px', padding: '0.75rem', marginBottom: '1rem' }}>
+                                    <p style={{ color: '#dc2626', margin: 0, fontSize: '0.85rem', fontWeight: '600' }}>🚫 Restricted — HR and SuperAdmin only</p>
+                                </div>
+                                {uploadedFiles.hrConfidential.length > 0 ? (
+                                    <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                                        {uploadedFiles.hrConfidential.map((file) => {
+                                            const badge = getFileTypeBadge(file.name);
+                                            return (
+                                                <div key={file.id} style={{ display: 'flex', alignItems: 'center', padding: '0.75rem', background: '#fef2f2', borderRadius: '6px', marginBottom: '0.5rem', border: '1px solid #fecaca' }}>
+                                                    <span style={{ background: badge.color, color: 'white', padding: '0.25rem 0.5rem', borderRadius: '4px', fontSize: '0.7rem', fontWeight: '600', marginRight: '0.75rem' }}>{badge.label}</span>
+                                                    <div style={{ flex: 1 }}>
+                                                        <div style={{ fontSize: '0.9rem', fontWeight: '500', color: '#374151' }}>{file.name.length > 40 ? file.name.substring(0, 40) + '...' : file.name}</div>
+                                                        <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>{formatFileSize(file.size)} • by {file.uploadedBy}</div>
+                                                        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                                                            <button onClick={() => handleViewDocument(file.name, file)} style={{ background: '#1e3a8a', border: 'none', color: 'white', cursor: 'pointer', padding: '0.4rem 0.75rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: '600' }}>View</button>
+                                                            <button onClick={() => handleFileDelete('hrConfidential', file.id, file.name)} style={{ background: '#ef4444', border: 'none', color: 'white', cursor: 'pointer', padding: '0.4rem 0.75rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: '600' }}>Delete</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                ) : (
+                                    <p style={{ color: '#94a3b8', textAlign: 'center' }}>No confidential documents uploaded yet.</p>
+                                )}
+                            </div>
+                            )}
                         </div>
                     </div>
                 </section>
@@ -12148,6 +12242,9 @@ loadBalancer.distribute(traffic);`}
                                         opacity: canUploadDoc ? 1 : 0.6
                                     }}>
                                     <option value="HR-Documents">📁 HR Documents</option>
+                                    {(userRole === 'hr' || userRole === 'superadmin') && (
+                                        <option value="HR-Confidential">🔐 HR Confidential</option>
+                                    )}
                                     {(userRole === 'superadmin' || userRole === 'security') && (
                                         <option value="Compliance-Security">🔒 Compliance & Security</option>
                                     )}
@@ -12173,7 +12270,7 @@ loadBalancer.distribute(traffic);`}
                                     
                                     if (e.target.files && e.target.files.length > 0) {
                                         const files = Array.from(e.target.files);
-                                        const categoryLabels = { 'HR-Documents': 'HR Documents', 'Compliance-Security': 'Compliance & Security', 'Shared-Resources': 'Shared Resources', 'Resumes': 'Resumes' };
+                                        const categoryLabels = { 'HR-Documents': 'HR Documents', 'HR-Confidential': 'HR Confidential', 'Compliance-Security': 'Compliance & Security', 'Shared-Resources': 'Shared Resources', 'Resumes': 'Resumes' };
                                         
                                         try {
                                             const button = document.querySelector('label[for="documentUpload"]');
