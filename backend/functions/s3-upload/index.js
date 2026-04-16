@@ -92,7 +92,7 @@ exports.handler = async (event) => {
             let s3Key = fileUrl;
             if (fileUrl.includes('amazonaws.com')) {
                 const url = new URL(fileUrl);
-                s3Key = url.pathname.substring(1); // Remove leading slash
+                s3Key = decodeURIComponent(url.pathname.substring(1)); // Remove leading slash and decode
             }
 
             const deleteParams = {

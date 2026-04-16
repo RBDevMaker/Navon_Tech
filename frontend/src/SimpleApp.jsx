@@ -12651,9 +12651,10 @@ loadBalancer.distribute(traffic);`}
                                                 </a>
                                                 {userRole !== 'employee' && (
                                                 <button
-                                                    onClick={() => {
-                                                        const yes = window.confirm(`🗑️ Delete "${file.name}"?\n\nThis action cannot be undone.`);
-                                                        if (!yes) return;
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        if (!window.confirm(`🗑️ Delete "${file.name}"?\n\nThis action cannot be undone.`)) return;
                                                         deleteFromS3(file.url).then(() => {
                                                             alert('✅ Deleted.');
                                                             fetchSharedResourceFiles();
