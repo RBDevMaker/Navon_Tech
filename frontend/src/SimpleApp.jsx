@@ -14812,10 +14812,27 @@ loadBalancer.distribute(traffic);`}
                                 );
                             })}
                             {getReferralsFromATS().length === 0 && (
-                                <div style={{ textAlign: 'center', padding: '3rem', background: 'white', borderRadius: '12px', border: '2px solid #e2e8f0' }}>
-                                    <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📭</div>
-                                    <h3 style={{ color: '#1e3a8a', marginBottom: '0.5rem' }}>No Referrals</h3>
-                                    <p style={{ color: '#64748b' }}>No employee referrals have been submitted yet.</p>
+                                <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', border: '2px solid #e2e8f0' }}>
+                                    <h3 style={{ color: '#1e3a8a', marginBottom: '1.5rem', textAlign: 'center' }}>Referral Pipeline</h3>
+                                    {(() => {
+                                        const stages = ['Submitted', 'Under Review', 'Interview Scheduled', 'Offer Extended', 'Hired', '90 Days 💸', '180 Days 💸💸'];
+                                        const stageColors = { 'Submitted': '#6366f1', 'Under Review': '#f59e0b', 'Interview Scheduled': '#3b82f6', 'Offer Extended': '#10b981', 'Hired': '#059669', '90 Days 💸': '#d4af37', '180 Days 💸💸': '#16a34a' };
+                                        return (
+                                            <>
+                                            <div style={{ display: 'flex', gap: '0.25rem', marginBottom: '1rem' }}>
+                                                {stages.map((s) => (
+                                                    <div key={s} style={{ flex: 1, height: '8px', borderRadius: '4px', background: '#e2e8f0' }} />
+                                                ))}
+                                            </div>
+                                            <div style={{ display: 'flex', gap: '0.25rem' }}>
+                                                {stages.map((s) => (
+                                                    <span key={s} style={{ flex: 1, textAlign: 'center', fontSize: '0.7rem', color: stageColors[s] || '#94a3b8', fontWeight: '500' }}>{s}</span>
+                                                ))}
+                                            </div>
+                                            </>
+                                        );
+                                    })()}
+                                    <p style={{ color: '#94a3b8', textAlign: 'center', marginTop: '1.5rem', fontSize: '0.9rem' }}>No employee referrals in the pipeline yet.</p>
                                 </div>
                             )}
                         </div>
