@@ -12744,17 +12744,15 @@ loadBalancer.distribute(traffic);`}
                                                     style={{ background: '#d4af37', color: '#0f172a', border: 'none', padding: '0.6rem 1rem', borderRadius: '6px', fontWeight: '600', fontSize: '0.85rem', flex: 1, textDecoration: 'none', textAlign: 'center' }}>
                                                     ⬇️ Download
                                                 </a>
-                                                <button onClick={async () => {
-                                                    if (!confirm(`🗑️ Delete "${file.name}"?\n\nThis action cannot be undone.`)) return;
-                                                    try {
-                                                        console.log('Deleting file URL:', file.url);
-                                                        await deleteFromS3(file.url);
+                                                <button onClick={() => {
+                                                    const yes = window.confirm(`🗑️ Delete "${file.name}"?\n\nThis action cannot be undone.`);
+                                                    if (!yes) return;
+                                                    deleteFromS3(file.url).then(() => {
                                                         alert('✅ Deleted.');
                                                         fetchHrConfidentialFiles();
-                                                    } catch (err) {
-                                                        console.error('Delete error:', err);
+                                                    }).catch(err => {
                                                         alert(`❌ Delete failed: ${err.message}`);
-                                                    }
+                                                    });
                                                 }} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '0.6rem 1rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem' }}>
                                                     🗑️
                                                 </button>
