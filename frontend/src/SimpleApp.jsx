@@ -12651,10 +12651,14 @@ loadBalancer.distribute(traffic);`}
                                                 </a>
                                                 {userRole !== 'employee' && (
                                                 <button
-                                                    onClick={async () => {
-                                                        if (!confirm(`🗑️ Delete "${file.name}"?`)) return;
-                                                        try { await deleteFromS3(file.url); alert('✅ Deleted.'); fetchSharedResourceFiles(); } catch (err) { alert(`❌ ${err.message}`); }
-                                                    }}
+                                                    onClick={() => {
+                                                        const yes = window.confirm(`🗑️ Delete "${file.name}"?\n\nThis action cannot be undone.`);
+                                                        if (!yes) return;
+                                                        deleteFromS3(file.url).then(() => {
+                                                            alert('✅ Deleted.');
+                                                            fetchSharedResourceFiles();
+                                                        }).catch(err => { alert(`❌ ${err.message}`); });
+                                                    }}}
                                                     style={{ background: '#ef4444', color: 'white', border: 'none', padding: '0.6rem 1rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem' }}>
                                                     🗑️
                                                 </button>
