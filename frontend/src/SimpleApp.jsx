@@ -102,6 +102,10 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [isLoadingCompliance, setIsLoadingCompliance] = useState(false);
     const [isLoadingSharedResources, setIsLoadingSharedResources] = useState(false);
     
+    // HR Confidential files state
+    const [hrConfidentialFiles, setHrConfidentialFiles] = useState([]);
+    const [isLoadingHrConfidential, setIsLoadingHrConfidential] = useState(false);
+    
     // Resume files state (S3 Documents/Resumes folder)
     const [resumeDocFiles, setResumeDocFiles] = useState([]);
     const [isLoadingResumeDocs, setIsLoadingResumeDocs] = useState(false);
@@ -455,6 +459,13 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         }
     }, [currentPage]);
 
+    // Fetch HR Confidential files
+    useEffect(() => {
+        if (currentPage === 'hrconfidential') {
+            fetchHrConfidentialFiles();
+        }
+    }, [currentPage]);
+
     // Fetch HR documents from S3
     const fetchHRDocuments = async () => {
         try {
@@ -615,6 +626,29 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             console.error('Error fetching resume docs:', error);
         } finally {
             setIsLoadingResumeDocs(false);
+        }
+    };
+
+    // Fetch HR Confidential files from S3
+    const fetchHrConfidentialFiles = async () => {
+        setIsLoadingHrConfidential(true);
+        try {
+            const result = await listS3Contents('Documents/HR-Confidential/');
+            const files = (result.files || [])
+                .filter(file => file.name && file.name.trim() !== '')
+                .map(file => ({
+                    id: file.key,
+                    name: file.name,
+                    size: file.size,
+                    lastModified: file.lastModified,
+                    type: file.name.split('.').pop(),
+                    url: file.url
+                }));
+            setHrConfidentialFiles(files);
+        } catch (error) {
+            console.error('Error fetching HR confidential files:', error);
+        } finally {
+            setIsLoadingHrConfidential(false);
         }
     };
 
@@ -11969,7 +12003,8 @@ loadBalancer.distribute(traffic);`}
                             </div>
                             )}
 
-                            {/* Shared Resources */}
+                            {/* Shared Resources - HR, Admin, Security, SuperAdmin */}
+                            {(userRole === 'hr' || userRole === 'admin' || userRole === 'security' || userRole === 'superadmin') && (
                             <div className="hover-lift animate-scale-in" style={{
                                 background: 'white',
                                 padding: '2rem',
@@ -12024,6 +12059,53 @@ loadBalancer.distribute(traffic);`}
                                     Browse Resources
                                 </button>
                             </div>
+                            )}
+
+                            {/* HR Confidential - HR and SuperAdmin only */}
+                            {(userRole === 'hr' || userRole === 'superadmin') && (
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #ef4444',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                display: 'flex',
+                                flexDirection: 'column'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{ fontSize: '2.5rem', marginRight: '1rem' }}>🔐</div>
+                                    <h3 style={{ color: '#dc2626', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        HR Confidential
+                                    </h3>
+                                </div>
+                                <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px', padding: '0.75rem', marginBottom: '1rem' }}>
+                                    <p style={{ color: '#dc2626', margin: 0, fontSize: '0.85rem', fontWeight: '600' }}>🚫 Restricted — HR and SuperAdmin only</p>
+                                </div>
+                                <div style={{ marginBottom: '1rem', flex: 1 }}>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Sensitive HR documents</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Employee records</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Confidential files</p>
+                                </div>
+                                <button 
+                                    onClick={() => {
+                                        setCurrentPage('hrconfidential');
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }}
+                                    style={{
+                                    background: '#dc2626',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    width: '100%',
+                                    marginTop: 'auto'
+                                }}>
+                                    Access Confidential Files
+                                </button>
+                            </div>
+                            )}
 
                             {/* Resumes - Brian and Veronica only */}
                             {(loginEmail?.toLowerCase() === 'veronica.hill@navontech.com' || loginEmail?.toLowerCase() === 'brian.briscoe@navontech.com' || loginEmail?.toLowerCase().includes('root') || userRole === 'superadmin') && (
@@ -12613,6 +12695,97 @@ loadBalancer.distribute(traffic);`}
                                                     🗑️
                                                 </button>
                                                 )}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </div>
+                </section>
+            )}
+
+            {/* HR CONFIDENTIAL PAGE */}
+            {currentPage === 'hrconfidential' && (userRole === 'hr' || userRole === 'superadmin') && (
+                <section style={{ padding: '4rem 2rem', background: '#f1f5f9', minHeight: '100vh' }}>
+                    <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                        <div style={{ background: 'linear-gradient(135deg, #fef2f2 0%, #fecaca 100%)', padding: '1rem', borderRadius: '8px', marginBottom: '2rem', fontSize: '0.9rem', color: '#991b1b' }}>
+                            🏠 Home → 🔐 Secure Employee Portal → 📁 Document Management → <strong>🔐 HR Confidential</strong>
+                        </div>
+                        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                            <h2 style={{ fontSize: '3rem', marginBottom: '0.5rem', color: '#dc2626', fontWeight: '800' }}>🔐 HR Confidential</h2>
+                            <div style={{ background: '#fef2f2', border: '2px solid #ef4444', borderRadius: '8px', padding: '0.75rem', display: 'inline-block', marginBottom: '1.5rem' }}>
+                                <p style={{ color: '#dc2626', margin: 0, fontWeight: '700' }}>🚫 Restricted — HR and SuperAdmin Access Only</p>
+                            </div>
+                            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                                <button onClick={() => { setCurrentPage('documentmanagement'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                                    style={{ background: '#d4af37', color: '#0f172a', border: 'none', padding: '1rem 2rem', borderRadius: '8px', cursor: 'pointer', fontWeight: '700', fontSize: '1rem' }}>
+                                    ← Back to Document Management
+                                </button>
+                                <label style={{ background: '#dc2626', color: 'white', border: 'none', padding: '1rem 2rem', borderRadius: '8px', cursor: 'pointer', fontWeight: '700', fontSize: '1rem' }}>
+                                    📤 Upload Confidential File
+                                    <input type="file" multiple accept=".pdf,.doc,.docx,.txt,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.gif" style={{ display: 'none' }} onChange={async (e) => {
+                                        if (e.target.files && e.target.files.length > 0) {
+                                            try {
+                                                for (const file of Array.from(e.target.files)) {
+                                                    await uploadDocument(file, 'HR-Confidential');
+                                                }
+                                                alert(`✅ Uploaded ${e.target.files.length} file(s) to HR Confidential`);
+                                                fetchHrConfidentialFiles();
+                                                e.target.value = '';
+                                            } catch (err) { alert(`❌ Upload failed: ${err.message}`); }
+                                        }
+                                    }} />
+                                </label>
+                            </div>
+                        </div>
+
+                        {isLoadingHrConfidential ? (
+                            <div style={{ textAlign: 'center', padding: '3rem' }}>
+                                <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>⏳</div>
+                                <p style={{ color: '#475569' }}>Loading confidential files...</p>
+                            </div>
+                        ) : hrConfidentialFiles.length === 0 ? (
+                            <div style={{ textAlign: 'center', padding: '3rem', background: 'white', borderRadius: '12px', border: '2px solid #fecaca' }}>
+                                <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📭</div>
+                                <h3 style={{ color: '#dc2626', marginBottom: '0.5rem' }}>No Confidential Files Yet</h3>
+                                <p style={{ color: '#64748b' }}>Upload confidential HR documents using the button above.</p>
+                            </div>
+                        ) : (
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(350px, 100%), 1fr))', gap: '1.5rem' }}>
+                                {hrConfidentialFiles.map((file) => {
+                                    const badge = getFileTypeBadge(file.name);
+                                    const modParts = file.lastModified ? String(file.lastModified).split('T')[0].split('-') : null;
+                                    const displayDate = modParts && modParts.length === 3
+                                        ? new Date(Number(modParts[0]), Number(modParts[1]) - 1, Number(modParts[2])).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+                                        : '';
+                                    return (
+                                        <div key={file.id} className="hover-lift" style={{
+                                            background: 'white', padding: '1.5rem', borderRadius: '12px',
+                                            border: '2px solid #ef4444', boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                                        }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+                                                <span style={{ background: badge.color, color: 'white', padding: '0.3rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: '600', marginRight: '0.75rem' }}>{badge.label}</span>
+                                                <div style={{ flex: 1, minWidth: 0 }}>
+                                                    <h4 style={{ color: '#1e3a8a', margin: 0, fontSize: '1rem', fontWeight: '600', wordBreak: 'break-word' }}>{file.name}</h4>
+                                                    <p style={{ color: '#94a3b8', fontSize: '0.8rem', margin: '0.25rem 0 0 0' }}>{formatFileSize(file.size)}{displayDate ? ` • ${displayDate}` : ''}</p>
+                                                </div>
+                                            </div>
+                                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                                <button onClick={() => handleViewDocument(file.name, { name: file.name, s3Url: file.url })}
+                                                    style={{ background: '#1e3a8a', color: 'white', border: 'none', padding: '0.6rem 1rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem', flex: 1 }}>
+                                                    👁️ View
+                                                </button>
+                                                <a href={file.url} download={file.name} target="_blank" rel="noopener noreferrer"
+                                                    style={{ background: '#d4af37', color: '#0f172a', border: 'none', padding: '0.6rem 1rem', borderRadius: '6px', fontWeight: '600', fontSize: '0.85rem', flex: 1, textDecoration: 'none', textAlign: 'center' }}>
+                                                    ⬇️ Download
+                                                </a>
+                                                <button onClick={async () => {
+                                                    if (!confirm(`🗑️ Delete "${file.name}"?\n\nThis action cannot be undone.`)) return;
+                                                    try { await deleteFromS3(file.url); alert('✅ Deleted.'); fetchHrConfidentialFiles(); } catch (err) { alert(`❌ ${err.message}`); }
+                                                }} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '0.6rem 1rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem' }}>
+                                                    🗑️
+                                                </button>
                                             </div>
                                         </div>
                                     );
