@@ -10616,6 +10616,7 @@ loadBalancer.distribute(traffic);`}
                                     {isAdminView && <option value="location">By Location</option>}
                                     {isAdminView && <option value="shirtSize">By T-Shirt Size</option>}
                                     {isAdminView && <option value="startDate">By Start Date</option>}
+                                    {isAdminView && <option value="birthday">By Birthday Month</option>}
                                 </select>
                                 {directoryFilter !== 'all' && (
                                     <select
@@ -10651,11 +10652,25 @@ loadBalancer.distribute(traffic);`}
                                                         const [y] = m.startDate.split('-');
                                                         return y;
                                                     }
+                                                    if (directoryFilter === 'birthday') {
+                                                        if (!m.birthdate) return null;
+                                                        const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+                                                        // Handle MM/DD/YYYY or YYYY-MM-DD formats
+                                                        let monthNum;
+                                                        if (m.birthdate.includes('/')) {
+                                                            monthNum = parseInt(m.birthdate.split('/')[0]);
+                                                        } else if (m.birthdate.includes('-')) {
+                                                            monthNum = parseInt(m.birthdate.split('-')[1]);
+                                                        }
+                                                        return monthNum >= 1 && monthNum <= 12 ? months[monthNum - 1] : null;
+                                                    }
                                                     return '';
                                                 })();
                                                 return val ? [val] : [];
                                             })
                                         )].sort((a, b) => {
+                                            const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+                                            if (directoryFilter === 'birthday') return months.indexOf(a) - months.indexOf(b);
                                             return a.localeCompare(b);
                                         }).map(val => (
                                             <option key={val} value={val}>{val}</option>
@@ -10700,7 +10715,19 @@ loadBalancer.distribute(traffic);`}
                                     if (directorySearch && y !== directorySearch) return 0;
                                     if (directoryMonth && mo !== directoryMonth) return 0;
                                 }
-                                if (directoryFilter !== 'all' && directoryFilter !== 'startDate' && directorySearch) {
+                                if (directoryFilter === 'birthday' && directorySearch) {
+                                    if (!profileData.birthdate) return 0;
+                                    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+                                    let monthNum;
+                                    if (profileData.birthdate.includes('/')) {
+                                        monthNum = parseInt(profileData.birthdate.split('/')[0]);
+                                    } else if (profileData.birthdate.includes('-')) {
+                                        monthNum = parseInt(profileData.birthdate.split('-')[1]);
+                                    }
+                                    const monthName = monthNum >= 1 && monthNum <= 12 ? months[monthNum - 1] : '';
+                                    if (monthName.toLowerCase() !== directorySearch.toLowerCase()) return 0;
+                                }
+                                if (directoryFilter !== 'all' && directoryFilter !== 'startDate' && directoryFilter !== 'birthday' && directorySearch) {
                                     const fieldMap = { department: 'department', employmentType: 'employmentType', billableStatus: 'billableStatus', prime: 'contractAssignment', gender: 'gender', location: 'location', shirtSize: 'shirtSize' };
                                     const field = fieldMap[directoryFilter];
                                     if (field) {
@@ -10726,6 +10753,19 @@ loadBalancer.distribute(traffic);`}
                                     if (!m.startDate) return false;
                                     const [y, mo] = m.startDate.split('-');
                                     return (!directorySearch || y === directorySearch) && (!directoryMonth || mo === directoryMonth);
+                                }
+                                if (directoryFilter === 'birthday') {
+                                    if (!directorySearch) return true;
+                                    if (!m.birthdate) return false;
+                                    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+                                    let monthNum;
+                                    if (m.birthdate.includes('/')) {
+                                        monthNum = parseInt(m.birthdate.split('/')[0]);
+                                    } else if (m.birthdate.includes('-')) {
+                                        monthNum = parseInt(m.birthdate.split('-')[1]);
+                                    }
+                                    const monthName = monthNum >= 1 && monthNum <= 12 ? months[monthNum - 1] : '';
+                                    return monthName.toLowerCase() === directorySearch.toLowerCase();
                                 }
                                 if (!directorySearch.trim()) return true;
                                 const s = directorySearch.toLowerCase();
@@ -10758,7 +10798,19 @@ loadBalancer.distribute(traffic);`}
                                     if (directorySearch && y !== directorySearch) return false;
                                     if (directoryMonth && mo !== directoryMonth) return false;
                                 }
-                                if (directoryFilter !== 'all' && directoryFilter !== 'startDate' && directorySearch) {
+                                if (directoryFilter === 'birthday' && directorySearch) {
+                                    if (!profileData.birthdate) return false;
+                                    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+                                    let monthNum;
+                                    if (profileData.birthdate.includes('/')) {
+                                        monthNum = parseInt(profileData.birthdate.split('/')[0]);
+                                    } else if (profileData.birthdate.includes('-')) {
+                                        monthNum = parseInt(profileData.birthdate.split('-')[1]);
+                                    }
+                                    const monthName = monthNum >= 1 && monthNum <= 12 ? months[monthNum - 1] : '';
+                                    if (monthName.toLowerCase() !== directorySearch.toLowerCase()) return false;
+                                }
+                                if (directoryFilter !== 'all' && directoryFilter !== 'startDate' && directoryFilter !== 'birthday' && directorySearch) {
                                     const fieldMap = { department: 'department', employmentType: 'employmentType', billableStatus: 'billableStatus', prime: 'contractAssignment', gender: 'gender', location: 'location', shirtSize: 'shirtSize' };
                                     const field = fieldMap[directoryFilter];
                                     if (field) {
@@ -11087,6 +11139,19 @@ loadBalancer.distribute(traffic);`}
                                     const monthMatch = !directoryMonth || mo === directoryMonth;
                                     return yearMatch && monthMatch;
                                 }
+                                if (directoryFilter === 'birthday') {
+                                    if (!directorySearch) return true;
+                                    if (!member.birthdate) return false;
+                                    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+                                    let monthNum;
+                                    if (member.birthdate.includes('/')) {
+                                        monthNum = parseInt(member.birthdate.split('/')[0]);
+                                    } else if (member.birthdate.includes('-')) {
+                                        monthNum = parseInt(member.birthdate.split('-')[1]);
+                                    }
+                                    const monthName = monthNum >= 1 && monthNum <= 12 ? months[monthNum - 1] : '';
+                                    return monthName.toLowerCase() === directorySearch.toLowerCase();
+                                }
                                 if (!directorySearch.trim()) return true;
                                 const search = directorySearch.toLowerCase();
                                 // Category filter mode
@@ -11108,6 +11173,20 @@ loadBalancer.distribute(traffic);`}
                             }).sort((a, b) => {
                                 if (directoryFilter === 'startDate') {
                                     return (a.startDate || '9999-12-31').localeCompare(b.startDate || '9999-12-31');
+                                }
+                                if (directoryFilter === 'birthday') {
+                                    const getMonthDay = (bd) => {
+                                        if (!bd) return '99/99';
+                                        if (bd.includes('/')) {
+                                            const parts = bd.split('/');
+                                            return parts[0].padStart(2,'0') + '/' + parts[1].padStart(2,'0');
+                                        } else if (bd.includes('-')) {
+                                            const parts = bd.split('-');
+                                            return parts[1] + '/' + parts[2];
+                                        }
+                                        return '99/99';
+                                    };
+                                    return getMonthDay(a.birthdate).localeCompare(getMonthDay(b.birthdate));
                                 }
                                 return 0;
                             }).map((member) => (
