@@ -1822,6 +1822,49 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         document.body.removeChild(a);
     };
 
+    // Convert PDF resume to DOCX
+    const convertPdfToDocx = async (s3Key, candidateName) => {
+        if (!s3Key) { alert('Resume file not available'); return; }
+        if (!s3Key.toLowerCase().endsWith('.pdf')) {
+            alert('This file is already in DOCX format or is not a PDF.');
+            return;
+        }
+        
+        const confirmConvert = window.confirm(`Convert ${candidateName || 'this resume'} from PDF to DOCX?\n\nThe converted file will be saved alongside the original PDF.`);
+        if (!confirmConvert) return;
+        
+        try {
+            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+            
+            const response = await fetch(`${apiUrl}/convert-pdf-to-docx`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ s3Key })
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Conversion failed');
+            }
+            
+            const data = await response.json();
+            
+            // Auto-download the converted file
+            const a = document.createElement('a');
+            a.href = data.docxUrl;
+            a.download = candidateName ? `${candidateName.replace(/\s+/g, '_')}_Resume.docx` : 'Resume.docx';
+            a.target = '_blank';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            alert(`✅ PDF converted to DOCX successfully!\n\nFile saved as: ${data.docxKey.split('/').pop()}`);
+        } catch (error) {
+            console.error('Error converting PDF to DOCX:', error);
+            alert(`❌ Failed to convert PDF to DOCX.\n\n${error.message}`);
+        }
+    };
+
     // Export resumes to Excel/CSV
     const exportToExcel = () => {
         // Create CSV content
@@ -13402,6 +13445,12 @@ loadBalancer.distribute(traffic);`}
                                                     style={{ background: '#d4af37', color: '#0f172a', border: 'none', padding: '0.6rem 1rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem', flex: 1, textDecoration: 'none', textAlign: 'center' }}>
                                                     ⬇️ Download
                                                 </a>
+                                                {file.name.toLowerCase().endsWith('.pdf') && (
+                                                    <button onClick={() => convertPdfToDocx(file.id, file.name.replace('.pdf', '').replace('.PDF', ''))}
+                                                        style={{ background: '#7c3aed', color: 'white', border: 'none', padding: '0.6rem 1rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem', flex: 1 }}>
+                                                        📝 PDF→DOCX
+                                                    </button>
+                                                )}
                                             </div>
                                         </div>
                                     );
@@ -13553,8 +13602,8 @@ loadBalancer.distribute(traffic);`}
                                                                 </div>
                                                                 <div style={{ display: 'flex', gap: '0.25rem', flexWrap: 'wrap' }}>
                                                                     <button onClick={(e) => { e.stopPropagation(); setEditingResume({...resume}); }} style={{ background: '#f59e0b', color: '#0f172a', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', fontWeight: '600' }}>Edit</button>
-                                                                    {userGroups.includes('security') && <button onClick={() => resume.resumeId === 'sample' ? alert('This is a demo resume card showing how real resumes will appear.') : viewResume(resume.s3Key, resume.candidateName)} style={{ background: '#1e3a8a', color: 'white', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', fontWeight: '600' }}>View</button>}
-                                                                    {userGroups.includes('security') && resume.resumeId !== 'sample' && <button onClick={() => downloadResume(resume.s3Key, resume.candidateName)} style={{ background: '#059669', color: 'white', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', fontWeight: '600' }}>Download</button>}
+                                                                    {(userGroups.includes('security') || userRole === 'superadmin' || loginEmail?.toLowerCase().includes('root')) && <button onClick={() => resume.resumeId === 'sample' ? alert('This is a demo resume card showing how real resumes will appear.') : viewResume(resume.s3Key, resume.candidateName)} style={{ background: '#1e3a8a', color: 'white', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', fontWeight: '600' }}>View</button>}
+                                                                    {(userGroups.includes('security') || userRole === 'superadmin' || loginEmail?.toLowerCase().includes('root')) && resume.resumeId !== 'sample' && <button onClick={() => downloadResume(resume.s3Key, resume.candidateName)} style={{ background: '#059669', color: 'white', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', fontWeight: '600' }}>Download</button>}
                                                                     <button onClick={() => {
                                                                         const r = resume;
                                                                         const html = `<html><head><title>${r.candidateName || 'Resume'}</title></head><body style="font-family:Arial,sans-serif;max-width:700px;margin:0 auto;padding:40px">
@@ -13579,6 +13628,8 @@ loadBalancer.distribute(traffic);`}
                                                                         w.document.close();
                                                                         w.print();
                                                                     }} style={{ background: '#dc2626', color: 'white', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', fontWeight: '600' }}>PDF</button>
+                                                                </div>
+                                                                <div style={{ display: 'flex', gap: '0.25rem', flexWrap: 'wrap', marginTop: '0.25rem' }}>
                                                                     <select value={resume.stage || 'New'} onChange={(e) => { if (resume.resumeId === 'sample') { alert('Demo resume — use a real resume to change stages.'); return; } updateResumeStage(resume.resumeId, e.target.value); }} style={{ padding: '0.25rem', borderRadius: '4px', border: '1px solid #d4af37', fontSize: '0.7rem', cursor: 'pointer', flex: 1, minWidth: 0 }}>
                                                                         <option value="New">→ New</option><option value="Screening">→ Screening</option><option value="Interview">→ Interview</option><option value="Offer">→ Offer</option><option value="Pending">→ Pending</option><option value="Hired">→ Hired</option><option value="Archived">→ Archive</option><option value="Rejected">→ Rejected</option>
                                                                     </select>

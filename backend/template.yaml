@@ -455,6 +455,39 @@ Resources:
             Auth:
               Authorizer: NONE
 
+  # PDF to DOCX Conversion Function (Python)
+  PdfToDocxFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/pdf-to-docx/
+      Handler: app.handler
+      Runtime: python3.13
+      Description: Converts PDF resumes to DOCX format using pdf2docx
+      MemorySize: 1024
+      Timeout: 60
+      Environment:
+        Variables:
+          S3_BUCKET: navon-tech-images
+      Policies:
+        - S3CrudPolicy:
+            BucketName: navon-tech-images
+        - Statement:
+            - Effect: Allow
+              Action:
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+              Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"
+      Events:
+        ConvertPdf:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/convert-pdf-to-docx
+            Method: POST
+            Auth:
+              Authorizer: NONE
+
   # Rate Limiting Table for Job Applications
   RateLimitTable:
     Type: AWS::DynamoDB::Table
