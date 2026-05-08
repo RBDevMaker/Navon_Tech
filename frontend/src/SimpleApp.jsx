@@ -110,6 +110,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     // Resume files state (S3 Documents/Resumes folder)
     const [resumeDocFiles, setResumeDocFiles] = useState([]);
     const [isLoadingResumeDocs, setIsLoadingResumeDocs] = useState(false);
+    const [resumeDocSort, setResumeDocSort] = useState('newest');
     
     // Referral tracking - derived from ATS resumes with "Employee Referral" in notes
     const getReferralsFromATS = () => {
@@ -250,9 +251,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
     
-    // Fetch resumes when on resumes page or referral tracking pages
+    // Fetch resumes when on resumes page, referral tracking pages, or resume docs page
     useEffect(() => {
-        if ((currentPage === 'resumes' || currentPage === 'referraltracking' || currentPage === 'myreferralstatus') && (userGroups.includes('security') || userRole === 'security' || userRole === 'hr' || userRole === 'superadmin' || currentPage === 'myreferralstatus')) {
+        if ((currentPage === 'resumes' || currentPage === 'resumedocs' || currentPage === 'referraltracking' || currentPage === 'myreferralstatus') && (userGroups.includes('security') || userRole === 'security' || userRole === 'hr' || userRole === 'superadmin' || loginEmail?.toLowerCase().includes('root') || currentPage === 'myreferralstatus')) {
             fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
         }
     }, [currentPage, userRole]);
@@ -1830,7 +1831,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             return;
         }
         
-        const confirmConvert = window.confirm(`Convert ${candidateName || 'this resume'} from PDF to DOCX?\n\nThe converted file will be saved alongside the original PDF.`);
+        const confirmConvert = window.confirm(`Convert ${candidateName || 'this resume'} from PDF to DOCX?\n\nThe converted DOCX will appear alongside the original PDF.`);
         if (!confirmConvert) return;
         
         try {
@@ -1849,16 +1850,18 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             
             const data = await response.json();
             
-            // Auto-download the converted file
-            const a = document.createElement('a');
-            a.href = data.docxUrl;
-            a.download = candidateName ? `${candidateName.replace(/\s+/g, '_')}_Resume.docx` : 'Resume.docx';
-            a.target = '_blank';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            // Add the new DOCX file to the resume doc files list (appears on the card)
+            const newDocxFile = {
+                id: data.docxKey,
+                name: data.docxKey.split('/').pop(),
+                size: 0,
+                lastModified: new Date().toISOString(),
+                type: 'docx',
+                url: data.docxUrl
+            };
+            setResumeDocFiles(prev => [newDocxFile, ...prev]);
             
-            alert(`✅ PDF converted to DOCX successfully!\n\nFile saved as: ${data.docxKey.split('/').pop()}`);
+            alert(`✅ PDF converted to DOCX successfully!\n\nFile added: ${newDocxFile.name}`);
         } catch (error) {
             console.error('Error converting PDF to DOCX:', error);
             alert(`❌ Failed to convert PDF to DOCX.\n\n${error.message}`);
@@ -13384,10 +13387,34 @@ loadBalancer.distribute(traffic);`}
                                         if (e.target.files && e.target.files.length > 0) {
                                             try {
                                                 for (const file of Array.from(e.target.files)) {
+                                                    const candidateName = prompt(`Enter candidate name for:\n${file.name}\n\n(First Last)`);
+                                                    if (!candidateName || !candidateName.trim()) {
+                                                        alert('❌ Candidate name is required. Upload cancelled for this file.');
+                                                        continue;
+                                                    }
                                                     await uploadDocument(file, 'Resumes');
+                                                    // Create ATS entry so name shows on card
+                                                    const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                                                    const fileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+                                                    await fetch(`${apiUrl}/resume`, {
+                                                        method: 'POST',
+                                                        headers: { 'Content-Type': 'application/json' },
+                                                        body: JSON.stringify({
+                                                            candidateName: candidateName.trim(),
+                                                            email: '',
+                                                            phone: '',
+                                                            position: 'Not specified',
+                                                            department: 'General',
+                                                            stage: 'New',
+                                                            s3Key: `Resumes/${fileName}`,
+                                                            notes: `Manually uploaded via Document Management by ${profileData.name || loginEmail}`,
+                                                            receivedDate: new Date().toISOString().split('T')[0]
+                                                        })
+                                                    });
                                                 }
-                                                alert(`✅ Uploaded ${e.target.files.length} resume(s)`);
+                                                alert(`✅ Upload complete`);
                                                 fetchResumeDocs();
+                                                fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
                                                 e.target.value = '';
                                             } catch (err) {
                                                 alert(`❌ Upload failed: ${err.message}`);
@@ -13410,32 +13437,93 @@ loadBalancer.distribute(traffic);`}
                                 <p style={{ color: '#64748b' }}>Upload resumes using the button above.</p>
                             </div>
                         ) : (
+                            <>
+                            <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem', alignItems: 'center' }}>
+                                <span style={{ color: '#475569', fontWeight: '600', fontSize: '0.9rem' }}>Sort by:</span>
+                                <select value={resumeDocSort} onChange={(e) => setResumeDocSort(e.target.value)} style={{ padding: '0.5rem 1rem', borderRadius: '6px', border: '2px solid #d4af37', fontSize: '0.85rem', cursor: 'pointer', fontWeight: '600' }}>
+                                    <option value="newest">📅 Newest First</option>
+                                    <option value="oldest">📅 Oldest First</option>
+                                    <option value="name-asc">🔤 Last Name A→Z</option>
+                                    <option value="name-desc">🔤 Last Name Z→A</option>
+                                </select>
+                                <span style={{ color: '#94a3b8', fontSize: '0.85rem' }}>({resumeDocFiles.length} files)</span>
+                            </div>
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(350px, 100%), 1fr))', gap: '1.5rem' }}>
-                                {resumeDocFiles.map((file) => {
+                                {[...resumeDocFiles].sort((a, b) => {
+                                    if (resumeDocSort === 'newest') return new Date(b.lastModified || 0) - new Date(a.lastModified || 0);
+                                    if (resumeDocSort === 'oldest') return new Date(a.lastModified || 0) - new Date(b.lastModified || 0);
+                                    if (resumeDocSort === 'name-asc' || resumeDocSort === 'name-desc') {
+                                        const getLastName = (file) => {
+                                            // Try ATS match first
+                                            const matched = resumes.find(r => r.s3Key && (r.s3Key === file.id || r.s3Key.replace(/\.[^.]+$/, '') === file.id?.replace(/\.[^.]+$/, '')));
+                                            if (matched?.candidateName) {
+                                                const parts = matched.candidateName.trim().split(/\s+/);
+                                                return (parts.length > 1 ? parts[parts.length - 1] : parts[0]).toLowerCase();
+                                            }
+                                            // Fallback to filename
+                                            const clean = file.name.replace(/^\d+-/, '').replace(/^Resumes-\d+-/, '').replace(/\.[^.]+$/, '').replace(/[_-]/g, ' ').trim();
+                                            const parts = clean.split(/\s+/);
+                                            return (parts.length > 1 ? parts[parts.length - 1] : parts[0]).toLowerCase();
+                                        };
+                                        const lastA = getLastName(a);
+                                        const lastB = getLastName(b);
+                                        return resumeDocSort === 'name-asc' ? lastA.localeCompare(lastB) : lastB.localeCompare(lastA);
+                                    }
+                                    return 0;
+                                }).map((file) => {
                                     const badge = getFileTypeBadge(file.name);
                                     const modParts = file.lastModified ? String(file.lastModified).split('T')[0].split('-') : null;
                                     const displayDate = modParts && modParts.length === 3
                                         ? new Date(Number(modParts[0]), Number(modParts[1]) - 1, Number(modParts[2])).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
                                         : '';
+                                    const displayTime = file.lastModified ? new Date(file.lastModified).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) : '';
+                                    // Match file to ATS resume entry by s3Key to get candidate name
+                                    const matchedResume = resumes.find(r => r.s3Key && r.s3Key === file.id);
+                                    // Also try matching by filename (for converted files like .docx from .pdf)
+                                    const matchedByName = !matchedResume ? resumes.find(r => r.s3Key && file.id && r.s3Key.replace(/\.[^.]+$/, '') === file.id.replace(/\.[^.]+$/, '')) : null;
+                                    const atsName = (matchedResume || matchedByName)?.candidateName || null;
+                                    
+                                    // Fallback: parse name from filename if no ATS match
+                                    const parseNameFromFile = (fileName) => {
+                                        let clean = fileName
+                                            .replace(/^\d+-/, '')           // remove timestamp prefix
+                                            .replace(/^Resumes-\d+-/, '')   // remove "Resumes-timestamp-" prefix
+                                            .replace(/\.[^.]+$/, '')        // remove extension
+                                            .replace(/[_-]/g, ' ')          // replace underscores/dashes with spaces
+                                            .replace(/\s*\(\d+\)\s*/g, '') // remove (1), (2) etc
+                                            .replace(/\b(resume|cv|sr|senior|junior|developer|engineer|specialist|copy of)\b/gi, '')
+                                            .replace(/\s{2,}/g, ' ')
+                                            .trim();
+                                        if (clean.length < 2) return null;
+                                        return clean;
+                                    };
+                                    
+                                    const rawName = atsName || parseNameFromFile(file.name);
+                                    const candidateDisplayName = rawName
+                                        ? (() => { const parts = rawName.trim().split(/\s+/); return parts.length >= 2 ? `${parts[parts.length - 1]}, ${parts.slice(0, -1).join(' ')}` : parts[0]; })()
+                                        : null;
                                     return (
                                         <div key={file.id} className="hover-lift" style={{
                                             background: 'white', padding: '1.5rem', borderRadius: '12px',
                                             border: '2px solid #d4af37', boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
                                         }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
                                                 <span style={{
                                                     background: badge.color, color: 'white', padding: '0.3rem 0.6rem',
                                                     borderRadius: '4px', fontSize: '0.75rem', fontWeight: '600', marginRight: '0.75rem'
                                                 }}>{badge.label}</span>
                                                 <div style={{ flex: 1, minWidth: 0 }}>
-                                                    <h4 style={{ color: '#1e3a8a', margin: 0, fontSize: '1rem', fontWeight: '600', wordBreak: 'break-word' }}>
-                                                        {file.name}
+                                                    <h4 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.1rem', fontWeight: '700', wordBreak: 'break-word' }}>
+                                                        {candidateDisplayName || file.name}
                                                     </h4>
-                                                    <p style={{ color: '#94a3b8', fontSize: '0.8rem', margin: '0.25rem 0 0 0' }}>
-                                                        {formatFileSize(file.size)}{displayDate ? ` • ${displayDate}` : ''}
-                                                    </p>
                                                 </div>
                                             </div>
+                                            {candidateDisplayName && <p style={{ color: '#64748b', fontSize: '0.75rem', margin: '0 0 0.5rem 0', wordBreak: 'break-word' }}>
+                                                📎 {file.name}
+                                            </p>}
+                                            <p style={{ color: '#94a3b8', fontSize: '0.8rem', margin: '0 0 1rem 0' }}>
+                                                {formatFileSize(file.size)}{displayDate ? ` • Submitted: ${displayDate}` : ''}{displayTime ? ` at ${displayTime}` : ''}
+                                            </p>
                                             <div style={{ display: 'flex', gap: '0.5rem' }}>
                                                 <button onClick={() => handleViewDocument(file.name, { name: file.name, s3Url: file.url })}
                                                     style={{ background: '#1e3a8a', color: 'white', border: 'none', padding: '0.6rem 1rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem', flex: 1 }}>
@@ -13456,6 +13544,7 @@ loadBalancer.distribute(traffic);`}
                                     );
                                 })}
                             </div>
+                            </>
                         )}
                     </div>
                 </section>

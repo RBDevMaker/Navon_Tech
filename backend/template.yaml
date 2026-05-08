@@ -460,8 +460,8 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: functions/pdf-to-docx/
-      Handler: app.handler
-      Runtime: python3.13
+      Handler: index.handler
+      Runtime: nodejs20.x
       Description: Converts PDF resumes to DOCX format using pdf2docx
       MemorySize: 1024
       Timeout: 60
