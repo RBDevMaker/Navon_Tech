@@ -13604,7 +13604,7 @@ loadBalancer.distribute(traffic);`}
                                 { key: 'Offer', label: 'Offer', sub: 'Offers Extended', icon: '✅', bg: 'linear-gradient(135deg, #dcfce7 0%, #f0fdf4 100%)', border: '#10b981', color: '#166534' },
                                 { key: 'Pending', label: 'Pending Start', sub: 'Awaiting Start Date', icon: '⏳', bg: 'linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%)', border: '#0ea5e9', color: '#0c4a6e' },
                                 { key: 'Hired', label: 'Hired', sub: 'Active Employees', icon: '🎉', bg: 'linear-gradient(135deg, #d1fae5 0%, #ecfdf5 100%)', border: '#059669', color: '#065f46' },
-                                { key: 'Rejected', label: 'Rejected', sub: 'Not Moving Forward', icon: '❌', bg: 'linear-gradient(135deg, #fee2e2 0%, #fef2f2 100%)', border: '#ef4444', color: '#991b1b' },
+                                { key: 'Rejected', label: 'Rejected/Archived', sub: 'Not Moving Forward', icon: '❌', bg: 'linear-gradient(135deg, #fee2e2 0%, #fef2f2 100%)', border: '#ef4444', color: '#991b1b' },
                                 { key: 'Archived', label: 'Archived', sub: 'Completed Hires', icon: '📦', bg: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)', border: '#94a3b8', color: '#475569' }
                             ];
                             const allResumes = [...filteredResumes];
@@ -13674,6 +13674,13 @@ loadBalancer.distribute(traffic);`}
                                                                 style={{ background: 'white', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', fontSize: '0.8rem', cursor: 'grab', overflow: 'hidden', wordBreak: 'break-word' }}>
                                                                 <div onClick={() => setEditingResume({...resume})} style={{ cursor: 'pointer' }}>
                                                                 <div style={{ fontWeight: '700', color: '#1e3a8a', marginBottom: '0.25rem', fontSize: '0.85rem' }}>{resume.candidateName || 'Unknown'}</div>
+                                                                {resume.stage === 'Archived' && (
+                                                                    <div style={{ marginBottom: '0.25rem' }}>
+                                                                        <span style={{ background: resume.hiredDate ? '#059669' : '#ef4444', color: 'white', padding: '0.15rem 0.4rem', borderRadius: '4px', fontSize: '0.65rem', fontWeight: '700' }}>
+                                                                            {resume.hiredDate ? '✓ HIRED' : '✗ NOT HIRED'}
+                                                                        </span>
+                                                                    </div>
+                                                                )}
                                                                 <div style={{ color: '#64748b', marginBottom: '0.15rem' }}><strong>Position:</strong> {resume.position || 'Not specified'}</div>
                                                                 <div style={{ color: '#64748b', marginBottom: '0.15rem' }}><strong>Department:</strong> {resume.department || 'Not specified'}</div>
                                                                 {resume.stage === 'Pending' && resume.hiredDate && (
