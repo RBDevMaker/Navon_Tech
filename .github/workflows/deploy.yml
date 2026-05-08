@@ -44,11 +44,12 @@ jobs:
         run: |
           cd backend
           sam deploy --no-confirm-changeset --no-fail-on-empty-changeset \
-            --stack-name tech-company-backend-prod \
-            --s3-bucket ${{ secrets.SAM_DEPLOYMENT_BUCKET }} \
+            --stack-name NavonTechBackend \
+            --resolve-s3 \
+            --s3-prefix NavonTechBackend \
             --capabilities CAPABILITY_IAM \
             --region ${{ env.AWS_REGION }} \
-            --parameter-overrides Environment=prod
+            --parameter-overrides Environment=dev
 
   deploy-frontend:
     needs: deploy-backend
