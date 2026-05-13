@@ -96,6 +96,11 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [isLoadingAssessment, setIsLoadingAssessment] = useState(false);
     const [showSecurityAssessment, setShowSecurityAssessment] = useState(false);
     const [uploadCategory, setUploadCategory] = useState('HR-Documents');
+    const [uploadDocTitle, setUploadDocTitle] = useState('');
+    const [uploadDocDescription, setUploadDocDescription] = useState('');
+    const [editingDocId, setEditingDocId] = useState(null);
+    const [editingDocName, setEditingDocName] = useState('');
+    const [editingDocDesc, setEditingDocDesc] = useState('');
     
     // Compliance & Security / Shared Resources file states
     const [complianceFiles, setComplianceFiles] = useState([]);
@@ -536,7 +541,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 size: file.size,
                 type: file.name.split('.').pop(),
                 uploadDate: file.lastModified,
-                uploadedBy: 'SYSTEM',
+                uploadedBy: 'Rachelle',
                 s3Url: file.url
             })) || [];
             
@@ -547,7 +552,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 size: file.size,
                 type: file.name.split('.').pop(),
                 uploadDate: file.lastModified,
-                uploadedBy: 'SYSTEM',
+                uploadedBy: 'Yahvinah',
                 s3Url: file.url
             })) || [];
             
@@ -558,7 +563,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 size: file.size,
                 type: file.name.split('.').pop(),
                 uploadDate: file.lastModified,
-                uploadedBy: 'SYSTEM',
+                uploadedBy: '',
                 s3Url: file.url
             })) || [];
             
@@ -569,7 +574,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 size: file.size,
                 type: file.name.split('.').pop(),
                 uploadDate: file.lastModified,
-                uploadedBy: '',
+                uploadedBy: file.name.includes('EAP') ? 'Yahvinah' : '',
                 s3Url: file.url
             })) || [];
             
@@ -10228,286 +10233,124 @@ loadBalancer.distribute(traffic);`}
                                 )}
                             </div>
 
-                            {/* Annual Review Survey - HR/Admin/Security/SuperAdmin only */}
-                            {(userRole === 'hr' || userRole === 'admin' || userRole === 'security' || userRole === 'superadmin') && (
+                            {/* HR Documents uploaded via dropdown */}
+                            {uploadedFiles.hrDocuments.length > 0 && (
                             <div className="hover-lift animate-scale-in" style={{
-                                background: 'white',
-                                padding: '2rem',
-                                borderRadius: '12px',
-                                border: '2px solid #d4af37',
-                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                animationDelay: '0.2s'
+                                background: 'white', padding: '2rem', borderRadius: '12px',
+                                border: '2px solid #d4af37', boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
                             }}>
                                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
                                     <div style={{
-                                        background: '#1e3a8a',
-                                        color: 'white',
-                                        width: '60px',
-                                        height: '60px',
-                                        borderRadius: '12px',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        fontWeight: 'bold',
-                                        fontSize: '0.8rem',
-                                        marginRight: '1rem'
-                                    }}>
-                                        SURVEY
-                                    </div>
+                                        background: '#1e3a8a', color: 'white', width: '60px', height: '60px',
+                                        borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        fontWeight: 'bold', fontSize: '0.8rem', marginRight: '1rem'
+                                    }}>HR</div>
                                     <div>
                                         <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.3rem', fontWeight: '700' }}>
-                                            {uploadedFiles.hrForms.length > 0 
-                                                ? uploadedFiles.hrForms[0].name 
-                                                : 'Annual Review Survey'}
+                                            {uploadedFiles.hrDocuments[0]?.title || uploadedFiles.hrDocuments[0]?.name.replace(/^HR-Documents-\d+-/, '').replace(/^HR-Confidential-\d+-/, '') || 'HR Documents'}
                                         </h3>
-                                        <div style={{ 
-                                            display: 'flex', 
-                                            alignItems: 'center', 
-                                            gap: '1rem',
-                                            marginTop: '0.5rem'
-                                        }}>
-                                            <span style={{
-                                                background: '#059669',
-                                                color: 'white',
-                                                padding: '0.25rem 0.75rem',
-                                                borderRadius: '12px',
-                                                fontSize: '0.75rem',
-                                                fontWeight: '600'
-                                            }}>
-                                                {uploadedFiles.hrForms.length > 0 
-                                                    ? uploadedFiles.hrForms[0].name.split('.').pop().toUpperCase()
-                                                    : 'EXCEL'}
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '0.5rem' }}>
+                                            <span style={{ background: '#059669', color: 'white', padding: '0.25rem 0.75rem', borderRadius: '12px', fontSize: '0.75rem', fontWeight: '600' }}>
+                                                {uploadedFiles.hrDocuments[0]?.name.split('.').pop().toUpperCase()}
                                             </span>
                                         </div>
                                     </div>
                                 </div>
                                 <div style={{ marginBottom: '1.5rem' }}>
                                     <p style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: '1.6' }}>
-                                        Annual performance review form and self-assessment survey. 
-                                        Complete and submit before your scheduled review meeting 
-                                        with your manager.
+                                        {uploadedFiles.hrDocuments[0]?.description || 'HR policies, forms, and employee resources uploaded by authorized personnel.'}
                                     </p>
                                 </div>
-                                <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
-                                    {canUploadHandbook() ? (
-                                        <label style={{
-                                            background: '#d4af37',
-                                            color: '#0f172a',
-                                            border: 'none',
-                                            padding: '0.75rem 1.5rem',
-                                            borderRadius: '6px',
-                                            cursor: 'pointer',
-                                            fontWeight: '600',
-                                            fontSize: '1rem',
-                                            display: 'inline-flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            transition: 'all 0.3s ease'
-                                        }}
-                                        onMouseOver={(e) => {
-                                            e.currentTarget.style.background = '#b8941f';
-                                            e.currentTarget.style.transform = 'translateY(-2px)';
-                                        }}
-                                        onMouseOut={(e) => {
-                                            e.currentTarget.style.background = '#d4af37';
-                                            e.currentTarget.style.transform = 'translateY(0)';
-                                        }}>
-                                            📤 Upload
-                                            <input
-                                                type="file"
-                                                multiple
-                                                accept=".xls,.xlsx,.pdf,.doc,.docx,.txt"
-                                                style={{ display: 'none' }}
-                                                onChange={(e) => handleFileUpload('hrForms', e.target.files)}
-                                            />
-                                        </label>
-                                    ) : (
-                                        <div style={{
-                                            background: '#f3f4f6',
-                                            color: '#6b7280',
-                                            border: '2px solid #e5e7eb',
-                                            padding: '0.75rem 1.5rem',
-                                            borderRadius: '6px',
-                                            fontSize: '1rem',
-                                            display: 'inline-flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center'
-                                        }}>
-                                            🔒 HR Only
-                                        </div>
-                                    )}
-                                </div>
-                                
+
                                 {/* Display uploaded files */}
-                                {uploadedFiles.hrForms.length > 0 && (
-                                    <div style={{
-                                        background: '#f0f9ff',
-                                        padding: '1rem',
-                                        borderRadius: '8px',
-                                        border: '1px solid #bae6fd',
-                                        marginTop: '1rem'
-                                    }}>
-                                        <h4 style={{ 
-                                            color: '#0369a1', 
-                                            margin: '0 0 0.75rem 0', 
-                                            fontSize: '0.9rem',
-                                            fontWeight: '600'
-                                        }}>
-                                            📁 Uploaded Files ({uploadedFiles.hrForms.length})
-                                        </h4>
-                                        <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
-                                            {uploadedFiles.hrForms.map((file) => {
-                                                const badge = getFileTypeBadge(file.name);
-                                                return (
-                                                    <div key={file.id} style={{
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'space-between',
-                                                        padding: '0.75rem',
-                                                        background: 'white',
-                                                        borderRadius: '6px',
-                                                        marginBottom: '0.5rem',
-                                                        border: '1px solid #e2e8f0',
-                                                        boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-                                                    }}>
-                                                        <div style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
-                                                            <span style={{
-                                                                background: badge.color,
-                                                                color: 'white',
-                                                                padding: '0.25rem 0.5rem',
-                                                                borderRadius: '4px',
-                                                                fontSize: '0.7rem',
-                                                                fontWeight: '600',
-                                                                marginRight: '0.75rem'
-                                                            }}>
-                                                                {badge.label}
-                                                            </span>
-                                                            <div style={{ flex: 1 }}>
-                                                                <div style={{ 
-                                                                    fontSize: '0.9rem', 
-                                                                    fontWeight: '500',
-                                                                    color: '#374151',
-                                                                    marginBottom: '0.25rem'
-                                                                }}>
-                                                                    {file.name.length > 30 ? file.name.substring(0, 30) + '...' : file.name}
+                                <div style={{
+                                    background: '#f0f9ff', padding: '1rem', borderRadius: '8px',
+                                    border: '1px solid #bae6fd', marginTop: '1rem'
+                                }}>
+                                    <h4 style={{ color: '#0369a1', margin: '0 0 0.75rem 0', fontSize: '0.9rem', fontWeight: '600' }}>
+                                        📁 Uploaded Files ({uploadedFiles.hrDocuments.length})
+                                    </h4>
+                                    <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                                        {uploadedFiles.hrDocuments.map((file) => {
+                                            const badge = getFileTypeBadge(file.name);
+                                            const isEditing = editingDocId === file.id;
+                                            const displayName = (file.title || file.name).replace(/^HR-Documents-\d+-/, '').replace(/^HR-Confidential-\d+-/, '');
+                                            return (
+                                                <div key={file.id} style={{
+                                                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                                                    padding: '0.75rem', background: 'white', borderRadius: '6px',
+                                                    marginBottom: '0.5rem', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                                                }}>
+                                                    <div style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                                                        <span style={{ background: badge.color, color: 'white', padding: '0.25rem 0.5rem', borderRadius: '4px', fontSize: '0.7rem', fontWeight: '600', marginRight: '0.75rem' }}>
+                                                            {badge.label}
+                                                        </span>
+                                                        <div style={{ flex: 1 }}>
+                                                            {isEditing ? (
+                                                                <input value={editingDocName} onChange={(e) => setEditingDocName(e.target.value)}
+                                                                    style={{ width: '100%', padding: '0.4rem', border: '2px solid #3b82f6', borderRadius: '4px', fontSize: '0.9rem', fontWeight: '600', color: '#1e3a8a', marginBottom: '0.25rem' }} />
+                                                            ) : (
+                                                                <div style={{ fontSize: '0.9rem', fontWeight: '500', color: '#374151', marginBottom: '0.25rem' }}>
+                                                                    {displayName.length > 40 ? displayName.substring(0, 40) + '...' : displayName}
                                                                 </div>
-                                                                <div style={{ 
-                                                                    fontSize: '0.75rem', 
-                                                                    color: '#6b7280',
-                                                                    marginBottom: '0.5rem'
-                                                                }}>
-                                                                    {formatFileSize(file.size)} • {new Date(file.uploadDate).toLocaleDateString()} • by {file.uploadedBy}
-                                                                    <br/>
-                                                                    <span style={{ fontSize: '0.7rem', color: '#9ca3af' }}>
-                                                                        Type: {file.type || 'unknown'} | Ext: {file.name.split('.').pop().toLowerCase()}
-                                                                    </span>
-                                                                </div>
-                                                                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                                                    <button
-                                                                        onClick={() => handleViewDocument(file.name, file)}
-                                                                        style={{
-                                                                            background: '#1e3a8a',
-                                                                            border: 'none',
-                                                                            color: 'white',
-                                                                            cursor: 'pointer',
-                                                                            padding: '0.4rem 0.75rem',
-                                                                            borderRadius: '4px',
-                                                                            fontSize: '0.75rem',
-                                                                            fontWeight: '600',
-                                                                            flex: 1
-                                                                        }}
-                                                                        title="View document content"
-                                                                    >
-                                                                        View Document
+                                                            )}
+                                                            {isEditing ? (
+                                                                <textarea value={editingDocDesc} onChange={(e) => setEditingDocDesc(e.target.value)}
+                                                                    placeholder="Description (optional)" rows={1}
+                                                                    style={{ width: '100%', padding: '0.3rem', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '0.75rem', marginBottom: '0.5rem', resize: 'vertical' }} />
+                                                            ) : (
+                                                                file.description && <div style={{ fontSize: '0.7rem', color: '#64748b', fontStyle: 'italic', marginBottom: '0.25rem' }}>{file.description}</div>
+                                                            )}
+                                                            <div style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.5rem' }}>
+                                                                {formatFileSize(file.size)} • {file.uploadDate ? new Date(file.uploadDate).toLocaleDateString() : ''}{file.uploadedBy ? ` • by ${file.uploadedBy}` : ''}
+                                                                <br/>
+                                                                <span style={{ fontSize: '0.7rem', color: '#9ca3af' }}>
+                                                                    Type: {file.type || 'unknown'} | Ext: {file.name.split('.').pop().toLowerCase()}
+                                                                </span>
+                                                            </div>
+                                                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                                                <button onClick={() => handleViewDocument(file.name, file)}
+                                                                    style={{ background: '#1e3a8a', border: 'none', color: 'white', cursor: 'pointer', padding: '0.4rem 0.75rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: '600', flex: 1 }}>
+                                                                    View Document
+                                                                </button>
+                                                                {(userRole === 'hr' || userRole === 'superadmin') && !isEditing && (
+                                                                    <button onClick={() => { setEditingDocId(file.id); setEditingDocName(displayName); setEditingDocDesc(file.description || ''); }}
+                                                                        style={{ background: '#f59e0b', border: 'none', color: '#0f172a', cursor: 'pointer', padding: '0.4rem 0.75rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: '600' }}
+                                                                        title="Edit title and description">
+                                                                        ✏️ Edit Info
                                                                     </button>
-                                                                    {canDeleteHandbook() && (
-                                                                        <button
-                                                                            onClick={() => handleFileDelete('hrForms', file.id, file.name)}
-                                                                            style={{
-                                                                                background: '#ef4444',
-                                                                                border: 'none',
-                                                                                color: 'white',
-                                                                                cursor: 'pointer',
-                                                                                padding: '0.4rem 0.75rem',
-                                                                                borderRadius: '4px',
-                                                                                fontSize: '0.75rem',
-                                                                                fontWeight: '600',
-                                                                                flex: 1
-                                                                            }}
-                                                                            title="Delete file (HR/Admin only)"
-                                                                        >
-                                                                            Delete
-                                                                        </button>
-                                                                    )}
-                                                                </div>
+                                                                )}
+                                                                {(userRole === 'hr' || userRole === 'superadmin') && isEditing && (
+                                                                    <>
+                                                                    <button onClick={() => {
+                                                                        setUploadedFiles(prev => ({ ...prev, hrDocuments: prev.hrDocuments.map(f => f.id === file.id ? { ...f, title: editingDocName, description: editingDocDesc } : f) }));
+                                                                        setEditingDocId(null);
+                                                                    }}
+                                                                        style={{ background: '#059669', border: 'none', color: 'white', cursor: 'pointer', padding: '0.4rem 0.75rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: '600' }}>
+                                                                        Save
+                                                                    </button>
+                                                                    <button onClick={() => setEditingDocId(null)}
+                                                                        style={{ background: '#6b7280', border: 'none', color: 'white', cursor: 'pointer', padding: '0.4rem 0.75rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: '600' }}>
+                                                                        Cancel
+                                                                    </button>
+                                                                    </>
+                                                                )}
+                                                                {canDeleteHandbook() && (
+                                                                    <button onClick={() => handleFileDelete('hrDocuments', file.id, file.name)}
+                                                                        style={{ background: '#ef4444', border: 'none', color: 'white', cursor: 'pointer', padding: '0.4rem 0.75rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: '600' }}>
+                                                                        Delete
+                                                                    </button>
+                                                                )}
                                                             </div>
                                                         </div>
                                                     </div>
-                                                );
-                                            })}
-                                        </div>
-                                        
-                                        {/* File Type Support Info */}
-                                        <div style={{
-                                            background: 'rgba(34, 197, 94, 0.1)',
-                                            border: '1px solid rgba(34, 197, 94, 0.3)',
-                                            borderRadius: '6px',
-                                            padding: '0.75rem',
-                                            marginTop: '0.75rem'
-                                        }}>
-                                            <div style={{ fontSize: '0.8rem', color: '#166534', fontWeight: '600', marginBottom: '0.25rem' }}>
-                                                📄 File Viewing Support:
-                                            </div>
-                                            <div style={{ fontSize: '0.75rem', color: '#15803d' }}>
-                                                • <strong>TXT files:</strong> Full content displayed in viewer<br/>
-                                                • <strong>PDF files:</strong> Embedded PDF viewer<br/>
-                                                • <strong>Word docs (.docx/.doc):</strong> Download to view (browser limitation)<br/>
-                                                • <strong>Other files:</strong> Download option provided
-                                            </div>
-                                        </div>
+                                                </div>
+                                            );
+                                        })}
                                     </div>
-                                )}
+                                </div>
                             </div>
                             )}
-
-                            {/* HR Documents uploaded via dropdown */}
-                            {uploadedFiles.hrDocuments.map((file) => {
-                                const badge = getFileTypeBadge(file.name);
-                                return (
-                                    <div key={file.id} className="hover-lift animate-scale-in" style={{
-                                        background: 'white', padding: '2rem', borderRadius: '12px',
-                                        border: '2px solid #d4af37', boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-                                    }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
-                                            <div style={{
-                                                background: badge.color, color: 'white', width: '60px', height: '60px',
-                                                borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                                fontWeight: 'bold', fontSize: '0.8rem', marginRight: '1rem'
-                                            }}>{badge.label}</div>
-                                            <div>
-                                                <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.1rem', fontWeight: '700', wordBreak: 'break-word' }}>
-                                                    {file.name.replace(/^HR-Documents-\d+-/, '').replace(/^HR-Confidential-\d+-/, '')}
-                                                </h3>
-                                                <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '0.25rem' }}>
-                                                    {formatFileSize(file.size)}{file.uploadedBy ? ` • by ${file.uploadedBy}` : ''}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                            <button onClick={() => handleViewDocument(file.name, file)}
-                                                style={{ background: '#1e3a8a', border: 'none', color: 'white', cursor: 'pointer', padding: '0.6rem 1rem', borderRadius: '6px', fontSize: '0.85rem', fontWeight: '600', flex: 1 }}>
-                                                View Document
-                                            </button>
-                                            {canDeleteHandbook() && (
-                                                <button onClick={() => handleFileDelete('hrDocuments', file.id, file.name)}
-                                                    style={{ background: '#ef4444', border: 'none', color: 'white', cursor: 'pointer', padding: '0.6rem 1rem', borderRadius: '6px', fontSize: '0.85rem', fontWeight: '600' }}>
-                                                    Delete
-                                                </button>
-                                            )}
-                                        </div>
-                                    </div>
-                                );
-                            })}
                         </div>
                     </div>
                 </section>
@@ -12065,7 +11908,7 @@ loadBalancer.distribute(traffic);`}
                                         • Benefits information
                                     </p>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Annual review survey
+                                        • Employee handbook and policies
                                     </p>
                                 </div>
                                 <button 
@@ -12479,6 +12322,53 @@ loadBalancer.distribute(traffic);`}
                                     )}
                                 </select>
                             </div>
+                            {/* Document Title (optional) */}
+                            <div style={{ marginBottom: '1rem' }}>
+                                <label style={{ display: 'block', fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem', fontSize: '0.95rem' }}>
+                                    Document Title (optional):
+                                </label>
+                                <input
+                                    type="text"
+                                    value={uploadDocTitle}
+                                    onChange={(e) => setUploadDocTitle(e.target.value)}
+                                    placeholder="e.g., Q2 Performance Review, NDA Agreement"
+                                    disabled={!canUploadDoc}
+                                    style={{
+                                        padding: '0.75rem 1rem',
+                                        border: '2px solid #e2e8f0',
+                                        borderRadius: '8px',
+                                        fontSize: '0.95rem',
+                                        color: '#1e293b',
+                                        width: '100%',
+                                        maxWidth: '400px',
+                                        boxSizing: 'border-box'
+                                    }}
+                                />
+                            </div>
+                            {/* Document Description (optional) */}
+                            <div style={{ marginBottom: '1.5rem' }}>
+                                <label style={{ display: 'block', fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem', fontSize: '0.95rem' }}>
+                                    Description (optional):
+                                </label>
+                                <textarea
+                                    value={uploadDocDescription}
+                                    onChange={(e) => setUploadDocDescription(e.target.value)}
+                                    placeholder="Brief description of the document..."
+                                    disabled={!canUploadDoc}
+                                    rows={2}
+                                    style={{
+                                        padding: '0.75rem 1rem',
+                                        border: '2px solid #e2e8f0',
+                                        borderRadius: '8px',
+                                        fontSize: '0.95rem',
+                                        color: '#1e293b',
+                                        width: '100%',
+                                        maxWidth: '400px',
+                                        boxSizing: 'border-box',
+                                        resize: 'vertical'
+                                    }}
+                                />
+                            </div>
                             <input
                                 type="file"
                                 id="documentUpload"
@@ -12509,7 +12399,7 @@ loadBalancer.distribute(traffic);`}
                                                 // If uploading to Resumes, also create ATS entry
                                                 if (uploadCategory === 'Resumes') {
                                                     try {
-                                                        const candidateName = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+                                                        const candidateName = uploadDocTitle.trim() || file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
                                                         const atsApiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
                                                         await fetch(`${atsApiUrl}/resume`, {
                                                             method: 'POST',
@@ -12522,7 +12412,7 @@ loadBalancer.distribute(traffic);`}
                                                                 department: 'Not specified',
                                                                 stage: 'New',
                                                                 s3Key: `Documents/Resumes/${uploadCategory}-${Date.now()}-${file.name}`,
-                                                                notes: `Uploaded via Document Management by ${profileData.name || loginEmail}`,
+                                                                notes: uploadDocDescription.trim() ? uploadDocDescription.trim() : `Uploaded via Document Management by ${profileData.name || loginEmail}`,
                                                                 receivedDate: new Date().toISOString().split('T')[0]
                                                             })
                                                         });
@@ -12534,6 +12424,8 @@ loadBalancer.distribute(traffic);`}
                                             
                                             alert(`✅ Successfully uploaded ${files.length} file(s) to ${categoryLabels[uploadCategory] || uploadCategory}!`);
                                             
+                                            setUploadDocTitle('');
+                                            setUploadDocDescription('');
                                             button.textContent = originalText;
                                             button.style.pointerEvents = 'auto';
                                             e.target.value = '';
@@ -13832,6 +13724,8 @@ loadBalancer.distribute(traffic);`}
                             {[
                                 { icon: '📧', name: 'Microsoft 365 Email', desc: 'Corporate email access', status: 'Active', link: 'https://outlook.office.com' },
                                 { icon: '👥', name: 'Rippling', desc: 'HR, payroll, and benefits management', status: 'Active', link: 'https://app.rippling.com' },
+                                { icon: '💰', name: 'Voya (Employees)', desc: '401(k) retirement plan management', status: 'Active', link: 'https://www.voya.com/accounts' },
+                                ...(loginEmail?.toLowerCase() === 'rachelle.briscoe@navontech.com' || loginEmail?.toLowerCase() === 'brian.briscoe@navontech.com' || loginEmail?.toLowerCase().includes('root') ? [{ icon: '🏦', name: 'Voya (Sponsors)', desc: 'Plan sponsor administration portal', status: 'Active', link: 'https://portal.voya.com/authportalui/#/#sponsor' }] : []),
                                 { icon: '☁️', name: 'AWS Console Access', desc: 'Manage cloud infrastructure', status: 'Active', link: 'https://console.aws.amazon.com' },
                                 { icon: '💻', name: 'GitHub', desc: 'Secure Code Repository - Git version control', status: 'Active', link: 'https://github.com' },
                                 { icon: '🎨', name: 'Canva', desc: 'Design platform for presentations, graphics, and marketing materials', status: 'Active', link: 'https://www.canva.com' },
