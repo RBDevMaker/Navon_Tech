@@ -2293,7 +2293,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 borderImage: 'linear-gradient(90deg, transparent 0%, #d4af37 20%, #f4e5a1 50%, #d4af37 80%, transparent 100%) 1'
             }}>
                 <div style={{ display: 'flex', alignItems: 'center' }} className="animate-slide-in-left">
-                    <a href="#home" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+                    <a href="#home" onClick={() => { setCurrentPage('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
                         <img
                             src={`${s3BaseUrl}/public/images/logo_double_framed.jpeg`}
                             alt="Logo"
@@ -2305,7 +2305,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                     </a>
                 </div>
                 <nav className="animate-slide-in-right">
-                    <a href="#home" style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500', transition: 'all 0.3s ease', position: 'relative', display: 'inline-block' }} 
+                    <a href="#home" onClick={() => { setCurrentPage('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500', transition: 'all 0.3s ease', position: 'relative', display: 'inline-block' }} 
                        onMouseOver={(e) => { e.target.style.color = '#d4af37'; e.target.style.transform = 'translateY(-3px) scale(1.1)'; }}
                        onMouseOut={(e) => { e.target.style.color = 'white'; e.target.style.transform = 'translateY(0) scale(1)'; }}>Home</a>
                     <a href="#about" onClick={() => setCurrentPage('about')} style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500', transition: 'all 0.3s ease', display: 'inline-block' }}
