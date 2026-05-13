@@ -2416,7 +2416,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                     </span>
                                     <button
                                         onClick={() => {
-                                            const utterance = new SpeechSynthesisUtterance('nuh von');
+                                            const utterance = new SpeechSynthesisUtterance('nuhh von');
                                             utterance.rate = 0.8;
                                             utterance.pitch = 1;
                                             window.speechSynthesis.speak(utterance);
