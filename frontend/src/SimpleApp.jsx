@@ -2515,7 +2515,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
 
                     {/* Additional Home Sections */}
                     <section style={{
-                        padding: '6rem 2rem',
+                        padding: '2.5rem 1rem 3.5rem',
                         background: 'linear-gradient(135deg, rgba(248, 250, 252, 0.97) 0%, rgba(255, 255, 255, 0.95) 50%, rgba(241, 245, 249, 0.97) 100%), url("https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80") center/cover',
                         backgroundAttachment: 'fixed',
                         position: 'relative',
@@ -2551,7 +2551,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             display: 'flex',
                             flexDirection: 'row',
                             flexWrap: 'wrap',
-                            gap: '2in',
+                            gap: '1in',
                             alignItems: 'center',
                             justifyContent: 'center'
                         }}>
