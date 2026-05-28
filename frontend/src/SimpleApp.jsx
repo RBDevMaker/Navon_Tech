@@ -10,6 +10,16 @@ import { saveAs } from 'file-saver';
 // Configure Amplify
 Amplify.configure(awsConfig);
 
+const HOME_SPOTLIGHT_VIDEOS = [
+    { path: 'Navon Tech Roll.mp4' },
+    { path: 'public/videos/hero-loop.mp4' },
+    { path: 'public/videos/cloud-solutions.mp4' },
+    { path: 'public/videos/mission-support.mp4' },
+];
+
+const getS3VideoUrl = (path) =>
+    `https://navon-tech-images.s3.us-east-1.amazonaws.com/${path.split('/').map(encodeURIComponent).join('/')}`;
+
 function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const s3BaseUrl = "https://navon-tech-images.s3.us-east-1.amazonaws.com";
     // Emails only visible to HR/Admin/Security/SuperAdmin in admin view (never shown to employees)
@@ -23,6 +33,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [userRole, setUserRole] = useState(authenticatedUserRole || 'employee'); // Use authenticated role
     const [userGroups, setUserGroups] = useState([]); // All Cognito groups for multi-role support
     const [selectedJob, setSelectedJob] = useState(''); // For prefilling job application
+    const [activeHomeVideo, setActiveHomeVideo] = useState(0);
     const [showReferralForm, setShowReferralForm] = useState(false); // For referral form modal
     const [profileData, setProfileData] = useState({
         name: '',
@@ -2329,12 +2340,12 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             {/* HOME PAGE */}
             {currentPage === 'home' && (
                 <div>
-                    {/* Hero Section */}
+                    {/* Hero Section — matches About page hero background */}
                     <section style={{
-                        background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.35) 0%, rgba(30, 41, 59, 0.30) 50%, rgba(51, 65, 85, 0.35) 100%), url("https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=1920&q=80") center 15%/cover',
+                        background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(30, 41, 59, 0.88) 50%, rgba(51, 65, 85, 0.92) 100%), url("https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1920&q=80") center/cover',
                         backgroundAttachment: 'fixed',
-                        backgroundPosition: `center ${15 + scrollY * 0.5}%`,
-                        padding: '3rem 2rem 2rem 2rem',
+                        backgroundPosition: `center ${scrollY * 0.3}px`,
+                        padding: '4rem 2rem 3rem 2rem',
                         textAlign: 'center',
                         position: 'relative',
                         overflow: 'hidden',
@@ -2383,7 +2394,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                         }}></div>
                         
                         <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
-                            {/* Pronunciation Guide */}
                             <div className="animate-fade-in-up" style={{
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -2471,7 +2481,6 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             }}>
                                 Welcome to wiser technology solutions, we take technology higher!
                             </h2>
-                            
                             <div className="animate-fade-in-up" style={{
                                 maxWidth: '1200px',
                                 margin: '2rem auto 2rem auto',
@@ -2497,123 +2506,187 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                     </section>
 
                     {/* Gold Divider */}
-                    <div style={{
-                        height: '5px',
-                        background: 'linear-gradient(90deg, transparent 0%, #d4af37 10%, #d4af37 90%, transparent 100%)',
-                        boxShadow: '0 0 40px rgba(212, 175, 55, 0.8), 0 0 20px rgba(212, 175, 55, 0.6)',
+                    <div className="animate-pulse" style={{
+                        height: '3px',
+                        background: 'linear-gradient(90deg, transparent 0%, #d4af37 50%, transparent 100%)',
+                        boxShadow: '0 0 20px rgba(212, 175, 55, 0.5)',
                         margin: '0'
                     }}></div>
 
                     {/* Additional Home Sections */}
-                    <section style={{ padding: '6rem 2rem', background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)' }}>
-                        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-                            <div style={{ 
-                                display: 'grid', 
-                                gridTemplateColumns: 'repeat(3, 1fr)', 
-                                gap: '2rem'
+                    <section style={{
+                        padding: '6rem 2rem',
+                        background: 'linear-gradient(135deg, rgba(248, 250, 252, 0.97) 0%, rgba(255, 255, 255, 0.95) 50%, rgba(241, 245, 249, 0.97) 100%), url("https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80") center/cover',
+                        backgroundAttachment: 'fixed',
+                        position: 'relative',
+                        overflow: 'hidden'
+                    }}>
+                        <div className="animate-float-slow" style={{
+                            position: 'absolute',
+                            top: '15%',
+                            right: '5%',
+                            width: '280px',
+                            height: '280px',
+                            background: 'radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, transparent 70%)',
+                            borderRadius: '50%',
+                            pointerEvents: 'none',
+                            zIndex: 0
+                        }}></div>
+                        <div className="animate-float" style={{
+                            position: 'absolute',
+                            bottom: '10%',
+                            left: '8%',
+                            width: '220px',
+                            height: '220px',
+                            background: 'radial-gradient(circle, rgba(30, 58, 138, 0.06) 0%, transparent 70%)',
+                            borderRadius: '50%',
+                            pointerEvents: 'none',
+                            zIndex: 0
+                        }}></div>
+                        <div className="home-services-grid" style={{
+                            maxWidth: '1400px',
+                            margin: '0 auto',
+                            position: 'relative',
+                            zIndex: 1,
+                            display: 'flex',
+                            flexDirection: 'row',
+                            flexWrap: 'wrap',
+                            gap: '2in',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}>
+                            {/* Left: video gallery */}
+                            <div className="animate-fade-in-up" style={{
+                                flex: '0 0 auto',
+                                width: 'min(500px, 40vw)',
+                                animationDelay: '0.1s',
+                                opacity: 0,
+                                animation: 'fadeInUp 0.8s ease-out 0.1s forwards'
+                            }}>
+                                <div style={{
+                                    borderRadius: '12px',
+                                    overflow: 'hidden',
+                                    border: '2px solid rgba(212, 175, 55, 0.45)',
+                                    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)',
+                                    background: 'rgba(15, 23, 42, 0.5)',
+                                    aspectRatio: '1 / 1',
+                                    width: '100%'
+                                }}>
+                                    <video
+                                        key={HOME_SPOTLIGHT_VIDEOS[activeHomeVideo].path}
+                                        autoPlay
+                                        muted
+                                        loop
+                                        playsInline
+                                        poster={`${s3BaseUrl}/public/images/Navon ABC.png`}
+                                        style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            objectFit: 'cover',
+                                            display: 'block'
+                                        }}
+                                    >
+                                        <source
+                                            src={getS3VideoUrl(HOME_SPOTLIGHT_VIDEOS[activeHomeVideo].path)}
+                                            type="video/mp4"
+                                        />
+                                    </video>
+                                </div>
+                            </div>
+
+                            {/* Right: stacked service cards */}
+                            <div style={{
+                                flex: '1 1 280px',
+                                minWidth: '260px',
+                                maxWidth: '420px',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '1rem',
+                                justifyContent: 'center'
                             }}>
                                 {/* Services and Solutions */}
                                 <div className="hover-lift animate-slide-in-left" style={{
                                     background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
-                                    padding: '3rem',
-                                    borderRadius: '20px',
-                                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                                    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+                                    padding: '1.15rem 1.35rem',
+                                    borderRadius: '14px',
+                                    border: '1px solid rgba(212, 175, 55, 0.25)',
+                                    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)',
                                     position: 'relative',
                                     overflow: 'hidden',
                                     display: 'flex',
                                     flexDirection: 'column'
                                 }}>
-                                    <div className="animate-pulse" style={{
-                                        position: 'absolute',
-                                        top: '-50px',
-                                        right: '-50px',
-                                        width: '150px',
-                                        height: '150px',
-                                        background: 'radial-gradient(circle, rgba(37, 99, 235, 0.2) 0%, transparent 70%)',
-                                        borderRadius: '50%'
-                                    }}></div>
-                                    <h3 style={{ 
-                                        color: 'white', 
-                                        marginBottom: '1.5rem', 
-                                        fontSize: '1.8rem',
+                                    <h3 style={{
+                                        color: 'white',
+                                        marginBottom: '0.5rem',
+                                        fontSize: '1.05rem',
                                         fontWeight: '700'
                                     }}>
                                         Services and Solutions
                                     </h3>
-                                    <p style={{ 
-                                        color: '#cbd5e1', 
-                                        lineHeight: '1.8',
-                                        marginBottom: '2rem',
-                                        fontSize: '1.05rem',
+                                    <p style={{
+                                        color: '#cbd5e1',
+                                        lineHeight: '1.55',
+                                        marginBottom: '0.85rem',
+                                        fontSize: '0.82rem',
                                         flex: 1
                                     }}>
                                         Outsource your IT management to us and focus on running your business. We handle maintenance so you can invest in growth and innovation.
                                     </p>
-                                    <div style={{ textAlign: 'center' }}>
+                                    <div style={{ textAlign: 'right' }}>
                                         <a href="#capabilities" style={{
                                             background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
                                             color: 'white',
-                                            padding: '1rem 2rem',
-                                            borderRadius: '10px',
+                                            padding: '0.5rem 1rem',
+                                            borderRadius: '8px',
                                             textDecoration: 'none',
                                             fontWeight: '600',
+                                            fontSize: '0.8rem',
                                             display: 'inline-block',
-                                            boxShadow: '0 8px 20px rgba(212, 175, 55, 0.3)',
+                                            boxShadow: '0 4px 12px rgba(212, 175, 55, 0.3)',
                                             transition: 'all 0.3s ease'
                                         }}>
                                             See Services →
                                         </a>
                                     </div>
                                 </div>
-                                
+
                                 {/* Technical Experience */}
                                 <div className="hover-lift animate-fade-in-up" style={{
                                     background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
-                                    padding: '3rem',
-                                    borderRadius: '20px',
-                                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                                    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+                                    padding: '1.15rem 1.35rem',
+                                    borderRadius: '14px',
+                                    border: '1px solid rgba(212, 175, 55, 0.25)',
+                                    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)',
                                     position: 'relative',
                                     overflow: 'hidden',
                                     display: 'flex',
                                     flexDirection: 'column',
-                                    animationDelay: '0.3s',
+                                    animationDelay: '0.2s',
                                     opacity: 0
                                 }}>
-                                    <div className="animate-pulse" style={{
-                                        position: 'absolute',
-                                        top: '-50px',
-                                        right: '-50px',
-                                        width: '150px',
-                                        height: '150px',
-                                        background: 'radial-gradient(circle, rgba(37, 99, 235, 0.2) 0%, transparent 70%)',
-                                        borderRadius: '50%'
-                                    }}></div>
-                                    <h3 style={{ 
-                                        color: 'white', 
-                                        marginBottom: '1.5rem', 
-                                        fontSize: '1.8rem',
+                                    <h3 style={{
+                                        color: 'white',
+                                        marginBottom: '0.5rem',
+                                        fontSize: '1.05rem',
                                         fontWeight: '700'
                                     }}>
                                         Technical Experience
                                     </h3>
-                                    <p style={{ 
-                                        color: '#cbd5e1', 
-                                        lineHeight: '1.8',
-                                        marginBottom: '2rem',
-                                        fontSize: '1.05rem',
+                                    <p style={{
+                                        color: '#cbd5e1',
+                                        lineHeight: '1.55',
+                                        marginBottom: '0.85rem',
+                                        fontSize: '0.82rem',
                                         flex: 1
                                     }}>
                                         Our highly skilled team maintains top-level certifications across operating systems, networks, and databases. We bring deep expertise to projects of any size.
                                     </p>
-                                    <div style={{ textAlign: 'center' }}>
+                                    <div style={{ textAlign: 'right' }}>
                                         <a href="#about" onClick={(e) => {
                                             e.preventDefault();
                                             setCurrentPage('about');
                                             window.location.hash = 'about';
-                                            
-                                            // Wait for page to render, then scroll
                                             const scrollToCertifications = () => {
                                                 const element = document.getElementById('certifications');
                                                 if (element) {
@@ -2621,21 +2694,20 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                                     const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
                                                     window.scrollTo({ top: elementPosition - offset, behavior: 'smooth' });
                                                 } else {
-                                                    // If element not found, try again
                                                     setTimeout(scrollToCertifications, 100);
                                                 }
                                             };
-                                            
                                             setTimeout(scrollToCertifications, 100);
                                         }} style={{
                                             background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
                                             color: 'white',
-                                            padding: '1rem 2rem',
-                                            borderRadius: '10px',
+                                            padding: '0.5rem 1rem',
+                                            borderRadius: '8px',
                                             textDecoration: 'none',
                                             fontWeight: '600',
+                                            fontSize: '0.8rem',
                                             display: 'inline-block',
-                                            boxShadow: '0 8px 20px rgba(212, 175, 55, 0.3)',
+                                            boxShadow: '0 4px 12px rgba(212, 175, 55, 0.3)',
                                             transition: 'all 0.3s ease',
                                             cursor: 'pointer'
                                         }}>
@@ -2643,65 +2715,57 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                         </a>
                                     </div>
                                 </div>
-                                
+
                                 {/* Satisfaction Guaranteed */}
                                 <div className="hover-lift animate-slide-in-right" style={{
                                     background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
-                                    padding: '3rem',
-                                    borderRadius: '20px',
-                                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                                    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+                                    padding: '1.15rem 1.35rem',
+                                    borderRadius: '14px',
+                                    border: '1px solid rgba(212, 175, 55, 0.25)',
+                                    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)',
                                     position: 'relative',
                                     overflow: 'hidden',
                                     display: 'flex',
                                     flexDirection: 'column',
-                                    animationDelay: '0.6s',
+                                    animationDelay: '0.3s',
                                     opacity: 0
                                 }}>
-                                    <div style={{
-                                        position: 'absolute',
-                                        top: '-50px',
-                                        right: '-50px',
-                                        width: '150px',
-                                        height: '150px',
-                                        background: 'radial-gradient(circle, rgba(245, 158, 11, 0.2) 0%, transparent 70%)',
-                                        borderRadius: '50%'
-                                    }}></div>
-                                    <h3 style={{ 
-                                        color: 'white', 
-                                        marginBottom: '1.5rem', 
-                                        fontSize: '1.8rem',
+                                    <h3 style={{
+                                        color: 'white',
+                                        marginBottom: '0.5rem',
+                                        fontSize: '1.05rem',
                                         fontWeight: '700'
                                     }}>
                                         Satisfaction Guaranteed
                                     </h3>
-                                    <p style={{ 
-                                        color: '#cbd5e1', 
-                                        lineHeight: '1.8',
-                                        marginBottom: '1rem',
-                                        fontSize: '1.05rem',
+                                    <p style={{
+                                        color: '#cbd5e1',
+                                        lineHeight: '1.55',
+                                        marginBottom: '0.35rem',
+                                        fontSize: '0.82rem',
                                         flex: 1
                                     }}>
                                         We provide tailored IT solutions that fit your company's needs and budget, delivering professional customer service every step of the way.
                                     </p>
-                                    <p style={{ 
-                                        color: '#d4af37', 
+                                    <p style={{
+                                        color: '#d4af37',
                                         fontWeight: '600',
-                                        marginBottom: '2rem',
-                                        fontSize: '1.1rem'
+                                        marginBottom: '0.85rem',
+                                        fontSize: '0.8rem'
                                     }}>
                                         We guarantee you will be satisfied with our work.
                                     </p>
-                                    <div style={{ textAlign: 'center' }}>
+                                    <div style={{ textAlign: 'right' }}>
                                         <a href="#contact" style={{
                                             background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
                                             color: 'white',
-                                            padding: '1rem 2rem',
-                                            borderRadius: '10px',
+                                            padding: '0.5rem 1rem',
+                                            borderRadius: '8px',
                                             textDecoration: 'none',
                                             fontWeight: '600',
+                                            fontSize: '0.8rem',
                                             display: 'inline-block',
-                                            boxShadow: '0 8px 20px rgba(212, 175, 55, 0.3)',
+                                            boxShadow: '0 4px 12px rgba(212, 175, 55, 0.3)',
                                             transition: 'all 0.3s ease'
                                         }}>
                                             Contact Us →
@@ -2710,6 +2774,13 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                                 </div>
                             </div>
                         </div>
+                        <style>{`
+                            @media (max-width: 900px) {
+                                .home-services-grid {
+                                    flex-direction: column !important;
+                                }
+                            }
+                        `}</style>
                     </section>
 
                     {/* Gold Divider */}
