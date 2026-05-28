@@ -4773,6 +4773,30 @@ loadBalancer.distribute(traffic);`}
                                     location: '',
                                     description: 'Design, implement, and maintain secure network infrastructure for federal agencies and defense contractors.',
                                     requirements: ['CCNA/CCNP Certification', 'Network security experience', 'Government networking protocols']
+                                },
+                                {
+                                    title: 'Data Scientist',
+                                    category: 'Data Scientist',
+                                    type: 'Full-time',
+                                    location: '',
+                                    description: 'Build and deploy data products that turn complex datasets into actionable insights. Work with analytics, modeling, and automation to support mission outcomes.',
+                                    requirements: ['Python/R experience', 'Statistical modeling & machine learning', 'Experience with data pipelines and visualization']
+                                },
+                                {
+                                    title: 'Systems Engineer',
+                                    category: 'Systems Engineer',
+                                    type: 'Full-time',
+                                    location: '',
+                                    description: 'Design, integrate, and maintain resilient systems supporting cloud and on-prem workloads. Partner with engineering teams to improve reliability, performance, and security.',
+                                    requirements: ['Systems engineering experience', 'Linux/Windows administration', 'Security and performance best practices']
+                                },
+                                {
+                                    title: 'IT Program Manager',
+                                    category: 'IT Program Manager',
+                                    type: 'Full-time',
+                                    location: '',
+                                    description: 'Lead mission-focused IT programs from planning through delivery. Coordinate stakeholders, manage schedules and risks, and ensure high-quality outcomes across technical teams.',
+                                    requirements: ['Program/project management experience', 'Experience delivering IT/engineering initiatives', 'Strong stakeholder communication & risk management']
                                 }
                             ].map((job, index) => (
                                 <div key={index} className="hover-lift animate-slide-in-left" style={{
@@ -15249,6 +15273,187 @@ loadBalancer.distribute(traffic);`}
                             gap: '2rem',
                             marginBottom: '3rem'
                         }}>
+                            {/* Data Scientist */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2.5rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                            }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
+                                    <div>
+                                        <h3 style={{ color: '#1e3a8a', margin: '0 0 0.5rem 0', fontSize: '1.8rem', fontWeight: '700' }}>
+                                            Data Scientist
+                                        </h3>
+                                        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+                                            <span style={{ background: '#e0f2fe', color: '#0369a1', padding: '0.25rem 0.75rem', borderRadius: '20px', fontSize: '0.85rem', fontWeight: '600' }}>
+                                                Data & Analytics
+                                            </span>
+                                            <span style={{ background: '#f0fdf4', color: '#15803d', padding: '0.25rem 0.75rem', borderRadius: '20px', fontSize: '0.85rem', fontWeight: '600' }}>
+                                                📍 Remote / Hybrid
+                                            </span>
+                                            <span style={{ background: '#fef3c7', color: '#d97706', padding: '0.25rem 0.75rem', borderRadius: '20px', fontSize: '0.85rem', fontWeight: '600' }}>
+                                                Full-time
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div style={{ textAlign: 'right' }}>
+                                        <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#64748b', marginBottom: '0.25rem' }}>
+                                            To Be Determined
+                                        </div>
+                                        <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                                            Salary Range
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <p style={{ color: '#475569', lineHeight: '1.6', marginBottom: '1rem' }}>
+                                        Build and deploy data products that turn complex datasets into actionable insights. Work with modern analytics, modeling, and automation to support mission-focused outcomes.
+                                    </p>
+                                    
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
+                                        <div>
+                                            <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>
+                                                🔒 Clearance
+                                            </div>
+                                            <div style={{ fontSize: '0.9rem', color: '#64748b' }}>
+                                                Ability to obtain
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>
+                                                📅 Posted
+                                            </div>
+                                            <div style={{ fontSize: '0.9rem', color: '#64748b' }}>
+                                                Now Hiring
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>
+                                                ⏰ Application Deadline
+                                            </div>
+                                            <div style={{ fontSize: '0.9rem', color: '#dc2626' }}>
+                                                Open until filled
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button 
+                                    onClick={() => {
+                                        setSelectedJob('Data Scientist');
+                                        setCurrentPage('careers');
+                                        setTimeout(() => {
+                                            document.getElementById('application-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                        }, 100);
+                                    }}
+                                    style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 2rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    fontSize: '1rem'
+                                }}>
+                                    Apply Now
+                                </button>
+                            </div>
+
+                            {/* Systems Engineer */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2.5rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.05s'
+                            }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
+                                    <div>
+                                        <h3 style={{ color: '#1e3a8a', margin: '0 0 0.5rem 0', fontSize: '1.8rem', fontWeight: '700' }}>
+                                            Systems Engineer
+                                        </h3>
+                                        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+                                            <span style={{ background: '#e0f2fe', color: '#0369a1', padding: '0.25rem 0.75rem', borderRadius: '20px', fontSize: '0.85rem', fontWeight: '600' }}>
+                                                Engineering
+                                            </span>
+                                            <span style={{ background: '#f0fdf4', color: '#15803d', padding: '0.25rem 0.75rem', borderRadius: '20px', fontSize: '0.85rem', fontWeight: '600' }}>
+                                                📍 Herndon, VA / Remote
+                                            </span>
+                                            <span style={{ background: '#fef3c7', color: '#d97706', padding: '0.25rem 0.75rem', borderRadius: '20px', fontSize: '0.85rem', fontWeight: '600' }}>
+                                                Full-time
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div style={{ textAlign: 'right' }}>
+                                        <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#64748b', marginBottom: '0.25rem' }}>
+                                            To Be Determined
+                                        </div>
+                                        <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                                            Salary Range
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <p style={{ color: '#475569', lineHeight: '1.6', marginBottom: '1rem' }}>
+                                        Design, integrate, and maintain resilient systems supporting cloud and on-prem workloads. Collaborate across teams to improve reliability, performance, and security.
+                                    </p>
+                                    
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
+                                        <div>
+                                            <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>
+                                                🔒 Clearance
+                                            </div>
+                                            <div style={{ fontSize: '0.9rem', color: '#64748b' }}>
+                                                Ability to obtain
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>
+                                                📅 Posted
+                                            </div>
+                                            <div style={{ fontSize: '0.9rem', color: '#64748b' }}>
+                                                Now Hiring
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div style={{ fontWeight: '600', color: '#1e3a8a', marginBottom: '0.5rem' }}>
+                                                ⏰ Application Deadline
+                                            </div>
+                                            <div style={{ fontSize: '0.9rem', color: '#dc2626' }}>
+                                                Open until filled
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button 
+                                    onClick={() => {
+                                        setSelectedJob('Systems Engineer');
+                                        setCurrentPage('careers');
+                                        setTimeout(() => {
+                                            document.getElementById('application-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                        }, 100);
+                                    }}
+                                    style={{
+                                    background: '#1e3a8a',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.75rem 2rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    fontSize: '1rem'
+                                }}>
+                                    Apply Now
+                                </button>
+                            </div>
+
                             {/* Senior Cloud Architect */}
                             <div className="hover-lift animate-scale-in" style={{
                                 background: 'white',
