@@ -20,6 +20,14 @@ const HOME_SPOTLIGHT_VIDEOS = [
 const getS3VideoUrl = (path) =>
     `https://navon-tech-images.s3.us-east-1.amazonaws.com/${path.split('/').map(encodeURIComponent).join('/')}`;
 
+const MOBILE_APP_TABS = [
+    { page: 'home', label: 'Home', icon: '🏠' },
+    { page: 'about', label: 'About', icon: 'ℹ️' },
+    { page: 'capabilities', label: 'Services', icon: '⚙️' },
+    { page: 'careers', label: 'Careers', icon: '💼' },
+    { page: 'contact', label: 'Contact', icon: '✉️' },
+];
+
 function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const s3BaseUrl = "https://navon-tech-images.s3.us-east-1.amazonaws.com";
     // Emails only visible to HR/Admin/Security/SuperAdmin in admin view (never shown to employees)
@@ -1986,7 +1994,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     };
 
     return (
-        <div style={{ fontFamily: '"Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif', lineHeight: '1.6' }}>
+        <div className={`app-root${!loginEmail && currentPage !== 'login' ? ' has-mobile-nav' : ''}`} style={{ fontFamily: '"Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif', lineHeight: '1.6' }}>
             <style>{`
                 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
                 
@@ -2206,25 +2214,128 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 button, .btn, a[style*="background"] {
                     transition: all 0.3s ease;
                 }
+
+                .mobile-nav-toggle,
+                .mobile-app-nav {
+                    display: none;
+                }
                 
-                /* Mobile Responsive Styles */
+                /* Mobile app shell — desktop unchanged above */
                 @media (max-width: 768px) {
+                    .app-root.has-mobile-nav {
+                        padding-bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px));
+                        overflow-x: hidden;
+                    }
+
                     header {
-                        padding: 1rem !important;
+                        padding: 0.65rem 1rem !important;
+                        justify-content: center !important;
+                        position: sticky;
+                    }
+
+                    /* Home video + cards: stack vertically on phone */
+                    .home-services-grid {
                         flex-direction: column !important;
-                        gap: 1rem;
+                        align-items: center !important;
+                        gap: 1.25rem !important;
                     }
-                    
-                    header nav {
-                        display: flex;
-                        flex-wrap: wrap;
+
+                    .home-services-grid > div:first-child {
+                        width: min(300px, 88vw) !important;
+                    }
+
+                    .home-services-grid > div:last-child {
+                        width: 100% !important;
+                        max-width: 100% !important;
+                        min-width: 0 !important;
+                    }
+
+                    footer {
+                        padding: 2rem 1rem calc(1.5rem + env(safe-area-inset-bottom, 0px)) !important;
+                        margin-bottom: 0;
+                    }
+
+                    .app-root.has-mobile-nav footer {
+                        padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px)) !important;
+                    }
+
+                    a[style*="background"],
+                    button {
+                        min-height: 44px;
+                    }
+
+                    .mobile-app-nav button {
+                        min-height: 3.1rem !important;
+                    }
+
+                    header nav.main-nav,
+                    .mobile-nav-toggle {
+                        display: none !important;
+                    }
+
+                    .mobile-app-nav {
+                        display: flex !important;
+                        flex-direction: row !important;
+                        flex-wrap: nowrap !important;
+                        align-items: stretch;
+                        width: 100%;
+                        max-width: 100vw;
+                        position: fixed;
+                        bottom: 0;
+                        left: 0;
+                        right: 0;
+                        z-index: 1001;
+                        background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+                        border-top: 2px solid rgba(212, 175, 55, 0.45);
+                        padding: 0.2rem 0 calc(0.2rem + env(safe-area-inset-bottom, 0px));
+                        box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.4);
+                        overflow: hidden;
+                    }
+
+                    .mobile-app-nav button {
+                        flex: 1 1 0 !important;
+                        min-width: 0 !important;
+                        width: 20%;
+                        max-width: 20%;
+                        display: flex !important;
+                        flex-direction: column !important;
+                        align-items: center;
                         justify-content: center;
-                        gap: 0.5rem;
+                        gap: 0.1rem;
+                        background: transparent;
+                        border: none;
+                        color: #94a3b8;
+                        cursor: pointer;
+                        padding: 0.3rem 0.05rem;
+                        min-height: 3.1rem;
+                        font-size: 0.58rem;
+                        font-weight: 600;
+                        letter-spacing: 0;
+                        line-height: 1.1;
+                        transition: color 0.2s ease, transform 0.2s ease;
+                        -webkit-tap-highlight-color: transparent;
                     }
-                    
-                    header nav a {
-                        margin: 0 0.5rem !important;
-                        font-size: 0.9rem !important;
+
+                    .mobile-app-nav button .tab-icon {
+                        font-size: 1.05rem;
+                        line-height: 1;
+                        flex-shrink: 0;
+                    }
+
+                    .mobile-app-nav button span:not(.tab-icon) {
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        max-width: 100%;
+                        text-align: center;
+                    }
+
+                    .mobile-app-nav button.active {
+                        color: #d4af37;
+                    }
+
+                    .mobile-app-nav button:active {
+                        transform: scale(0.96);
                     }
                     
                     header img {
@@ -2232,7 +2343,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                     }
                     
                     section {
-                        padding: 3rem 1rem !important;
+                        padding: 2rem 1rem !important;
+                        background-attachment: scroll !important;
                     }
                     
                     h1 {
@@ -2315,7 +2427,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                         />
                     </a>
                 </div>
-                <nav className="animate-slide-in-right">
+                <nav className="main-nav animate-slide-in-right">
                     <a href="#home" onClick={() => { setCurrentPage('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} style={{ color: 'white', margin: '0 1.5rem', textDecoration: 'none', fontWeight: '500', transition: 'all 0.3s ease', position: 'relative', display: 'inline-block' }} 
                        onMouseOver={(e) => { e.target.style.color = '#d4af37'; e.target.style.transform = 'translateY(-3px) scale(1.1)'; }}
                        onMouseOut={(e) => { e.target.style.color = 'white'; e.target.style.transform = 'translateY(0) scale(1)'; }}>Home</a>
@@ -18429,6 +18541,27 @@ Please review and approve this request.
                         </div>
                     </div>
                 </div>
+            )}
+
+            {/* Mobile app tab bar — phones only, public site */}
+            {!loginEmail && currentPage !== 'login' && (
+                <nav className="mobile-app-nav" aria-label="Mobile app navigation">
+                    {MOBILE_APP_TABS.map((tab) => (
+                        <button
+                            key={tab.page}
+                            type="button"
+                            className={currentPage === tab.page ? 'active' : ''}
+                            onClick={() => {
+                                setCurrentPage(tab.page);
+                                window.location.hash = tab.page;
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }}
+                        >
+                            <span className="tab-icon" aria-hidden="true">{tab.icon}</span>
+                            <span>{tab.label}</span>
+                        </button>
+                    ))}
+                </nav>
             )}
 
             {/* Floating Logout Button - shows on all portal pages when logged in */}
