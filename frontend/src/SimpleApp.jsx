@@ -13139,7 +13139,10 @@ loadBalancer.distribute(traffic);`}
                                             new Paragraph({ children: [new TextRun({ text: 'NAVON TECHNOLOGIES', bold: true, size: 32, color: '1e3a8a' })], alignment: AlignmentType.CENTER }),
                                             new Paragraph({ children: [new TextRun({ text: 'Cleared Candidate Summary', bold: true, size: 24, italics: true })], alignment: AlignmentType.CENTER, spacing: { after: 300 } }),
                                             new Paragraph({ children: [new TextRun({ text: `Candidate Name: ${g('candidateName')}`, size: 22 })], spacing: { after: 100 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Date of Birth: ${g('dob')}`, size: 22 })], spacing: { after: 100 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Place of Birth: ${g('pob')}`, size: 22 })], spacing: { after: 100 } }),
                                             new Paragraph({ children: [new TextRun({ text: `Date of Conversation: ${g('conversationDate')}`, size: 22 })], spacing: { after: 100 } }),
+                                            new Paragraph({ children: [new TextRun({ text: `Emergency Contact: ${g('emergencyContact')}  |  Phone: ${g('emergencyContactNumber')}`, size: 22 })], spacing: { after: 100 } }),
                                             new Paragraph({ children: [new TextRun({ text: `Recruiter: ${g('recruiter')}`, size: 22 })], spacing: { after: 200 } }),
 
                                             new Paragraph({ children: [new TextRun({ text: '1. Clearance Info', bold: true, size: 24, color: '1e3a8a' })], spacing: { before: 200, after: 100 } }),
@@ -13265,7 +13268,9 @@ loadBalancer.distribute(traffic);`}
                                 // Also generate and upload PDF version
                                 const pdfHtml = `<html><head><style>body{font-family:Arial,sans-serif;max-width:700px;margin:0 auto;padding:30px}h1{color:#1e3a8a;text-align:center;font-size:22px}h2{color:#1e3a8a;font-size:16px;border-bottom:2px solid #d4af37;padding-bottom:4px;margin-top:20px}p{margin:4px 0;font-size:13px}.footer{text-align:center;margin-top:30px;border-top:1px solid #1e3a8a;padding-top:10px;font-size:11px;color:#666}</style></head><body>
                                 <h1>NAVON TECHNOLOGIES<br><em>Cleared Candidate Summary</em></h1>
-                                <p><strong>Candidate:</strong> ${g('candidateName')} | <strong>Date:</strong> ${g('conversationDate')} | <strong>Recruiter:</strong> ${g('recruiter')}</p>
+                                <p><strong>Candidate:</strong> ${g('candidateName')} | <strong>DOB:</strong> ${g('dob')} | <strong>POB:</strong> ${g('pob')}</p>
+                                <p><strong>Date:</strong> ${g('conversationDate')} | <strong>Recruiter:</strong> ${g('recruiter')}</p>
+                                <p><strong>Emergency Contact:</strong> ${g('emergencyContact')} | <strong>Phone:</strong> ${g('emergencyContactNumber')}</p>
                                 <h2>1. Clearance Info</h2><p>Level: ${g('clearanceLevel')} | Upgrade: ${g('upgradeWillingness')} | Last Investigation: ${g('lastInvestigation')}</p>
                                 <h2>2. Location & Mobility</h2><p>Location: ${g('currentLocation')} | Relocate: ${g('relocateWillingness')} | Timeline: ${g('relocationTimeline')}</p>
                                 <h2>3. Compensation</h2><p>Current: ${g('currentComp')} | Target: ${g('targetComp')} | Notes: ${g('compNotes')}</p>
@@ -13340,7 +13345,15 @@ loadBalancer.distribute(traffic);`}
                                     <div style={sectionStyle}>
                                         <div style={rowStyle}>
                                             <div><label style={labelStyle}>Candidate Name *</label><input name="candidateName" required style={inputStyle} /></div>
+                                            <div><label style={labelStyle}>Date of Birth</label><input name="dob" type="date" style={inputStyle} /></div>
+                                        </div>
+                                        <div style={fieldStyle}><label style={labelStyle}>Place of Birth</label><input name="pob" placeholder="City, State" style={inputStyle} /></div>
+                                        <div style={rowStyle}>
                                             <div><label style={labelStyle}>Date of Conversation</label><input name="conversationDate" type="date" style={inputStyle} /></div>
+                                        </div>
+                                        <div style={rowStyle}>
+                                            <div><label style={labelStyle}>Emergency Contact</label><input name="emergencyContact" placeholder="Full name" style={inputStyle} /></div>
+                                            <div><label style={labelStyle}>Emergency Contact Number</label><input name="emergencyContactNumber" type="tel" placeholder="(555) 555-5555" style={inputStyle} /></div>
                                         </div>
                                         <div style={fieldStyle}><label style={labelStyle}>Recruiter</label><input name="recruiter" style={inputStyle} /></div>
                                     </div>
