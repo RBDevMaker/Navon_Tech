@@ -37,6 +37,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [currentPage, setCurrentPage] = useState('home');
     const [scrollY, setScrollY] = useState(0);
     const [showSecureModal, setShowSecureModal] = useState(false);
+    const [showClearanceDenied, setShowClearanceDenied] = useState(false);
     const [showTimeOffModal, setShowTimeOffModal] = useState(false);
     const [userRole, setUserRole] = useState(authenticatedUserRole || 'employee'); // Use authenticated role
     const [userGroups, setUserGroups] = useState([]); // All Cognito groups for multi-role support
@@ -5081,6 +5082,17 @@ loadBalancer.distribute(traffic);`}
                                     return;
                                 }
 
+                                // Check clearance requirement
+                                const clearance = formData.get('clearance');
+                                if (!clearance) {
+                                    alert('Please select your security clearance status.');
+                                    return;
+                                }
+                                if (clearance === 'no') {
+                                    alert('Sorry, we are not hiring for positions without TS/SCI with Polygraph at this time.\n\nThank you for your interest in Navon Technologies.');
+                                    return;
+                                }
+
                                 // Show loading state
                                 const submitButton = e.target.querySelector('button[type="submit"]');
                                 const originalText = submitButton.textContent;
@@ -5334,6 +5346,20 @@ loadBalancer.distribute(traffic);`}
                                 {/* Applicant's Comments */}
                                 <div>
                                     <label style={{ display: 'block', color: '#0f172a', fontWeight: '600', marginBottom: '0.5rem', fontSize: '1rem' }}>
+                                        Security Clearance <span style={{ color: '#ef4444' }}>*</span>
+                                    </label>
+                                    <p style={{ color: '#64748b', fontSize: '0.85rem', marginBottom: '0.75rem' }}>
+                                        Do you currently hold an active TS/SCI with Polygraph?
+                                    </p>
+                                    <select name="clearance" required onChange={(e) => { if (e.target.value === 'no') { setShowClearanceDenied(true); e.target.value = ''; } }} style={{ width: '100%', padding: '0.75rem', border: '2px solid #e2e8f0', borderRadius: '8px', fontSize: '1rem', fontFamily: 'inherit', cursor: 'pointer' }}>
+                                        <option value="">-- Select --</option>
+                                        <option value="yes">Yes — I hold an active TS/SCI with Polygraph</option>
+                                        <option value="no">No — I do not hold this clearance</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label style={{ display: 'block', color: '#0f172a', fontWeight: '600', marginBottom: '0.5rem', fontSize: '1rem' }}>
                                         Applicant's Comments
                                     </label>
                                     <textarea name="comments" rows={3} placeholder="Any additional information you'd like to share..." style={{ width: '100%', padding: '0.75rem', border: '2px solid #e2e8f0', borderRadius: '8px', fontSize: '1rem', fontFamily: 'inherit', resize: 'vertical' }} />
@@ -5362,6 +5388,47 @@ loadBalancer.distribute(traffic);`}
                         </div>
                         
                         {/* Our Benefits Section - Inspired by Vanjure */}
+
+                        {/* Clearance Denied Modal */}
+                        {showClearanceDenied && (
+                            <div style={{
+                                position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+                                background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                zIndex: 99999, animation: 'fadeIn 0.3s ease'
+                            }} onClick={() => setShowClearanceDenied(false)}>
+                                <div onClick={(e) => e.stopPropagation()} style={{
+                                    background: '#ffffff',
+                                    borderRadius: '16px', padding: '2.5rem', maxWidth: '420px', width: '90%',
+                                    border: '2px solid #e2e8f0', boxShadow: '0 20px 50px rgba(0,0,0,0.15)',
+                                    textAlign: 'center', animation: 'slideUp 0.3s ease'
+                                }}>
+                                    <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>🚫</div>
+                                    <h3 style={{ color: '#1e293b', fontSize: '1.2rem', fontWeight: '700', marginBottom: '1rem' }}>
+                                        Position Requirement Not Met
+                                    </h3>
+                                    <p style={{ color: '#475569', fontSize: '0.95rem', lineHeight: '1.7', marginBottom: '1rem' }}>
+                                        Sorry, we are not hiring for positions without <strong style={{ color: '#1e3a8a' }}>TS/SCI with Polygraph</strong> at this time.
+                                    </p>
+                                    <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
+                                        Thank you for your interest in Navon Technologies. We wish you the best in your search.
+                                    </p>
+                                    <button onClick={() => setShowClearanceDenied(false)} style={{
+                                        background: '#1e3a8a',
+                                        color: 'white', border: 'none', padding: '0.75rem 2rem',
+                                        borderRadius: '8px', fontSize: '0.95rem', fontWeight: '600', cursor: 'pointer',
+                                        transition: 'all 0.3s ease'
+                                    }}
+                                    onMouseOver={(e) => e.currentTarget.style.background = '#2563eb'}
+                                    onMouseOut={(e) => e.currentTarget.style.background = '#1e3a8a'}>
+                                        OK, Thank You
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                        <style>{`
+                            @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+                        `}</style>
+
                         <div style={{
                             background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
                             padding: '4rem 2rem',
