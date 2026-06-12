@@ -13345,17 +13345,17 @@ loadBalancer.distribute(traffic);`}
                                     <div style={sectionStyle}>
                                         <div style={rowStyle}>
                                             <div><label style={labelStyle}>Candidate Name *</label><input name="candidateName" required style={inputStyle} /></div>
-                                            <div><label style={labelStyle}>Date of Birth</label><input name="dob" type="date" style={inputStyle} /></div>
+                                            <div><label style={labelStyle}>Date of Birth *</label><input name="dob" type="date" required style={inputStyle} /></div>
                                         </div>
-                                        <div style={fieldStyle}><label style={labelStyle}>Place of Birth</label><input name="pob" placeholder="City, State" style={inputStyle} /></div>
+                                        <div style={fieldStyle}><label style={labelStyle}>Place of Birth *</label><input name="pob" placeholder="City, State" required style={inputStyle} /></div>
+                                        <div style={rowStyle}>
+                                            <div><label style={labelStyle}>Emergency Contact *</label><input name="emergencyContact" placeholder="Full name" required style={inputStyle} /></div>
+                                            <div><label style={labelStyle}>Emergency Contact Number *</label><input name="emergencyContactNumber" type="tel" placeholder="(555) 555-5555" required style={inputStyle} /></div>
+                                        </div>
                                         <div style={rowStyle}>
                                             <div><label style={labelStyle}>Date of Conversation</label><input name="conversationDate" type="date" style={inputStyle} /></div>
+                                            <div><label style={labelStyle}>Recruiter</label><input name="recruiter" style={inputStyle} /></div>
                                         </div>
-                                        <div style={rowStyle}>
-                                            <div><label style={labelStyle}>Emergency Contact</label><input name="emergencyContact" placeholder="Full name" style={inputStyle} /></div>
-                                            <div><label style={labelStyle}>Emergency Contact Number</label><input name="emergencyContactNumber" type="tel" placeholder="(555) 555-5555" style={inputStyle} /></div>
-                                        </div>
-                                        <div style={fieldStyle}><label style={labelStyle}>Recruiter</label><input name="recruiter" style={inputStyle} /></div>
                                     </div>
 
                                     {/* 1. Clearance Info */}
