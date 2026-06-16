@@ -7,12 +7,10 @@ frontend:
         - nvm use 20
         - node --version
         - npm --version
-        - cd frontend
-        - rm -rf node_modules
-        - npm ci
+        - cd frontend && rm -rf node_modules && npm ci
     build:
       commands:
-        - npm run build
+        - cd frontend && npm run build
   artifacts:
     baseDirectory: frontend/dist
     files:
