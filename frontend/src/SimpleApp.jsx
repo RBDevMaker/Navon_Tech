@@ -12872,7 +12872,7 @@ loadBalancer.distribute(traffic);`}
                                                             <button onClick={async () => {
                                                                 try {
                                                                     const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
-                                                                    const s3Key = file.key || file.id;
+                                                                    const s3Key = file.id;
                                                                     
                                                                     // Fetch HTML content through API (avoids CORS)
                                                                     const response = await fetch(`${apiUrl}/upload-to-s3`, {
@@ -12880,8 +12880,10 @@ loadBalancer.distribute(traffic);`}
                                                                         headers: { 'Content-Type': 'application/json' },
                                                                         body: JSON.stringify({ action: 'getFile', key: s3Key })
                                                                     });
+                                                                    if (!response.ok) throw new Error(`API returned ${response.status}`);
                                                                     const data = await response.json();
-                                                                    const html = data.content || '';
+                                                                    if (!data.content) throw new Error('No content returned');
+                                                                    const html = data.content;
                                                                     
                                                                     // Parse all fields from the HTML
                                                                     const get = (pattern) => {
