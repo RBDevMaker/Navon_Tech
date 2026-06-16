@@ -420,7 +420,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
 
     // Fetch logged-in user's profile from DynamoDB
     useEffect(() => {
-        if (loginEmail && !isAddingEmployee && !editingEmployeeEmail) {
+        if (loginEmail && loginEmail.includes('@') && loginEmail.includes('.') && !isAddingEmployee && !editingEmployeeEmail) {
             const fetchMyProfile = async () => {
                 try {
                     const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
