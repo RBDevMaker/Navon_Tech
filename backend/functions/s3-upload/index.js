@@ -1,4 +1,4 @@
-const { S3Client, PutObjectCommand, DeleteObjectCommand, ListObjectsV2Command, CopyObjectCommand } = require('@aws-sdk/client-s3');
+const { S3Client, PutObjectCommand, DeleteObjectCommand, ListObjectsV2Command, CopyObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
 
 const s3Client = new S3Client({ region: process.env.AWS_REGION || 'us-east-1' });
 const BUCKET_NAME = process.env.S3_BUCKET_NAME || 'navon-tech-images';
@@ -155,11 +155,24 @@ exports.handler = async (event) => {
                     newUrl: newFileUrl
                 })
             };
+        } else if (action === 'getFile') {
+            // Get file content from S3 (for reading HTML summaries etc.)
+            const s3Key = body.key || body.s3Key;
+            if (!s3Key) {
+                return { statusCode: 400, headers, body: JSON.stringify({ error: 'key is required' }) };
+            }
+            const getResponse = await s3Client.send(new GetObjectCommand({ Bucket: BUCKET_NAME, Key: s3Key }));
+            const content = await getResponse.Body.transformToString();
+            return {
+                statusCode: 200,
+                headers,
+                body: JSON.stringify({ content, key: s3Key })
+            };
         } else {
             return {
                 statusCode: 400,
                 headers,
-                body: JSON.stringify({ error: 'Invalid action. Use "list", "upload", "delete", or "move"' })
+                body: JSON.stringify({ error: 'Invalid action. Use "list", "upload", "delete", "move", or "getFile"' })
             };
         }
     } catch (error) {

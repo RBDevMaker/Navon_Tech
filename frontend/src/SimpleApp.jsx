@@ -12871,13 +12871,17 @@ loadBalancer.distribute(traffic);`}
                                                             </button>
                                                             <button onClick={async () => {
                                                                 try {
-                                                                    // Fetch HTML content through API to avoid CORS
                                                                     const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
                                                                     const s3Key = file.key || file.id;
                                                                     
-                                                                    // Use Google Docs viewer workaround - fetch directly with no-cors then parse
-                                                                    const response = await fetch(file.url);
-                                                                    const html = await response.text();
+                                                                    // Fetch HTML content through API (avoids CORS)
+                                                                    const response = await fetch(`${apiUrl}/upload-to-s3`, {
+                                                                        method: 'POST',
+                                                                        headers: { 'Content-Type': 'application/json' },
+                                                                        body: JSON.stringify({ action: 'getFile', key: s3Key })
+                                                                    });
+                                                                    const data = await response.json();
+                                                                    const html = data.content || '';
                                                                     
                                                                     // Parse all fields from the HTML
                                                                     const get = (pattern) => {
@@ -12896,14 +12900,13 @@ loadBalancer.distribute(traffic);`}
                                                                         clearanceLevel: get(/Level:\s*([^|<]+)/),
                                                                         upgradeWillingness: get(/Upgrade:\s*([^|<]+)/),
                                                                         lastInvestigation: get(/Last Investigation:\s*([^|<]+)/),
-                                                                        currentLocation: get(/Location:\s*([^|<]+)/),
+                                                                        currentLocation: get(/<h2>2\..*?Location:\s*([^|<]+)/s),
                                                                         relocateWillingness: get(/Relocate:\s*([^|<]+)/),
                                                                         relocationTimeline: get(/Timeline:\s*([^<]+)/),
-                                                                        currentComp: get(/<h2>3\. Compensation<\/h2><p>Current:\s*([^|<]+)/),
+                                                                        currentComp: get(/<h2>3\..*?Current:\s*([^|<]+)/s),
                                                                         targetComp: get(/Target:\s*([^|<]+)/),
                                                                         compNotes: get(/<h2>3\..*?Notes:\s*([^<]+)/s),
                                                                         benefitsCoverage: get(/Coverage:\s*([^|<]+)/),
-                                                                        benefitsNotes: get(/<h2>4\..*?Notes:\s*([^<]+)/s),
                                                                         ticketingSystems: get(/Ticketing:\s*([^|<]+)/),
                                                                         hardwareExp: get(/Hardware:\s*([^|<]+)/),
                                                                         softwareExp: get(/Software:\s*([^<]+?)(?:<\/p>|$)/),
@@ -12919,7 +12922,7 @@ loadBalancer.distribute(traffic);`}
                                                                         savedAt: new Date().toISOString()
                                                                     };
                                                                     
-                                                                    // Save to localStorage for future
+                                                                    // Save to localStorage
                                                                     const drafts = JSON.parse(localStorage.getItem('candidateSummaryDrafts') || '[]');
                                                                     const existingIdx = drafts.findIndex(d => d.candidateName === draft.candidateName);
                                                                     if (existingIdx >= 0) { drafts[existingIdx] = draft; }
@@ -12940,16 +12943,7 @@ loadBalancer.distribute(traffic);`}
                                                                     }, 600);
                                                                 } catch (err) {
                                                                     console.error('Edit fetch error:', err);
-                                                                    // Fallback - just open form with name
-                                                                    const drafts = JSON.parse(localStorage.getItem('candidateSummaryDrafts') || '[]');
-                                                                    let draft = drafts.find(d => d.candidateName === candidateName);
-                                                                    if (!draft) { draft = { candidateName, savedAt: new Date().toISOString() }; drafts.push(draft); localStorage.setItem('candidateSummaryDrafts', JSON.stringify(drafts)); }
-                                                                    setCurrentPage('candidatesummary');
-                                                                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                                                                    setTimeout(() => {
-                                                                        const form = document.querySelector('form');
-                                                                        if (form) { Object.entries(draft).forEach(([key, value]) => { if (key === 'savedAt') return; const input = form.querySelector(`[name="${key}"]`); if (input) input.value = value; }); }
-                                                                    }, 600);
+                                                                    alert('❌ Could not load summary data. Please try again.');
                                                                 }
                                                             }}
                                                                 style={{ background: '#f59e0b', color: '#0f172a', border: 'none', padding: '0.5rem 0.75rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.8rem' }}>
