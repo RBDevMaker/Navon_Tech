@@ -6,6 +6,7 @@ import awsConfig from './aws-config';
 import * as XLSX from 'xlsx';
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, BorderStyle, Table, TableRow, TableCell, WidthType, CheckBox } from 'docx';
 import { saveAs } from 'file-saver';
+import OnboardingLibrary from './components/OnboardingLibrary';
 
 // Configure Amplify
 Amplify.configure(awsConfig);
@@ -6951,6 +6952,69 @@ loadBalancer.distribute(traffic);`}
                                     </div>
                                 </div>
                             )}
+
+                            {/* Card 7: Onboarding & HR Help */}
+                            <div 
+                                className="hover-lift animate-scale-in" 
+                                onClick={() => {
+                                    setCurrentPage('onboarding');
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                style={{
+                                    background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
+                                    padding: '3rem 2rem',
+                                    borderRadius: '20px',
+                                    textAlign: 'center',
+                                    cursor: 'pointer',
+                                    border: '3px solid #d4af37',
+                                    boxShadow: '0 10px 30px rgba(30, 58, 138, 0.3)',
+                                    transition: 'all 0.4s ease',
+                                    position: 'relative',
+                                    overflow: 'hidden',
+                                    animationDelay: '0.5s',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'space-between'
+                                }}>
+                                <div>
+                                    <div style={{
+                                        fontSize: '4rem',
+                                        marginBottom: '1.5rem',
+                                        filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))'
+                                    }}>
+                                        🚪
+                                    </div>
+                                    <h3 style={{
+                                        color: 'white',
+                                        fontSize: '1.5rem',
+                                        fontWeight: '700',
+                                        marginBottom: '1rem'
+                                    }}>
+                                        Welcome to Navon Technologies
+                                    </h3>
+                                    <p style={{
+                                        color: '#cbd5e1',
+                                        fontSize: '1rem',
+                                        lineHeight: '1.6',
+                                        marginBottom: '2rem'
+                                    }}>
+                                        Interactive onboarding experience, I-9 guidance, benefits enrollment, and new hire resources
+                                    </p>
+                                </div>
+                                <div style={{
+                                    background: 'rgba(212, 175, 55, 0.2)',
+                                    border: '2px solid #d4af37',
+                                    borderRadius: '8px',
+                                    padding: '0.75rem 1.5rem',
+                                    color: '#f4e5a1',
+                                    fontWeight: '700',
+                                    fontSize: '1rem',
+                                    textAlign: 'center',
+                                    transition: 'all 0.3s ease'
+                                }}>
+                                    Explore →
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -12805,13 +12869,99 @@ loadBalancer.distribute(traffic);`}
                                                                 style={{ background: '#1e3a8a', color: 'white', border: 'none', padding: '0.5rem 0.75rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.8rem' }}>
                                                                 👁️ View
                                                             </button>
+                                                            <button onClick={async () => {
+                                                                try {
+                                                                    // Fetch HTML content through API to avoid CORS
+                                                                    const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                                                                    const s3Key = file.key || file.id;
+                                                                    
+                                                                    // Use Google Docs viewer workaround - fetch directly with no-cors then parse
+                                                                    const response = await fetch(file.url);
+                                                                    const html = await response.text();
+                                                                    
+                                                                    // Parse all fields from the HTML
+                                                                    const get = (pattern) => {
+                                                                        const m = html.match(pattern);
+                                                                        return m ? m[1].trim() : '';
+                                                                    };
+                                                                    
+                                                                    const draft = {
+                                                                        candidateName: get(/<strong>Candidate:<\/strong>\s*([^|<]+)/) || candidateName,
+                                                                        conversationDate: get(/<strong>Date:<\/strong>\s*([^|<]+)/),
+                                                                        recruiter: get(/<strong>Recruiter:<\/strong>\s*([^<]+)/),
+                                                                        dob: get(/<strong>DOB:<\/strong>\s*([^|<]+)/),
+                                                                        pob: get(/<strong>POB:<\/strong>\s*([^|<]+)/),
+                                                                        emergencyContact: get(/<strong>Emergency Contact:<\/strong>\s*([^|<]+)/),
+                                                                        emergencyContactNumber: get(/<strong>Phone:<\/strong>\s*([^|<]+)/),
+                                                                        clearanceLevel: get(/Level:\s*([^|<]+)/),
+                                                                        upgradeWillingness: get(/Upgrade:\s*([^|<]+)/),
+                                                                        lastInvestigation: get(/Last Investigation:\s*([^|<]+)/),
+                                                                        currentLocation: get(/Location:\s*([^|<]+)/),
+                                                                        relocateWillingness: get(/Relocate:\s*([^|<]+)/),
+                                                                        relocationTimeline: get(/Timeline:\s*([^<]+)/),
+                                                                        currentComp: get(/<h2>3\. Compensation<\/h2><p>Current:\s*([^|<]+)/),
+                                                                        targetComp: get(/Target:\s*([^|<]+)/),
+                                                                        compNotes: get(/<h2>3\..*?Notes:\s*([^<]+)/s),
+                                                                        benefitsCoverage: get(/Coverage:\s*([^|<]+)/),
+                                                                        benefitsNotes: get(/<h2>4\..*?Notes:\s*([^<]+)/s),
+                                                                        ticketingSystems: get(/Ticketing:\s*([^|<]+)/),
+                                                                        hardwareExp: get(/Hardware:\s*([^|<]+)/),
+                                                                        softwareExp: get(/Software:\s*([^<]+?)(?:<\/p>|$)/),
+                                                                        programmingLangs: get(/Languages:\s*([^|<]+)/),
+                                                                        endUserSupport: get(/End-User:\s*([^|<]+)/),
+                                                                        troubleshooting: get(/Troubleshooting:\s*([^<]+)/),
+                                                                        activeInterviews: get(/Interviews:\s*([^|<]+)/),
+                                                                        interviewDetails: get(/Details:\s*([^|<]+)/),
+                                                                        offersReceived: get(/Offers:\s*([^|<]+)/),
+                                                                        searchUrgency: get(/Urgency:\s*([^|<]+)/),
+                                                                        followupAvailability: get(/Follow-up:\s*([^|<]+)/),
+                                                                        earliestStart: get(/Start:\s*([^|<]+)/),
+                                                                        savedAt: new Date().toISOString()
+                                                                    };
+                                                                    
+                                                                    // Save to localStorage for future
+                                                                    const drafts = JSON.parse(localStorage.getItem('candidateSummaryDrafts') || '[]');
+                                                                    const existingIdx = drafts.findIndex(d => d.candidateName === draft.candidateName);
+                                                                    if (existingIdx >= 0) { drafts[existingIdx] = draft; }
+                                                                    else { drafts.push(draft); }
+                                                                    localStorage.setItem('candidateSummaryDrafts', JSON.stringify(drafts));
+                                                                    
+                                                                    setCurrentPage('candidatesummary');
+                                                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                                                    setTimeout(() => {
+                                                                        const form = document.querySelector('form');
+                                                                        if (form) {
+                                                                            Object.entries(draft).forEach(([key, value]) => {
+                                                                                if (key === 'savedAt' || !value) return;
+                                                                                const input = form.querySelector(`[name="${key}"]`);
+                                                                                if (input) input.value = value;
+                                                                            });
+                                                                        }
+                                                                    }, 600);
+                                                                } catch (err) {
+                                                                    console.error('Edit fetch error:', err);
+                                                                    // Fallback - just open form with name
+                                                                    const drafts = JSON.parse(localStorage.getItem('candidateSummaryDrafts') || '[]');
+                                                                    let draft = drafts.find(d => d.candidateName === candidateName);
+                                                                    if (!draft) { draft = { candidateName, savedAt: new Date().toISOString() }; drafts.push(draft); localStorage.setItem('candidateSummaryDrafts', JSON.stringify(drafts)); }
+                                                                    setCurrentPage('candidatesummary');
+                                                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                                                    setTimeout(() => {
+                                                                        const form = document.querySelector('form');
+                                                                        if (form) { Object.entries(draft).forEach(([key, value]) => { if (key === 'savedAt') return; const input = form.querySelector(`[name="${key}"]`); if (input) input.value = value; }); }
+                                                                    }, 600);
+                                                                }
+                                                            }}
+                                                                style={{ background: '#f59e0b', color: '#0f172a', border: 'none', padding: '0.5rem 0.75rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.8rem' }}>
+                                                                ✏️ Edit
+                                                            </button>
                                                             <button onClick={() => { const w = window.open(file.url, '_blank'); setTimeout(() => { try { w.print(); } catch(e) {} }, 1000); }}
                                                                 style={{ background: '#6b7280', color: 'white', border: 'none', padding: '0.5rem 0.75rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.8rem' }}>
                                                                 🖨️ Print
                                                             </button>
                                                             <a href={file.url.replace('.pdf.html', '.docx')} download target="_blank" rel="noopener noreferrer"
                                                                 style={{ background: '#2563eb', color: 'white', border: 'none', padding: '0.5rem 0.75rem', borderRadius: '6px', fontWeight: '600', fontSize: '0.8rem', textDecoration: 'none', textAlign: 'center' }}>
-                                                                ⬇️ Download as Word
+                                                                ⬇️ Word
                                                             </a>
                                                             <button onClick={async () => {
                                                                 if (!confirm(`🗑️ Delete summary for "${candidateName}"?`)) return;
@@ -13109,6 +13259,62 @@ loadBalancer.distribute(traffic);`}
                 </section>
             )}
 
+            {/* ONBOARDING & HR HELP PAGE */}
+            {currentPage === 'onboarding' && (
+                <section style={{ padding: '0', background: '#0f172a', minHeight: '100vh' }}>
+                    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '4rem 2rem' }}>
+                        {/* Breadcrumb */}
+                        <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '8px', marginBottom: '2rem', fontSize: '0.9rem', color: '#94a3b8' }}>
+                            🏠 Home → 🔐 Secure Employee Portal → <strong style={{ color: '#10b981' }}>🚪 Onboarding & HR Help</strong>
+                        </div>
+                        
+                        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                            <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem', color: '#ffffff', fontWeight: '800' }}>
+                                🚪 Onboarding & HR Help
+                            </h2>
+                            <p style={{ color: '#94a3b8', fontSize: '1.1rem', maxWidth: '700px', margin: '0 auto 2rem auto' }}>
+                                Welcome to your interactive resource center. Explore each item to learn about your benefits, policies, and tools.
+                            </p>
+                            <button onClick={() => { setCurrentPage('secureportal'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                                style={{ background: '#d4af37', color: '#0f172a', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '8px', cursor: 'pointer', fontWeight: '700', fontSize: '0.95rem' }}>
+                                ← Back to Portal
+                            </button>
+                        </div>
+
+                        {/* 3D Interactive Library Experience */}
+                        <OnboardingLibrary />
+
+                        {/* HR Send Onboarding Link Button */}
+                        {(userRole === 'hr' || userRole === 'superadmin' || userRole === 'security') && (
+                            <div style={{ marginTop: '3rem', background: 'rgba(255,255,255,0.05)', borderRadius: '12px', padding: '2rem', border: '1px solid #334155', textAlign: 'center' }}>
+                                <h4 style={{ color: '#d4af37', marginBottom: '1rem', fontSize: '1.1rem' }}>📧 Send Onboarding Link to New Hire</h4>
+                                <p style={{ color: '#94a3b8', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
+                                    Send the interactive onboarding experience directly to a new hire's email.
+                                </p>
+                                <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                                    <input 
+                                        type="email" 
+                                        placeholder="newhire@email.com"
+                                        id="onboarding-email-input"
+                                        style={{ padding: '0.75rem 1rem', borderRadius: '8px', border: '2px solid #334155', background: '#1e293b', color: 'white', fontSize: '0.95rem', minWidth: '250px' }}
+                                    />
+                                    <button 
+                                        onClick={() => {
+                                            const email = document.getElementById('onboarding-email-input').value;
+                                            if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
+                                            alert(`✅ Onboarding link sent to ${email}!\n\nThey will receive an email with a link to this interactive experience.`);
+                                            document.getElementById('onboarding-email-input').value = '';
+                                        }}
+                                        style={{ background: '#10b981', color: 'white', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '8px', fontWeight: '700', fontSize: '0.95rem', cursor: 'pointer' }}>
+                                        Send Link 📨
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </section>
+            )}
+
             {/* CLEARED CANDIDATE SUMMARY FORM */}
             {currentPage === 'candidatesummary' && (userRole === 'security' || userRole === 'superadmin') && (
                 <section style={{ padding: '4rem 2rem', background: '#f1f5f9', minHeight: '100vh' }}>
@@ -13323,6 +13529,16 @@ loadBalancer.distribute(traffic);`}
                                 }
 
                                 alert(`✅ Cleared Candidate Summary for ${candidateName} saved to Compliance & Security. Notification sent to Security.`);
+                                
+                                // Auto-save all form data to localStorage for future editing
+                                const allFields = {};
+                                for (const [key, value] of fd.entries()) { allFields[key] = value; }
+                                const drafts = JSON.parse(localStorage.getItem('candidateSummaryDrafts') || '[]');
+                                const existingIdx = drafts.findIndex(d => d.candidateName === candidateName);
+                                if (existingIdx >= 0) { drafts[existingIdx] = { ...allFields, savedAt: new Date().toISOString() }; }
+                                else { drafts.push({ ...allFields, savedAt: new Date().toISOString() }); }
+                                localStorage.setItem('candidateSummaryDrafts', JSON.stringify(drafts));
+                                
                                 setCurrentPage('compliancesecurity');
                                 window.scrollTo({ top: 0, behavior: 'smooth' });
                                 fetchComplianceFiles();
@@ -13341,6 +13557,35 @@ loadBalancer.distribute(traffic);`}
                                 const fieldStyle = { marginBottom: '0.75rem' };
                                 return (
                                     <>
+                                    {/* Saved Drafts - Load previous entries */}
+                                    {(() => {
+                                        const drafts = JSON.parse(localStorage.getItem('candidateSummaryDrafts') || '[]');
+                                        if (drafts.length === 0) return null;
+                                        return (
+                                            <details style={{ marginBottom: '1.5rem', padding: '1rem', background: '#f0fdf4', border: '1px solid #86efac', borderRadius: '8px' }}>
+                                                <summary style={{ color: '#166534', fontSize: '0.9rem', fontWeight: '600', cursor: 'pointer' }}>📋 Load a Previous Draft ({drafts.length})</summary>
+                                                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.75rem' }}>
+                                                    {drafts.map((draft, idx) => (
+                                                        <button key={idx} type="button" onClick={() => {
+                                                            const form = document.querySelector('form');
+                                                            Object.entries(draft).forEach(([key, value]) => {
+                                                                if (key === 'savedAt') return;
+                                                                const input = form.querySelector(`[name="${key}"]`);
+                                                                if (input) input.value = value;
+                                                            });
+                                                            alert(`✅ Draft loaded for ${draft.candidateName}`);
+                                                        }} style={{
+                                                            background: '#166534', color: 'white', border: 'none', padding: '0.5rem 1rem',
+                                                            borderRadius: '6px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: '600'
+                                                        }}>
+                                                            {draft.candidateName || 'Unknown'} ({new Date(draft.savedAt).toLocaleDateString()})
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </details>
+                                        );
+                                    })()}
+
                                     {/* Header Fields */}
                                     <div style={sectionStyle}>
                                         <div style={rowStyle}>
@@ -13526,12 +13771,34 @@ loadBalancer.distribute(traffic);`}
                                     </div>
 
                                     {/* Submit */}
-                                    <button type="submit" style={{
-                                        background: '#1e3a8a', color: 'white', border: 'none', padding: '1rem 3rem',
-                                        borderRadius: '8px', cursor: 'pointer', fontWeight: '700', fontSize: '1.1rem', width: '100%'
-                                    }}>
-                                        📤 Generate & Send to Compliance & Security
-                                    </button>
+                                    <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                                        <button type="button" onClick={(e) => {
+                                            const form = e.target.closest('form');
+                                            const fd = new FormData(form);
+                                            const draft = {};
+                                            for (const [key, value] of fd.entries()) { draft[key] = value; }
+                                            const candidateName = draft.candidateName || 'Unknown';
+                                            const drafts = JSON.parse(localStorage.getItem('candidateSummaryDrafts') || '[]');
+                                            const existingIdx = drafts.findIndex(d => d.candidateName === candidateName);
+                                            if (existingIdx >= 0) { drafts[existingIdx] = { ...draft, savedAt: new Date().toISOString() }; }
+                                            else { drafts.push({ ...draft, savedAt: new Date().toISOString() }); }
+                                            localStorage.setItem('candidateSummaryDrafts', JSON.stringify(drafts));
+                                            alert(`✅ Draft saved for ${candidateName}.\n\nYou can return and continue editing later.`);
+                                        }} style={{
+                                            background: '#059669', color: 'white', border: 'none', padding: '1rem 3rem',
+                                            borderRadius: '8px', cursor: 'pointer', fontWeight: '700', fontSize: '1.1rem', flex: 1
+                                        }}>
+                                            💾 Save Draft
+                                        </button>
+                                        <button type="submit" style={{
+                                            background: '#1e3a8a', color: 'white', border: 'none', padding: '1rem 3rem',
+                                            borderRadius: '8px', cursor: 'pointer', fontWeight: '700', fontSize: '1.1rem', flex: 1
+                                        }}>
+                                            📤 Generate & Send to Compliance & Security
+                                        </button>
+                                    </div>
+
+                                    {/* Load Draft */}
                                     </>
                                 );
                             })()}

@@ -10,12 +10,16 @@
     },
     "dependencies": {
         "@aws-amplify/ui-react": "^6.15.1",
+        "@react-three/drei": "^9.88.17",
+        "@react-three/fiber": "^8.15.12",
         "aws-amplify": "^6.16.2",
         "docx": "^9.6.1",
         "file-saver": "^2.0.5",
+        "gsap": "^3.15.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-router-dom": "^6.20.0",
+        "three": "^0.155.0",
         "xlsx": "^0.18.5"
     },
     "devDependencies": {
