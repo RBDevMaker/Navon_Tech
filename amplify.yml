@@ -3,13 +3,14 @@ frontend:
   phases:
     preBuild:
       commands:
-        - nvm install 20
-        - nvm use 20
+        - nvm install 20.20.2
+        - nvm use 20.20.2
         - node --version
         - npm --version
         - cd frontend
         - rm -rf node_modules
         - npm ci
+        - npm rebuild
     build:
       commands:
         - npm run build
