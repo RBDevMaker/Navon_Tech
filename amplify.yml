@@ -5,7 +5,10 @@ frontend:
       commands:
         - nvm install 20
         - nvm use 20
-        - cd frontend && npm ci
+        - node --version
+        - npm --version
+        - cd frontend
+        - npm ci
     build:
       commands:
         - npm run build
@@ -14,4 +17,5 @@ frontend:
     files:
       - "**/*"
   cache:
-    paths: []
+    paths:
+      - frontend/node_modules/**/*
