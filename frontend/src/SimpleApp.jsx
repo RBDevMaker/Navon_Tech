@@ -6,7 +6,6 @@ import awsConfig from './aws-config';
 import * as XLSX from 'xlsx';
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, BorderStyle, Table, TableRow, TableCell, WidthType, CheckBox } from 'docx';
 import { saveAs } from 'file-saver';
-import OnboardingLibrary from './components/OnboardingLibrary';
 
 // Configure Amplify
 Amplify.configure(awsConfig);
@@ -6953,7 +6952,8 @@ loadBalancer.distribute(traffic);`}
                                 </div>
                             )}
 
-                            {/* Card 7: Onboarding & HR Help */}
+                            {/* Card 7: Onboarding & HR Help - Hidden for now */}
+                            {false && (
                             <div 
                                 className="hover-lift animate-scale-in" 
                                 onClick={() => {
@@ -7015,6 +7015,7 @@ loadBalancer.distribute(traffic);`}
                                     Explore →
                                 </div>
                             </div>
+                            )}
                         </div>
                     </div>
                 </section>
@@ -13277,8 +13278,12 @@ loadBalancer.distribute(traffic);`}
                             </button>
                         </div>
 
-                        {/* 3D Interactive Library Experience */}
-                        <OnboardingLibrary />
+                        {/* 3D Interactive Library Experience - Coming Soon */}
+                        <div style={{ textAlign: 'center', padding: '4rem 2rem', background: '#1e293b', borderRadius: '20px', border: '2px solid #334155' }}>
+                            <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🚧</div>
+                            <h3 style={{ color: '#d4af37', marginBottom: '1rem' }}>Interactive Onboarding Experience</h3>
+                            <p style={{ color: '#94a3b8' }}>Coming soon — your immersive resource library is being built.</p>
+                        </div>
 
                         {/* HR Send Onboarding Link Button */}
                         {(userRole === 'hr' || userRole === 'superadmin' || userRole === 'security') && (
