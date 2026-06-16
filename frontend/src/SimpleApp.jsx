@@ -13560,20 +13560,33 @@ loadBalancer.distribute(traffic);`}
                                                 <summary style={{ color: '#166534', fontSize: '0.9rem', fontWeight: '600', cursor: 'pointer' }}>📋 Load a Previous Draft ({drafts.length})</summary>
                                                 <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.75rem' }}>
                                                     {drafts.map((draft, idx) => (
-                                                        <button key={idx} type="button" onClick={() => {
-                                                            const form = document.querySelector('form');
-                                                            Object.entries(draft).forEach(([key, value]) => {
-                                                                if (key === 'savedAt') return;
-                                                                const input = form.querySelector(`[name="${key}"]`);
-                                                                if (input) input.value = value;
-                                                            });
-                                                            alert(`✅ Draft loaded for ${draft.candidateName}`);
-                                                        }} style={{
-                                                            background: '#166534', color: 'white', border: 'none', padding: '0.5rem 1rem',
-                                                            borderRadius: '6px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: '600'
-                                                        }}>
-                                                            {draft.candidateName || 'Unknown'} ({new Date(draft.savedAt).toLocaleDateString()})
-                                                        </button>
+                                                        <div key={idx} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                                                            <button type="button" onClick={() => {
+                                                                const form = document.querySelector('form');
+                                                                Object.entries(draft).forEach(([key, value]) => {
+                                                                    if (key === 'savedAt') return;
+                                                                    const input = form.querySelector(`[name="${key}"]`);
+                                                                    if (input) input.value = value;
+                                                                });
+                                                                alert(`✅ Draft loaded for ${draft.candidateName}`);
+                                                            }} style={{
+                                                                background: '#166534', color: 'white', border: 'none', padding: '0.5rem 1rem',
+                                                                borderRadius: '6px 0 0 6px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: '600'
+                                                            }}>
+                                                                {draft.candidateName || 'Unknown'} ({new Date(draft.savedAt).toLocaleDateString()})
+                                                            </button>
+                                                            <button type="button" onClick={() => {
+                                                                if (!confirm(`Delete draft for "${draft.candidateName}"?`)) return;
+                                                                const updated = drafts.filter((_, i) => i !== idx);
+                                                                localStorage.setItem('candidateSummaryDrafts', JSON.stringify(updated));
+                                                                window.location.reload();
+                                                            }} style={{
+                                                                background: '#ef4444', color: 'white', border: 'none', padding: '0.5rem 0.5rem',
+                                                                borderRadius: '0 6px 6px 0', cursor: 'pointer', fontSize: '0.8rem', fontWeight: '600'
+                                                            }}>
+                                                                ✕
+                                                            </button>
+                                                        </div>
                                                     ))}
                                                 </div>
                                             </details>
