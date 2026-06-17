@@ -767,6 +767,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 contractAssignment: profile.contractAssignment || '',
                 contractName: profile.contractName || '',
                 personalEmail: profile.personalEmail || '',
+                preferredName: profile.preferredName || '',
                 address: profile.address || '',
                 birthdate: profile.birthdate || '',
                 gender: profile.gender || '',
@@ -8302,6 +8303,7 @@ loadBalancer.distribute(traffic);`}
                                     emergencyContact: profileData.emergencyContact || '',
                                     emergencyPhone: profileData.emergencyPhone || '',
                                     personalEmail: profileData.personalEmail || '',
+                                    preferredName: profileData.preferredName || '',
                                     address: profileData.address || '',
                                     birthdate: normalizeDate(profileData.birthdate),
                                     gender: profileData.gender || '',
@@ -8532,6 +8534,36 @@ loadBalancer.distribute(traffic);`}
                                                 name: `${prev.name?.split(' ')[0] || ''} ${e.target.value}`
                                             }))}
                                             placeholder="Enter last name"
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                border: '2px solid #e2e8f0',
+                                                borderRadius: '8px',
+                                                fontSize: '1rem',
+                                                outline: 'none'
+                                            }}
+                                            onFocus={(e) => e.target.style.borderColor = '#1e3a8a'}
+                                            onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                                        />
+                                    </div>
+
+                                    {/* Preferred Name */}
+                                    <div>
+                                        <label style={{
+                                            display: 'block',
+                                            color: '#0f172a',
+                                            fontWeight: '600',
+                                            marginBottom: '0.5rem',
+                                            fontSize: '0.9rem'
+                                        }}>
+                                            Preferred Name
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="preferredName"
+                                            value={profileData.preferredName || ''}
+                                            onChange={(e) => setProfileData(prev => ({ ...prev, preferredName: e.target.value }))}
+                                            placeholder="Nickname or preferred name"
                                             style={{
                                                 width: '100%',
                                                 padding: '0.75rem',
