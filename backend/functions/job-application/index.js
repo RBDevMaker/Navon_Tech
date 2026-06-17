@@ -518,7 +518,7 @@ exports.handler = async (event) => {
                     }
                 }
             },
-            ReplyToAddresses: [sanitizedEmail]
+            ReplyToAddresses: sanitizedEmail ? [sanitizedEmail] : ['hr@navontech.com']
         };
 
         // Send email to Security via SES (with resume)
@@ -561,7 +561,7 @@ exports.handler = async (event) => {
                     }
                 }
             },
-            ReplyToAddresses: [sanitizedEmail]
+            ReplyToAddresses: sanitizedEmail ? [sanitizedEmail] : ['hr@navontech.com']
         };
 
         // Send confirmation email to applicant
@@ -644,17 +644,22 @@ www.navontech.com
         // Send all emails in parallel
         console.log('Sending HR notification email to: hr@navontech.com');
         console.log('Sending Security notification email to: security@navontech.com');
-        console.log('Sending applicant confirmation email to:', sanitizedEmail);
         
-        const [hrEmailResult, securityEmailResult, applicantEmailResult] = await Promise.all([
+        const emailPromises = [
             sesClient.send(new SendEmailCommand(hrEmailParams)),
-            sesClient.send(new SendEmailCommand(securityEmailParams)),
-            sesClient.send(new SendEmailCommand(applicantEmailParams))
-        ]);
+            sesClient.send(new SendEmailCommand(securityEmailParams))
+        ];
+        
+        // Only send applicant confirmation if they have an email
+        if (sanitizedEmail && validateEmail(sanitizedEmail)) {
+            console.log('Sending applicant confirmation email to:', sanitizedEmail);
+            emailPromises.push(sesClient.send(new SendEmailCommand(applicantEmailParams)));
+        }
+        
+        await Promise.all(emailPromises);
 
-        console.log('HR email sent successfully. MessageId:', hrEmailResult.MessageId);
-        console.log('Applicant confirmation email sent successfully. MessageId:', applicantEmailResult.MessageId);
-        console.log('Application processed successfully for:', sanitizedEmail);
+        console.log('Emails sent successfully');
+        console.log('Application processed successfully for:', sanitizedName);
 
         return {
             statusCode: 200,
