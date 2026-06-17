@@ -15065,7 +15065,7 @@ loadBalancer.distribute(traffic);`}
                                     }
                                     
                                     // Validate all required fields
-                                    if (!referrerName || !referrerEmail || !candidateName || !candidateEmail) {
+                                    if (!referrerName || !referrerEmail || !candidateName) {
                                         alert('Please fill out all required fields');
                                         return;
                                     }
@@ -15179,13 +15179,13 @@ loadBalancer.distribute(traffic);`}
                                                     marginBottom: '0.5rem',
                                                     fontSize: '0.9rem'
                                                 }}>
-                                                    Your Name<span style={{ color: '#ef4444' }}>*</span>
+                                                    Referee's Name<span style={{ color: '#ef4444' }}>*</span>
                                                 </label>
                                                 <input 
                                                     type="text"
                                                     name="referrerName"
                                                     required
-                                                    placeholder="Your full name"
+                                                    placeholder="Referee's full name"
                                                     style={{
                                                         width: '100%',
                                                         padding: '0.75rem',
@@ -15267,13 +15267,12 @@ loadBalancer.distribute(traffic);`}
                                                     marginBottom: '0.5rem',
                                                     fontSize: '0.9rem'
                                                 }}>
-                                                    Candidate Email<span style={{ color: '#ef4444' }}>*</span>
+                                                    Referral Date<span style={{ color: '#ef4444' }}>*</span>
                                                 </label>
                                                 <input 
-                                                    type="email"
-                                                    name="candidateEmail"
+                                                    type="date"
+                                                    name="referralDate"
                                                     required
-                                                    placeholder="candidate@email.com"
                                                     style={{
                                                         width: '100%',
                                                         padding: '0.75rem',
