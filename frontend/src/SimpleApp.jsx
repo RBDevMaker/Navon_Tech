@@ -15126,25 +15126,33 @@ loadBalancer.distribute(traffic);`}
                                         const result = await response.json();
 
                                         if (response.ok) {
-                                            // Also upload resume to Resume Portal if resume was provided
-                                            if (resume && resume.size > 0) {
-                                                try {
-                                                    const resumePortalData = {
-                                                        candidateName: candidateName,
-                                                        email: candidateEmail,
-                                                        phone: candidatePhone,
-                                                        position: position,
-                                                        department: 'Engineering', // Default, can be updated later
-                                                        experience: '',
-                                                        stage: 'New',
-                                                        receivedDate: new Date().toISOString(),
-                                                        notes: `Employee Referral from ${referrerName} (${referrerEmail}). Relationship: ${relationship}. ${notes || ''}`
-                                                    };
+                                            // Create ATS entry for the referral
+                                            try {
+                                                const atsApiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                                                const resumePortalData = {
+                                                    candidateName: candidateName,
+                                                    email: candidateEmail,
+                                                    phone: candidatePhone,
+                                                    position: position,
+                                                    department: 'General',
+                                                    experience: '',
+                                                    stage: 'New',
+                                                    receivedDate: new Date().toISOString(),
+                                                    notes: `Employee Referral from ${referrerName} (${referrerEmail}). Relationship: ${relationship}. ${notes || ''}`
+                                                };
+                                                
+                                                if (resume && resume.size > 0) {
                                                     await uploadResume(resumePortalData, resume);
-                                                } catch (resumeError) {
-                                                    console.error('Resume upload to portal failed:', resumeError);
-                                                    // Don't fail the whole referral if resume portal upload fails
+                                                } else {
+                                                    // Create ATS entry without resume file
+                                                    await fetch(`${atsApiUrl}/resume`, {
+                                                        method: 'POST',
+                                                        headers: { 'Content-Type': 'application/json' },
+                                                        body: JSON.stringify(resumePortalData)
+                                                    });
                                                 }
+                                            } catch (resumeError) {
+                                                console.error('ATS entry creation failed:', resumeError);
                                             }
                                             
                                             alert('✅ Referral submitted successfully! HR will review the candidate and you will receive updates via email.');
