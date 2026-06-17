@@ -7431,10 +7431,11 @@ loadBalancer.distribute(traffic);`}
                                             const existingEmails = new Set((existingData.profiles || existingData || []).map(p => (p.email || '').toLowerCase()));
 
                                             const newEmployees = rows.filter(r => !existingEmails.has(r.email.toLowerCase()));
-                                            const skipped = rows.length - newEmployees.length;
+                                            const existingToUpdate = rows.filter(r => existingEmails.has(r.email.toLowerCase()));
+                                            const skipped = existingToUpdate.length;
 
-                                            if (newEmployees.length === 0) {
-                                                alert(`All ${rows.length} employees already exist in the directory. No new profiles to create.`);
+                                            if (newEmployees.length === 0 && existingToUpdate.length === 0) {
+                                                alert(`No employees found to import or update.`);
                                                 return;
                                             }
 
@@ -7442,13 +7443,15 @@ loadBalancer.distribute(traffic);`}
                                             const pending = newEmployees.filter(e => (e.status||'').toLowerCase().match(/pending|not started|pre-start|onboarding|accepted/)).length;
                                             const active = newEmployees.length - terminated - pending;
 
-                                            if (!confirm(`Found ${rows.length} employees in CSV.\n\n✅ New employees to add: ${newEmployees.length}\n   • Active: ${active}\n   • Pending/Not Started: ${pending}\n   • Terminated → Previous Employees: ${terminated}\n⏭️ Already exist (skip): ${skipped}\n\nProceed with import?`)) return;
+                                            if (!confirm(`Found ${rows.length} employees in CSV.\n\n✅ New employees to add: ${newEmployees.length}\n   • Active: ${active}\n   • Pending/Not Started: ${pending}\n   • Terminated → Previous Employees: ${terminated}\n🔄 Existing to update: ${skipped}\n\nProceed with import?`)) return;
 
                                             let added = 0;
+                                            let updated = 0;
                                             let failed = 0;
+                                            
+                                            // Add new employees
                                             for (const emp of newEmployees) {
                                                 try {
-                                                    // Normalize start date to YYYY-MM-DD if possible
                                                     let normalizedDate = emp.startDate;
                                                     if (normalizedDate) {
                                                         const d = new Date(normalizedDate);
@@ -7475,10 +7478,6 @@ loadBalancer.distribute(traffic);`}
                                                         })(),
                                                         showInDirectory: false
                                                     };
-                                                    if (!profilePayload.email?.toLowerCase().endsWith('@navontech.com')) {
-                                                        failed++;
-                                                        continue;
-                                                    }
                                                     const res = await fetch(`${apiUrl}/profiles`, {
                                                         method: 'POST',
                                                         headers: { 'Content-Type': 'application/json' },
@@ -7490,8 +7489,43 @@ loadBalancer.distribute(traffic);`}
                                                     failed++;
                                                 }
                                             }
-                                            alert(`✅ Import Complete!\n\nAdded: ${added} new employee${added !== 1 ? 's' : ''}\nSkipped: ${skipped} existing\n${failed > 0 ? `Failed: ${failed}` : ''}`);
-                                            // Refresh team members if on directory
+                                            
+                                            // Update existing employees with missing fields
+                                            for (const emp of existingToUpdate) {
+                                                try {
+                                                    let normalizedDate = emp.startDate;
+                                                    if (normalizedDate) {
+                                                        const d = new Date(normalizedDate);
+                                                        if (!isNaN(d.getTime())) {
+                                                            normalizedDate = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+                                                        }
+                                                    }
+                                                    const updatePayload = {};
+                                                    if (emp.department) updatePayload.department = emp.department;
+                                                    if (emp.title) updatePayload.title = emp.title;
+                                                    if (normalizedDate) updatePayload.startDate = normalizedDate;
+                                                    if (emp.phone) updatePayload.phone = emp.phone;
+                                                    if (emp.location) updatePayload.location = emp.location;
+                                                    if (emp.name) updatePayload.name = emp.name;
+                                                    if (emp.status) {
+                                                        const s = emp.status.toLowerCase();
+                                                        if (s.includes('terminat') || s.includes('inactive')) updatePayload.employmentType = 'Archived';
+                                                    }
+                                                    
+                                                    if (Object.keys(updatePayload).length > 0) {
+                                                        const res = await fetch(`${apiUrl}/profiles/${emp.email}`, {
+                                                            method: 'PUT',
+                                                            headers: { 'Content-Type': 'application/json' },
+                                                            body: JSON.stringify(updatePayload)
+                                                        });
+                                                        if (res.ok) updated++;
+                                                    }
+                                                } catch (err) {
+                                                    // Silent fail for updates
+                                                }
+                                            }
+                                            
+                                            alert(`✅ Import Complete!\n\nAdded: ${added} new employee${added !== 1 ? 's' : ''}\nUpdated: ${updated} existing\n${failed > 0 ? `Failed: ${failed}` : ''}`);
                                             if (typeof fetchTeamMembers === 'function') fetchTeamMembers();
                                         } catch (err) {
                                             alert('❌ Error reading CSV: ' + err.message);
