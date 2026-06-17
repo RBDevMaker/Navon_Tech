@@ -1812,6 +1812,52 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                         console.error('Referral notification failed:', notifyErr);
                     }
                 }
+
+                // Auto-create Team Directory profile when moved to Hired
+                if (newStage === 'Hired') {
+                    try {
+                        const hiredDate = updateBody.hiredDate || resume.hiredDate || new Date().toISOString().split('T')[0];
+                        const nameParts = (resume.candidateName || '').trim().split(/\s+/);
+                        const profilePayload = {
+                            name: resume.candidateName,
+                            email: resume.email || '',
+                            phone: resume.phone || '',
+                            title: resume.position || 'New Hire',
+                            department: resume.department || 'General',
+                            startDate: hiredDate,
+                            employmentType: 'Active',
+                            billableStatus: 'Non-Billable',
+                            showInDirectory: true
+                        };
+                        
+                        // Create profile in DynamoDB
+                        const profileEmail = resume.email || `${nameParts.join('.').toLowerCase()}@navontech.com`;
+                        await fetch(`${apiUrl}/profiles`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ ...profilePayload, employeeId: profileEmail })
+                        });
+                        
+                        // Send email to rachelle.briscoe@navontech.com to update the profile
+                        await fetch(`${apiUrl}/apply`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                type: 'stage-change-notification',
+                                candidateName: resume.candidateName,
+                                position: resume.position || 'New Hire',
+                                oldStage: resume.stage,
+                                newStage: 'Hired — Profile Created',
+                                hiredDate: hiredDate,
+                                notifyEmail: 'rachelle.briscoe@navontech.com'
+                            })
+                        });
+                        
+                        console.log(`Profile created for ${resume.candidateName}`);
+                    } catch (profileErr) {
+                        console.error('Auto-profile creation failed:', profileErr);
+                    }
+                }
             }
             
             await fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
