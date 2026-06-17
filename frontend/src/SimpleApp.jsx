@@ -1827,7 +1827,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             startDate: hiredDate,
                             employmentType: 'Active',
                             billableStatus: 'Non-Billable',
-                            showInDirectory: true
+                            showInDirectory: false
                         };
                         
                         // Create profile in DynamoDB
