@@ -7428,10 +7428,10 @@ loadBalancer.distribute(traffic);`}
                                             const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
                                             const existingRes = await fetch(`${apiUrl}/profiles`);
                                             const existingData = await existingRes.json();
-                                            const existingEmails = new Set((existingData.profiles || existingData || []).map(p => (p.email || '').toLowerCase()));
+                                            const existingNames = new Set((existingData.profiles || existingData || []).map(p => (p.name || '').toLowerCase().trim()));
 
-                                            const newEmployees = rows.filter(r => !existingEmails.has(r.email.toLowerCase()));
-                                            const existingToUpdate = rows.filter(r => existingEmails.has(r.email.toLowerCase()));
+                                            const newEmployees = rows.filter(r => !existingNames.has(r.name.toLowerCase().trim()));
+                                            const existingToUpdate = rows.filter(r => existingNames.has(r.name.toLowerCase().trim()));
                                             const skipped = existingToUpdate.length;
 
                                             if (newEmployees.length === 0 && existingToUpdate.length === 0) {
@@ -7506,19 +7506,25 @@ loadBalancer.distribute(traffic);`}
                                                     if (normalizedDate) updatePayload.startDate = normalizedDate;
                                                     if (emp.phone) updatePayload.phone = emp.phone;
                                                     if (emp.location) updatePayload.location = emp.location;
-                                                    if (emp.name) updatePayload.name = emp.name;
+                                                    if (emp.email) updatePayload.email = emp.email;
                                                     if (emp.status) {
                                                         const s = emp.status.toLowerCase();
                                                         if (s.includes('terminat') || s.includes('inactive')) updatePayload.employmentType = 'Archived';
                                                     }
                                                     
                                                     if (Object.keys(updatePayload).length > 0) {
-                                                        const res = await fetch(`${apiUrl}/profiles/${emp.email}`, {
-                                                            method: 'PUT',
-                                                            headers: { 'Content-Type': 'application/json' },
-                                                            body: JSON.stringify(updatePayload)
-                                                        });
-                                                        if (res.ok) updated++;
+                                                        // Find existing profile by name to get their employeeId
+                                                        const existingProfiles = existingData.profiles || existingData || [];
+                                                        const match = existingProfiles.find(p => (p.name || '').toLowerCase().trim() === emp.name.toLowerCase().trim());
+                                                        if (match) {
+                                                            const profileId = match.employeeId || match.email;
+                                                            const res = await fetch(`${apiUrl}/profiles/${profileId}`, {
+                                                                method: 'PUT',
+                                                                headers: { 'Content-Type': 'application/json' },
+                                                                body: JSON.stringify(updatePayload)
+                                                            });
+                                                            if (res.ok) updated++;
+                                                        }
                                                     }
                                                 } catch (err) {
                                                     // Silent fail for updates
