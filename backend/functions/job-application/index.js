@@ -364,8 +364,8 @@ exports.handler = async (event) => {
             };
         }
 
-        // Validate email format
-        if (!validateEmail(sanitizedEmail)) {
+        // Validate email format (skip for referrals without candidate email)
+        if (sanitizedEmail && !validateEmail(sanitizedEmail)) {
             console.warn('Invalid email format:', sanitizedEmail);
             return {
                 statusCode: 400,
