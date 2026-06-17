@@ -1754,42 +1754,51 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             
             if (!response.ok) throw new Error('Failed to update resume');
             
-            // Check if this is a referral and send notification
+            // Send email notification to HR and Security for all stage changes
             const resume = filteredResumes.find(r => r.resumeId === resumeId) || resumes.find(r => r.resumeId === resumeId);
-            if (resume && resume.notes && resume.notes.includes('Employee Referral')) {
+            if (resume) {
                 try {
-                    const notifyEmail = 'security@navontech.com';
-                    await fetch(`${apiUrl}/apply`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            type: 'referral-stage-notification',
-                            candidateName: resume.candidateName,
-                            position: resume.position,
-                            oldStage: resume.stage,
-                            newStage: newStage,
-                            referredBy: resume.notes.match(/Employee Referral from ([^(]+)/)?.[1]?.trim() || 'Unknown',
-                            notifyEmail
-                        })
-                    });
-                    // Also notify HR when Hired
-                    if (newStage === 'Hired') {
+                    // Notify both HR and Security of stage change
+                    for (const notifyEmail of ['hr@navontech.com', 'security@navontech.com']) {
                         await fetch(`${apiUrl}/apply`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
-                                type: 'referral-stage-notification',
+                                type: 'stage-change-notification',
                                 candidateName: resume.candidateName,
-                                position: resume.position,
+                                position: resume.position || 'Not specified',
                                 oldStage: resume.stage,
                                 newStage: newStage,
-                                referredBy: resume.notes.match(/Employee Referral from ([^(]+)/)?.[1]?.trim() || 'Unknown',
-                                notifyEmail: 'hr@navontech.com'
+                                hiredDate: updateBody.hiredDate || resume.hiredDate || '',
+                                notifyEmail
                             })
                         });
                     }
                 } catch (notifyErr) {
-                    console.error('Referral notification failed:', notifyErr);
+                    console.error('Stage notification failed:', notifyErr);
+                }
+                
+                // Additional referral notification if applicable
+                if (resume.notes && resume.notes.includes('Employee Referral')) {
+                    try {
+                        for (const notifyEmail of ['security@navontech.com', ...(newStage === 'Hired' ? ['hr@navontech.com'] : [])]) {
+                            await fetch(`${apiUrl}/apply`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    type: 'referral-stage-notification',
+                                    candidateName: resume.candidateName,
+                                    position: resume.position,
+                                    oldStage: resume.stage,
+                                    newStage: newStage,
+                                    referredBy: resume.notes.match(/Employee Referral from ([^(]+)/)?.[1]?.trim() || 'Unknown',
+                                    notifyEmail
+                                })
+                            });
+                        }
+                    } catch (notifyErr) {
+                        console.error('Referral notification failed:', notifyErr);
+                    }
                 }
             }
             
@@ -17816,6 +17825,10 @@ Please review and approve this request.
                                     <option value="Offer">Offer</option>
                                     <option value="Rejected">Rejected</option>
                                 </select>
+                            </div>
+                            <div>
+                                <label style={{ display: 'block', fontWeight: '600', color: '#1e3a8a', marginBottom: '0.25rem', fontSize: '0.85rem' }}>Start Date</label>
+                                <input type="date" value={editingResume.hiredDate || ''} onChange={(e) => setEditingResume({...editingResume, hiredDate: e.target.value})} style={{ width: '100%', padding: '0.6rem', border: '2px solid #e2e8f0', borderRadius: '8px', fontSize: '0.9rem', boxSizing: 'border-box' }} />
                             </div>
                             <div>
                                 <label style={{ display: 'block', fontWeight: '600', color: '#1e3a8a', marginBottom: '0.25rem', fontSize: '0.85rem' }}>Additional Info (Applicant)</label>

@@ -149,6 +149,52 @@ exports.handler = async (event) => {
             };
         }
 
+        // Handle stage change notifications (all stage moves)
+        if (body.type === 'stage-change-notification') {
+            const { candidateName, position, oldStage, newStage, hiredDate, notifyEmail } = body;
+            
+            const stageEmoji = { 'New': '📥', 'Screening': '🔍', 'Interview': '📝', 'Offer': '✅', 'Pending': '⏳', 'Hired': '🎉', 'Rejected': '❌', 'Archived': '📦' };
+            const emoji = stageEmoji[newStage] || '📋';
+            
+            const subject = `${emoji} ATS Update: ${candidateName} moved to ${newStage}`;
+            const htmlBody = `
+                <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;">
+                    <div style="background:#1e3a8a;padding:20px;border-radius:12px 12px 0 0;text-align:center;">
+                        <h2 style="color:#d4af37;margin:0;">NAVON TECHNOLOGIES</h2>
+                        <p style="color:rgba(255,255,255,0.8);margin:5px 0 0;font-size:12px;">Application Tracking System</p>
+                    </div>
+                    <div style="background:#f8fafc;padding:24px;border:2px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px;">
+                        <h3 style="color:#1e3a8a;margin:0 0 16px;">${emoji} Stage Change Notification</h3>
+                        <table style="width:100%;font-size:14px;border-collapse:collapse;">
+                            <tr><td style="padding:8px 0;color:#64748b;width:130px;"><strong>Candidate:</strong></td><td style="padding:8px 0;color:#1e293b;">${candidateName}</td></tr>
+                            <tr><td style="padding:8px 0;color:#64748b;"><strong>Position:</strong></td><td style="padding:8px 0;color:#1e293b;">${position}</td></tr>
+                            <tr><td style="padding:8px 0;color:#64748b;"><strong>Previous Stage:</strong></td><td style="padding:8px 0;color:#1e293b;">${oldStage || 'N/A'}</td></tr>
+                            <tr><td style="padding:8px 0;color:#64748b;"><strong>New Stage:</strong></td><td style="padding:8px 0;color:#1e293b;font-weight:700;">${newStage}</td></tr>
+                            ${hiredDate ? `<tr><td style="padding:8px 0;color:#64748b;"><strong>Start Date:</strong></td><td style="padding:8px 0;color:#1e293b;">${hiredDate}</td></tr>` : ''}
+                        </table>
+                        <p style="color:#94a3b8;font-size:12px;margin:20px 0 0;border-top:1px solid #e2e8f0;padding-top:12px;">
+                            This is an automated notification from the Navon Technologies ATS.
+                        </p>
+                    </div>
+                </div>
+            `;
+            
+            await sesClient.send(new SendEmailCommand({
+                Destination: { ToAddresses: [notifyEmail] },
+                Message: {
+                    Subject: { Data: subject },
+                    Body: { Html: { Data: htmlBody } }
+                },
+                Source: 'noreply@navontech.com'
+            }));
+            
+            return {
+                statusCode: 200,
+                headers: CORS_HEADERS,
+                body: JSON.stringify({ message: 'Stage change notification sent' })
+            };
+        }
+
         // Handle referral notifications
         if (body.type === 'referral-stage-notification' || body.type === 'referral-bonus-notification') {
             const { candidateName, position, referredBy, notifyEmail, oldStage, newStage, milestone, action, hiredDate } = body;
