@@ -13540,9 +13540,9 @@ loadBalancer.distribute(traffic);`}
                                 else { drafts.push({ ...allFields, savedAt: new Date().toISOString() }); }
                                 localStorage.setItem('candidateSummaryDrafts', JSON.stringify(drafts));
                                 
-                                setCurrentPage('compliancesecurity');
+                                // Reset form and stay on candidate summary page
+                                e.target.reset();
                                 window.scrollTo({ top: 0, behavior: 'smooth' });
-                                fetchComplianceFiles();
                             } catch (err) {
                                 console.error('Error generating document:', err);
                                 alert(`❌ Error: ${err.message}`);
