@@ -146,13 +146,14 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             const atsToReferralStage = { 'New': 'Submitted', 'Screening': 'Under Review', 'Interview': 'Interview Scheduled', 'Offer': 'Offer Extended', 'Pending': 'Offer Extended', 'Hired': 'Hired', 'Archived': 'Hired', 'Rejected': 'Not Selected' };
             let stage = atsToReferralStage[r.stage] || r.stage;
             let daysSinceHired = null;
-            // Check 90-day milestones
+            // Check day milestones
             if (stage === 'Hired' && r.hiredDate) {
                 const hp = r.hiredDate.split('-');
                 const hiredMs = new Date(Number(hp[0]), Number(hp[1]) - 1, Number(hp[2])).getTime();
                 daysSinceHired = Math.floor((Date.now() - hiredMs) / (1000 * 60 * 60 * 24));
                 if (daysSinceHired >= 180) stage = '180 Days 💸💸';
                 else if (daysSinceHired >= 90) stage = '90 Days 💸';
+                else if (daysSinceHired >= 30) stage = '30 Days ✓';
             }
             return {
                 id: r.resumeId,
@@ -15508,7 +15509,7 @@ loadBalancer.distribute(traffic);`}
                         {/* Referral Cards */}
                         <div style={{ display: 'grid', gap: '1.5rem' }}>
                             {getReferralsFromATS().map(referral => {
-                                const stages = ['Submitted', 'Under Review', 'Interview Scheduled', 'Offer Extended', 'Hired', '90 Days 💸', '180 Days 💸💸'];
+                                const stages = ['Submitted', 'Under Review', 'Interview Scheduled', 'Offer Extended', 'Hired', '30 Days ✓', '90 Days 💸', '180 Days 💸💸'];
                                 const stageIndex = stages.indexOf(referral.stage);
                                 const stageColors = { 'Submitted': '#6366f1', 'Under Review': '#f59e0b', 'Interview Scheduled': '#3b82f6', 'Offer Extended': '#10b981', 'Hired': '#059669', 'Not Selected': '#ef4444', '90 Days 💸': '#d4af37', '180 Days 💸💸': '#16a34a' };
                                 const daysInfo = referral.daysSinceHired;
@@ -15525,7 +15526,8 @@ loadBalancer.distribute(traffic);`}
                                                 <p style={{ color: '#94a3b8', margin: 0, fontSize: '0.85rem' }}>
                                                     Date: {(() => { const p = referral.referredDate.split('-'); return p.length === 3 ? new Date(Number(p[0]), Number(p[1])-1, Number(p[2])).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : referral.referredDate; })()}
                                                 </p>
-                                                {daysInfo !== null && referral.stage === 'Hired' && <p style={{ color: '#059669', margin: '0.25rem 0 0 0', fontSize: '0.85rem', fontWeight: '600' }}>📅 {daysInfo} of 90 days completed</p>}
+                                                {daysInfo !== null && referral.stage === 'Hired' && <p style={{ color: '#059669', margin: '0.25rem 0 0 0', fontSize: '0.85rem', fontWeight: '600' }}>📅 {daysInfo} of 30 days completed</p>}
+                                                {referral.stage === '30 Days ✓' && <p style={{ color: '#0ea5e9', margin: '0.25rem 0 0 0', fontSize: '0.9rem', fontWeight: '700' }}>✓ 30-day milestone reached — referred by {referral.referredBy}</p>}
                                                 {referral.stage === '90 Days 💸' && <p style={{ color: '#d4af37', margin: '0.25rem 0 0 0', fontSize: '0.9rem', fontWeight: '700' }}>💸 Half bonus eligible — referred by {referral.referredBy}</p>}
                                                 {referral.stage === '180 Days 💸💸' && <p style={{ color: '#16a34a', margin: '0.25rem 0 0 0', fontSize: '0.9rem', fontWeight: '700' }}>💸💸 Full balance eligible — referred by {referral.referredBy}</p>}
                                             </div>
@@ -15556,8 +15558,8 @@ loadBalancer.distribute(traffic);`}
                                 <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', border: '2px solid #e2e8f0' }}>
                                     <h3 style={{ color: '#1e3a8a', marginBottom: '1.5rem', textAlign: 'center' }}>Referral Pipeline</h3>
                                     {(() => {
-                                        const stages = ['Submitted', 'Under Review', 'Interview Scheduled', 'Offer Extended', 'Hired', '90 Days 💸', '180 Days 💸💸'];
-                                        const stageColors = { 'Submitted': '#6366f1', 'Under Review': '#f59e0b', 'Interview Scheduled': '#3b82f6', 'Offer Extended': '#10b981', 'Hired': '#059669', '90 Days 💸': '#d4af37', '180 Days 💸💸': '#16a34a' };
+                                        const stages = ['Submitted', 'Under Review', 'Interview Scheduled', 'Offer Extended', 'Hired', '30 Days ✓', '90 Days 💸', '180 Days 💸💸'];
+                                        const stageColors = { 'Submitted': '#6366f1', 'Under Review': '#f59e0b', 'Interview Scheduled': '#3b82f6', 'Offer Extended': '#10b981', 'Hired': '#059669', '30 Days ✓': '#0ea5e9', '90 Days 💸': '#d4af37', '180 Days 💸💸': '#16a34a' };
                                         return (
                                             <>
                                             <div style={{ display: 'flex', gap: '0.25rem', marginBottom: '1rem' }}>
@@ -15609,8 +15611,8 @@ loadBalancer.distribute(traffic);`}
                                 const myReferrals = allReferrals.filter(r => profileData.name && r.referredBy?.toLowerCase() === profileData.name.toLowerCase());
                                 return myReferrals.length > 0 ? (
                                 myReferrals.map(referral => {
-                                    const stages = ['Submitted', 'Under Review', 'Hired', '90 Days 💸', '180 Days 💸💸'];
-                                    const stageMap = { 'Submitted': 'Submitted', 'Under Review': 'Under Review', 'Interview Scheduled': 'Under Review', 'Offer Extended': 'Under Review', 'Hired': 'Hired', 'Not Hired': 'Not Hired', '90 Days 💸': '90 Days 💸', '180 Days 💸💸': '180 Days 💸💸' };
+                                    const stages = ['Submitted', 'Under Review', 'Hired', '30 Days ✓', '90 Days 💸', '180 Days 💸💸'];
+                                    const stageMap = { 'Submitted': 'Submitted', 'Under Review': 'Under Review', 'Interview Scheduled': 'Under Review', 'Offer Extended': 'Under Review', 'Hired': 'Hired', 'Not Hired': 'Not Hired', '30 Days ✓': '30 Days ✓', '90 Days 💸': '90 Days 💸', '180 Days 💸💸': '180 Days 💸💸' };
                                     const displayStage = stageMap[referral.stage] || referral.stage;
                                     const isNotHired = displayStage === 'Not Hired';
                                     const stageIndex = isNotHired ? 1 : stages.indexOf(displayStage);
