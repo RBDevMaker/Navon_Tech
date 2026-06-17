@@ -7428,10 +7428,13 @@ loadBalancer.distribute(traffic);`}
                                             const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
                                             const existingRes = await fetch(`${apiUrl}/profiles`);
                                             const existingData = await existingRes.json();
-                                            const existingNames = new Set((existingData.profiles || existingData || []).map(p => (p.name || '').toLowerCase().trim()));
+                                            const existingProfiles = existingData.profiles || existingData || [];
+                                            const existingNames = new Set(existingProfiles.map(p => (p.name || '').toLowerCase().trim()));
+                                            const existingEmails = new Set(existingProfiles.map(p => (p.email || '').toLowerCase().trim()));
 
-                                            const newEmployees = rows.filter(r => !existingNames.has(r.name.toLowerCase().trim()));
-                                            const existingToUpdate = rows.filter(r => existingNames.has(r.name.toLowerCase().trim()));
+                                            const isExisting = (r) => existingNames.has(r.name.toLowerCase().trim()) || existingEmails.has(r.email.toLowerCase().trim());
+                                            const newEmployees = rows.filter(r => !isExisting(r));
+                                            const existingToUpdate = rows.filter(r => isExisting(r));
                                             const skipped = existingToUpdate.length;
 
                                             if (newEmployees.length === 0 && existingToUpdate.length === 0) {
@@ -7513,9 +7516,11 @@ loadBalancer.distribute(traffic);`}
                                                     }
                                                     
                                                     if (Object.keys(updatePayload).length > 0) {
-                                                        // Find existing profile by name to get their employeeId
-                                                        const existingProfiles = existingData.profiles || existingData || [];
-                                                        const match = existingProfiles.find(p => (p.name || '').toLowerCase().trim() === emp.name.toLowerCase().trim());
+                                                        // Find existing profile by name or email
+                                                        const match = existingProfiles.find(p => 
+                                                            (p.name || '').toLowerCase().trim() === emp.name.toLowerCase().trim() ||
+                                                            (p.email || '').toLowerCase().trim() === emp.email.toLowerCase().trim()
+                                                        );
                                                         if (match) {
                                                             const profileId = match.employeeId || match.email;
                                                             const res = await fetch(`${apiUrl}/profiles/${profileId}`, {
