@@ -149,6 +149,51 @@ exports.handler = async (event) => {
             };
         }
 
+        // Handle referral confirmation to referee
+        if (body.type === 'referral-confirmation') {
+            const { referrerName, referrerEmail, candidateName, position } = body;
+            
+            const subject = `✅ Thank You for Your Referral — ${candidateName}`;
+            const htmlBody = `
+                <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;">
+                    <div style="background:#1e3a8a;padding:20px;border-radius:12px 12px 0 0;text-align:center;">
+                        <h2 style="color:#d4af37;margin:0;">NAVON TECHNOLOGIES</h2>
+                        <p style="color:rgba(255,255,255,0.8);margin:5px 0 0;font-size:12px;">Employee Referral Program</p>
+                    </div>
+                    <div style="background:#f8fafc;padding:24px;border:2px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px;">
+                        <h3 style="color:#1e3a8a;margin:0 0 16px;">Thank You, ${referrerName}!</h3>
+                        <p style="color:#334155;font-size:14px;line-height:1.6;">
+                            Your referral for <strong>${candidateName}</strong>${position ? ` for the <strong>${position}</strong> position` : ''} has been received and is now under review by our HR team.
+                        </p>
+                        <p style="color:#334155;font-size:14px;line-height:1.6;">
+                            We appreciate you helping us find great talent. You will receive updates as the candidate progresses through our hiring process.
+                        </p>
+                        <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:12px;margin:16px 0;">
+                            <p style="color:#166534;font-size:13px;margin:0;">💡 <strong>Reminder:</strong> Eligible referral bonuses are paid at 90 days and 180 days after the candidate's start date.</p>
+                        </div>
+                        <p style="color:#94a3b8;font-size:12px;margin:20px 0 0;border-top:1px solid #e2e8f0;padding-top:12px;">
+                            Navon Technologies | Leesburg, Virginia
+                        </p>
+                    </div>
+                </div>
+            `;
+            
+            await sesClient.send(new SendEmailCommand({
+                Destination: { ToAddresses: [referrerEmail] },
+                Message: {
+                    Subject: { Data: subject },
+                    Body: { Html: { Data: htmlBody } }
+                },
+                Source: 'noreply@navontech.com'
+            }));
+            
+            return {
+                statusCode: 200,
+                headers: CORS_HEADERS,
+                body: JSON.stringify({ message: 'Referral confirmation sent to referee' })
+            };
+        }
+
         // Handle stage change notifications (all stage moves)
         if (body.type === 'stage-change-notification') {
             const { candidateName, position, oldStage, newStage, hiredDate, notifyEmail } = body;

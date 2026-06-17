@@ -15147,6 +15147,24 @@ loadBalancer.distribute(traffic);`}
                                             }
                                             
                                             alert('✅ Referral submitted successfully! HR will review the candidate and you will receive updates via email.');
+                                            
+                                            // Send confirmation email to referee
+                                            try {
+                                                await fetch(apiEndpoint, {
+                                                    method: 'POST',
+                                                    headers: { 'Content-Type': 'application/json' },
+                                                    body: JSON.stringify({
+                                                        type: 'referral-confirmation',
+                                                        referrerName,
+                                                        referrerEmail,
+                                                        candidateName,
+                                                        position
+                                                    })
+                                                });
+                                            } catch (confirmErr) {
+                                                console.error('Referee confirmation email failed:', confirmErr);
+                                            }
+                                            
                                             e.target.reset();
                                             setShowReferralForm(false);
                                         } else {
@@ -15211,7 +15229,7 @@ loadBalancer.distribute(traffic);`}
                                                     type="email"
                                                     name="referrerEmail"
                                                     required
-                                                    placeholder="your.email@navontech.com"
+                                                    placeholder="referees.email@navontech.com"
                                                     style={{
                                                         width: '100%',
                                                         padding: '0.75rem',
@@ -15221,6 +15239,7 @@ loadBalancer.distribute(traffic);`}
                                                         fontFamily: 'inherit'
                                                     }}
                                                 />
+                                                <p style={{ color: '#ef4444', fontSize: '0.7rem', margin: '0.25rem 0 0 0', fontStyle: 'italic' }}>For confirmation of submission</p>
                                             </div>
                                         </div>
 
@@ -15307,7 +15326,7 @@ loadBalancer.distribute(traffic);`}
                                                         fontFamily: 'inherit'
                                                     }}
                                                 />
-                                                <p style={{ color: '#ef4444', fontSize: '0.7rem', margin: '0.25rem 0 0 0', fontStyle: 'italic' }}>For HR/Security Use Only</p>
+                                                <p style={{ color: '#ef4444', fontSize: '0.7rem', margin: '0.25rem 0 0 0', fontStyle: 'italic' }}>For Candidates Record</p>
                                             </div>
 
                                             <div>
