@@ -143,6 +143,12 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         const atsReferrals = resumes.filter(r => r.notes && r.notes.includes('Employee Referral')).map(r => {
             const referredByMatch = r.notes.match(/Employee Referral from ([^(]+)/);
             const referredBy = referredByMatch ? referredByMatch[1].trim() : 'Unknown';
+            const referrerEmailMatch = r.notes.match(/\(([^)]+@[^)]+)\)/);
+            const referrerEmail = referrerEmailMatch ? referrerEmailMatch[1].trim() : '';
+            const relationshipMatch = r.notes.match(/Relationship:\s*([^.]+)/);
+            const relationship = relationshipMatch ? relationshipMatch[1].trim() : '';
+            // Extract additional notes (everything after the structured fields)
+            const additionalNotes = r.notes.replace(/Employee Referral from [^.]+\.?\s*/, '').replace(/\([^)]*\)\.?\s*/, '').replace(/Relationship:\s*[^.]+\.?\s*/, '').trim();
             // Map ATS stage to referral stage
             const atsToReferralStage = { 'New': 'Submitted', 'Screening': 'Under Review', 'Interview': 'Interview Scheduled', 'Offer': 'Offer Extended', 'Pending': 'Offer Extended', 'Hired': 'Hired', 'Archived': 'Hired', 'Rejected': 'Not Selected' };
             let stage = atsToReferralStage[r.stage] || r.stage;
@@ -160,8 +166,12 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 id: r.resumeId,
                 candidateName: r.candidateName,
                 email: r.email || '',
+                phone: r.phone || '',
                 position: r.position,
                 referredBy,
+                referrerEmail,
+                relationship,
+                additionalNotes,
                 referredDate: r.receivedDate ? r.receivedDate.split('T')[0] : '',
                 stage,
                 hiredDate: r.hiredDate || null,
@@ -15552,11 +15562,16 @@ loadBalancer.distribute(traffic);`}
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
                                             <div>
                                                 <h3 style={{ color: '#1e3a8a', margin: '0 0 0.5rem 0', fontSize: '1.4rem' }}>{referral.candidateName}</h3>
-                                                <p style={{ color: '#64748b', margin: '0 0 0.25rem 0' }}>Position: {referral.position}</p>
-                                                <p style={{ color: '#64748b', margin: '0 0 0.25rem 0' }}>Referred by: {referral.referredBy}</p>
-                                                <p style={{ color: '#94a3b8', margin: 0, fontSize: '0.85rem' }}>
-                                                    Date: {(() => { const p = referral.referredDate.split('-'); return p.length === 3 ? new Date(Number(p[0]), Number(p[1])-1, Number(p[2])).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : referral.referredDate; })()}
+                                                <p style={{ color: '#64748b', margin: '0 0 0.25rem 0' }}><strong>Position:</strong> {referral.position || 'Not specified'}</p>
+                                                <p style={{ color: '#64748b', margin: '0 0 0.25rem 0' }}><strong>Referred by:</strong> {referral.referredBy}{referral.referrerEmail ? ` (${referral.referrerEmail})` : ''}</p>
+                                                {referral.relationship && <p style={{ color: '#64748b', margin: '0 0 0.25rem 0' }}><strong>Relationship:</strong> {referral.relationship}</p>}
+                                                {referral.email && <p style={{ color: '#64748b', margin: '0 0 0.25rem 0' }}><strong>Candidate Email:</strong> {referral.email}</p>}
+                                                {referral.phone && <p style={{ color: '#64748b', margin: '0 0 0.25rem 0' }}><strong>Candidate Phone:</strong> {referral.phone}</p>}
+                                                <p style={{ color: '#94a3b8', margin: '0 0 0.25rem 0', fontSize: '0.85rem' }}>
+                                                    <strong>Referral Date:</strong> {(() => { const p = referral.referredDate.split('-'); return p.length === 3 ? new Date(Number(p[0]), Number(p[1])-1, Number(p[2])).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : referral.referredDate; })()}
                                                 </p>
+                                                {referral.hiredDate && <p style={{ color: '#059669', margin: '0 0 0.25rem 0', fontSize: '0.85rem' }}><strong>Hired Date:</strong> {referral.hiredDate}</p>}
+                                                {referral.additionalNotes && <p style={{ color: '#475569', margin: '0.5rem 0 0 0', fontSize: '0.85rem', fontStyle: 'italic', background: '#f8fafc', padding: '0.5rem', borderRadius: '6px', border: '1px solid #e2e8f0' }}>📝 {referral.additionalNotes}</p>}
                                                 {daysInfo !== null && referral.stage === 'Hired' && <p style={{ color: '#059669', margin: '0.25rem 0 0 0', fontSize: '0.85rem', fontWeight: '600' }}>📅 {daysInfo} of 30 days completed</p>}
                                                 {referral.stage === '30 Days ✓' && <p style={{ color: '#0ea5e9', margin: '0.25rem 0 0 0', fontSize: '0.9rem', fontWeight: '700' }}>✓ 30-day milestone reached — referred by {referral.referredBy}</p>}
                                                 {referral.stage === '90 Days 💸' && <p style={{ color: '#d4af37', margin: '0.25rem 0 0 0', fontSize: '0.9rem', fontWeight: '700' }}>💸 Half bonus eligible — referred by {referral.referredBy}</p>}
