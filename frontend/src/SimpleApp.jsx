@@ -15050,7 +15050,7 @@ loadBalancer.distribute(traffic);`}
                                     const referrerName = formData.get('referrerName');
                                     const referrerEmail = formData.get('referrerEmail');
                                     const candidateName = formData.get('candidateName');
-                                    const candidateEmail = formData.get('candidateEmail');
+                                    const candidateEmail = formData.get('candidateEmail') || '';
                                     const candidatePhone = formData.get('candidatePhone');
                                     const position = formData.get('position');
                                     const relationship = formData.get('relationship');
@@ -15059,8 +15059,8 @@ loadBalancer.distribute(traffic);`}
                                     
                                     // Validate email formats
                                     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                                    if (!emailRegex.test(referrerEmail) || !emailRegex.test(candidateEmail)) {
-                                        alert('Please enter valid email addresses');
+                                    if (!emailRegex.test(referrerEmail)) {
+                                        alert('Please enter a valid email address');
                                         return;
                                     }
                                     
@@ -15205,7 +15205,7 @@ loadBalancer.distribute(traffic);`}
                                                     marginBottom: '0.5rem',
                                                     fontSize: '0.9rem'
                                                 }}>
-                                                    Your Email<span style={{ color: '#ef4444' }}>*</span>
+                                                    Referee's Email<span style={{ color: '#ef4444' }}>*</span>
                                                 </label>
                                                 <input 
                                                     type="email"
@@ -15282,6 +15282,32 @@ loadBalancer.distribute(traffic);`}
                                                         fontFamily: 'inherit'
                                                     }}
                                                 />
+                                            </div>
+
+                                            <div style={{ marginBottom: '1rem' }}>
+                                                <label style={{ 
+                                                    display: 'block', 
+                                                    color: '#0f172a', 
+                                                    fontWeight: '600', 
+                                                    marginBottom: '0.5rem',
+                                                    fontSize: '0.9rem'
+                                                }}>
+                                                    Candidate Email
+                                                </label>
+                                                <input 
+                                                    type="email"
+                                                    name="candidateEmail"
+                                                    placeholder="candidate@email.com"
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '0.75rem',
+                                                        border: '2px solid #e2e8f0',
+                                                        borderRadius: '8px',
+                                                        fontSize: '1rem',
+                                                        fontFamily: 'inherit'
+                                                    }}
+                                                />
+                                                <p style={{ color: '#ef4444', fontSize: '0.7rem', margin: '0.25rem 0 0 0', fontStyle: 'italic' }}>For HR/Security Use Only</p>
                                             </div>
 
                                             <div>
