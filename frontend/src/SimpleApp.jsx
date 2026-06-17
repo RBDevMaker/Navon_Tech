@@ -14857,7 +14857,7 @@ loadBalancer.distribute(traffic);`}
                             )}
 
                             {/* View Bonus Eligibility - HR and Security only */}
-                            {(userRole === 'hr' || userRole === 'security' || userRole === 'superadmin') && (() => {
+                            {(userRole === 'hr' || userRole === 'security' || userRole === 'superadmin') && isAdminView && (() => {
                                 const isRachelle = loginEmail?.toLowerCase() === 'rachelle.briscoe@navontech.com' || loginEmail?.toLowerCase() === 'rachelleroot@navontech.com';
                                 return (
                             <div className="hover-lift animate-scale-in" style={{
@@ -15338,12 +15338,11 @@ loadBalancer.distribute(traffic);`}
                                                     marginBottom: '0.5rem',
                                                     fontSize: '0.9rem'
                                                 }}>
-                                                    Candidate Phone<span style={{ color: '#ef4444' }}>*</span>
+                                                    Candidate Phone
                                                 </label>
                                                 <input 
                                                     type="tel"
                                                     name="candidatePhone"
-                                                    required
                                                     placeholder="(555) 123-4567"
                                                     style={{
                                                         width: '100%',
