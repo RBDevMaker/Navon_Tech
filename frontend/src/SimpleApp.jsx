@@ -136,6 +136,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [resumeDocFiles, setResumeDocFiles] = useState([]);
     const [isLoadingResumeDocs, setIsLoadingResumeDocs] = useState(false);
     const [resumeDocSort, setResumeDocSort] = useState('newest');
+    const [referralSort, setReferralSort] = useState('pipeline-desc');
     
     // Referral tracking - derived from ATS resumes with "Employee Referral" in notes
     const getReferralsFromATS = () => {
@@ -15513,9 +15514,32 @@ loadBalancer.distribute(traffic);`}
                             </button>
                         </div>
 
+                        {/* Sort Dropdown */}
+                        <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.5rem', alignItems: 'center' }}>
+                            <span style={{ color: '#475569', fontWeight: '600', fontSize: '0.9rem' }}>Sort by:</span>
+                            <select value={referralSort} onChange={(e) => setReferralSort(e.target.value)} style={{ padding: '0.5rem 1rem', borderRadius: '6px', border: '2px solid #d4af37', fontSize: '0.85rem', cursor: 'pointer', fontWeight: '600' }}>
+                                <option value="pipeline-desc">📊 Pipeline Stage (180 Days → Submitted)</option>
+                                <option value="pipeline-asc">📊 Pipeline Stage (Submitted → 180 Days)</option>
+                                <option value="newest">📅 Newest Referral First</option>
+                                <option value="oldest">📅 Oldest Referral First</option>
+                                <option value="name-asc">🔤 Name A→Z</option>
+                                <option value="name-desc">🔤 Name Z→A</option>
+                            </select>
+                            <span style={{ color: '#94a3b8', fontSize: '0.85rem' }}>({getReferralsFromATS().length} referrals)</span>
+                        </div>
+
                         {/* Referral Cards */}
                         <div style={{ display: 'grid', gap: '1.5rem' }}>
-                            {getReferralsFromATS().map(referral => {
+                            {[...getReferralsFromATS()].sort((a, b) => {
+                                const stageOrder = ['Submitted', 'Under Review', 'Interview Scheduled', 'Offer Extended', 'Hired', '30 Days ✓', '90 Days 💸', '180 Days 💸💸'];
+                                if (referralSort === 'pipeline-desc') return stageOrder.indexOf(b.stage) - stageOrder.indexOf(a.stage);
+                                if (referralSort === 'pipeline-asc') return stageOrder.indexOf(a.stage) - stageOrder.indexOf(b.stage);
+                                if (referralSort === 'newest') return new Date(b.referredDate || 0) - new Date(a.referredDate || 0);
+                                if (referralSort === 'oldest') return new Date(a.referredDate || 0) - new Date(b.referredDate || 0);
+                                if (referralSort === 'name-asc') return (a.candidateName || '').localeCompare(b.candidateName || '');
+                                if (referralSort === 'name-desc') return (b.candidateName || '').localeCompare(a.candidateName || '');
+                                return 0;
+                            }).map(referral => {
                                 const stages = ['Submitted', 'Under Review', 'Interview Scheduled', 'Offer Extended', 'Hired', '30 Days ✓', '90 Days 💸', '180 Days 💸💸'];
                                 const stageIndex = stages.indexOf(referral.stage);
                                 const stageColors = { 'Submitted': '#6366f1', 'Under Review': '#f59e0b', 'Interview Scheduled': '#3b82f6', 'Offer Extended': '#10b981', 'Hired': '#059669', 'Not Selected': '#ef4444', '90 Days 💸': '#d4af37', '180 Days 💸💸': '#16a34a' };
