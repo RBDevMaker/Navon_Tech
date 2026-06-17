@@ -338,8 +338,9 @@ exports.handler = async (event) => {
         const sanitizedEmail = sanitizeInput(email);
         const sanitizedPosition = sanitizeInput(position);
 
-        // Validate required fields
-        if (!sanitizedName || !sanitizedEmail) {
+        // Validate required fields (email optional for referrals)
+        const isReferral = position && position.startsWith('REFERRAL:');
+        if (!sanitizedName || (!sanitizedEmail && !isReferral)) {
             console.warn('Missing required fields', { name: !!name, email: !!email });
             return {
                 statusCode: 400,
