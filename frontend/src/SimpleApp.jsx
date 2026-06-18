@@ -11026,7 +11026,11 @@ loadBalancer.distribute(traffic);`}
                                                 const val = (() => {
                                                     if (directoryFilter === 'employmentType') return m.employmentType;
                                                     if (directoryFilter === 'billableStatus') return m.billableStatus;
-                                                    if (directoryFilter === 'prime') return m.contractAssignment;
+                                                    if (directoryFilter === 'prime') {
+                                                        const validPrimes = ['Arcfield', 'Nightwing', 'SAIC', 'GDIT'];
+                                                        const parts = (m.contractAssignment || '').split(',').map(p => p.trim()).filter(Boolean);
+                                                        return parts.filter(p => validPrimes.some(vp => p.toLowerCase().includes(vp.toLowerCase())));
+                                                    }
                                                     if (directoryFilter === 'gender') return m.gender;
                                                     if (directoryFilter === 'location') return m.location;
                                                     if (directoryFilter === 'shirtSize') return m.shirtSize;
