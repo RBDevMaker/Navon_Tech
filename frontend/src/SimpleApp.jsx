@@ -11275,7 +11275,7 @@ loadBalancer.distribute(traffic);`}
                                                         </span>
                                                     </div>
                                                     <div style={{ color: '#64748b', fontSize: '0.9rem' }}>
-                                                        {(isAdminView || userRole !== 'employee') ? (profileData.title || 'Your Title') : ''}
+                                                        {(isAdminView || userRole !== 'employee') ? `👤 ${profileData.title || 'Your Title'}` : ''}
                                                     </div>
 
                                                 </div>
@@ -11631,9 +11631,9 @@ loadBalancer.distribute(traffic);`}
                                                 <div>
                                                     <div style={{ fontWeight: '600', color: '#1e3a8a' }}>{member.name || member.email}</div>
                                                     {(isAdminView && userRole !== 'employee') ? (
-                                                        <div style={{ color: '#64748b', fontSize: '0.9rem' }}>{member.title || 'Employee'}</div>
+                                                        <div style={{ color: '#64748b', fontSize: '0.9rem' }}>👤 {member.title || 'Employee'}</div>
                                                     ) : member.showTitleInDirectory && member.title ? (
-                                                        <div style={{ color: '#64748b', fontSize: '0.9rem' }}>{member.title}</div>
+                                                        <div style={{ color: '#64748b', fontSize: '0.9rem' }}>👤 {member.title}</div>
                                                     ) : null}
                                                 </div>
                                             </div>
@@ -12074,7 +12074,7 @@ loadBalancer.distribute(traffic);`}
                             <h3 style={{ margin: '0 0 0.75rem 0', color: '#1e3a8a', fontSize: '1rem' }}>💼 Employment Information</h3>
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.85rem', color: '#475569' }}>
                                 <div>📧 {selectedEmployee.email}</div>
-                                {selectedEmployee.department && <div>🏷️ {selectedEmployee.department}</div>}
+                                {selectedEmployee.department && <div>{selectedEmployee.department}</div>}
                                 {selectedEmployee.location && <div>{selectedEmployee.location.toLowerCase().includes('headquarters') ? '🏢' : '📍'} {selectedEmployee.location}</div>}
                                 {selectedEmployee.phone && isAdminView && <div>📱 {selectedEmployee.phone}</div>}
                                 {selectedEmployee.startDate && isAdminView && <div>📅 Start: {formatDate(selectedEmployee.startDate)}</div>}
