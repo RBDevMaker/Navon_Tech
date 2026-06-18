@@ -5320,9 +5320,8 @@ loadBalancer.distribute(traffic);`}
                                             fontFamily: 'inherit'
                                         }}
                                     />
+                                    <p style={{ color: '#64748b', fontSize: '0.75rem', margin: '0.25rem 0 0 0', fontStyle: 'italic' }}>Please use full titles — no abbreviations (e.g., "Site Reliability Engineer" not "SRE")</p>
                                 </div>
-
-                                {/* Current State and Relocate */}
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                                     <div>
                                         <label style={{ display: 'block', color: '#0f172a', fontWeight: '600', marginBottom: '0.5rem', fontSize: '1rem' }}>
