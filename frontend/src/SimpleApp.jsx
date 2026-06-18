@@ -8687,7 +8687,7 @@ loadBalancer.distribute(traffic);`}
                                             fontWeight: '600',
                                             fontSize: '0.9rem'
                                         }}>
-                                            Email Address
+                                            Work Email
                                         </label>
                                         <input
                                             type="email"
@@ -11660,10 +11660,10 @@ loadBalancer.distribute(traffic);`}
                                             )}
                                             <div style={{ fontSize: '0.9rem', color: '#475569' }}>
                                                 {member.contractAssignment && (userRole === 'hr' || userRole === 'admin' || userRole === 'security' || userRole === 'superadmin') && isAdminView && (
-                                                    <div style={{ marginBottom: '0.5rem' }}>📋 Prime: {member.contractAssignment}</div>
+                                                    <div style={{ marginBottom: '0.5rem' }}>📋 {member.contractAssignment}</div>
                                                 )}
                                                 {isAdminView && userRole !== 'employee' && member.department && (
-                                                    <div style={{ marginBottom: '0.5rem' }}>👤 {member.department}</div>
+                                                    <div style={{ marginBottom: '0.5rem' }}>{member.department}</div>
                                                 )}
                                                 {isAdminView && userRole !== 'employee' && member.location && (
                                                     <div style={{ marginBottom: '0.5rem' }}>🏢 {member.location}</div>
