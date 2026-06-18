@@ -8451,25 +8451,23 @@ loadBalancer.distribute(traffic);`}
                                     setEditingEmployeeEmail(null);
                                     // Refresh team directory data
                                     fetchTeamMembers();
-                                    // Restore own profile immediately from saved copy
-                                    if (savedOwnProfile) {
-                                        setProfileData(savedOwnProfile);
-                                        setSavedOwnProfile(null);
-                                    } else {
-                                        // Fallback: re-fetch from API
-                                        try {
-                                            const apiUrl2 = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
-                                            const res = await fetch(`${apiUrl2}/profiles/${loginEmail}`);
-                                            if (res.ok) {
-                                                const data = await res.json();
-                                                if (data && data.name) {
-                                                    setProfileData(prev => ({ ...prev, ...data, employeeId: data.employeeId || data.email }));
-                                                }
+                                    // Force re-fetch own profile from API
+                                    try {
+                                        const apiUrl2 = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                                        const res = await fetch(`${apiUrl2}/profiles/${loginEmail}`);
+                                        if (res.ok) {
+                                            const data = await res.json();
+                                            if (data && data.name) {
+                                                setProfileData({ ...data, employeeId: data.employeeId || data.email });
                                             }
-                                        } catch (err) {
-                                            console.log('Could not re-fetch own profile:', err);
+                                        }
+                                    } catch (err) {
+                                        // Fallback to saved copy
+                                        if (savedOwnProfile) {
+                                            setProfileData(savedOwnProfile);
                                         }
                                     }
+                                    setSavedOwnProfile(null);
                                     alert(`✅ ${updatedProfile.name}'s profile updated successfully!`);
                                     setCurrentPage('teamdirectory');
                                     window.scrollTo({ top: 0, behavior: 'smooth' });
