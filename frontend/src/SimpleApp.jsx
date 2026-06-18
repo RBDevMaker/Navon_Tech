@@ -11320,9 +11320,14 @@ loadBalancer.distribute(traffic);`}
                                                                 🏢 {profileData.location}
                                                             </div>
                                                         )}
+                                                        {profileData.contractAssignment && (
+                                                            <div style={{ marginBottom: '0.5rem' }}>
+                                                                📋 {profileData.contractAssignment}
+                                                            </div>
+                                                        )}
                                                         {profileData.department && (
                                                             <div style={{ marginBottom: '0.5rem' }}>
-                                                                🏷️ Department: {profileData.department}
+                                                                {profileData.department}
                                                             </div>
                                                         )}
                                                         {profileData.startDate && (
