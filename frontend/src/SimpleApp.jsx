@@ -11325,7 +11325,7 @@ loadBalancer.distribute(traffic);`}
                                                                 📋 {profileData.contractAssignment}
                                                             </div>
                                                         )}
-                                                        {profileData.department && (
+                                                        {false && profileData.department && (
                                                             <div style={{ marginBottom: '0.5rem' }}>
                                                                 {profileData.department}
                                                             </div>
@@ -11342,7 +11342,7 @@ loadBalancer.distribute(traffic);`}
                                                         )}
                                                         {profileData.manager && (
                                                             <div style={{ marginBottom: '0.5rem' }}>
-                                                                👤 Manager: {profileData.manager}
+                                                                💼 Manager: {profileData.manager}
                                                             </div>
                                                         )}
                                                         {profileData.emergencyContact && (
@@ -11665,7 +11665,7 @@ loadBalancer.distribute(traffic);`}
                                                 {member.contractAssignment && (userRole === 'hr' || userRole === 'admin' || userRole === 'security' || userRole === 'superadmin') && isAdminView && (
                                                     <div style={{ marginBottom: '0.5rem' }}>📋 {member.contractAssignment}</div>
                                                 )}
-                                                {isAdminView && userRole !== 'employee' && member.department && (
+                                                {isAdminView && userRole !== 'employee' && false && member.department && (
                                                     <div style={{ marginBottom: '0.5rem' }}>{member.department}</div>
                                                 )}
                                                 {isAdminView && userRole !== 'employee' && member.location && (
@@ -11684,7 +11684,7 @@ loadBalancer.distribute(traffic);`}
                                                             <div style={{ marginBottom: '0.5rem' }}>💰 Salary: {member.salary}</div>
                                                         )}
                                                         {member.manager && (
-                                                            <div style={{ marginBottom: '0.5rem' }}>👤 Manager: {member.manager}</div>
+                                                            <div style={{ marginBottom: '0.5rem' }}>💼 Manager: {member.manager}</div>
                                                         )}
                                                         {member.emergencyContact && (
                                                             <div style={{ marginBottom: '0.5rem' }}>🚨 Emergency: {member.emergencyContact}</div>
@@ -11753,7 +11753,7 @@ loadBalancer.distribute(traffic);`}
                                                     {(userRole === 'hr' || userRole === 'security' || userRole === 'superadmin') && (
                                                         <div style={{ marginBottom: '0.5rem' }}>💰 Salary: $95,000</div>
                                                     )}
-                                                    <div style={{ marginBottom: '0.5rem' }}>👤 Manager: Sarah Johnson</div>
+                                                    <div style={{ marginBottom: '0.5rem' }}>💼 Manager: Sarah Johnson</div>
                                                     <div>🚨 Emergency Contact: Jane Doe - (555) 987-6543</div>
                                                 </>
                                             )}
@@ -12074,11 +12074,11 @@ loadBalancer.distribute(traffic);`}
                             <h3 style={{ margin: '0 0 0.75rem 0', color: '#1e3a8a', fontSize: '1rem' }}>💼 Employment Information</h3>
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.85rem', color: '#475569' }}>
                                 <div>📧 {selectedEmployee.email}</div>
-                                {selectedEmployee.department && <div>{selectedEmployee.department}</div>}
+                                {false && selectedEmployee.department && <div>{selectedEmployee.department}</div>}
                                 {selectedEmployee.location && <div>{selectedEmployee.location.toLowerCase().includes('headquarters') ? '🏢' : '📍'} {selectedEmployee.location}</div>}
                                 {selectedEmployee.phone && isAdminView && <div>📱 {selectedEmployee.phone}</div>}
                                 {selectedEmployee.startDate && isAdminView && <div>📅 Start: {formatDate(selectedEmployee.startDate)}</div>}
-                                {selectedEmployee.manager && isAdminView && <div>👤 Manager: {selectedEmployee.manager}</div>}
+                                {selectedEmployee.manager && isAdminView && <div>💼 Manager: {selectedEmployee.manager}</div>}
                                 {selectedEmployee.contractAssignment && (userRole === 'hr' || userRole === 'admin' || userRole === 'security' || userRole === 'superadmin') && isAdminView && <div>📋 Prime: {selectedEmployee.contractAssignment}</div>}
                                 {selectedEmployee.salary && (userRole === 'hr' || userRole === 'security' || userRole === 'superadmin') && isAdminView && <div>💰 Salary: {selectedEmployee.salary}</div>}
                             </div>
