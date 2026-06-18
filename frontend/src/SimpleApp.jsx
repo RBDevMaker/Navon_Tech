@@ -7391,7 +7391,7 @@ loadBalancer.distribute(traffic);`}
                                             const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/['"]/g, ''));
                                             // Map common header names
                                             const findCol = (names) => headers.findIndex(h => names.some(n => h.includes(n)));
-                                            const nameIdx = findCol(['name', 'full name', 'employee name']);
+                                            const nameIdx = findCol(['employee', 'name', 'full name', 'employee name', 'worker']);
                                             const firstIdx = findCol(['first name', 'first_name', 'firstname']);
                                             const lastIdx = findCol(['last name', 'last_name', 'lastname']);
                                             const emailIdx = findCol(['email', 'work email', 'email address']);
