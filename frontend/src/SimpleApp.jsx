@@ -1741,21 +1741,24 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             
             const updateBody = { stage: newStage };
             
-            // Prompt for start date when moving to Pending
+            // Prompt for start date when moving to Pending (optional)
             if (newStage === 'Pending') {
-                const startDate = prompt('📅 Enter start date for this candidate (YYYY-MM-DD):');
-                if (!startDate || !/^\d{4}-\d{2}-\d{2}$/.test(startDate)) {
-                    alert('❌ Valid start date required (YYYY-MM-DD format) to move to Pending.');
-                    return;
+                const startDate = prompt('📅 Enter start date for this candidate (YYYY-MM-DD):\n\n(Leave blank if unknown)');
+                if (startDate && /^\d{4}-\d{2}-\d{2}$/.test(startDate)) {
+                    updateBody.hiredDate = startDate;
                 }
-                updateBody.hiredDate = startDate;
             }
             
-            // When moving to Hired, use existing hiredDate or set today
+            // When moving to Hired, require start date
             if (newStage === 'Hired') {
                 const existingResume = filteredResumes.find(r => r.resumeId === resumeId) || resumes.find(r => r.resumeId === resumeId);
                 if (!existingResume?.hiredDate) {
-                    updateBody.hiredDate = new Date().toISOString().split('T')[0];
+                    const startDate = prompt('📅 Enter start date for this candidate (YYYY-MM-DD):');
+                    if (!startDate || !/^\d{4}-\d{2}-\d{2}$/.test(startDate)) {
+                        alert('❌ Valid start date required (YYYY-MM-DD format) to move to Hired.');
+                        return;
+                    }
+                    updateBody.hiredDate = startDate;
                 }
             }
             
