@@ -7394,14 +7394,24 @@ loadBalancer.distribute(traffic);`}
                                             const nameIdx = findCol(['employee', 'name', 'full name', 'employee name', 'worker']);
                                             const firstIdx = findCol(['first name', 'first_name', 'firstname']);
                                             const lastIdx = findCol(['last name', 'last_name', 'lastname']);
-                                            const emailIdx = findCol(['email', 'work email', 'email address']);
+                                            const emailIdx = findCol(['work email', 'email', 'email address']);
                                             const deptIdx = findCol(['department', 'dept']);
                                             const titleIdx = findCol(['title', 'job title', 'position', 'role']);
-                                            const startIdx = findCol(['start date', 'hire date', 'start_date', 'hire_date']);
+                                            const startIdx = findCol(['first start date', 'start date', 'hire date', 'start_date', 'hire_date']);
                                             const phoneIdx = findCol(['phone', 'work phone', 'mobile', 'phone number']);
-                                            const locationIdx = findCol(['location', 'office', 'work location']);
+                                            const locationIdx = findCol(['is remote', 'location', 'office', 'work location']);
                                             const statusIdx = findCol(['status', 'employment status', 'employee status', 'emp status']);
                                             const empTypeIdx = findCol(['employment type', 'emp type', 'type', 'worker type']);
+                                            const personalEmailIdx = findCol(['personal email']);
+                                            const addressIdx = findCol(['home address', 'full address', 'address']);
+                                            const preferredNameIdx = findCol(['preferred first name', 'preferred name', 'nickname']);
+                                            const genderIdx = findCol(['sex', 'gender']);
+                                            const shirtIdx = findCol(['t-shirt size', 'shirt size', 'tshirt']);
+                                            const teamsIdx = findCol(['teams', 'team', 'prime', 'contract']);
+                                            const dobIdx = findCol(['date of birth', 'birthdate', 'dob', 'birthday']);
+                                            const emergencyNameIdx = findCol(['emergency contact name', 'emergency contact', 'emergency name']);
+                                            const emergencyPhoneIdx = findCol(['emergency contact phone', 'emergency phone', 'emergency number']);
+                                            const dietaryIdx = findCol(['dietary restrictions', 'dietary', 'allergies', 'food allergy']);
 
                                             if (emailIdx === -1) { alert('CSV must have an Email column. Found headers: ' + headers.join(', ')); return; }
                                             if (nameIdx === -1 && firstIdx === -1) { alert('CSV must have a Name or First Name column. Found headers: ' + headers.join(', ')); return; }
@@ -7410,6 +7420,7 @@ loadBalancer.distribute(traffic);`}
                                                 const cols = line.match(/(".*?"|[^",]+|(?<=,)(?=,))/g)?.map(c => c.trim().replace(/^"|"$/g, '')) || line.split(',').map(c => c.trim());
                                                 const email = cols[emailIdx]?.trim();
                                                 const name = nameIdx !== -1 ? cols[nameIdx]?.trim() : `${cols[firstIdx]?.trim() || ''} ${cols[lastIdx]?.trim() || ''}`.trim();
+                                                const locationVal = locationIdx !== -1 ? cols[locationIdx]?.trim() : '';
                                                 return {
                                                     email: email || '',
                                                     name: name || '',
@@ -7417,9 +7428,19 @@ loadBalancer.distribute(traffic);`}
                                                     title: titleIdx !== -1 ? cols[titleIdx]?.trim() || '' : '',
                                                     startDate: startIdx !== -1 ? cols[startIdx]?.trim() || '' : '',
                                                     phone: phoneIdx !== -1 ? cols[phoneIdx]?.trim() || '' : '',
-                                                    location: locationIdx !== -1 ? cols[locationIdx]?.trim() || '' : '',
+                                                    location: locationVal.toLowerCase() === 'yes' || locationVal.toLowerCase() === 'true' || locationVal.toLowerCase() === 'remote' ? 'Remote' : locationVal ? 'Headquarters' : '',
                                                     status: statusIdx !== -1 ? cols[statusIdx]?.trim() || '' : '',
-                                                    empType: empTypeIdx !== -1 ? cols[empTypeIdx]?.trim() || '' : ''
+                                                    empType: empTypeIdx !== -1 ? cols[empTypeIdx]?.trim() || '' : '',
+                                                    personalEmail: personalEmailIdx !== -1 ? cols[personalEmailIdx]?.trim() || '' : '',
+                                                    address: addressIdx !== -1 ? cols[addressIdx]?.trim() || '' : '',
+                                                    preferredName: preferredNameIdx !== -1 ? cols[preferredNameIdx]?.trim() || '' : '',
+                                                    gender: genderIdx !== -1 ? cols[genderIdx]?.trim() || '' : '',
+                                                    shirtSize: shirtIdx !== -1 ? cols[shirtIdx]?.trim() || '' : '',
+                                                    contractAssignment: teamsIdx !== -1 ? cols[teamsIdx]?.trim() || '' : '',
+                                                    birthdate: dobIdx !== -1 ? cols[dobIdx]?.trim() || '' : '',
+                                                    emergencyContact: emergencyNameIdx !== -1 ? cols[emergencyNameIdx]?.trim() || '' : '',
+                                                    emergencyPhone: emergencyPhoneIdx !== -1 ? cols[emergencyPhoneIdx]?.trim() || '' : '',
+                                                    dietaryAllergy: dietaryIdx !== -1 ? cols[dietaryIdx]?.trim() || '' : ''
                                                 };
                                             }).filter(r => r.email && r.email.includes('@'));
 
@@ -7471,6 +7492,16 @@ loadBalancer.distribute(traffic);`}
                                                         startDate: normalizedDate,
                                                         phone: emp.phone,
                                                         location: emp.location,
+                                                        personalEmail: emp.personalEmail,
+                                                        address: emp.address,
+                                                        preferredName: emp.preferredName,
+                                                        gender: emp.gender,
+                                                        shirtSize: emp.shirtSize,
+                                                        contractAssignment: emp.contractAssignment,
+                                                        birthdate: emp.birthdate,
+                                                        emergencyContact: emp.emergencyContact,
+                                                        emergencyPhone: emp.emergencyPhone,
+                                                        dietaryAllergy: emp.dietaryAllergy,
                                                         employmentType: (() => {
                                                             const s = (emp.status || '').toLowerCase();
                                                             const t = (emp.empType || '').toLowerCase();
@@ -7511,6 +7542,16 @@ loadBalancer.distribute(traffic);`}
                                                     if (emp.phone) updatePayload.phone = emp.phone;
                                                     if (emp.location) updatePayload.location = emp.location;
                                                     if (emp.email) updatePayload.email = emp.email;
+                                                    if (emp.personalEmail) updatePayload.personalEmail = emp.personalEmail;
+                                                    if (emp.address) updatePayload.address = emp.address;
+                                                    if (emp.preferredName) updatePayload.preferredName = emp.preferredName;
+                                                    if (emp.gender) updatePayload.gender = emp.gender;
+                                                    if (emp.shirtSize) updatePayload.shirtSize = emp.shirtSize;
+                                                    if (emp.contractAssignment) updatePayload.contractAssignment = emp.contractAssignment;
+                                                    if (emp.birthdate) updatePayload.birthdate = emp.birthdate;
+                                                    if (emp.emergencyContact) updatePayload.emergencyContact = emp.emergencyContact;
+                                                    if (emp.emergencyPhone) updatePayload.emergencyPhone = emp.emergencyPhone;
+                                                    if (emp.dietaryAllergy) updatePayload.dietaryAllergy = emp.dietaryAllergy;
                                                     if (emp.status) {
                                                         const s = emp.status.toLowerCase();
                                                         if (s.includes('terminat') || s.includes('inactive')) updatePayload.employmentType = 'Archived';
@@ -8877,38 +8918,8 @@ loadBalancer.distribute(traffic);`}
                                         />
                                     </div>
 
-                                    {/* Gender */}
-                                    <div>
-                                        <label style={{
-                                            display: 'block',
-                                            marginBottom: '0.5rem',
-                                            color: '#334155',
-                                            fontWeight: '600',
-                                            fontSize: '0.9rem'
-                                        }}>
-                                            Gender
-                                        </label>
-                                        <select
-                                            name="gender"
-                                            value={profileData.gender || ''}
-                                            onChange={(e) => setProfileData(prev => ({ ...prev, gender: e.target.value }))}
-                                            style={{
-                                                width: '100%',
-                                                padding: '0.75rem',
-                                                border: '2px solid #e2e8f0',
-                                                borderRadius: '8px',
-                                                fontSize: '1rem',
-                                                outline: 'none',
-                                                background: 'white'
-                                            }}
-                                            onFocus={(e) => e.target.style.borderColor = '#1e3a8a'}
-                                            onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
-                                        >
-                                            <option value="">Select gender</option>
-                                            <option value="Male">Male</option>
-                                            <option value="Female">Female</option>
-                                        </select>
-                                    </div>
+                                    {/* Gender - Hidden from UI but kept for sorting */}
+                                    <input type="hidden" name="gender" value={profileData.gender || ''} />
 
                                     {/* Dietary/Allergy */}
                                     <div>
@@ -11495,6 +11506,7 @@ loadBalancer.distribute(traffic);`}
                                 if (member.employmentType === 'Archived') return false;
                                 // Exclude logged-in user (shown in the "You" card above)
                                 if (loginEmail && member.email && member.email.toLowerCase() === loginEmail.toLowerCase()) return false;
+                                if (profileData.name && member.name && member.name.toLowerCase() === profileData.name.toLowerCase()) return false;
                                 // Exclude admin-only profiles from employee view
                                 if (userRole === 'employee' && adminOnlyEmails.includes(member.email?.toLowerCase())) return false;
                                 // Exclude HR/Security-only profiles from other roles
