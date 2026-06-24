@@ -5546,7 +5546,8 @@ loadBalancer.distribute(traffic);`}
                                     { icon: '🛡️', title: 'Long-Term Disability - 100% Company Paid', desc: '60% of monthly earnings up to $12,000/month. Benefits begin on 91st day and continue through disability' },
                                     { icon: '📚', title: 'Training & Development', desc: 'Annual training budget, tuition assistance, and online learning resources' },
                                     { icon: '💪', title: 'Health & Wellness', desc: 'Health and wellness allowance for gym memberships or fitness reimbursement' },
-                                    { icon: '🎁', title: 'Bonuses', desc: 'Bonuses awarded for personal and professional milestones throughout the year' }
+                                    { icon: '🎁', title: 'Bonuses', desc: 'Bonuses awarded for personal milestones and professional excellence' },
+                                    { icon: '🚀', title: 'Beyond the Horizon Bonus', desc: 'Performance-based bonus rewarding employees who go above and beyond. See HR for details' }
                                 ].map((benefit, index) => (
                                     <div key={index} className="hover-lift" style={{
                                         background: 'rgba(255, 255, 255, 0.05)',
@@ -14755,16 +14756,19 @@ loadBalancer.distribute(traffic);`}
                                             Send inquiries to HR@navontech.com. Referrals are case by case.
                                         </div>
                                     </div>
+                                    <div style={{
+                                        background: '#eff6ff', padding: '1rem', borderRadius: '8px',
+                                        marginBottom: '1rem', border: '1px solid #93c5fd'
+                                    }}>
+                                        <div style={{ fontWeight: '600', color: '#1e40af', marginBottom: '0.5rem' }}>
+                                            🚀 Beyond the Horizon Bonus
+                                        </div>
+                                        <div style={{ fontSize: '0.9rem', color: '#1e3a8a' }}>
+                                            Performance-based bonus rewarding employees who go above and beyond — creating new job positions or contributing to business development.
+                                        </div>
+                                    </div>
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
                                         • Submit candidate referrals
-                                    </p>
-                                    {(userRole === 'hr' || userRole === 'admin' || userRole === 'security' || userRole === 'superadmin') && (
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Track referral status
-                                    </p>
-                                    )}
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • View bonus eligibility
                                     </p>
                                 </div>
                                 <button 
