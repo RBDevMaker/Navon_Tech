@@ -109,9 +109,10 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [showAuditLogsModal, setShowAuditLogsModal] = useState(false);
     const [auditLogs, setAuditLogs] = useState([]);
     const [isLoadingLogs, setIsLoadingLogs] = useState(false);
-    const [logFilters, setLogFilters] = useState({ eventType: 'all', userId: '', limit: '100' });
+    const [logFilters, setLogFilters] = useState({ eventType: 'all', userId: '', limit: '100', dateFrom: '', dateTo: '', month: '' });
     const [loginHistory, setLoginHistory] = useState([]);
     const [isLoadingLoginHistory, setIsLoadingLoginHistory] = useState(false);
+    const [loginFilter, setLoginFilter] = useState({ user: '', dateFrom: '', dateTo: '', month: '' });
     const [securityAssessment, setSecurityAssessment] = useState(null);
     const [isLoadingAssessment, setIsLoadingAssessment] = useState(false);
     const [showSecurityAssessment, setShowSecurityAssessment] = useState(false);
@@ -9807,6 +9808,31 @@ loadBalancer.distribute(traffic);`}
                                         Login History
                                     </h3>
                                 </div>
+                                {/* Filters */}
+                                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+                                    <select value={loginFilter.user} onChange={(e) => setLoginFilter(prev => ({ ...prev, user: e.target.value }))}
+                                        style={{ padding: '0.5rem', borderRadius: '6px', border: '1px solid #e2e8f0', fontSize: '0.8rem', flex: 1, minWidth: '120px' }}>
+                                        <option value="">All Users</option>
+                                        {[...new Set(loginHistory.map(l => l.userEmail || l.userId).filter(Boolean))].sort().map(u => (
+                                            <option key={u} value={u}>{u}</option>
+                                        ))}
+                                    </select>
+                                    <input type="date" value={loginFilter.dateFrom} onChange={(e) => setLoginFilter(prev => ({ ...prev, dateFrom: e.target.value, month: '' }))}
+                                        placeholder="From" title="From date"
+                                        style={{ padding: '0.5rem', borderRadius: '6px', border: '1px solid #e2e8f0', fontSize: '0.8rem' }} />
+                                    <input type="date" value={loginFilter.dateTo} onChange={(e) => setLoginFilter(prev => ({ ...prev, dateTo: e.target.value, month: '' }))}
+                                        placeholder="To" title="To date"
+                                        style={{ padding: '0.5rem', borderRadius: '6px', border: '1px solid #e2e8f0', fontSize: '0.8rem' }} />
+                                    <input type="month" value={loginFilter.month} onChange={(e) => setLoginFilter(prev => ({ ...prev, month: e.target.value, dateFrom: '', dateTo: '' }))}
+                                        title="Filter by month"
+                                        style={{ padding: '0.5rem', borderRadius: '6px', border: '1px solid #e2e8f0', fontSize: '0.8rem' }} />
+                                    {(loginFilter.user || loginFilter.dateFrom || loginFilter.dateTo || loginFilter.month) && (
+                                        <button onClick={() => setLoginFilter({ user: '', dateFrom: '', dateTo: '', month: '' })}
+                                            style={{ padding: '0.5rem 0.75rem', borderRadius: '6px', border: 'none', background: '#ef4444', color: 'white', fontSize: '0.75rem', cursor: 'pointer', fontWeight: '600' }}>
+                                            Clear
+                                        </button>
+                                    )}
+                                </div>
                                 <div style={{ marginBottom: '1.5rem', maxHeight: '300px', overflowY: 'auto' }}>
                                     {loginHistory.length === 0 && !isLoadingLoginHistory && (
                                         <div style={{ textAlign: 'center', padding: '1rem', color: '#64748b', fontSize: '0.9rem' }}>
@@ -9816,7 +9842,16 @@ loadBalancer.distribute(traffic);`}
                                     {isLoadingLoginHistory && (
                                         <div style={{ textAlign: 'center', padding: '1rem', color: '#64748b' }}>Loading...</div>
                                     )}
-                                    {loginHistory.map((login, index) => (
+                                    {loginHistory.filter(login => {
+                                        if (loginFilter.user && (login.userEmail || login.userId || '') !== loginFilter.user) return false;
+                                        if (loginFilter.dateFrom && new Date(login.timestamp) < new Date(loginFilter.dateFrom)) return false;
+                                        if (loginFilter.dateTo && new Date(login.timestamp) > new Date(loginFilter.dateTo + 'T23:59:59')) return false;
+                                        if (loginFilter.month) {
+                                            const logMonth = new Date(login.timestamp).toISOString().slice(0, 7);
+                                            if (logMonth !== loginFilter.month) return false;
+                                        }
+                                        return true;
+                                    }).map((login, index) => (
                                         <div key={index} style={{
                                             background: login.success !== false ? '#f0fdf4' : '#fef2f2',
                                             padding: '0.75rem',
@@ -19040,6 +19075,30 @@ Please review and approve this request.
                                             <option value="500">500 logs</option>
                                         </select>
                                     </div>
+                                    <div>
+                                        <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.5rem', color: '#475569' }}>
+                                            From Date:
+                                        </label>
+                                        <input type="date" value={logFilters.dateFrom}
+                                            onChange={(e) => setLogFilters({ ...logFilters, dateFrom: e.target.value, month: '' })}
+                                            style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', border: '2px solid #e2e8f0', fontSize: '1rem' }} />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.5rem', color: '#475569' }}>
+                                            To Date:
+                                        </label>
+                                        <input type="date" value={logFilters.dateTo}
+                                            onChange={(e) => setLogFilters({ ...logFilters, dateTo: e.target.value, month: '' })}
+                                            style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', border: '2px solid #e2e8f0', fontSize: '1rem' }} />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.5rem', color: '#475569' }}>
+                                            Month:
+                                        </label>
+                                        <input type="month" value={logFilters.month}
+                                            onChange={(e) => setLogFilters({ ...logFilters, month: e.target.value, dateFrom: '', dateTo: '' })}
+                                            style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', border: '2px solid #e2e8f0', fontSize: '1rem' }} />
+                                    </div>
                                 </div>
                                 <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
                                     <button
@@ -19095,7 +19154,15 @@ Please review and approve this request.
                                         Showing {auditLogs.length} log(s)
                                     </div>
                                     <div style={{ display: 'grid', gap: '1rem' }}>
-                                        {auditLogs.map(log => (
+                                        {auditLogs.filter(log => {
+                                            if (logFilters.dateFrom && new Date(log.timestamp) < new Date(logFilters.dateFrom)) return false;
+                                            if (logFilters.dateTo && new Date(log.timestamp) > new Date(logFilters.dateTo + 'T23:59:59')) return false;
+                                            if (logFilters.month) {
+                                                const logMonth = new Date(log.timestamp).toISOString().slice(0, 7);
+                                                if (logMonth !== logFilters.month) return false;
+                                            }
+                                            return true;
+                                        }).map(log => (
                                             <div key={log.eventId} style={{
                                                 background: '#f8fafc',
                                                 padding: '1.5rem',
