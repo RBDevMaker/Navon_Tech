@@ -71,6 +71,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     });
     const [pendingProfilePicture, setPendingProfilePicture] = useState(null);
     const [loginEmail, setLoginEmail] = useState('');
+    const [sessionStartTime, setSessionStartTime] = useState(null);
     const [loginPassword, setLoginPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [loginError, setLoginError] = useState('');
@@ -238,6 +239,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                     const hash = window.location.hash.slice(1) || 'home';
                     if (email && hash !== 'login') {
                         setLoginEmail(email);
+                        setSessionStartTime(Date.now());
                         setUserRole(role);
                         setUserGroups(groups.map(g => g.toLowerCase()));
                     }
@@ -492,6 +494,23 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             clearTimeout(timeout);
             timeout = setTimeout(async () => {
                 try {
+                    // Log session duration before logout
+                    if (sessionStartTime) {
+                        const duration = Math.floor((Date.now() - sessionStartTime) / 1000);
+                        const mins = Math.floor(duration / 60);
+                        const hrs = Math.floor(mins / 60);
+                        const durationStr = hrs > 0 ? `${hrs}h ${mins % 60}m` : `${mins}m`;
+                        try {
+                            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                            const session = await fetchAuthSession();
+                            const token = session.tokens?.idToken?.toString();
+                            await fetch(`${apiUrl}/audit-logs`, {
+                                method: 'POST',
+                                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ eventType: 'LOGOUT', userEmail: loginEmail, details: `Auto-logout (inactivity). Session duration: ${durationStr}`, duration: duration })
+                            });
+                        } catch (e) {}
+                    }
                     await signOut();
                     alert('⏱️ You have been logged out due to 10 minutes of inactivity.');
                     window.location.hash = 'home';
@@ -9876,7 +9895,7 @@ loadBalancer.distribute(traffic);`}
                                                 </div>
                                             </div>
                                             <div style={{ fontSize: '0.8rem', color: login.success !== false ? '#166534' : '#991b1b' }}>
-                                                👤 {login.userEmail || login.userId || 'Unknown'} {login.action ? `• ${login.action}` : ''}
+                                                👤 {login.userEmail || login.userId || 'Unknown'} {login.action ? `• ${login.action}` : ''}{login.details && login.details.includes('duration') ? ` • ⏱️ ${login.details.match(/duration: ([^.]+)/i)?.[1] || ''}` : ''}
                                             </div>
                                         </div>
                                     ))}
@@ -19261,6 +19280,23 @@ Please review and approve this request.
                 <button
                     onClick={async () => {
                         try {
+                            // Log session duration
+                            if (sessionStartTime) {
+                                const duration = Math.floor((Date.now() - sessionStartTime) / 1000);
+                                const mins = Math.floor(duration / 60);
+                                const hrs = Math.floor(mins / 60);
+                                const durationStr = hrs > 0 ? `${hrs}h ${mins % 60}m` : `${mins}m`;
+                                try {
+                                    const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                                    const session = await fetchAuthSession();
+                                    const token = session.tokens?.idToken?.toString();
+                                    await fetch(`${apiUrl}/audit-logs`, {
+                                        method: 'POST',
+                                        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ eventType: 'LOGOUT', userEmail: loginEmail, details: `Manual logout. Session duration: ${durationStr}`, duration: duration })
+                                    });
+                                } catch (e) {}
+                            }
                             await signOut();
                             window.location.hash = 'home';
                             window.location.reload();
