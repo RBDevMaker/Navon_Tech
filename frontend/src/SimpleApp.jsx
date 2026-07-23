@@ -9809,28 +9809,39 @@ loadBalancer.distribute(traffic);`}
                                     </h3>
                                 </div>
                                 {/* Filters */}
-                                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
-                                    <select value={loginFilter.user} onChange={(e) => setLoginFilter(prev => ({ ...prev, user: e.target.value }))}
-                                        style={{ padding: '0.5rem', borderRadius: '6px', border: '1px solid #e2e8f0', fontSize: '0.8rem', flex: 1, minWidth: '120px' }}>
-                                        <option value="">All Users</option>
-                                        {[...new Set(loginHistory.map(l => l.userEmail || l.userId).filter(Boolean))].sort().map(u => (
-                                            <option key={u} value={u}>{u}</option>
-                                        ))}
-                                    </select>
-                                    <input type="date" value={loginFilter.dateFrom} onChange={(e) => setLoginFilter(prev => ({ ...prev, dateFrom: e.target.value, month: '' }))}
-                                        placeholder="From" title="From date"
-                                        style={{ padding: '0.5rem', borderRadius: '6px', border: '1px solid #e2e8f0', fontSize: '0.8rem' }} />
-                                    <input type="date" value={loginFilter.dateTo} onChange={(e) => setLoginFilter(prev => ({ ...prev, dateTo: e.target.value, month: '' }))}
-                                        placeholder="To" title="To date"
-                                        style={{ padding: '0.5rem', borderRadius: '6px', border: '1px solid #e2e8f0', fontSize: '0.8rem' }} />
-                                    <input type="month" value={loginFilter.month} onChange={(e) => setLoginFilter(prev => ({ ...prev, month: e.target.value, dateFrom: '', dateTo: '' }))}
-                                        title="Filter by month"
-                                        style={{ padding: '0.5rem', borderRadius: '6px', border: '1px solid #e2e8f0', fontSize: '0.8rem' }} />
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '0.75rem', marginBottom: '1rem', background: '#f8fafc', padding: '1rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                                    <div>
+                                        <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.25rem', color: '#475569', fontSize: '0.75rem' }}>User:</label>
+                                        <select value={loginFilter.user} onChange={(e) => setLoginFilter(prev => ({ ...prev, user: e.target.value }))}
+                                            style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', border: '1px solid #e2e8f0', fontSize: '0.8rem' }}>
+                                            <option value="">All Users</option>
+                                            {[...new Set(loginHistory.map(l => l.userEmail || l.userId).filter(Boolean))].sort().map(u => (
+                                                <option key={u} value={u}>{u}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.25rem', color: '#475569', fontSize: '0.75rem' }}>From Date:</label>
+                                        <input type="date" value={loginFilter.dateFrom} onChange={(e) => setLoginFilter(prev => ({ ...prev, dateFrom: e.target.value, month: '' }))}
+                                            style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', border: '1px solid #e2e8f0', fontSize: '0.8rem' }} />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.25rem', color: '#475569', fontSize: '0.75rem' }}>To Date:</label>
+                                        <input type="date" value={loginFilter.dateTo} onChange={(e) => setLoginFilter(prev => ({ ...prev, dateTo: e.target.value, month: '' }))}
+                                            style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', border: '1px solid #e2e8f0', fontSize: '0.8rem' }} />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.25rem', color: '#475569', fontSize: '0.75rem' }}>Month:</label>
+                                        <input type="month" value={loginFilter.month} onChange={(e) => setLoginFilter(prev => ({ ...prev, month: e.target.value, dateFrom: '', dateTo: '' }))}
+                                            style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', border: '1px solid #e2e8f0', fontSize: '0.8rem' }} />
+                                    </div>
                                     {(loginFilter.user || loginFilter.dateFrom || loginFilter.dateTo || loginFilter.month) && (
-                                        <button onClick={() => setLoginFilter({ user: '', dateFrom: '', dateTo: '', month: '' })}
-                                            style={{ padding: '0.5rem 0.75rem', borderRadius: '6px', border: 'none', background: '#ef4444', color: 'white', fontSize: '0.75rem', cursor: 'pointer', fontWeight: '600' }}>
-                                            Clear
-                                        </button>
+                                        <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+                                            <button onClick={() => setLoginFilter({ user: '', dateFrom: '', dateTo: '', month: '' })}
+                                                style={{ padding: '0.5rem 0.75rem', borderRadius: '6px', border: 'none', background: '#ef4444', color: 'white', fontSize: '0.75rem', cursor: 'pointer', fontWeight: '600', width: '100%' }}>
+                                                Clear Filters
+                                            </button>
+                                        </div>
                                     )}
                                 </div>
                                 <div style={{ marginBottom: '1.5rem', maxHeight: '300px', overflowY: 'auto' }}>
