@@ -14301,7 +14301,6 @@ loadBalancer.distribute(traffic);`}
                                 { key: 'Offer', label: 'Offer', sub: 'Offers Extended', icon: '✅', bg: 'linear-gradient(135deg, #dcfce7 0%, #f0fdf4 100%)', border: '#10b981', color: '#166534' },
                                 { key: 'Pending', label: 'Pending Start', sub: 'Awaiting Start Date', icon: '⏳', bg: 'linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%)', border: '#0ea5e9', color: '#0c4a6e' },
                                 { key: 'Hired', label: 'Hired', sub: 'Active Employees', icon: '🎉', bg: 'linear-gradient(135deg, #d1fae5 0%, #ecfdf5 100%)', border: '#059669', color: '#065f46' },
-                                { key: 'Rejected', label: 'Rejected/Archived', sub: 'Not Moving Forward', icon: '❌', bg: 'linear-gradient(135deg, #fee2e2 0%, #fef2f2 100%)', border: '#ef4444', color: '#991b1b' },
                                 { key: 'Archived', label: 'Archived', sub: 'Completed Hires', icon: '📦', bg: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)', border: '#94a3b8', color: '#475569' }
                             ];
                             const allResumes = [...filteredResumes];
@@ -14427,7 +14426,7 @@ loadBalancer.distribute(traffic);`}
                                                                 </div>
                                                                 <div style={{ display: 'flex', gap: '0.25rem', flexWrap: 'wrap', marginTop: '0.25rem' }}>
                                                                     <select value={resume.stage || 'New'} onChange={(e) => { if (resume.resumeId === 'sample') { alert('Demo resume — use a real resume to change stages.'); return; } updateResumeStage(resume.resumeId, e.target.value); }} style={{ padding: '0.25rem', borderRadius: '4px', border: '1px solid #d4af37', fontSize: '0.7rem', cursor: 'pointer', flex: 1, minWidth: 0 }}>
-                                                                        <option value="New">→ New</option><option value="Screening">→ Screening</option><option value="Interview">→ Interview</option><option value="Offer">→ Offer</option><option value="Pending">→ Pending</option><option value="Hired">→ Hired</option><option value="Archived">→ Archive</option><option value="Rejected">→ Rejected</option>
+                                                                        <option value="New">→ New</option><option value="Screening">→ Screening</option><option value="Interview">→ Interview</option><option value="Offer">→ Offer</option><option value="Pending">→ Pending</option><option value="Hired">→ Hired</option><option value="Archived">→ Archive</option>
                                                                     </select>
                                                                     <button onClick={() => resume.resumeId === 'sample' ? alert('Demo resume cannot be deleted.') : deleteResume(resume.resumeId, resume.candidateName)} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', display: (loginEmail?.toLowerCase() === 'brian.briscoe@navontech.com' || loginEmail?.toLowerCase().includes('root')) ? 'inline-block' : 'none' }}>Delete</button>
                                                                     {resume.stage === 'Hired' && resume.resumeId !== 'sample' && (
@@ -18138,7 +18137,7 @@ Please review and approve this request.
                                     <option value="Screening">Screening</option>
                                     <option value="Interview">Interview</option>
                                     <option value="Offer">Offer</option>
-                                    <option value="Rejected">Rejected</option>
+                                    
                                 </select>
                             </div>
                             <div>
