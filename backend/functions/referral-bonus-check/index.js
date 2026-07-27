@@ -13,7 +13,44 @@ exports.handler = async (event) => {
     console.log('Running daily referral bonus check...');
     
     try {
-        // Scan for all hired referrals
+        // First: Auto-move Pending candidates to Hired when start date arrives
+        const pendingResult = await docClient.send(new ScanCommand({
+            TableName: TABLE_NAME,
+            FilterExpression: 'stage = :pending AND attribute_exists(hiredDate)',
+            ExpressionAttributeValues: { ':pending': 'Pending' }
+        }));
+        
+        const pendingCandidates = pendingResult.Items || [];
+        const today = new Date().toISOString().split('T')[0];
+        let movedToHired = 0;
+        
+        for (const candidate of pendingCandidates) {
+            if (candidate.hiredDate && candidate.hiredDate <= today) {
+                await docClient.send(new UpdateCommand({
+                    TableName: TABLE_NAME,
+                    Key: { resumeId: candidate.resumeId, receivedDate: candidate.receivedDate },
+                    UpdateExpression: 'SET stage = :hired, updatedAt = :now',
+                    ExpressionAttributeValues: { ':hired': 'Hired', ':now': new Date().toISOString() }
+                }));
+                
+                // Send notification
+                for (const email of NOTIFY_EMAILS) {
+                    await sesClient.send(new SendEmailCommand({
+                        Source: 'noreply@navontech.com',
+                        Destination: { ToAddresses: [email] },
+                        Message: {
+                            Subject: { Data: `🎉 Auto-Hired: ${candidate.candidateName} — Start Date Reached` },
+                            Body: { Html: { Data: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;"><div style="background:#1e3a8a;padding:20px;border-radius:12px 12px 0 0;text-align:center;"><h2 style="color:#d4af37;margin:0;">NAVON TECHNOLOGIES</h2></div><div style="background:#f8fafc;padding:24px;border:2px solid #e2e8f0;border-radius:0 0 12px 12px;"><h3 style="color:#059669;">🎉 Candidate Auto-Moved to Hired</h3><p><strong>${candidate.candidateName}</strong> has reached their start date (${candidate.hiredDate}) and has been automatically moved from Pending to Hired.</p><p>Position: ${candidate.position || 'Not specified'}</p></div></div>` } }
+                        }
+                    }));
+                }
+                movedToHired++;
+                console.log(`Auto-moved ${candidate.candidateName} to Hired (start date: ${candidate.hiredDate})`);
+            }
+        }
+        console.log(`Auto-moved ${movedToHired} candidate(s) to Hired`);
+
+        // Second: Check referral bonus milestones
         const result = await docClient.send(new ScanCommand({
             TableName: TABLE_NAME,
             FilterExpression: 'contains(notes, :referral) AND stage = :hired AND attribute_exists(hiredDate)',
