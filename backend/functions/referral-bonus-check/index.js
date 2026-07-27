@@ -13,6 +13,19 @@ exports.handler = async (event) => {
     console.log('Running daily referral bonus check...');
     
     try {
+        // Monthly reminder on 1st of each month
+        const today = new Date();
+        if (today.getDate() === 1) {
+            console.log('First of month — sending monthly review reminder to Brian');
+            await sesClient.send(new SendEmailCommand({
+                Source: 'noreply@navontech.com',
+                Destination: { ToAddresses: ['brian.briscoe@navontech.com'] },
+                Message: {
+                    Subject: { Data: '📋 Monthly Reminder: Review Archived Resumes & ATS' },
+                    Body: { Html: { Data: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;"><div style="background:linear-gradient(135deg,#1e3a8a,#3b82f6);padding:30px;text-align:center;border-radius:12px 12px 0 0;"><h1 style="color:#d4af37;margin:0;font-size:24px;">NAVON TECHNOLOGIES</h1><p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:13px;letter-spacing:2px;">MONTHLY REMINDER</p></div><div style="background:#d4af37;height:4px;"></div><div style="padding:30px;background:#f8fafc;border-radius:0 0 12px 12px;border:2px solid #e2e8f0;border-top:none;"><h2 style="color:#1e3a8a;margin:0 0 16px;">Hi Brian,</h2><p style="color:#334155;font-size:15px;line-height:1.6;">This is your monthly reminder to:</p><div style="background:#eff6ff;border:2px solid #93c5fd;border-radius:8px;padding:16px;margin:16px 0;"><ul style="color:#1e40af;font-size:14px;line-height:2;margin:0;padding-left:20px;"><li><strong>Review Archived Resumes</strong> — Check for candidates worth revisiting or removing</li><li><strong>Check the ATS Board</strong> — Ensure all candidates are in the correct pipeline stage</li><li><strong>Update any stale entries</strong> — Move or archive candidates that have been sitting too long</li></ul></div><p style="margin:16px 0;"><a href="https://navontech.com/#login" style="display:inline-block;background:#1e3a8a;color:white;text-decoration:none;padding:12px 24px;border-radius:8px;font-weight:700;">Open Employee Portal →</a></p><p style="color:#64748b;font-size:13px;margin-top:20px;">This is an automated monthly reminder from the Navon Technologies Employee Portal.</p></div></div>` } }
+                }
+            }));
+        }
         // First: Auto-move Pending candidates to Hired when start date arrives
         const pendingResult = await docClient.send(new ScanCommand({
             TableName: TABLE_NAME,
