@@ -488,6 +488,38 @@ Resources:
             Auth:
               Authorizer: NONE
 
+  # Referral Bonus Daily Check (Scheduled)
+  ReferralBonusCheckFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/referral-bonus-check/
+      Handler: index.handler
+      Description: Daily check for referral bonus milestones (30/90/180 days) - sends email notifications
+      MemorySize: 256
+      Timeout: 60
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ResumeMetadataTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - ses:SendEmail
+                - ses:SendRawEmail
+              Resource: "*"
+            - Effect: Allow
+              Action:
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+              Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"
+      Events:
+        DailyCheck:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 12 * * ? *)
+            Description: Run daily at 8 AM ET (12 UTC)
+            Enabled: true
+
   # Rate Limiting Table for Job Applications
   RateLimitTable:
     Type: AWS::DynamoDB::Table
