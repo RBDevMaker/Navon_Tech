@@ -1761,6 +1761,12 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             
             const updateBody = { stage: newStage };
             
+            // Prompt for screened date when moving to Screening
+            if (newStage === 'Screening') {
+                const screenedDate = prompt('📅 Enter screened date (YYYY-MM-DD):\n\n(Leave blank for today)');
+                updateBody.screenedDate = (screenedDate && /^\d{4}-\d{2}-\d{2}$/.test(screenedDate)) ? screenedDate : new Date().toISOString().split('T')[0];
+            }
+            
             // Prompt for start date when moving to Pending (optional)
             if (newStage === 'Pending') {
                 const startDate = prompt('📅 Enter start date for this candidate (YYYY-MM-DD):\n\n(Leave blank if unknown)');
@@ -14374,6 +14380,9 @@ loadBalancer.distribute(traffic);`}
                                                                 )}
                                                                 <div style={{ color: '#64748b', marginBottom: '0.15rem' }}><strong>Position:</strong> {resume.position || 'Not specified'}</div>
                                                                 <div style={{ color: '#64748b', marginBottom: '0.15rem' }}><strong>Department:</strong> {resume.department || 'Not specified'}</div>
+                                                                {resume.screenedDate && (
+                                                                    <div style={{ color: '#92400e', marginBottom: '0.15rem', fontWeight: '600' }}>🔍 Screened: {resume.screenedDate}</div>
+                                                                )}
                                                                 {resume.stage === 'Pending' && resume.hiredDate && (
                                                                     <div style={{ color: '#0c4a6e', marginBottom: '0.15rem', fontWeight: '600' }}>📅 Start Date: {resume.hiredDate}</div>
                                                                 )}
@@ -18135,6 +18144,10 @@ Please review and approve this request.
                             <div>
                                 <label style={{ display: 'block', fontWeight: '600', color: '#1e3a8a', marginBottom: '0.25rem', fontSize: '0.85rem' }}>Start Date</label>
                                 <input type="date" value={editingResume.hiredDate || ''} onChange={(e) => setEditingResume({...editingResume, hiredDate: e.target.value})} style={{ width: '100%', padding: '0.6rem', border: '2px solid #e2e8f0', borderRadius: '8px', fontSize: '0.9rem', boxSizing: 'border-box' }} />
+                            </div>
+                            <div>
+                                <label style={{ display: 'block', fontWeight: '600', color: '#1e3a8a', marginBottom: '0.25rem', fontSize: '0.85rem' }}>Screened Date</label>
+                                <input type="date" value={editingResume.screenedDate || ''} onChange={(e) => setEditingResume({...editingResume, screenedDate: e.target.value})} style={{ width: '100%', padding: '0.6rem', border: '2px solid #e2e8f0', borderRadius: '8px', fontSize: '0.9rem', boxSizing: 'border-box' }} />
                             </div>
                             <div>
                                 <label style={{ display: 'block', fontWeight: '600', color: '#1e3a8a', marginBottom: '0.25rem', fontSize: '0.85rem' }}>Additional Info (Applicant)</label>
