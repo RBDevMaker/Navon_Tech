@@ -18075,10 +18075,11 @@ Please review and approve this request.
                             if (editingResume.resumeId === 'sample') { alert('Demo resume cannot be saved.'); return; }
                             try {
                                 const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                                const { resumeId, createdAt, updatedAt, ...editableFields } = editingResume;
                                 const res = await fetch(`${apiUrl}/resume/${editingResume.resumeId}`, {
                                     method: 'PUT',
                                     headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify(editingResume)
+                                    body: JSON.stringify(editableFields)
                                 });
                                 if (!res.ok) throw new Error('Failed to update');
                                 setEditingResume(null);
