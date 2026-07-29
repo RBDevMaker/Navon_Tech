@@ -98,6 +98,10 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [editingResume, setEditingResume] = useState(null);
     const [showArchivedResumes, setShowArchivedResumes] = useState(false);
     const [showRolePermissions, setShowRolePermissions] = useState(false);
+    const [deepLinkCandidate, setDeepLinkCandidate] = useState(null); // For deep-linking to specific candidate from email
+    const [complianceSearch, setComplianceSearch] = useState(''); // Search for candidate summaries
+    const [complianceSort, setComplianceSort] = useState('newest'); // Sort candidate summaries by date
+    const [resumeSearchQuery, setResumeSearchQuery] = useState(''); // Search for resumes by candidate name
     
     // User management states
     const [showManageUsersModal, setShowManageUsersModal] = useState(false);
@@ -190,8 +194,28 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     // Handle hash changes for navigation
     useEffect(() => {
         const handleHashChange = async () => {
-            const hash = window.location.hash.slice(1) || 'home';
+            const fullHash = window.location.hash.slice(1) || 'home';
+            // Parse query params from hash (e.g., #resumes?candidate=John%20Doe)
+            const [hash, queryString] = fullHash.split('?');
             setCurrentPage(hash);
+            
+            if (queryString) {
+                const params = new URLSearchParams(queryString);
+                const candidate = params.get('candidate');
+                if (candidate) {
+                    setDeepLinkCandidate(decodeURIComponent(candidate));
+                    // Auto-fill search on compliance or resumes page
+                    if (hash === 'compliancesecurity') {
+                        setComplianceSearch(decodeURIComponent(candidate));
+                    }
+                    if (hash === 'resumes') {
+                        setResumeSearchQuery(decodeURIComponent(candidate));
+                    }
+                }
+            } else {
+                setDeepLinkCandidate(null);
+            }
+            
             // Clear editing state when navigating away from profile form
             if (hash !== 'myprofile' && editingEmployeeEmail) {
                 setEditingEmployeeEmail(null);
@@ -293,7 +317,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     
     // Fetch resumes when on resumes page, referral tracking pages, or resume docs page
     useEffect(() => {
-        if ((currentPage === 'resumes' || currentPage === 'resumedocs' || currentPage === 'referraltracking' || currentPage === 'myreferralstatus') && (userGroups.includes('security') || userRole === 'security' || userRole === 'hr' || userRole === 'superadmin' || loginEmail?.toLowerCase().includes('root') || currentPage === 'myreferralstatus')) {
+        if ((currentPage === 'resumes' || currentPage === 'resumedocs' || currentPage === 'referraltracking' || currentPage === 'myreferralstatus' || currentPage === 'compliancesecurity') && (userGroups.includes('security') || userRole === 'security' || userRole === 'hr' || userRole === 'superadmin' || loginEmail?.toLowerCase().includes('root') || currentPage === 'myreferralstatus')) {
             fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
         }
     }, [currentPage, userRole]);
@@ -1919,18 +1943,42 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         }
     };
 
-    const viewResume = (s3Key, candidateName) => {
-        if (!s3Key) {
+    const viewResume = async (s3Key, candidateName) => {
+        if (!s3Key && !candidateName) {
             alert('Resume file not available');
             return;
         }
         
-        // Construct S3 URL
-        const s3Url = `${s3BaseUrl}/${s3Key}`;
-        
-        // Use Google Docs viewer to display PDF inline in new tab
-        const viewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(s3Url)}&embedded=false`;
-        window.open(viewerUrl, '_blank');
+        try {
+            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+            // Search both resume folders for matching files
+            const [docsResult, atsResult] = await Promise.all([
+                fetch(`${apiUrl}/upload-to-s3`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'list', prefix: 'Documents/Resumes/' }) }).then(r => r.ok ? r.json() : { files: [] }),
+                fetch(`${apiUrl}/upload-to-s3`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'list', prefix: 'Resumes/' }) }).then(r => r.ok ? r.json() : { files: [] })
+            ]);
+            const allFiles = [...(docsResult.files || []), ...(atsResult.files || [])];
+            
+            // Try exact key match first
+            let matchedFile = s3Key ? allFiles.find(f => f.key === s3Key) : null;
+            
+            // If no exact match, search by candidate name in filename
+            if (!matchedFile && candidateName) {
+                const searchName = candidateName.toLowerCase().replace(/\s+/g, '');
+                matchedFile = allFiles.find(f => {
+                    const fName = (f.name || '').toLowerCase().replace(/[\s_-]/g, '').replace(/^\d+-/, '');
+                    return fName.includes(searchName) || searchName.includes(fName.replace(/\.[^.]+$/, ''));
+                });
+            }
+            
+            if (matchedFile && matchedFile.url) {
+                handleViewDocument(candidateName || matchedFile.name, { name: matchedFile.name, s3Url: matchedFile.url });
+            } else {
+                alert(`No resume file found for ${candidateName || 'this candidate'}.`);
+            }
+        } catch (err) {
+            console.error('Error viewing resume:', err);
+            alert('Error loading resume. Please try again.');
+        }
     };
 
     const downloadResume = (s3Key, candidateName) => {
@@ -12763,7 +12811,7 @@ loadBalancer.distribute(traffic);`}
                             )}
 
                             {/* Application Tracking System - Security, HR, SuperAdmin */}
-                            {(userGroups.includes('security') || userRole === 'security' || userRole === 'hr' || userRole === 'superadmin') && isAdminView && (
+                            {(userGroups.includes('security') || userRole === 'security' || userRole === 'hr' || userRole === 'superadmin' || loginEmail?.toLowerCase().includes('root')) && isAdminView && (
                                 <div className="hover-lift animate-scale-in" style={{
                                     background: 'white',
                                     padding: '2rem',
@@ -13050,7 +13098,7 @@ loadBalancer.distribute(traffic);`}
             )}
 
             {/* COMPLIANCE & SECURITY PAGE */}
-            {currentPage === 'compliancesecurity' && (userRole === 'superadmin' || userRole === 'security') && (
+            {currentPage === 'compliancesecurity' && (userRole === 'superadmin' || userRole === 'security' || userGroups.includes('security') || loginEmail?.toLowerCase().includes('root')) && (
                 <section style={{ padding: '4rem 2rem', background: '#f1f5f9', minHeight: '100vh' }}>
                     <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
                         <div style={{
@@ -13092,8 +13140,63 @@ loadBalancer.distribute(traffic);`}
                                         <h3 style={{ color: '#1e3a8a', marginBottom: '1.5rem', fontSize: '1.3rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                             📝 Cleared Candidate Summaries ({summaries.length})
                                         </h3>
+                                        {/* Search and Sort Controls */}
+                                        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                                            <input
+                                                type="text"
+                                                placeholder="🔍 Search by candidate name..."
+                                                value={complianceSearch}
+                                                onChange={(e) => setComplianceSearch(e.target.value)}
+                                                style={{
+                                                    flex: 1,
+                                                    minWidth: '200px',
+                                                    padding: '0.75rem 1rem',
+                                                    border: '2px solid #d4af37',
+                                                    borderRadius: '8px',
+                                                    fontSize: '0.95rem',
+                                                    outline: 'none',
+                                                    background: 'white'
+                                                }}
+                                                onFocus={(e) => { e.target.style.borderColor = '#1e3a8a'; e.target.style.boxShadow = '0 0 0 3px rgba(30,58,138,0.15)'; }}
+                                                onBlur={(e) => { e.target.style.borderColor = '#d4af37'; e.target.style.boxShadow = 'none'; }}
+                                            />
+                                            <select
+                                                value={complianceSort}
+                                                onChange={(e) => setComplianceSort(e.target.value)}
+                                                style={{
+                                                    padding: '0.75rem 1rem',
+                                                    border: '2px solid #d4af37',
+                                                    borderRadius: '8px',
+                                                    fontSize: '0.95rem',
+                                                    outline: 'none',
+                                                    background: 'white',
+                                                    cursor: 'pointer',
+                                                    fontWeight: '600',
+                                                    color: '#1e3a8a'
+                                                }}>
+                                                <option value="newest">Newest First</option>
+                                                <option value="oldest">Oldest First</option>
+                                                <option value="name-az">Name A–Z</option>
+                                                <option value="name-za">Name Z–A</option>
+                                            </select>
+                                        </div>
                                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
-                                            {summaries.map(file => {
+                                            {summaries
+                                            .filter(file => {
+                                                if (!complianceSearch.trim()) return true;
+                                                const name = file.name.replace('ClearedCandidateSummary-', '').replace(/-\d+\.pdf\.html$/, '').replace(/_/g, ' ');
+                                                return name.toLowerCase().includes(complianceSearch.toLowerCase());
+                                            })
+                                            .sort((a, b) => {
+                                                const nameA = a.name.replace('ClearedCandidateSummary-', '').replace(/-\d+\.pdf\.html$/, '').replace(/_/g, ' ');
+                                                const nameB = b.name.replace('ClearedCandidateSummary-', '').replace(/-\d+\.pdf\.html$/, '').replace(/_/g, ' ');
+                                                if (complianceSort === 'newest') return (b.lastModified || '').localeCompare(a.lastModified || '');
+                                                if (complianceSort === 'oldest') return (a.lastModified || '').localeCompare(b.lastModified || '');
+                                                if (complianceSort === 'name-az') return nameA.localeCompare(nameB);
+                                                if (complianceSort === 'name-za') return nameB.localeCompare(nameA);
+                                                return 0;
+                                            })
+                                            .map(file => {
                                                 const candidateName = file.name.replace('ClearedCandidateSummary-', '').replace(/-\d+\.pdf\.html$/, '').replace(/_/g, ' ');
                                                 const modParts = file.lastModified ? String(file.lastModified).split('T')[0].split('-') : null;
                                                 const displayDate = modParts && modParts.length === 3
@@ -13202,6 +13305,40 @@ loadBalancer.distribute(traffic);`}
                                                                 style={{ background: '#2563eb', color: 'white', border: 'none', padding: '0.5rem 0.75rem', borderRadius: '6px', fontWeight: '600', fontSize: '0.8rem', textDecoration: 'none', textAlign: 'center' }}>
                                                                 ⬇️ Word
                                                             </a>
+                                                            <button onClick={async () => { 
+                                                                // Try to find in already-loaded resumes
+                                                                let matchedResume = resumes.find(r => {
+                                                                    const rName = (r.candidateName || '').toLowerCase().trim();
+                                                                    const cName = candidateName.toLowerCase().trim();
+                                                                    return r.s3Key && (rName === cName || rName.includes(cName) || cName.includes(rName));
+                                                                });
+                                                                // If not loaded yet, fetch resumes first
+                                                                if (!matchedResume) {
+                                                                    try {
+                                                                        const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                                                                        const response = await fetch(`${apiUrl}/resumes?limit=50`);
+                                                                        if (response.ok) {
+                                                                            const data = await response.json();
+                                                                            const resumeList = data.resumes || [];
+                                                                            setResumes(resumeList);
+                                                                            setFilteredResumes(resumeList);
+                                                                            matchedResume = resumeList.find(r => {
+                                                                                const rName = (r.candidateName || '').toLowerCase().trim();
+                                                                                const cName = candidateName.toLowerCase().trim();
+                                                                                return r.s3Key && (rName === cName || rName.includes(cName) || cName.includes(rName));
+                                                                            });
+                                                                        }
+                                                                    } catch (e) { console.error('Resume fetch error:', e); }
+                                                                }
+                                                                if (matchedResume && matchedResume.s3Key) {
+                                                                    viewResume(matchedResume.s3Key, candidateName);
+                                                                } else {
+                                                                    alert(`No resume file found for ${candidateName}. Check the ATS.`);
+                                                                }
+                                                            }}
+                                                                style={{ background: '#059669', color: 'white', border: 'none', padding: '0.5rem 0.75rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.8rem' }}>
+                                                                📄 Resume
+                                                            </button>
                                                             <button onClick={async () => {
                                                                 if (!confirm(`🗑️ Delete summary for "${candidateName}"?`)) return;
                                                                 try {
@@ -14064,7 +14201,7 @@ loadBalancer.distribute(traffic);`}
             )}
 
             {/* RESUME DOCUMENTS PAGE */}
-            {currentPage === 'resumedocs' && (
+            {currentPage === 'resumedocs' && (userGroups.includes('security') || userRole === 'security' || userRole === 'superadmin' || loginEmail?.toLowerCase().includes('root')) && (
                 <section style={{ padding: '4rem 2rem', background: '#f1f5f9', minHeight: '100vh' }}>
                     <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
                         <div style={{
@@ -14140,8 +14277,17 @@ loadBalancer.distribute(traffic);`}
                             </div>
                         ) : (
                             <>
-                            <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem', alignItems: 'center' }}>
-                                <span style={{ color: '#475569', fontWeight: '600', fontSize: '0.9rem' }}>Sort by:</span>
+                            <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                                <input
+                                    type="text"
+                                    placeholder="🔍 Search by candidate name..."
+                                    value={resumeSearchQuery}
+                                    onChange={(e) => setResumeSearchQuery(e.target.value)}
+                                    style={{ padding: '0.5rem 0.75rem', borderRadius: '6px', border: '2px solid #d4af37', fontSize: '0.85rem', minWidth: '200px', flex: 1, outline: 'none' }}
+                                    onFocus={(e) => { e.target.style.borderColor = '#1e3a8a'; }}
+                                    onBlur={(e) => { e.target.style.borderColor = '#d4af37'; }}
+                                />
+                                <span style={{ color: '#475569', fontWeight: '600', fontSize: '0.9rem' }}>Sort:</span>
                                 <select value={resumeDocSort} onChange={(e) => setResumeDocSort(e.target.value)} style={{ padding: '0.5rem 1rem', borderRadius: '6px', border: '2px solid #d4af37', fontSize: '0.85rem', cursor: 'pointer', fontWeight: '600' }}>
                                     <option value="newest">📅 Newest First</option>
                                     <option value="oldest">📅 Oldest First</option>
@@ -14151,7 +14297,12 @@ loadBalancer.distribute(traffic);`}
                                 <span style={{ color: '#94a3b8', fontSize: '0.85rem' }}>({resumeDocFiles.length} files)</span>
                             </div>
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(350px, 100%), 1fr))', gap: '1.5rem' }}>
-                                {[...resumeDocFiles].sort((a, b) => {
+                                {[...resumeDocFiles].filter(file => {
+                                    if (!resumeSearchQuery.trim()) return true;
+                                    const matched = resumes.find(r => r.s3Key && (r.s3Key === file.id || r.s3Key.replace(/\.[^.]+$/, '') === file.id?.replace(/\.[^.]+$/, '')));
+                                    const displayName = matched?.candidateName || file.name.replace(/^\d+-/, '').replace(/^Resumes-\d+-/, '').replace(/\.[^.]+$/, '').replace(/[_-]/g, ' ');
+                                    return displayName.toLowerCase().includes(resumeSearchQuery.toLowerCase());
+                                }).sort((a, b) => {
                                     if (resumeDocSort === 'newest') return new Date(b.lastModified || 0) - new Date(a.lastModified || 0);
                                     if (resumeDocSort === 'oldest') return new Date(a.lastModified || 0) - new Date(b.lastModified || 0);
                                     if (resumeDocSort === 'name-asc' || resumeDocSort === 'name-desc') {
@@ -14253,7 +14404,7 @@ loadBalancer.distribute(traffic);`}
             )}
 
             {/* APPLICATION TRACKING SYSTEM */}
-            {currentPage === 'resumes' && (userGroups.includes('security') || userRole === 'security' || userRole === 'hr' || userRole === 'superadmin') && (
+            {currentPage === 'resumes' && (userGroups.includes('security') || userRole === 'security' || userRole === 'hr' || userRole === 'superadmin' || loginEmail?.toLowerCase().includes('root')) && (
                 <section style={{ 
                     padding: 'clamp(0.5rem, 2vw, 2rem) clamp(0.25rem, 1vw, 1rem)', 
                     background: '#f1f5f9',
@@ -14315,6 +14466,15 @@ loadBalancer.distribute(traffic);`}
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.75rem', background: 'white', padding: '1rem 1.5rem', borderRadius: '12px', border: '2px solid #d4af37' }}>
                                     <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.3rem' }}>Applicants ({allResumes.filter(r => showArchivedResumes || r.stage !== 'Archived').length})</h3>
                                     <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                                        <input
+                                            type="text"
+                                            placeholder="🔍 Search candidate..."
+                                            value={resumeSearchQuery}
+                                            onChange={(e) => setResumeSearchQuery(e.target.value)}
+                                            style={{ padding: '0.5rem 0.75rem', borderRadius: '6px', border: '2px solid #d4af37', fontSize: '0.85rem', minWidth: '160px', outline: 'none' }}
+                                            onFocus={(e) => { e.target.style.borderColor = '#1e3a8a'; }}
+                                            onBlur={(e) => { e.target.style.borderColor = '#d4af37'; }}
+                                        />
                                         <button onClick={() => setShowArchivedResumes(!showArchivedResumes)} style={{ background: showArchivedResumes ? '#475569' : '#94a3b8', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600' }}>{showArchivedResumes ? '📦 Hide Archived' : '📦 Show Archived'}</button>
                                         {userGroups.includes('security') && <button onClick={() => setShowUploadModal(true)} style={{ background: '#10b981', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600' }}>Upload Resume</button>}
                                         <button onClick={exportToExcel} style={{ background: '#059669', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600' }}>Export Excel</button>
@@ -14343,7 +14503,7 @@ loadBalancer.distribute(traffic);`}
                                 <div style={{ overflowX: 'auto', paddingBottom: '1rem' }}>
                                     <div style={{ display: 'flex', gap: '1rem', minWidth: '900px' }}>
                                         {stages.filter(s => showArchivedResumes || s.key !== 'Archived').map(stage => {
-                                            const stageResumes = allResumes.filter(r => (r.stage || 'New') === stage.key);
+                                            const stageResumes = allResumes.filter(r => (r.stage || 'New') === stage.key).filter(r => !resumeSearchQuery.trim() || (r.candidateName || '').toLowerCase().includes(resumeSearchQuery.toLowerCase()));
                                             return (
                                                 <div key={stage.key} style={{ flex: 1, minWidth: '170px' }}>
                                                     <div style={{ background: stage.bg, padding: '1rem', borderRadius: '10px 10px 0 0', border: `2px solid ${stage.border}`, borderBottom: 'none', textAlign: 'center' }}>
