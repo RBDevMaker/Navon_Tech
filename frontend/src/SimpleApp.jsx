@@ -11072,6 +11072,7 @@ loadBalancer.distribute(traffic);`}
                                     {isAdminView && <option value="shirtSize">By T-Shirt Size</option>}
                                     {isAdminView && <option value="startDate">By Start Date</option>}
                                     {isAdminView && <option value="birthday">By Birthday Month</option>}
+                                    {isAdminView && (userRole === 'hr' || userRole === 'security' || userRole === 'superadmin') && <option value="dietaryAllergy">By Dietary/Allergy</option>}
                                 </select>
                                 {directoryFilter !== 'all' && (
                                     <select
@@ -11106,6 +11107,10 @@ loadBalancer.distribute(traffic);`}
                                                     if (directoryFilter === 'gender') return m.gender;
                                                     if (directoryFilter === 'location') return m.location;
                                                     if (directoryFilter === 'shirtSize') return m.shirtSize;
+                                                    if (directoryFilter === 'dietaryAllergy') {
+                                                        const val = (m.dietaryAllergy || '').trim();
+                                                        return val.toLowerCase() === 'none' ? 'None' : val;
+                                                    }
                                                     if (directoryFilter === 'startDate') {
                                                         if (!m.startDate) return null;
                                                         const [y] = m.startDate.split('-');
@@ -11187,7 +11192,7 @@ loadBalancer.distribute(traffic);`}
                                     if (monthName.toLowerCase() !== directorySearch.toLowerCase()) return 0;
                                 }
                                 if (directoryFilter !== 'all' && directoryFilter !== 'startDate' && directoryFilter !== 'birthday' && directorySearch) {
-                                    const fieldMap = { department: 'department', employmentType: 'employmentType', billableStatus: 'billableStatus', prime: 'contractAssignment', gender: 'gender', location: 'location', shirtSize: 'shirtSize' };
+                                    const fieldMap = { department: 'department', employmentType: 'employmentType', billableStatus: 'billableStatus', prime: 'contractAssignment', gender: 'gender', location: 'location', shirtSize: 'shirtSize', dietaryAllergy: 'dietaryAllergy' };
                                     const field = fieldMap[directoryFilter];
                                     if (field) {
                                         if (directoryFilter === 'department') {
@@ -11229,7 +11234,7 @@ loadBalancer.distribute(traffic);`}
                                 if (!directorySearch.trim()) return true;
                                 const s = directorySearch.toLowerCase();
                                 if (directoryFilter !== 'all') {
-                                    const fieldMap = { department: 'department', employmentType: 'employmentType', billableStatus: 'billableStatus', prime: 'contractAssignment', gender: 'gender', location: 'location', shirtSize: 'shirtSize' };
+                                    const fieldMap = { department: 'department', employmentType: 'employmentType', billableStatus: 'billableStatus', prime: 'contractAssignment', gender: 'gender', location: 'location', shirtSize: 'shirtSize', dietaryAllergy: 'dietaryAllergy' };
                                     if (directoryFilter === 'department') return (m[fieldMap[directoryFilter]] || '').split(',').map(d => d.trim().toLowerCase()).includes(s);
                                     return (m[fieldMap[directoryFilter]] || '').toLowerCase() === s;
                                 }
@@ -11270,7 +11275,7 @@ loadBalancer.distribute(traffic);`}
                                     if (monthName.toLowerCase() !== directorySearch.toLowerCase()) return false;
                                 }
                                 if (directoryFilter !== 'all' && directoryFilter !== 'startDate' && directoryFilter !== 'birthday' && directorySearch) {
-                                    const fieldMap = { department: 'department', employmentType: 'employmentType', billableStatus: 'billableStatus', prime: 'contractAssignment', gender: 'gender', location: 'location', shirtSize: 'shirtSize' };
+                                    const fieldMap = { department: 'department', employmentType: 'employmentType', billableStatus: 'billableStatus', prime: 'contractAssignment', gender: 'gender', location: 'location', shirtSize: 'shirtSize', dietaryAllergy: 'dietaryAllergy' };
                                     const field = fieldMap[directoryFilter];
                                     if (field) {
                                         if (directoryFilter === 'department') {
@@ -11621,7 +11626,7 @@ loadBalancer.distribute(traffic);`}
                                 const search = directorySearch.toLowerCase();
                                 // Category filter mode
                                 if (directoryFilter !== 'all') {
-                                    const fieldMap = { department: 'department', employmentType: 'employmentType', billableStatus: 'billableStatus', prime: 'contractAssignment', gender: 'gender', location: 'location', shirtSize: 'shirtSize' };
+                                    const fieldMap = { department: 'department', employmentType: 'employmentType', billableStatus: 'billableStatus', prime: 'contractAssignment', gender: 'gender', location: 'location', shirtSize: 'shirtSize', dietaryAllergy: 'dietaryAllergy' };
                                     const field = fieldMap[directoryFilter];
                                     if (directoryFilter === 'department') return (member[field] || '').split(',').map(d => d.trim().toLowerCase()).includes(search.toLowerCase());
                                     return (member[field] || '').toLowerCase() === search.toLowerCase();
