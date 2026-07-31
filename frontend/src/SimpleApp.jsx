@@ -12396,7 +12396,7 @@ loadBalancer.distribute(traffic);`}
                                 const isRoot = loginEmail?.toLowerCase().includes('root');
                                 const prime = profileData.contractAssignment || '';
                                 const timecards = [
-                                    { name: 'Nightwing', url: 'https://virgo2.syndeconnect.com/', logo: 'nightwing.png', color: '#1e3a8a', scale: 1.5 },
+                                    { name: 'Nightwing', url: 'https://virgo2.syndeoconnect.com/', logo: 'nightwing.png', color: '#1e3a8a', scale: 1.5 },
                                     { name: 'SAIC', url: 'https://cornerstone.saic.com/TimeCollection/TimesheetMgmt', logo: 'SAIC_Logo.svg', color: '#0369a1', scale: 1 },
                                     { name: 'GDIT', url: 'https://setris-ne.gdit.com/setris/login.aspx', logo: 'gdit.jpeg', color: '#4338ca', scale: 1 },
                                     { name: 'Arcfield', url: 'https://myapplications.azure.us/', logo: 'archfield.jpeg', color: '#7c3aed', scale: 1.5 }
