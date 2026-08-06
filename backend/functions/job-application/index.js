@@ -123,7 +123,11 @@ exports.handler = async (event) => {
                         <p style="margin:4px 0;font-size:14px;"><strong>Date of Conversation:</strong> ${conversationDate || 'Not specified'}</p>
                     </div>
                     <div style="text-align:center;margin-bottom:20px;">
-                        <a href="https://navontech.com/#compliancesecurity?candidate=${encodeURIComponent(candidateName)}" style="display:inline-block;background:linear-gradient(135deg,#1e3a8a,#3b82f6);color:white;text-decoration:none;padding:12px 30px;border-radius:8px;font-size:15px;font-weight:700;">Review ${candidateName} in Portal →</a>
+                        <a href="https://navontech.com/#compliancesecurity?candidate=${encodeURIComponent(candidateName)}" style="display:inline-block;background:linear-gradient(135deg,#1e3a8a,#3b82f6);color:white;text-decoration:none;padding:12px 30px;border-radius:8px;font-size:15px;font-weight:700;">📝 View Summary →</a>
+                    </div>
+                    <div style="text-align:center;margin-bottom:20px;">
+                        <a href="https://navontech.com/#resumes?candidate=${encodeURIComponent(candidateName)}" style="display:inline-block;background:#059669;color:white;text-decoration:none;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;margin-right:8px;">📄 View Resume</a>
+                        <a href="https://navontech.com/#resumes?candidate=${encodeURIComponent(candidateName)}" style="display:inline-block;background:#6366f1;color:white;text-decoration:none;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;">👤 View in ATS</a>
                     </div>
                     <p style="color:#64748b;font-size:13px;">Navigate to Compliance & Security to view, download, or print the full summary.</p>
                 </div>

@@ -13892,23 +13892,26 @@ loadBalancer.distribute(traffic);`}
 
                                 // Send notification email to security
                                 try {
-                                    await fetch(`${apiUrl}/apply`, {
-                                        method: 'POST',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({
-                                            type: 'candidate-summary-notification',
-                                            candidateName: candidateName,
-                                            clearanceLevel: g('clearanceLevel'),
-                                            recruiter: g('recruiter'),
-                                            conversationDate: g('conversationDate'),
-                                            notifyEmail: 'security@navontech.com'
-                                        })
-                                    });
+                                    const summaryNotifyEmails = ['veronica.hill@navontech.com', 'tammy.thompson@navontech.com', 'brian.briscoe@navontech.com'];
+                                    for (const notifyEmail of summaryNotifyEmails) {
+                                        await fetch(`${apiUrl}/apply`, {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({
+                                                type: 'candidate-summary-notification',
+                                                candidateName: candidateName,
+                                                clearanceLevel: g('clearanceLevel'),
+                                                recruiter: g('recruiter'),
+                                                conversationDate: g('conversationDate'),
+                                                notifyEmail
+                                            })
+                                        });
+                                    }
                                 } catch (notifyErr) {
                                     console.error('Notification failed:', notifyErr);
                                 }
 
-                                alert(`✅ Cleared Candidate Summary for ${candidateName} saved to Compliance & Security. Notification sent to Security.`);
+                                alert(`✅ Cleared Candidate Summary for ${candidateName} saved to Compliance & Security. Notification sent to Security team.`);
                                 
                                 // Auto-save all form data to localStorage for future editing
                                 const allFields = {};
