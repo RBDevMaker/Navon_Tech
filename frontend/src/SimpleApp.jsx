@@ -9888,9 +9888,14 @@ loadBalancer.distribute(traffic);`}
                                         <select value={loginFilter.user} onChange={(e) => setLoginFilter(prev => ({ ...prev, user: e.target.value }))}
                                             style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', border: '1px solid #e2e8f0', fontSize: '0.8rem' }}>
                                             <option value="">All Users</option>
-                                            {[...new Set(loginHistory.map(l => l.userEmail || l.userId).filter(Boolean))].sort().map(u => (
-                                                <option key={u} value={u}>{u}</option>
-                                            ))}
+                                            {users.length > 0
+                                                ? [...new Set(users.map(u => u.email).filter(Boolean))].sort().map(u => (
+                                                    <option key={u} value={u}>{u}</option>
+                                                ))
+                                                : [...new Set(loginHistory.map(l => l.userEmail || l.userId).filter(Boolean))].sort().map(u => (
+                                                    <option key={u} value={u}>{u}</option>
+                                                ))
+                                            }
                                         </select>
                                     </div>
                                     <div>
@@ -13892,26 +13897,23 @@ loadBalancer.distribute(traffic);`}
 
                                 // Send notification email to security
                                 try {
-                                    const summaryNotifyEmails = ['veronica.hill@navontech.com', 'tammy.thompson@navontech.com', 'brian.briscoe@navontech.com'];
-                                    for (const notifyEmail of summaryNotifyEmails) {
-                                        await fetch(`${apiUrl}/apply`, {
-                                            method: 'POST',
-                                            headers: { 'Content-Type': 'application/json' },
-                                            body: JSON.stringify({
-                                                type: 'candidate-summary-notification',
-                                                candidateName: candidateName,
-                                                clearanceLevel: g('clearanceLevel'),
-                                                recruiter: g('recruiter'),
-                                                conversationDate: g('conversationDate'),
-                                                notifyEmail
-                                            })
-                                        });
-                                    }
+                                    await fetch(`${apiUrl}/apply`, {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                            type: 'candidate-summary-notification',
+                                            candidateName: candidateName,
+                                            clearanceLevel: g('clearanceLevel'),
+                                            recruiter: g('recruiter'),
+                                            conversationDate: g('conversationDate'),
+                                            notifyEmail: 'security@navontech.com'
+                                        })
+                                    });
                                 } catch (notifyErr) {
                                     console.error('Notification failed:', notifyErr);
                                 }
 
-                                alert(`✅ Cleared Candidate Summary for ${candidateName} saved to Compliance & Security. Notification sent to Security team.`);
+                                alert(`✅ Cleared Candidate Summary for ${candidateName} saved to Compliance & Security. Notification sent to Security.`);
                                 
                                 // Auto-save all form data to localStorage for future editing
                                 const allFields = {};
