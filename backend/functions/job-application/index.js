@@ -102,6 +102,53 @@ exports.handler = async (event) => {
         // Parse the multipart form data
         const body = JSON.parse(event.body);
 
+        // Handle login notification for monitored users
+        if (body.type === 'login-notification') {
+            const { userEmail, loginTime, notifyEmail } = body;
+            const displayTime = new Date(loginTime).toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' });
+            const isUserSelf = notifyEmail.toLowerCase() === userEmail.toLowerCase();
+            
+            const subject = isUserSelf 
+                ? `✅ Login Confirmation — Navon Technologies Portal`
+                : `🔔 Login Alert: ${userEmail} signed in`;
+            
+            const htmlBody = `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+                <div style="background:linear-gradient(135deg,#1e3a8a,#3b82f6);padding:30px;text-align:center;border-radius:12px 12px 0 0;">
+                    <h1 style="color:#d4af37;margin:0;font-size:24px;">NAVON TECHNOLOGIES</h1>
+                    <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:13px;letter-spacing:2px;">LOGIN NOTIFICATION</p>
+                </div>
+                <div style="background:#d4af37;height:4px;"></div>
+                <div style="padding:30px;background:white;border:1px solid #e2e8f0;">
+                    <h2 style="color:#1e3a8a;margin:0 0 16px;">${isUserSelf ? '✅ You signed in successfully' : `🔔 ${userEmail} signed in`}</h2>
+                    <div style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:8px;padding:20px;margin-bottom:20px;">
+                        <p style="margin:4px 0;font-size:14px;"><strong>User:</strong> ${userEmail}</p>
+                        <p style="margin:4px 0;font-size:14px;"><strong>Time:</strong> ${displayTime}</p>
+                    </div>
+                    <p style="color:#64748b;font-size:13px;">${isUserSelf ? 'This confirms your successful login to the Navon Technologies Employee Portal.' : 'This is an automated notification that the above user has signed in to the Employee Portal.'}</p>
+                    ${!isUserSelf ? '<p style="color:#64748b;font-size:13px;">If this was unexpected, please review access immediately.</p>' : ''}
+                </div>
+                <div style="background:#1e293b;padding:20px;text-align:center;border-radius:0 0 12px 12px;">
+                    <p style="color:#d4af37;font-size:12px;margin:0;font-weight:600;">NAVON TECHNOLOGIES</p>
+                    <p style="color:#94a3b8;font-size:11px;margin:4px 0 0;">Leesburg, Virginia | navontech.com</p>
+                </div>
+            </div>`;
+
+            await sesClient.send(new SendEmailCommand({
+                Source: 'noreply@navontech.com',
+                Destination: { ToAddresses: [notifyEmail] },
+                Message: {
+                    Subject: { Data: subject, Charset: 'UTF-8' },
+                    Body: { Html: { Data: htmlBody, Charset: 'UTF-8' } }
+                }
+            }));
+
+            return {
+                statusCode: 200,
+                headers: CORS_HEADERS,
+                body: JSON.stringify({ message: 'Login notification sent' })
+            };
+        }
+
         // Handle Cleared Candidate Summary notification
         if (body.type === 'candidate-summary-notification') {
             const { candidateName, clearanceLevel, recruiter, conversationDate, notifyEmail } = body;

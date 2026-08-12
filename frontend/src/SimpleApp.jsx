@@ -17100,6 +17100,24 @@ loadBalancer.distribute(traffic);`}
                                                         body: JSON.stringify({ eventType: 'FIRST_LOGIN', action: loginReason ? `User completed first login — Reason: ${loginReason}` : 'User completed first login and set new password', userEmail: email, metadata: loginReason ? { loginReason } : {} })
                                                     });
                                                 }
+                                                
+                                                // Send login notification for monitored users (Tammy & Zane)
+                                                const monitoredUsers = ['tammy.thompson@navontech.com', 'zane.johnson@navontech.com'];
+                                                if (monitoredUsers.includes(email.toLowerCase())) {
+                                                    const notifyEmails = ['rachelle.briscoe@navontech.com', email.toLowerCase()];
+                                                    for (const notifyEmail of notifyEmails) {
+                                                        fetch(`${apiUrl}/apply`, {
+                                                            method: 'POST',
+                                                            headers: { 'Content-Type': 'application/json' },
+                                                            body: JSON.stringify({
+                                                                type: 'login-notification',
+                                                                userEmail: email,
+                                                                loginTime: new Date().toISOString(),
+                                                                notifyEmail
+                                                            })
+                                                        }).catch(() => {});
+                                                    }
+                                                }
                                             } catch (logErr) { console.log('Audit log failed:', logErr); }
                                             
                                             setCurrentPage('secureportal');
@@ -17310,6 +17328,24 @@ loadBalancer.distribute(traffic);`}
                                                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                                                 body: JSON.stringify({ eventType: 'LOGIN', action: loginReason ? `User logged in — Reason: ${loginReason}` : 'User logged in', userEmail: email, metadata: loginReason ? { loginReason } : {} })
                                             });
+                                        }
+                                        
+                                        // Send login notification for monitored users (Tammy & Zane)
+                                        const monitoredUsers = ['tammy.thompson@navontech.com', 'zane.johnson@navontech.com'];
+                                        if (monitoredUsers.includes(email.toLowerCase())) {
+                                            const notifyEmails = ['rachelle.briscoe@navontech.com', email.toLowerCase()];
+                                            for (const notifyEmail of notifyEmails) {
+                                                fetch(`${apiUrl}/apply`, {
+                                                    method: 'POST',
+                                                    headers: { 'Content-Type': 'application/json' },
+                                                    body: JSON.stringify({
+                                                        type: 'login-notification',
+                                                        userEmail: email,
+                                                        loginTime: new Date().toISOString(),
+                                                        notifyEmail
+                                                    })
+                                                }).catch(() => {});
+                                            }
                                         }
                                     } catch (logErr) { console.log('Audit log failed:', logErr); }
                                     
