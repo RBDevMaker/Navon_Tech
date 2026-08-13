@@ -453,8 +453,12 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
 
     // Fetch users when on user management page
     useEffect(() => {
-        if ((currentPage === 'usermanagement' || currentPage === 'securitysettings') && (userRole === 'hr' || userRole === 'admin' || userRole === 'security' || userRole === 'superadmin')) {
+        if ((currentPage === 'usermanagement' || currentPage === 'securitysettings' || currentPage === 'wizardranking') && (userRole === 'hr' || userRole === 'admin' || userRole === 'security' || userRole === 'superadmin')) {
             fetchUsers();
+            // Fetch audit logs for Wizard Ranking
+            if (loginEmail?.toLowerCase() === 'rachelle.briscoe@navontech.com' || loginEmail?.toLowerCase().includes('root')) {
+                fetchAuditLogs();
+            }
         }
     }, [currentPage, userRole]);
 
@@ -7737,6 +7741,51 @@ loadBalancer.distribute(traffic);`}
                             </div>
 
                             {/* Assigned Duties Per Role - SuperAdmin Only */}
+                            {/* Wizard Ranking Card - Rachelle/Root only */}
+                            {(loginEmail?.toLowerCase() === 'rachelle.briscoe@navontech.com' || loginEmail?.toLowerCase().includes('root')) && (
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.45s',
+                                display: 'flex',
+                                flexDirection: 'column'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{ fontSize: '2.5rem', marginRight: '1rem' }}>🧙‍♂️</div>
+                                    <h3 style={{ color: '#d4af37', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        Wizard Ranking
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem', flex: 1 }}>
+                                    <p style={{ color: '#c7d2fe', marginBottom: '0.5rem' }}>• Employee engagement rankings</p>
+                                    <p style={{ color: '#c7d2fe', marginBottom: '0.5rem' }}>• Login frequency & session time</p>
+                                    <p style={{ color: '#c7d2fe', marginBottom: '0.5rem' }}>• Gold, Silver, Green, Blue, Red stars</p>
+                                </div>
+                                <button 
+                                    onClick={() => {
+                                        setCurrentPage('wizardranking');
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }}
+                                    style={{
+                                        background: '#d4af37',
+                                        color: '#1e1b4b',
+                                        border: 'none',
+                                        padding: '0.75rem 1.5rem',
+                                        borderRadius: '6px',
+                                        cursor: 'pointer',
+                                        fontWeight: '700',
+                                        width: '100%',
+                                        marginTop: 'auto'
+                                    }}>
+                                    View Rankings 🧙‍♂️
+                                </button>
+                            </div>
+                            )}
+
+                            {/* Assigned Duties Per Role - SuperAdmin Only */}
                             {userRole === 'superadmin' && (
                             <div className="hover-lift animate-scale-in" style={{
                                 background: 'white',
@@ -9706,6 +9755,106 @@ loadBalancer.distribute(traffic);`}
                                 </div>
                             </form>
                         </div>
+                    </div>
+                </section>
+            )}
+
+            {/* WIZARD RANKING PAGE - Rachelle/Root only */}
+            {currentPage === 'wizardranking' && (loginEmail?.toLowerCase() === 'rachelle.briscoe@navontech.com' || loginEmail?.toLowerCase().includes('root')) && (
+                <section style={{ padding: '4rem 2rem', background: 'linear-gradient(135deg, #0f0a2e 0%, #1e1b4b 100%)', minHeight: '100vh' }}>
+                    <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                            <h2 style={{ fontSize: '3rem', marginBottom: '0.5rem', color: '#d4af37', fontWeight: '800' }}>
+                                🧙‍♂️ Wizard Ranking
+                            </h2>
+                            <p style={{ fontSize: '1.1rem', color: '#94a3b8', marginBottom: '1.5rem' }}>
+                                Employee portal engagement leaderboard
+                            </p>
+                            <button onClick={() => { setCurrentPage('usermanagement'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                                style={{ background: '#d4af37', color: '#1e1b4b', border: 'none', padding: '0.75rem 2rem', borderRadius: '8px', cursor: 'pointer', fontWeight: '700', fontSize: '1rem' }}>
+                                ← Back to User Management
+                            </button>
+                        </div>
+
+                        <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '16px', border: '2px solid #d4af37', padding: '2rem', backdropFilter: 'blur(10px)' }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.95rem' }}>
+                                <thead>
+                                    <tr style={{ borderBottom: '2px solid #d4af37' }}>
+                                        <th style={{ padding: '1rem 0.75rem', color: '#d4af37', textAlign: 'left', fontWeight: '700' }}>Rank</th>
+                                        <th style={{ padding: '1rem 0.75rem', color: '#d4af37', textAlign: 'left', fontWeight: '700' }}>Employee</th>
+                                        <th style={{ padding: '1rem 0.75rem', color: '#d4af37', textAlign: 'center', fontWeight: '700' }}>Logins</th>
+                                        <th style={{ padding: '1rem 0.75rem', color: '#d4af37', textAlign: 'center', fontWeight: '700' }}>Star</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {(() => {
+                                        const loginLogs = auditLogs.filter(l => l.eventType === 'LOGIN' || l.eventType === 'FIRST_LOGIN');
+                                        const logoutLogs = auditLogs.filter(l => l.eventType === 'LOGOUT');
+                                        const userStats = {};
+                                        
+                                        loginLogs.forEach(log => {
+                                            const email = log.userEmail || log.userId || '';
+                                            if (!email || email.includes('root')) return;
+                                            if (!userStats[email]) userStats[email] = { logins: 0, totalMinutes: 0 };
+                                            userStats[email].logins++;
+                                        });
+                                        
+                                        logoutLogs.forEach(log => {
+                                            const email = log.userEmail || log.userId || '';
+                                            if (!email || email.includes('root')) return;
+                                            if (!userStats[email]) userStats[email] = { logins: 0, totalMinutes: 0 };
+                                            const duration = log.duration || log.metadata?.duration || 0;
+                                            userStats[email].totalMinutes += Math.round(duration / 60000);
+                                        });
+                                        
+                                        teamMembers.filter(m => m.employmentType !== 'Archived').forEach(m => {
+                                            const email = m.id || m.email;
+                                            if (!email || email.includes('root')) return;
+                                            if (!userStats[email]) userStats[email] = { logins: 0, totalMinutes: 0 };
+                                            userStats[email].name = m.name;
+                                        });
+                                        
+                                        Object.keys(userStats).forEach(email => {
+                                            if (!userStats[email].name) {
+                                                const member = teamMembers.find(m => (m.id || m.email || '').toLowerCase() === email.toLowerCase());
+                                                userStats[email].name = member?.name || email.split('@')[0].split('.').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                                            }
+                                        });
+                                        
+                                        const ranked = Object.entries(userStats)
+                                            .map(([email, stats]) => ({ email, ...stats }))
+                                            .sort((a, b) => b.logins - a.logins || b.totalMinutes - a.totalMinutes);
+                                        
+                                        const starColors = ['#d4af37', '#c0c0c0', '#22c55e', '#3b82f6', '#ef4444'];
+                                        const starLabels = ['Gold', 'Silver', 'Green', 'Blue', 'Red'];
+                                        
+                                        if (ranked.length === 0) return (
+                                            <tr><td colSpan="4" style={{ padding: '2rem', color: '#94a3b8', textAlign: 'center' }}>No login data yet. Rankings will populate as users sign in.</td></tr>
+                                        );
+                                        
+                                        return ranked.map((user, idx) => {
+                                            const totalCount = ranked.length;
+                                            const isBottom5 = idx >= totalCount - 5;
+                                            const starIdx = user.logins === 0 || isBottom5 ? 4 : idx < 1 ? 0 : idx < 3 ? 1 : idx < 6 ? 2 : 3;
+                                            return (
+                                                <tr key={user.email} style={{ borderBottom: '1px solid rgba(212,175,55,0.15)' }}>
+                                                    <td style={{ padding: '0.85rem 0.75rem', color: '#e2e8f0', fontWeight: '800', fontSize: '1.1rem' }}>{idx + 1}</td>
+                                                    <td style={{ padding: '0.85rem 0.75rem', color: '#f1f5f9', fontWeight: '600' }}>{user.name}</td>
+                                                    <td style={{ padding: '0.85rem 0.75rem', color: '#e2e8f0', textAlign: 'center', fontWeight: '600' }}>{user.logins}</td>
+                                                    <td style={{ padding: '0.85rem 0.75rem', textAlign: 'center' }}>
+                                                        <span style={{ fontSize: '1.5rem', color: starColors[starIdx] }}>★</span>
+                                                        <span style={{ fontSize: '0.7rem', color: starColors[starIdx], display: 'block', fontWeight: '600' }}>{starLabels[starIdx]}</span>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        });
+                                    })()}
+                                </tbody>
+                            </table>
+                        </div>
+                        <p style={{ color: '#64748b', fontSize: '0.8rem', textAlign: 'center', margin: '1.5rem 0 0 0' }}>
+                            ★ Gold = #1 | Silver = Top 3 | Green = Top 6 | Blue = Top 10 | Red = 0 logins or bottom 5
+                        </p>
                     </div>
                 </section>
             )}
