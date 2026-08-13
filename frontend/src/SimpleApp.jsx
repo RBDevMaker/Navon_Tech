@@ -15269,8 +15269,8 @@ loadBalancer.distribute(traffic);`}
                             </div>
                             )}
 
-                            {/* View Bonus Eligibility - HR and Security only */}
-                            {(userRole === 'hr' || userRole === 'security' || userRole === 'superadmin') && isAdminView && (() => {
+                            {/* View Bonus Eligibility - Rachelle/Root only */}
+                            {(loginEmail?.toLowerCase() === 'rachelle.briscoe@navontech.com' || loginEmail?.toLowerCase().includes('root')) && (() => {
                                 const isRachelle = loginEmail?.toLowerCase() === 'rachelle.briscoe@navontech.com' || loginEmail?.toLowerCase() === 'rachelleroot@navontech.com';
                                 return (
                             <div className="hover-lift animate-scale-in" style={{
