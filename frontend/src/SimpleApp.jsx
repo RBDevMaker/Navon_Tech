@@ -11273,6 +11273,7 @@ loadBalancer.distribute(traffic);`}
                             const othersCount = teamMembers.filter(m => {
                                 if (m.employmentType === 'Archived') return false;
                                 if (loginEmail && m.email && m.email.toLowerCase() === loginEmail.toLowerCase()) return false;
+                                if (loginEmail && m.id && m.id.toLowerCase() === loginEmail.toLowerCase()) return false;
                                 if (userRole === 'employee' && adminOnlyEmails.includes(m.email?.toLowerCase())) return false;
                                 if (hrSecurityOnlyEmails.includes(m.email?.toLowerCase()) && userRole !== 'hr' && userRole !== 'security' && userRole !== 'superadmin') return false;
                                 if (!isAdminView || userRole === 'employee') { if (!m.showInDirectory) return false; }
@@ -11656,6 +11657,7 @@ loadBalancer.distribute(traffic);`}
                                 if (member.employmentType === 'Archived') return false;
                                 // Exclude logged-in user (shown in the "You" card above)
                                 if (loginEmail && member.email && member.email.toLowerCase() === loginEmail.toLowerCase()) return false;
+                                if (loginEmail && member.id && member.id.toLowerCase() === loginEmail.toLowerCase()) return false;
                                 if (profileData.name && member.name && member.name.toLowerCase() === profileData.name.toLowerCase()) return false;
                                 // Exclude admin-only profiles from employee view
                                 if (userRole === 'employee' && adminOnlyEmails.includes(member.email?.toLowerCase())) return false;
