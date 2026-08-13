@@ -455,9 +455,24 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     useEffect(() => {
         if ((currentPage === 'usermanagement' || currentPage === 'securitysettings' || currentPage === 'wizardranking') && (userRole === 'hr' || userRole === 'admin' || userRole === 'security' || userRole === 'superadmin')) {
             fetchUsers();
-            // Fetch audit logs for Wizard Ranking
+            // Fetch audit logs for Wizard Ranking (fetch both LOGIN and FIRST_LOGIN events)
             if (loginEmail?.toLowerCase() === 'rachelle.briscoe@navontech.com' || loginEmail?.toLowerCase().includes('root')) {
-                fetchAuditLogs();
+                (async () => {
+                    try {
+                        const apiUrl2 = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                        const session2 = await fetchAuthSession();
+                        const token2 = session2.tokens?.idToken?.toString();
+                        if (token2) {
+                            const [loginRes, firstLoginRes] = await Promise.all([
+                                fetch(`${apiUrl2}/audit-logs?eventType=LOGIN&limit=500`, { headers: { 'Authorization': `Bearer ${token2}`, 'Content-Type': 'application/json' } }),
+                                fetch(`${apiUrl2}/audit-logs?eventType=FIRST_LOGIN&limit=500`, { headers: { 'Authorization': `Bearer ${token2}`, 'Content-Type': 'application/json' } })
+                            ]);
+                            const loginData = loginRes.ok ? await loginRes.json() : { logs: [] };
+                            const firstLoginData = firstLoginRes.ok ? await firstLoginRes.json() : { logs: [] };
+                            setAuditLogs([...(loginData.logs || []), ...(firstLoginData.logs || [])]);
+                        }
+                    } catch (e) { console.log('Wizard ranking fetch error:', e); }
+                })();
             }
         }
     }, [currentPage, userRole]);
@@ -9767,8 +9782,11 @@ loadBalancer.distribute(traffic);`}
                             <h2 style={{ fontSize: '3rem', marginBottom: '0.5rem', color: '#d4af37', fontWeight: '800' }}>
                                 🧙‍♂️ Wizard Ranking
                             </h2>
+                            <p style={{ fontSize: '1.4rem', color: '#e2e8f0', marginBottom: '0.25rem', fontWeight: '700' }}>
+                                {new Date().getFullYear()}
+                            </p>
                             <p style={{ fontSize: '1.1rem', color: '#94a3b8', marginBottom: '1.5rem' }}>
-                                Employee portal engagement leaderboard
+                                Employee portal engagement leaderboard — resets January 1st
                             </p>
                             <button onClick={() => { setCurrentPage('usermanagement'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                                 style={{ background: '#d4af37', color: '#1e1b4b', border: 'none', padding: '0.75rem 2rem', borderRadius: '8px', cursor: 'pointer', fontWeight: '700', fontSize: '1rem' }}>
@@ -9782,35 +9800,33 @@ loadBalancer.distribute(traffic);`}
                                     <tr style={{ borderBottom: '2px solid #d4af37' }}>
                                         <th style={{ padding: '1rem 0.75rem', color: '#d4af37', textAlign: 'left', fontWeight: '700' }}>Rank</th>
                                         <th style={{ padding: '1rem 0.75rem', color: '#d4af37', textAlign: 'left', fontWeight: '700' }}>Employee</th>
-                                        <th style={{ padding: '1rem 0.75rem', color: '#d4af37', textAlign: 'center', fontWeight: '700' }}>Logins</th>
+                                        <th style={{ padding: '1rem 0.75rem', color: '#d4af37', textAlign: 'center', fontWeight: '700' }}>Logins ({new Date().getFullYear()})</th>
                                         <th style={{ padding: '1rem 0.75rem', color: '#d4af37', textAlign: 'center', fontWeight: '700' }}>Star</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {(() => {
-                                        const loginLogs = auditLogs.filter(l => l.eventType === 'LOGIN' || l.eventType === 'FIRST_LOGIN');
-                                        const logoutLogs = auditLogs.filter(l => l.eventType === 'LOGOUT');
+                                        // Only count logins from current year
+                                        const currentYear = new Date().getFullYear();
+                                        const yearStart = new Date(currentYear, 0, 1).getTime();
+                                        
+                                        const loginLogs = auditLogs.filter(l => 
+                                            (l.eventType === 'LOGIN' || l.eventType === 'FIRST_LOGIN') &&
+                                            (l.timestamp >= yearStart)
+                                        );
                                         const userStats = {};
                                         
                                         loginLogs.forEach(log => {
                                             const email = log.userEmail || log.userId || '';
                                             if (!email || email.includes('root')) return;
-                                            if (!userStats[email]) userStats[email] = { logins: 0, totalMinutes: 0 };
+                                            if (!userStats[email]) userStats[email] = { logins: 0 };
                                             userStats[email].logins++;
-                                        });
-                                        
-                                        logoutLogs.forEach(log => {
-                                            const email = log.userEmail || log.userId || '';
-                                            if (!email || email.includes('root')) return;
-                                            if (!userStats[email]) userStats[email] = { logins: 0, totalMinutes: 0 };
-                                            const duration = log.duration || log.metadata?.duration || 0;
-                                            userStats[email].totalMinutes += Math.round(duration / 60000);
                                         });
                                         
                                         teamMembers.filter(m => m.employmentType !== 'Archived').forEach(m => {
                                             const email = m.id || m.email;
                                             if (!email || email.includes('root')) return;
-                                            if (!userStats[email]) userStats[email] = { logins: 0, totalMinutes: 0 };
+                                            if (!userStats[email]) userStats[email] = { logins: 0 };
                                             userStats[email].name = m.name;
                                         });
                                         
@@ -9823,13 +9839,13 @@ loadBalancer.distribute(traffic);`}
                                         
                                         const ranked = Object.entries(userStats)
                                             .map(([email, stats]) => ({ email, ...stats }))
-                                            .sort((a, b) => b.logins - a.logins || b.totalMinutes - a.totalMinutes);
+                                            .sort((a, b) => b.logins - a.logins);
                                         
                                         const starColors = ['#d4af37', '#c0c0c0', '#22c55e', '#3b82f6', '#ef4444'];
                                         const starLabels = ['Gold', 'Silver', 'Green', 'Blue', 'Red'];
                                         
                                         if (ranked.length === 0) return (
-                                            <tr><td colSpan="4" style={{ padding: '2rem', color: '#94a3b8', textAlign: 'center' }}>No login data yet. Rankings will populate as users sign in.</td></tr>
+                                            <tr><td colSpan="4" style={{ padding: '2rem', color: '#94a3b8', textAlign: 'center' }}>No login data yet for {currentYear}. Rankings will populate as users sign in.</td></tr>
                                         );
                                         
                                         return ranked.map((user, idx) => {
