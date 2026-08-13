@@ -102,6 +102,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [complianceSearch, setComplianceSearch] = useState(''); // Search for candidate summaries
     const [complianceSort, setComplianceSort] = useState('newest'); // Sort candidate summaries by date
     const [resumeSearchQuery, setResumeSearchQuery] = useState(''); // Search for resumes by candidate name
+    const [lastLoginTime, setLastLoginTime] = useState(null); // Last login timestamp for display
     
     // User management states
     const [showManageUsersModal, setShowManageUsersModal] = useState(false);
@@ -6651,6 +6652,16 @@ loadBalancer.distribute(traffic);`}
                                 }}>
                                     Welcome, {loginEmail.split('@')[0].split('.')[0].charAt(0).toUpperCase() + loginEmail.split('@')[0].split('.')[0].slice(1)}! 👋
                                 </h3>
+                            )}
+                            {loginEmail && (
+                                <p style={{
+                                    margin: '0.5rem 0 0 0',
+                                    fontSize: '0.9rem',
+                                    color: 'rgba(255,255,255,0.7)',
+                                    textAlign: 'left'
+                                }}>
+                                    Last Login: {lastLoginTime ? new Date(lastLoginTime).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}
+                                </p>
                             )}
                         </div>
 
@@ -17120,6 +17131,12 @@ loadBalancer.distribute(traffic);`}
                                                 }
                                             } catch (logErr) { console.log('Audit log failed:', logErr); }
                                             
+                                            // Track last login time via localStorage
+                                            const lastLoginKey = `lastLogin_${email.toLowerCase()}`;
+                                            const previousLogin = localStorage.getItem(lastLoginKey);
+                                            if (previousLogin) setLastLoginTime(previousLogin);
+                                            localStorage.setItem(lastLoginKey, new Date().toISOString());
+                                            
                                             setCurrentPage('secureportal');
                                             setShowWelcomeGuide(true);
                                             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -17348,6 +17365,12 @@ loadBalancer.distribute(traffic);`}
                                             }
                                         }
                                     } catch (logErr) { console.log('Audit log failed:', logErr); }
+                                    
+                                    // Track last login time via localStorage
+                                    const lastLoginKey = `lastLogin_${email.toLowerCase()}`;
+                                    const previousLogin = localStorage.getItem(lastLoginKey);
+                                    if (previousLogin) setLastLoginTime(previousLogin);
+                                    localStorage.setItem(lastLoginKey, new Date().toISOString());
                                     
                                     setCurrentPage('secureportal');
                                     window.scrollTo({ top: 0, behavior: 'smooth' });
