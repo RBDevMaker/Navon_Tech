@@ -143,7 +143,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [resumeDocFiles, setResumeDocFiles] = useState([]);
     const [isLoadingResumeDocs, setIsLoadingResumeDocs] = useState(false);
     const [resumeDocSort, setResumeDocSort] = useState('newest');
-    const [referralSort, setReferralSort] = useState('pipeline-desc');
+    const [referralSort, setReferralSort] = useState('hired-oldest');
     
     // Referral tracking - derived from ATS resumes with "Employee Referral" in notes
     const getReferralsFromATS = () => {
@@ -15932,8 +15932,10 @@ loadBalancer.distribute(traffic);`}
                             <select value={referralSort} onChange={(e) => setReferralSort(e.target.value)} style={{ padding: '0.5rem 1rem', borderRadius: '6px', border: '2px solid #d4af37', fontSize: '0.85rem', cursor: 'pointer', fontWeight: '600' }}>
                                 <option value="pipeline-desc">📊 Pipeline Stage (180 Days → Submitted)</option>
                                 <option value="pipeline-asc">📊 Pipeline Stage (Submitted → 180 Days)</option>
-                                <option value="newest">📅 Newest Referral First</option>
-                                <option value="oldest">📅 Oldest Referral First</option>
+                                <option value="hired-newest">📅 Hired Date (Newest First)</option>
+                                <option value="hired-oldest">📅 Hired Date (Oldest First)</option>
+                                <option value="newest">📅 Referred Date (Newest First)</option>
+                                <option value="oldest">📅 Referred Date (Oldest First)</option>
                                 <option value="name-asc">🔤 Name A→Z</option>
                                 <option value="name-desc">🔤 Name Z→A</option>
                             </select>
@@ -15944,8 +15946,31 @@ loadBalancer.distribute(traffic);`}
                         <div style={{ display: 'grid', gap: '1.5rem' }}>
                             {[...getReferralsFromATS()].sort((a, b) => {
                                 const stageOrder = ['Submitted', 'Under Review', 'Interview Scheduled', 'Offer Extended', 'Hired', '30 Days ✓', '90 Days 💸', '180 Days 💸💸'];
-                                if (referralSort === 'pipeline-desc') return stageOrder.indexOf(b.stage) - stageOrder.indexOf(a.stage);
-                                if (referralSort === 'pipeline-asc') return stageOrder.indexOf(a.stage) - stageOrder.indexOf(b.stage);
+                                if (referralSort === 'pipeline-desc') {
+                                    const stageDiff = stageOrder.indexOf(b.stage) - stageOrder.indexOf(a.stage);
+                                    if (stageDiff !== 0) return stageDiff;
+                                    // Within same stage, sort by hired date (newest first), then referred date
+                                    if (a.hiredDate && b.hiredDate) return new Date(b.hiredDate) - new Date(a.hiredDate);
+                                    return new Date(b.referredDate || 0) - new Date(a.referredDate || 0);
+                                }
+                                if (referralSort === 'pipeline-asc') {
+                                    const stageDiff = stageOrder.indexOf(a.stage) - stageOrder.indexOf(b.stage);
+                                    if (stageDiff !== 0) return stageDiff;
+                                    if (a.hiredDate && b.hiredDate) return new Date(a.hiredDate) - new Date(b.hiredDate);
+                                    return new Date(a.referredDate || 0) - new Date(b.referredDate || 0);
+                                }
+                                if (referralSort === 'hired-newest') {
+                                    if (a.hiredDate && b.hiredDate) return new Date(b.hiredDate) - new Date(a.hiredDate);
+                                    if (a.hiredDate) return -1;
+                                    if (b.hiredDate) return 1;
+                                    return new Date(b.referredDate || 0) - new Date(a.referredDate || 0);
+                                }
+                                if (referralSort === 'hired-oldest') {
+                                    if (a.hiredDate && b.hiredDate) return new Date(a.hiredDate) - new Date(b.hiredDate);
+                                    if (a.hiredDate) return -1;
+                                    if (b.hiredDate) return 1;
+                                    return new Date(a.referredDate || 0) - new Date(b.referredDate || 0);
+                                }
                                 if (referralSort === 'newest') return new Date(b.referredDate || 0) - new Date(a.referredDate || 0);
                                 if (referralSort === 'oldest') return new Date(a.referredDate || 0) - new Date(b.referredDate || 0);
                                 if (referralSort === 'name-asc') return (a.candidateName || '').localeCompare(b.candidateName || '');
