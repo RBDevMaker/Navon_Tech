@@ -9129,39 +9129,6 @@ loadBalancer.distribute(traffic);`}
                                             </div>
                                         </div>
                                     </label>
-                                    
-                                    {/* Show Title checkbox */}
-                                    <label style={{
-                                        display: 'flex',
-                                        alignItems: 'flex-start',
-                                        cursor: 'pointer',
-                                        fontSize: '1rem',
-                                        color: '#334155',
-                                        marginTop: '1rem'
-                                    }}>
-                                        <input
-                                            type="checkbox"
-                                            name="showTitleInDirectory"
-                                            checked={profileData.showTitleInDirectory || false}
-                                            onChange={(e) => setProfileData(prev => ({ ...prev, showTitleInDirectory: e.target.checked }))}
-                                            style={{
-                                                width: '20px',
-                                                height: '20px',
-                                                marginRight: '1rem',
-                                                marginTop: '0.25rem',
-                                                cursor: 'pointer',
-                                                accentColor: '#1e3a8a'
-                                            }}
-                                        />
-                                        <div>
-                                            <div style={{ fontWeight: '600', marginBottom: '0.5rem' }}>
-                                                Show Job Title in Directory
-                                            </div>
-                                            <div style={{ fontSize: '0.9rem', color: '#64748b', lineHeight: '1.5' }}>
-                                                When enabled, your <strong>Job Title</strong> will also be visible to other employees in the directory.
-                                            </div>
-                                        </div>
-                                    </label>
                                 </div>
 
                                 {/* Request Password Reset - for all users */}
@@ -11419,7 +11386,7 @@ loadBalancer.distribute(traffic);`}
                                                         </span>
                                                     </div>
                                                     <div style={{ color: '#64748b', fontSize: '0.9rem' }}>
-                                                        {(isAdminView || userRole !== 'employee') ? `👤 ${profileData.title || 'Your Title'}` : ''}
+                                                        {profileData.title ? `👤 ${profileData.title}` : (isAdminView || userRole !== 'employee') ? '👤 Your Title' : ''}
                                                     </div>
 
                                                 </div>
@@ -11777,7 +11744,7 @@ loadBalancer.distribute(traffic);`}
                                                     <div style={{ fontWeight: '600', color: '#1e3a8a' }}>{member.name || member.email}</div>
                                                     {(isAdminView && userRole !== 'employee') ? (
                                                         <div style={{ color: '#64748b', fontSize: '0.9rem' }}>👤 {member.title || 'Employee'}</div>
-                                                    ) : member.showTitleInDirectory && member.title ? (
+                                                    ) : member.title ? (
                                                         <div style={{ color: '#64748b', fontSize: '0.9rem' }}>👤 {member.title}</div>
                                                     ) : null}
                                                 </div>
@@ -11816,7 +11783,10 @@ loadBalancer.distribute(traffic);`}
                                                 {isAdminView && userRole !== 'employee' && member.location && (
                                                     <div style={{ marginBottom: '0.5rem' }}>🏢 {member.location}</div>
                                                 )}
-                                                <div style={{ marginBottom: '0.5rem' }}>📧 {member.email}</div>
+                                                <div style={{ marginBottom: '0.5rem' }}>📧 {member.id || member.email}</div>
+                                                {(userRole === 'hr' || userRole === 'security' || userRole === 'superadmin' || loginEmail?.toLowerCase().includes('root')) && isAdminView && member.email && member.email !== member.id && (
+                                                    <div style={{ marginBottom: '0.5rem' }}>📧 Personal: {member.email}</div>
+                                                )}
                                                 {(userRole === 'hr' || userRole === 'admin' || userRole === 'security' || userRole === 'superadmin') && isAdminView && (
                                                     <>
                                                         {member.phone && (
@@ -12000,7 +11970,7 @@ loadBalancer.distribute(traffic);`}
                                                         <div style={{ flex: 1 }}>
                                                             <div style={{ fontWeight: '700', color: '#64748b', fontSize: '1rem' }}>{member.name}</div>
                                                             <div style={{ color: '#94a3b8', fontSize: '0.85rem' }}>{member.title || 'No title'}</div>
-                                                            <div style={{ color: '#94a3b8', fontSize: '0.8rem' }}>{member.email}</div>
+                                                            <div style={{ color: '#94a3b8', fontSize: '0.8rem' }}>{member.id || member.email}</div>
                                                         </div>
                                                         <span style={{
                                                             background: '#fee2e2', color: '#991b1b',
@@ -12218,7 +12188,10 @@ loadBalancer.distribute(traffic);`}
                         <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '10px', marginBottom: '1rem', border: '1px solid #e2e8f0' }}>
                             <h3 style={{ margin: '0 0 0.75rem 0', color: '#1e3a8a', fontSize: '1rem' }}>💼 Employment Information</h3>
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.85rem', color: '#475569' }}>
-                                <div>📧 {selectedEmployee.email}</div>
+                                <div>📧 {selectedEmployee.id || selectedEmployee.email}</div>
+                                {(userRole === 'hr' || userRole === 'security' || userRole === 'superadmin' || loginEmail?.toLowerCase().includes('root')) && isAdminView && selectedEmployee.email && selectedEmployee.email !== selectedEmployee.id && (
+                                    <div>📧 Personal: {selectedEmployee.email}</div>
+                                )}
                                 {false && selectedEmployee.department && <div>{selectedEmployee.department}</div>}
                                 {selectedEmployee.location && <div>{selectedEmployee.location.toLowerCase().includes('headquarters') ? '🏢' : '📍'} {selectedEmployee.location}</div>}
                                 {selectedEmployee.phone && isAdminView && <div>📱 {selectedEmployee.phone}</div>}
