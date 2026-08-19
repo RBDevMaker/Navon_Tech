@@ -151,7 +151,7 @@ exports.handler = async (event) => {
 
         // Handle Cleared Candidate Summary notification
         if (body.type === 'candidate-summary-notification') {
-            const { candidateName, clearanceLevel, recruiter, conversationDate, notifyEmail } = body;
+            const { candidateName, clearanceLevel, recruiter, conversationDate, summaryUrl, notifyEmail } = body;
             
             const subject = `📝 Cleared Candidate Summary for Review — ${candidateName}`;
             const htmlBody = `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
@@ -169,8 +169,11 @@ exports.handler = async (event) => {
                         <p style="margin:4px 0;font-size:14px;"><strong>Recruiter:</strong> ${recruiter || 'Not specified'}</p>
                         <p style="margin:4px 0;font-size:14px;"><strong>Date of Conversation:</strong> ${conversationDate || 'Not specified'}</p>
                     </div>
-                    <div style="text-align:center;margin-bottom:20px;">
-                        <a href="https://navontech.com/#compliancesecurity?candidate=${encodeURIComponent(candidateName)}" style="display:inline-block;background:linear-gradient(135deg,#1e3a8a,#3b82f6);color:white;text-decoration:none;padding:12px 30px;border-radius:8px;font-size:15px;font-weight:700;">📝 View Summary →</a>
+                    <div style="text-align:center;margin-bottom:12px;">
+                        ${summaryUrl ? `<a href="${summaryUrl}" style="display:inline-block;background:linear-gradient(135deg,#1e3a8a,#3b82f6);color:white;text-decoration:none;padding:12px 30px;border-radius:8px;font-size:15px;font-weight:700;">📝 Open Summary Document →</a>` : ''}
+                    </div>
+                    <div style="text-align:center;margin-bottom:12px;">
+                        <a href="https://navontech.com/#compliancesecurity?candidate=${encodeURIComponent(candidateName)}" style="display:inline-block;background:#475569;color:white;text-decoration:none;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;">🛡️ View in Portal</a>
                     </div>
                     <div style="text-align:center;margin-bottom:20px;">
                         <a href="https://navontech.com/#resumes?candidate=${encodeURIComponent(candidateName)}" style="display:inline-block;background:#059669;color:white;text-decoration:none;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;margin-right:8px;">📄 View Resume</a>

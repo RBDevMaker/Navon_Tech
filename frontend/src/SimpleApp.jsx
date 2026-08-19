@@ -14048,6 +14048,7 @@ loadBalancer.distribute(traffic);`}
 
                                 // Send notification email to security
                                 try {
+                                    const summaryUrl = `https://navon-tech-images.s3.us-east-1.amazonaws.com/Documents/Compliance-Security/${pdfFileName}`;
                                     await fetch(`${apiUrl}/apply`, {
                                         method: 'POST',
                                         headers: { 'Content-Type': 'application/json' },
@@ -14057,6 +14058,7 @@ loadBalancer.distribute(traffic);`}
                                             clearanceLevel: g('clearanceLevel'),
                                             recruiter: g('recruiter'),
                                             conversationDate: g('conversationDate'),
+                                            summaryUrl,
                                             notifyEmail: 'security@navontech.com'
                                         })
                                     });
