@@ -231,6 +231,9 @@ exports.handler = async (event) => {
                             <li>Forward to <strong>rachelle.briscoe@navontech.com</strong> to create company email</li>
                         </ol>
                     </div>
+                    <div style="text-align:center;margin-top:16px;">
+                        <a href="https://navon-tech-images.s3.us-east-1.amazonaws.com/Documents/Forms/New-Hire-Onboarding-Form.html" download="New-Hire-Onboarding-Blank-Form.html" style="display:inline-block;background:#f8fafc;color:#1e3a8a;text-decoration:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;border:2px solid #e2e8f0;">📥 Download Blank Form for Future Use</a>
+                    </div>
                 </div>
                 <div style="background:#1e293b;padding:20px;text-align:center;border-radius:0 0 12px 12px;">
                     <p style="color:#d4af37;font-size:12px;margin:0;font-weight:600;">NAVON TECHNOLOGIES</p>
@@ -246,6 +249,41 @@ exports.handler = async (event) => {
                     Body: { Html: { Data: htmlBody, Charset: 'UTF-8' } }
                 }
             }));
+
+            // Send heads-up notification to Rachelle and Yahvinah
+            const headsUpSubject = `🎉 New Hire Alert: ${candidateName} — Onboarding Form Sent to Brian`;
+            const headsUpHtml = `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+                <div style="background:linear-gradient(135deg,#1e3a8a,#3b82f6);padding:30px;text-align:center;border-radius:12px 12px 0 0;">
+                    <h1 style="color:#d4af37;margin:0;font-size:24px;">NAVON TECHNOLOGIES</h1>
+                    <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:13px;letter-spacing:2px;">NEW HIRE ALERT</p>
+                </div>
+                <div style="background:#d4af37;height:4px;"></div>
+                <div style="padding:30px;background:white;border:1px solid #e2e8f0;">
+                    <h2 style="color:#1e3a8a;margin:0 0 16px;">🎉 New Hire: ${candidateName}</h2>
+                    <p style="color:#334155;font-size:15px;line-height:1.6;margin:0 0 20px;">Brian has been sent the <strong>New Hire Onboarding Form</strong> for the employee listed below. Expect the completed form to be forwarded to you shortly.</p>
+                    <div style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:8px;padding:20px;margin-bottom:20px;">
+                        <p style="margin:4px 0;font-size:14px;"><strong>New Hire:</strong> ${candidateName}</p>
+                        <p style="margin:4px 0;font-size:14px;"><strong>Position:</strong> ${position || 'To be confirmed by Brian'}</p>
+                        <p style="margin:4px 0;font-size:14px;"><strong>Start Date:</strong> ${hiredDate || 'To be confirmed by Brian'}</p>
+                    </div>
+                    <p style="color:#64748b;font-size:13px;">Once Brian forwards the completed form, proceed with Rippling onboarding and company email creation.</p>
+                </div>
+                <div style="background:#1e293b;padding:20px;text-align:center;border-radius:0 0 12px 12px;">
+                    <p style="color:#d4af37;font-size:12px;margin:0;font-weight:600;">NAVON TECHNOLOGIES</p>
+                    <p style="color:#94a3b8;font-size:11px;margin:4px 0 0;">Confidential — For internal use only</p>
+                </div>
+            </div>`;
+
+            for (const hrEmail of ['yahvinah.bryant@navontech.com', 'rachelle.briscoe@navontech.com']) {
+                await sesClient.send(new SendEmailCommand({
+                    Source: 'hr@navontech.com',
+                    Destination: { ToAddresses: [hrEmail] },
+                    Message: {
+                        Subject: { Data: headsUpSubject, Charset: 'UTF-8' },
+                        Body: { Html: { Data: headsUpHtml, Charset: 'UTF-8' } }
+                    }
+                }));
+            }
 
             return {
                 statusCode: 200,
