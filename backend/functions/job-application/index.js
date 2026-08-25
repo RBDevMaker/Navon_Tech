@@ -149,6 +149,111 @@ exports.handler = async (event) => {
             };
         }
 
+        // Handle new hire onboarding form notification to CEO
+        if (body.type === 'new-hire-onboarding-form') {
+            const { candidateName, position, hiredDate, notifyEmail } = body;
+            
+            const subject = `🎉 New Hire Onboarding Form — ${candidateName} — Please Complete & Forward`;
+            const htmlBody = `<div style="font-family:Arial,sans-serif;max-width:650px;margin:0 auto;">
+                <div style="background:linear-gradient(135deg,#1e3a8a,#3b82f6);padding:30px;text-align:center;border-radius:12px 12px 0 0;">
+                    <h1 style="color:#d4af37;margin:0;font-size:24px;">NAVON TECHNOLOGIES</h1>
+                    <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:13px;letter-spacing:2px;">NEW HIRE ONBOARDING FORM</p>
+                </div>
+                <div style="background:#d4af37;height:4px;"></div>
+                <div style="padding:30px;background:white;border:1px solid #e2e8f0;">
+                    <h2 style="color:#1e3a8a;margin:0 0 16px;">🎉 ${candidateName} Has Been Hired!</h2>
+                    <p style="color:#334155;font-size:15px;line-height:1.6;margin:0 0 8px;">Please fill in the blanks below, then <strong>forward this email</strong> to:</p>
+                    <p style="color:#1e3a8a;font-size:15px;font-weight:700;margin:0 0 20px;">📧 yahvinah.bryant@navontech.com</p>
+                    
+                    <table style="width:100%;border-collapse:collapse;border:2px solid #e2e8f0;border-radius:8px;">
+                        <tr style="background:#f8fafc;">
+                            <td colspan="2" style="padding:12px 16px;font-weight:700;color:#1e3a8a;font-size:15px;border-bottom:2px solid #d4af37;">Employee Information</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid #e2e8f0;">
+                            <td style="padding:12px 16px;font-weight:600;color:#334155;width:180px;">Full Name:</td>
+                            <td style="padding:12px 16px;color:#64748b;">${candidateName || '________________________'}</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid #e2e8f0;">
+                            <td style="padding:12px 16px;font-weight:600;color:#334155;">Title / Position:</td>
+                            <td style="padding:12px 16px;color:#94a3b8;">${position || '________________________'}</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid #e2e8f0;">
+                            <td style="padding:12px 16px;font-weight:600;color:#334155;">Personal Email:</td>
+                            <td style="padding:12px 16px;color:#94a3b8;">________________________</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid #e2e8f0;">
+                            <td style="padding:12px 16px;font-weight:600;color:#334155;">Start Date:</td>
+                            <td style="padding:12px 16px;color:#94a3b8;">${hiredDate || '________________________'}</td>
+                        </tr>
+                        <tr style="background:#f8fafc;">
+                            <td colspan="2" style="padding:12px 16px;font-weight:700;color:#1e3a8a;font-size:15px;border-bottom:2px solid #d4af37;border-top:2px solid #e2e8f0;">Position Details</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid #e2e8f0;">
+                            <td style="padding:12px 16px;font-weight:600;color:#334155;">Level:</td>
+                            <td style="padding:12px 16px;color:#94a3b8;">________________________<br><span style="font-size:12px;color:#94a3b8;">(Junior / Mid / Senior / Lead / Expert / Principal / Manager / Director / VP)</span></td>
+                        </tr>
+                        <tr style="border-bottom:1px solid #e2e8f0;">
+                            <td style="padding:12px 16px;font-weight:600;color:#334155;">Team / Prime:</td>
+                            <td style="padding:12px 16px;color:#94a3b8;">________________________<br><span style="font-size:12px;color:#94a3b8;">(Arcfield / Nightwing / SAIC / GDIT / Overhead / BD / HR / Marketing)</span></td>
+                        </tr>
+                        <tr style="border-bottom:1px solid #e2e8f0;">
+                            <td style="padding:12px 16px;font-weight:600;color:#334155;">Hourly Rate:</td>
+                            <td style="padding:12px 16px;color:#94a3b8;">$ ________________________</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid #e2e8f0;">
+                            <td style="padding:12px 16px;font-weight:600;color:#334155;">Job Code (optional):</td>
+                            <td style="padding:12px 16px;color:#94a3b8;">________________________<br><br>________________________<br><br>________________________</td>
+                        </tr>
+                        <tr style="background:#f8fafc;">
+                            <td colspan="2" style="padding:12px 16px;font-weight:700;color:#1e3a8a;font-size:15px;border-bottom:2px solid #d4af37;border-top:2px solid #e2e8f0;">Benefits</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid #e2e8f0;">
+                            <td style="padding:12px 16px;font-weight:600;color:#334155;">Benefits Package:</td>
+                            <td style="padding:12px 16px;color:#94a3b8;">________________________<br><span style="font-size:12px;color:#94a3b8;">(Full Benefits / Partial / None)</span></td>
+                        </tr>
+                        <tr style="border-bottom:1px solid #e2e8f0;">
+                            <td style="padding:12px 16px;font-weight:600;color:#334155;">If partial, which:</td>
+                            <td style="padding:12px 16px;color:#94a3b8;">________________________<br><br>________________________<br><span style="font-size:12px;color:#94a3b8;">(Medical / Dental / Vision / 401k / PTO / Life / STD / LTD)</span></td>
+                        </tr>
+                        <tr style="background:#f8fafc;">
+                            <td colspan="2" style="padding:12px 16px;font-weight:700;color:#1e3a8a;font-size:15px;border-bottom:2px solid #d4af37;border-top:2px solid #e2e8f0;">Additional Notes</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="padding:12px 16px;color:#94a3b8;">________________________<br><br>________________________<br><br>________________________<br><span style="font-size:12px;color:#94a3b8;">(Equipment needs, remote/hybrid, clearance status, etc.)</span></td>
+                        </tr>
+                    </table>
+
+                    <div style="background:#fef3c7;border:2px solid #fbbf24;border-radius:8px;padding:16px;margin-top:20px;">
+                        <p style="color:#92400e;font-size:14px;margin:0;font-weight:600;">📝 Instructions:</p>
+                        <ol style="color:#92400e;font-size:13px;line-height:2;margin:8px 0 0;padding-left:20px;">
+                            <li>Click in the blank areas above and type your answers</li>
+                            <li>Forward this email to <strong>yahvinah.bryant@navontech.com</strong></li>
+                            <li>Forward to <strong>rachelle.briscoe@navontech.com</strong> to create company email</li>
+                        </ol>
+                    </div>
+                </div>
+                <div style="background:#1e293b;padding:20px;text-align:center;border-radius:0 0 12px 12px;">
+                    <p style="color:#d4af37;font-size:12px;margin:0;font-weight:600;">NAVON TECHNOLOGIES</p>
+                    <p style="color:#94a3b8;font-size:11px;margin:4px 0 0;">Confidential — For internal use only</p>
+                </div>
+            </div>`;
+
+            await sesClient.send(new SendEmailCommand({
+                Source: 'hr@navontech.com',
+                Destination: { ToAddresses: [notifyEmail] },
+                Message: {
+                    Subject: { Data: subject, Charset: 'UTF-8' },
+                    Body: { Html: { Data: htmlBody, Charset: 'UTF-8' } }
+                }
+            }));
+
+            return {
+                statusCode: 200,
+                headers: CORS_HEADERS,
+                body: JSON.stringify({ message: 'New hire onboarding form sent to CEO' })
+            };
+        }
+
         // Handle Cleared Candidate Summary notification
         if (body.type === 'candidate-summary-notification') {
             const { candidateName, clearanceLevel, recruiter, conversationDate, summaryUrl, notifyEmail } = body;

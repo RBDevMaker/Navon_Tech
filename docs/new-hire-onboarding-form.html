@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New Hire Onboarding Form - Navon Technologies</title>
+<style>
+    body { margin: 0; padding: 40px 20px; background: #f1f5f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    .container { max-width: 700px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.1); }
+    .header { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); padding: 40px; text-align: center; }
+    .header h1 { color: #d4af37; font-size: 28px; margin: 0 0 8px; font-weight: 800; letter-spacing: 1px; }
+    .header p { color: rgba(255,255,255,0.9); font-size: 14px; margin: 0; letter-spacing: 2px; }
+    .gold-bar { background: #d4af37; height: 4px; }
+    .body-content { padding: 40px; }
+    .intro { color: #334155; font-size: 15px; line-height: 1.6; margin: 0 0 24px; }
+    .form-section { margin-bottom: 24px; padding: 20px; background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px; }
+    .form-section h3 { color: #1e3a8a; font-size: 16px; margin: 0 0 16px; border-bottom: 2px solid #d4af37; padding-bottom: 8px; }
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-weight: 600; color: #334155; margin-bottom: 6px; font-size: 14px; }
+    .field input, .field select, .field textarea { width: 100%; padding: 10px 14px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 14px; box-sizing: border-box; font-family: inherit; }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: #1e3a8a; outline: none; box-shadow: 0 0 0 3px rgba(30,58,138,0.1); }
+    .field textarea { min-height: 80px; resize: vertical; }
+    .field .hint { font-size: 12px; color: #64748b; margin-top: 4px; }
+    .checkbox-group { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+    .checkbox-group label { display: flex; align-items: center; gap: 6px; font-weight: 400; font-size: 14px; color: #334155; cursor: pointer; }
+    .checkbox-group input[type="checkbox"], .checkbox-group input[type="radio"] { width: 18px; height: 18px; accent-color: #1e3a8a; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .submit-section { text-align: center; margin-top: 24px; padding: 20px; background: #eff6ff; border: 2px solid #93c5fd; border-radius: 12px; }
+    .submit-section p { color: #1e40af; font-size: 14px; margin: 0 0 8px; }
+    .submit-section strong { color: #1e3a8a; }
+    .footer { background: #1e293b; padding: 24px 40px; text-align: center; }
+    .footer p { margin: 0; }
+    .footer .brand { color: #d4af37; font-size: 12px; font-weight: 600; letter-spacing: 1px; margin-bottom: 8px; }
+    .footer .legal { color: #94a3b8; font-size: 11px; }
+    @media print {
+        body { padding: 0; background: white; }
+        .container { box-shadow: none; border-radius: 0; }
+        .field input, .field select, .field textarea { border: 1px solid #ccc; }
+    }
+    @media (max-width: 600px) {
+        .row { grid-template-columns: 1fr; }
+        .body-content { padding: 24px; }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>NAVON TECHNOLOGIES</h1>
+        <p>NEW HIRE ONBOARDING FORM</p>
+    </div>
+    <div class="gold-bar"></div>
+    <div class="body-content">
+        <p class="intro">
+            Please complete this form for each new hire so HR can process onboarding in Rippling. Once filled out, email this form to <strong>rachelle.briscoe@navontech.com</strong> and <strong>yahvinah.bryant@navontech.com</strong>.
+        </p>
+
+        <div class="form-section">
+            <h3>Employee Information</h3>
+            <div class="row">
+                <div class="field">
+                    <label>Full Name *</label>
+                    <input type="text" placeholder="First Last">
+                </div>
+                <div class="field">
+                    <label>Title / Position *</label>
+                    <input type="text" placeholder="e.g., Software Engineer">
+                </div>
+            </div>
+            <div class="row">
+                <div class="field">
+                    <label>Personal Email *</label>
+                    <input type="email" placeholder="personal@email.com">
+                    <div class="hint">Used for Rippling invite and onboarding docs</div>
+                </div>
+                <div class="field">
+                    <label>Start Date *</label>
+                    <input type="date">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>Position Details</h3>
+            <div class="row">
+                <div class="field">
+                    <label>Level *</label>
+                    <select>
+                        <option value="">Select level...</option>
+                        <option>Junior</option>
+                        <option>Mid</option>
+                        <option>Senior</option>
+                        <option>Lead</option>
+                        <option>Expert</option>
+                        <option>Principal</option>
+                        <option>Manager</option>
+                        <option>Director</option>
+                        <option>VP</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Team / Prime *</label>
+                    <select>
+                        <option value="">Select team...</option>
+                        <option>Arcfield</option>
+                        <option>Nightwing</option>
+                        <option>SAIC</option>
+                        <option>GDIT</option>
+                        <option>Overhead</option>
+                        <option>Business Development</option>
+                        <option>HR</option>
+                        <option>Marketing</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="field">
+                    <label>Hourly Rate *</label>
+                    <input type="text" placeholder="$ per hour">
+                </div>
+                <div class="field">
+                    <label>Job Code (optional)</label>
+                    <input type="text" placeholder="e.g., SE-03, PM-02">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>Benefits</h3>
+            <div class="field">
+                <label>Benefits Package *</label>
+                <div class="checkbox-group">
+                    <label><input type="radio" name="benefits" value="full"> Full Benefits</label>
+                    <label><input type="radio" name="benefits" value="partial"> Partial Benefits</label>
+                    <label><input type="radio" name="benefits" value="none"> No Benefits</label>
+                </div>
+            </div>
+            <div class="field">
+                <label>If partial, specify which benefits:</label>
+                <div class="checkbox-group">
+                    <label><input type="checkbox"> Medical</label>
+                    <label><input type="checkbox"> Dental</label>
+                    <label><input type="checkbox"> Vision</label>
+                    <label><input type="checkbox"> 401k</label>
+                    <label><input type="checkbox"> PTO</label>
+                    <label><input type="checkbox"> Life Insurance</label>
+                    <label><input type="checkbox"> Short-Term Disability</label>
+                    <label><input type="checkbox"> Long-Term Disability</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>Additional Notes</h3>
+            <div class="field">
+                <label>Any special instructions or notes for onboarding:</label>
+                <textarea placeholder="e.g., equipment needs, remote/hybrid, clearance status, etc."></textarea>
+            </div>
+        </div>
+
+        <div class="submit-section">
+            <p>Once complete, please email this form to:</p>
+            <p><strong>rachelle.briscoe@navontech.com</strong></p>
+            <p><strong>yahvinah.bryant@navontech.com</strong></p>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="brand">NAVON TECHNOLOGIES</p>
+        <p class="legal">Confidential — For internal use only</p>
+        <p class="legal">Leesburg, Virginia | navontech.com</p>
+    </div>
+</div>
+</body>
+</html>

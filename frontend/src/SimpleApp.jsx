@@ -1864,6 +1864,25 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                     console.error('Stage notification failed:', notifyErr);
                 }
                 
+                // Send onboarding form to CEO when moved to Hired
+                if (newStage === 'Hired') {
+                    try {
+                        await fetch(`${apiUrl}/apply`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                type: 'new-hire-onboarding-form',
+                                candidateName: resume.candidateName,
+                                position: resume.position || 'Not specified',
+                                hiredDate: updateBody.hiredDate || resume.hiredDate || '',
+                                notifyEmail: 'brian.briscoe@navontech.com'
+                            })
+                        });
+                    } catch (err) {
+                        console.error('CEO onboarding form notification failed:', err);
+                    }
+                }
+
                 // Additional referral notification if applicable
                 if (resume.notes && resume.notes.includes('Employee Referral')) {
                     try {
