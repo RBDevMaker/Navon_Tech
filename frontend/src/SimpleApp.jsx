@@ -327,7 +327,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     useEffect(() => {
         if (currentPage === 'resumes' && resumes.length > 0) {
             const today = new Date().toISOString().split('T')[0];
+            const todayMs = new Date(today).getTime();
             resumes.forEach(async (r) => {
+                // Auto-move Pending to Hired when start date arrives
                 if (r.stage === 'Pending' && r.hiredDate) {
                     const hp = r.hiredDate.split('-');
                     const startDate = `${hp[0]}-${hp[1]}-${hp[2]}`;
@@ -359,6 +361,26 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                             fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
                         } catch (err) {
                             console.error('Auto-move to Hired failed:', err);
+                        }
+                    }
+                }
+                
+                // Auto-archive Hired resumes 2 weeks after start date
+                if (r.stage === 'Hired' && r.hiredDate) {
+                    const hp = r.hiredDate.split('-');
+                    const startMs = new Date(Number(hp[0]), Number(hp[1]) - 1, Number(hp[2])).getTime();
+                    const daysSinceStart = Math.floor((todayMs - startMs) / (1000 * 60 * 60 * 24));
+                    if (daysSinceStart >= 14) {
+                        try {
+                            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                            await fetch(`${apiUrl}/resume/${r.resumeId}`, {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ stage: 'Archived' })
+                            });
+                            console.log(`Auto-archived ${r.candidateName} (14 days since start date: ${r.hiredDate})`);
+                        } catch (err) {
+                            console.error('Auto-archive failed:', err);
                         }
                     }
                 }
