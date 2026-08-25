@@ -7562,8 +7562,8 @@ loadBalancer.distribute(traffic);`}
                                             const startIdx = findCol(['first start date', 'start date', 'hire date', 'start_date', 'hire_date']);
                                             const phoneIdx = findCol(['phone', 'work phone', 'mobile', 'phone number']);
                                             const locationIdx = findCol(['is remote', 'location', 'office', 'work location']);
-                                            const statusIdx = findCol(['status', 'employment status', 'employee status', 'emp status']);
-                                            const empTypeIdx = findCol(['employment type', 'emp type', 'type', 'worker type']);
+                                            const statusIdx = findCol(['status', 'employment status', 'employee status', 'emp status', 'employement status']);
+                                            const empTypeIdx = findCol(['employment type', 'emp type', 'type', 'worker type', 'contractor']);
                                             const personalEmailIdx = findCol(['personal email']);
                                             const addressIdx = findCol(['home address', 'full address', 'address']);
                                             const preferredNameIdx = findCol(['preferred first name', 'preferred name', 'nickname']);
@@ -7669,7 +7669,8 @@ loadBalancer.distribute(traffic);`}
                                                             const t = (emp.empType || '').toLowerCase();
                                                             if (s.includes('terminat') || s.includes('inactive') || s.includes('offboard') || s.includes('separated')) return 'Archived';
                                                             if (s.includes('pending') || s.includes('not started') || s.includes('pre-start') || s.includes('onboarding') || s.includes('accepted')) return 'Pending';
-                                                            if (t.includes('contract') || t.includes('1099')) return 'Contract';
+                                                            if (t === 'true' || t === 'yes' || t.includes('contract') || t.includes('1099')) return 'Contract';
+                                                            if (t === 'false' || t === 'no' || t.includes('full') || t.includes('employee') || t.includes('w2') || t.includes('w-2')) return 'Full-Time';
                                                             if (t.includes('part')) return 'Part-Time';
                                                             return 'Full-Time';
                                                         })(),
@@ -7717,6 +7718,12 @@ loadBalancer.distribute(traffic);`}
                                                     if (emp.status) {
                                                         const s = emp.status.toLowerCase();
                                                         if (s.includes('terminat') || s.includes('inactive')) updatePayload.employmentType = 'Archived';
+                                                    }
+                                                    if (emp.empType) {
+                                                        const t = emp.empType.toLowerCase();
+                                                        if (t === 'true' || t === 'yes' || t.includes('contract') || t.includes('1099')) updatePayload.employmentType = 'Contract';
+                                                        else if (t.includes('part')) updatePayload.employmentType = 'Part-Time';
+                                                        else if (t === 'false' || t === 'no' || t.includes('full') || t.includes('employee') || t.includes('w2') || t.includes('w-2')) updatePayload.employmentType = 'Full-Time';
                                                     }
                                                     
                                                     if (Object.keys(updatePayload).length > 0) {
