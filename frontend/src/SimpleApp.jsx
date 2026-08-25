@@ -7646,8 +7646,15 @@ loadBalancer.distribute(traffic);`}
                                                             normalizedDate = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
                                                         }
                                                     }
+                                                    const workEmail = emp.email.toLowerCase().includes('@navontech.com') ? emp.email : (() => {
+                                                            const parts = emp.name.toLowerCase().trim().split(/\s+/);
+                                                            if (parts.length >= 2) return `${parts[0]}.${parts[parts.length - 1]}@navontech.com`;
+                                                            return `${parts[0]}@navontech.com`;
+                                                        })();
                                                     const profilePayload = {
-                                                        email: emp.email,
+                                                        employeeId: workEmail,
+                                                        email: emp.personalEmail || (emp.email.toLowerCase().includes('@navontech.com') ? '' : emp.email),
+                                                        personalEmail: emp.personalEmail || (emp.email.toLowerCase().includes('@navontech.com') ? '' : emp.email),
                                                         name: emp.name,
                                                         department: emp.department,
                                                         title: emp.title,
@@ -12011,8 +12018,8 @@ loadBalancer.distribute(traffic);`}
                                                     <div style={{ marginBottom: '0.5rem' }}>🏢 {member.location}</div>
                                                 )}
                                                 <div style={{ marginBottom: '0.5rem' }}>📧 {member.id || member.email}</div>
-                                                {(userRole === 'hr' || userRole === 'security' || userRole === 'superadmin' || loginEmail?.toLowerCase().includes('root')) && isAdminView && member.email && member.email !== member.id && (
-                                                    <div style={{ marginBottom: '0.5rem' }}>📧 Personal: {member.email}</div>
+                                                {(userRole === 'hr' || userRole === 'security' || userRole === 'superadmin' || loginEmail?.toLowerCase().includes('root')) && isAdminView && (member.personalEmail || (member.email && member.email !== member.id)) && (
+                                                    <div style={{ marginBottom: '0.5rem' }}>📧 Personal: {member.personalEmail || member.email}</div>
                                                 )}
                                                 {(userRole === 'hr' || userRole === 'admin' || userRole === 'security' || userRole === 'superadmin') && isAdminView && (
                                                     <>
