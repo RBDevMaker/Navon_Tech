@@ -103,6 +103,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [complianceSort, setComplianceSort] = useState('newest'); // Sort candidate summaries by date
     const [resumeSearchQuery, setResumeSearchQuery] = useState(''); // Search for resumes by candidate name
     const [lastLoginTime, setLastLoginTime] = useState(null); // Last login timestamp for display
+    const [showOnboardingModal, setShowOnboardingModal] = useState(false); // New hire onboarding modal
+    const [onboardingName, setOnboardingName] = useState(''); // New hire name input
     
     // User management states
     const [showManageUsersModal, setShowManageUsersModal] = useState(false);
@@ -12696,274 +12698,7 @@ loadBalancer.distribute(traffic);`}
                             gap: '2rem',
                             marginBottom: '3rem'
                         }}>
-                            {/* HR Documents */}
-                            <div className="hover-lift animate-scale-in" style={{
-                                background: 'white',
-                                padding: '2rem',
-                                borderRadius: '12px',
-                                border: '2px solid #d4af37',
-                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                display: 'flex',
-                                flexDirection: 'column'
-                            }}>
-                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
-                                    <div style={{
-                                        background: '#1e3a8a',
-                                        color: 'white',
-                                        width: '60px',
-                                        height: '60px',
-                                        borderRadius: '50%',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        fontWeight: 'bold',
-                                        fontSize: '1.2rem',
-                                        marginRight: '1rem'
-                                    }}>
-                                        HR
-                                    </div>
-                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
-                                        HR Documents
-                                    </h3>
-                                </div>
-                                <div style={{ marginBottom: '1rem', flex: 1 }}>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Employee handbook
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Benefits information
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Employee handbook and policies
-                                    </p>
-                                </div>
-                                <button 
-                                    onClick={() => {
-                                        setCurrentPage('hrdocuments');
-                                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                                    }}
-                                    style={{
-                                        background: '#1e3a8a',
-                                        color: 'white',
-                                        border: 'none',
-                                        padding: '0.75rem 1.5rem',
-                                        borderRadius: '6px',
-                                        cursor: 'pointer',
-                                        fontWeight: '600',
-                                        width: '100%',
-                                        marginTop: 'auto'
-                                    }}>
-                                    Access HR Files
-                                </button>
-                            </div>
-
-                            {/* Compliance & Security - SuperAdmin and Security only */}
-                            {(userRole === 'superadmin' || userRole === 'security') && (
-                            <div className="hover-lift animate-scale-in" style={{
-                                background: 'white',
-                                padding: '2rem',
-                                borderRadius: '12px',
-                                border: '2px solid #d4af37',
-                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                animationDelay: '0.1s',
-                                display: 'flex',
-                                flexDirection: 'column'
-                            }}>
-                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
-                                    <div style={{
-                                        fontSize: '2.5rem',
-                                        marginRight: '1rem'
-                                    }}>
-                                        🛡️
-                                    </div>
-                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
-                                        Compliance & Security
-                                    </h3>
-                                </div>
-                                <div style={{ marginBottom: '1rem', flex: 1 }}>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Security policies
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Compliance certificates
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Audit reports
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Training materials
-                                    </p>
-                                </div>
-                                <button 
-                                    onClick={() => {
-                                        setCurrentPage('compliancesecurity');
-                                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                                    }}
-                                    style={{
-                                    background: '#1e3a8a',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '0.75rem 1.5rem',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600',
-                                    width: '100%',
-                                    marginTop: 'auto'
-                                }}>
-                                    View Compliance
-                                </button>
-                            </div>
-                            )}
-
-                            {/* Shared Resources - HR, Admin, Security, SuperAdmin */}
-                            {(userRole === 'hr' || userRole === 'admin' || userRole === 'security' || userRole === 'superadmin') && (
-                            <div className="hover-lift animate-scale-in" style={{
-                                background: 'white',
-                                padding: '2rem',
-                                borderRadius: '12px',
-                                border: '2px solid #d4af37',
-                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                animationDelay: '0.2s',
-                                display: 'flex',
-                                flexDirection: 'column'
-                            }}>
-                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
-                                    <div style={{
-                                        fontSize: '2.5rem',
-                                        marginRight: '1rem'
-                                    }}>
-                                        🗂️
-                                    </div>
-                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
-                                        Shared Resources
-                                    </h3>
-                                </div>
-                                <div style={{ marginBottom: '1rem', flex: 1 }}>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Templates & forms
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Company presentations
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Marketing materials
-                                    </p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                        • Knowledge base articles
-                                    </p>
-                                </div>
-                                <button 
-                                    onClick={() => {
-                                        setCurrentPage('sharedresources');
-                                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                                    }}
-                                    style={{
-                                    background: '#1e3a8a',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '0.75rem 1.5rem',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600',
-                                    width: '100%',
-                                    marginTop: 'auto'
-                                }}>
-                                    Browse Resources
-                                </button>
-                            </div>
-                            )}
-
-                            {/* HR Confidential - HR and SuperAdmin only */}
-                            {(userRole === 'hr' || userRole === 'superadmin') && (
-                            <div className="hover-lift animate-scale-in" style={{
-                                background: 'white',
-                                padding: '2rem',
-                                borderRadius: '12px',
-                                border: '2px solid #ef4444',
-                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                display: 'flex',
-                                flexDirection: 'column'
-                            }}>
-                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
-                                    <div style={{ fontSize: '2.5rem', marginRight: '1rem' }}>🔐</div>
-                                    <h3 style={{ color: '#dc2626', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
-                                        HR Confidential
-                                    </h3>
-                                </div>
-                                <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px', padding: '0.75rem', marginBottom: '1rem' }}>
-                                    <p style={{ color: '#dc2626', margin: 0, fontSize: '0.85rem', fontWeight: '600' }}>🚫 Restricted — HR and SuperAdmin only</p>
-                                </div>
-                                <div style={{ marginBottom: '1rem', flex: 1 }}>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Sensitive HR documents</p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Employee records</p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Confidential files</p>
-                                </div>
-                                <button 
-                                    onClick={() => {
-                                        setCurrentPage('hrconfidential');
-                                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                                    }}
-                                    style={{
-                                    background: '#dc2626',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '0.75rem 1.5rem',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600',
-                                    width: '100%',
-                                    marginTop: 'auto'
-                                }}>
-                                    Access Confidential Files
-                                </button>
-                            </div>
-                            )}
-
-                            {/* Resumes - Brian and Veronica only */}
-                            {(loginEmail?.toLowerCase() === 'veronica.hill@navontech.com' || loginEmail?.toLowerCase() === 'brian.briscoe@navontech.com' || loginEmail?.toLowerCase().includes('root') || userRole === 'superadmin') && (
-                            <div className="hover-lift animate-scale-in" style={{
-                                background: 'white',
-                                padding: '2rem',
-                                borderRadius: '12px',
-                                border: '2px solid #d4af37',
-                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                animationDelay: '0.15s',
-                                display: 'flex',
-                                flexDirection: 'column'
-                            }}>
-                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
-                                    <div style={{ fontSize: '2.5rem', marginRight: '1rem' }}>📄</div>
-                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
-                                        Resumes
-                                    </h3>
-                                </div>
-                                <div style={{ marginBottom: '1rem', flex: 1 }}>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• View uploaded resumes</p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Upload new resumes</p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Download and review</p>
-                                </div>
-                                <button 
-                                    onClick={() => {
-                                        setCurrentPage('resumedocs');
-                                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                                    }}
-                                    style={{
-                                    background: '#1e3a8a',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '0.75rem 1.5rem',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600',
-                                    width: '100%',
-                                    marginTop: 'auto'
-                                }}>
-                                    Access Resumes
-                                </button>
-                            </div>
-                            )}
-                            
-                            {/* Cleared Candidate Summary - Security and SuperAdmin only */}
+                            {/* 1. Cleared Candidate Summary - Security and SuperAdmin only */}
                             {(userRole === 'security' || userRole === 'superadmin') && isAdminView && (
                             <div className="hover-lift animate-scale-in" style={{
                                 background: 'white',
@@ -12971,7 +12706,6 @@ loadBalancer.distribute(traffic);`}
                                 borderRadius: '12px',
                                 border: '2px solid #d4af37',
                                 boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                animationDelay: '0.25s',
                                 display: 'flex',
                                 flexDirection: 'column'
                             }}>
@@ -12987,79 +12721,225 @@ loadBalancer.distribute(traffic);`}
                                     <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Saves to Compliance & Security</p>
                                 </div>
                                 <button 
-                                    onClick={() => {
-                                        setCurrentPage('candidatesummary');
-                                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                                    }}
-                                    style={{
-                                    background: '#1e3a8a',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '0.75rem 1.5rem',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600',
-                                    width: '100%',
-                                    marginTop: 'auto'
-                                }}>
+                                    onClick={() => { setCurrentPage('candidatesummary'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                                    style={{ background: '#1e3a8a', color: 'white', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', width: '100%', marginTop: 'auto' }}>
                                     Open Form
                                 </button>
                             </div>
                             )}
 
-                            {/* Application Tracking System - Security, HR, SuperAdmin */}
-                            {(userGroups.includes('security') || userRole === 'security' || userRole === 'hr' || userRole === 'superadmin' || loginEmail?.toLowerCase().includes('root')) && isAdminView && (
-                                <div className="hover-lift animate-scale-in" style={{
-                                    background: 'white',
-                                    padding: '2rem',
-                                    borderRadius: '12px',
-                                    border: '2px solid #d4af37',
-                                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                    animationDelay: '0.3s',
-                                    display: 'flex',
-                                    flexDirection: 'column'
-                                }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
-                                        <div style={{
-                                            fontSize: '2.5rem',
-                                            marginRight: '1rem'
-                                        }}>
-                                            📄
-                                        </div>
-                                        <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
-                                            Application Tracking System (ATS)
-                                        </h3>
-                                    </div>
-                                    <div style={{ marginBottom: '1rem', flex: 1 }}>
-                                        <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                            • Job applications
-                                        </p>
-                                        <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                            • Interview materials
-                                        </p>
-                                        <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                                            • Archived applications
-                                        </p>
-                                    </div>
-                                    <button 
-                                        onClick={() => {
-                                            setCurrentPage('resumes');
-                                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                                        }}
-                                        style={{
-                                            background: '#1e3a8a',
-                                            color: 'white',
-                                            border: 'none',
-                                            padding: '0.75rem 1.5rem',
-                                            borderRadius: '6px',
-                                            cursor: 'pointer',
-                                            fontWeight: '600',
-                                            width: '100%',
-                                            marginTop: 'auto'
-                                        }}>
-                                        View Applicants
-                                    </button>
+                            {/* 2. Resumes - Brian and Veronica only */}
+                            {(loginEmail?.toLowerCase() === 'veronica.hill@navontech.com' || loginEmail?.toLowerCase() === 'brian.briscoe@navontech.com' || loginEmail?.toLowerCase().includes('root') || userRole === 'superadmin') && (
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.1s',
+                                display: 'flex',
+                                flexDirection: 'column'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{ fontSize: '2.5rem', marginRight: '1rem' }}>📄</div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        Resumes
+                                    </h3>
                                 </div>
+                                <div style={{ marginBottom: '1rem', flex: 1 }}>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• View uploaded resumes</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Upload new resumes</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Download and review</p>
+                                </div>
+                                <button 
+                                    onClick={() => { setCurrentPage('resumedocs'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                                    style={{ background: '#1e3a8a', color: 'white', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', width: '100%', marginTop: 'auto' }}>
+                                    Access Resumes
+                                </button>
+                            </div>
+                            )}
+
+                            {/* 3. Application Tracking System - Security, HR, SuperAdmin */}
+                            {(userGroups.includes('security') || userRole === 'security' || userRole === 'hr' || userRole === 'superadmin' || loginEmail?.toLowerCase().includes('root')) && isAdminView && (
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.2s',
+                                display: 'flex',
+                                flexDirection: 'column'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{ fontSize: '2.5rem', marginRight: '1rem' }}>📄</div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        Application Tracking System (ATS)
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem', flex: 1 }}>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Job applications</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Interview materials</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Archived applications</p>
+                                </div>
+                                <button 
+                                    onClick={() => { setCurrentPage('resumes'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                                    style={{ background: '#1e3a8a', color: 'white', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', width: '100%', marginTop: 'auto' }}>
+                                    View Applicants
+                                </button>
+                            </div>
+                            )}
+
+                            {/* 4. Compliance & Security - SuperAdmin and Security only */}
+                            {(userRole === 'superadmin' || userRole === 'security') && (
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.3s',
+                                display: 'flex',
+                                flexDirection: 'column'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{ fontSize: '2.5rem', marginRight: '1rem' }}>🛡️</div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        Compliance & Security
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem', flex: 1 }}>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Security policies</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Compliance certificates</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Audit reports</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Training materials</p>
+                                </div>
+                                <button 
+                                    onClick={() => { setCurrentPage('compliancesecurity'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                                    style={{ background: '#1e3a8a', color: 'white', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', width: '100%', marginTop: 'auto' }}>
+                                    View Compliance
+                                </button>
+                            </div>
+                            )}
+
+                            {/* 5. New Hire Onboarding Form - Brian, Veronica, SuperAdmin, Root */}
+                            {(loginEmail?.toLowerCase() === 'brian.briscoe@navontech.com' || loginEmail?.toLowerCase() === 'veronica.hill@navontech.com' || userRole === 'superadmin' || loginEmail?.toLowerCase().includes('root')) && isAdminView && (
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #10b981',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.35s',
+                                display: 'flex',
+                                flexDirection: 'column'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{ fontSize: '2.5rem', marginRight: '1rem' }}>🎉</div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                        New Hire Onboarding
+                                    </h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem', flex: 1 }}>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Send onboarding form to CEO</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• For hires outside the ATS pipeline</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Pre-fills candidate info for Rippling</p>
+                                </div>
+                                <button 
+                                    onClick={() => { setOnboardingName(''); setShowOnboardingModal(true); }}
+                                    style={{ background: '#10b981', color: 'white', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', width: '100%', marginTop: 'auto' }}>
+                                    Send Onboarding Form
+                                </button>
+                            </div>
+                            )}
+
+                            {/* HR Documents */}
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.4s',
+                                display: 'flex',
+                                flexDirection: 'column'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{ background: '#1e3a8a', color: 'white', width: '60px', height: '60px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '1.2rem', marginRight: '1rem' }}>HR</div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>HR Documents</h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem', flex: 1 }}>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Employee handbook</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Benefits information</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Employee handbook and policies</p>
+                                </div>
+                                <button 
+                                    onClick={() => { setCurrentPage('hrdocuments'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                                    style={{ background: '#1e3a8a', color: 'white', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', width: '100%', marginTop: 'auto' }}>
+                                    Access HR Files
+                                </button>
+                            </div>
+
+                            {/* Shared Resources - HR, Admin, Security, SuperAdmin */}
+                            {(userRole === 'hr' || userRole === 'admin' || userRole === 'security' || userRole === 'superadmin') && (
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #d4af37',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.45s',
+                                display: 'flex',
+                                flexDirection: 'column'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{ fontSize: '2.5rem', marginRight: '1rem' }}>🗂️</div>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>Shared Resources</h3>
+                                </div>
+                                <div style={{ marginBottom: '1rem', flex: 1 }}>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Templates & forms</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Company presentations</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Marketing materials</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Knowledge base articles</p>
+                                </div>
+                                <button 
+                                    onClick={() => { setCurrentPage('sharedresources'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                                    style={{ background: '#1e3a8a', color: 'white', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', width: '100%', marginTop: 'auto' }}>
+                                    Browse Resources
+                                </button>
+                            </div>
+                            )}
+
+                            {/* HR Confidential - HR and SuperAdmin only */}
+                            {(userRole === 'hr' || userRole === 'superadmin') && (
+                            <div className="hover-lift animate-scale-in" style={{
+                                background: 'white',
+                                padding: '2rem',
+                                borderRadius: '12px',
+                                border: '2px solid #ef4444',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                animationDelay: '0.5s',
+                                display: 'flex',
+                                flexDirection: 'column'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{ fontSize: '2.5rem', marginRight: '1rem' }}>🔐</div>
+                                    <h3 style={{ color: '#dc2626', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>HR Confidential</h3>
+                                </div>
+                                <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px', padding: '0.75rem', marginBottom: '1rem' }}>
+                                    <p style={{ color: '#dc2626', margin: 0, fontSize: '0.85rem', fontWeight: '600' }}>🚫 Restricted — HR and SuperAdmin only</p>
+                                </div>
+                                <div style={{ marginBottom: '1rem', flex: 1 }}>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Sensitive HR documents</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Employee records</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Confidential files</p>
+                                </div>
+                                <button 
+                                    onClick={() => { setCurrentPage('hrconfidential'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                                    style={{ background: '#dc2626', color: 'white', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', width: '100%', marginTop: 'auto' }}>
+                                    Access Confidential Files
+                                </button>
+                            </div>
                             )}
                         </div>
 
@@ -19122,6 +19002,84 @@ Please review and approve this request.
                                     ))}
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* New Hire Onboarding Modal */}
+            {showOnboardingModal && (
+                <div style={{
+                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                    background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    zIndex: 10000, backdropFilter: 'blur(4px)'
+                }} onClick={() => setShowOnboardingModal(false)}>
+                    <div style={{
+                        background: 'white', borderRadius: '16px', padding: '3rem', maxWidth: '500px', width: '90%',
+                        boxShadow: '0 24px 48px rgba(0,0,0,0.2)', border: '3px solid #d4af37'
+                    }} onClick={(e) => e.stopPropagation()}>
+                        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                            <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>🎉</div>
+                            <h2 style={{ color: '#1e3a8a', margin: '0 0 0.5rem 0', fontSize: '1.8rem', fontWeight: '800' }}>New Hire Onboarding</h2>
+                            <p style={{ color: '#64748b', margin: 0, fontSize: '1.1rem' }}>Enter the new hire's full name</p>
+                        </div>
+                        <input
+                            type="text"
+                            value={onboardingName}
+                            onChange={(e) => setOnboardingName(e.target.value)}
+                            placeholder="First Last"
+                            autoFocus
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' && onboardingName.trim()) {
+                                    e.target.closest('div').querySelector('button[data-submit]').click();
+                                }
+                            }}
+                            style={{
+                                width: '100%', padding: '1rem 1.25rem', border: '2px solid #d4af37', borderRadius: '10px',
+                                fontSize: '1.2rem', outline: 'none', boxSizing: 'border-box', marginBottom: '1.5rem',
+                                textAlign: 'center', fontWeight: '600', color: '#1e3a8a'
+                            }}
+                        />
+                        <div style={{ display: 'flex', gap: '1rem' }}>
+                            <button
+                                onClick={() => setShowOnboardingModal(false)}
+                                style={{
+                                    flex: 1, padding: '1rem', border: '2px solid #e2e8f0', borderRadius: '10px',
+                                    background: 'white', color: '#64748b', fontSize: '1.1rem', fontWeight: '600', cursor: 'pointer'
+                                }}>
+                                Cancel
+                            </button>
+                            <button
+                                data-submit="true"
+                                onClick={async () => {
+                                    if (!onboardingName.trim()) return;
+                                    try {
+                                        const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                                        await fetch(`${apiUrl}/apply`, {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({
+                                                type: 'new-hire-onboarding-form',
+                                                candidateName: onboardingName.trim(),
+                                                position: '',
+                                                hiredDate: '',
+                                                notifyEmail: 'brian.briscoe@navontech.com'
+                                            })
+                                        });
+                                        setShowOnboardingModal(false);
+                                        alert(`✅ Onboarding form sent to Brian for ${onboardingName.trim()}`);
+                                    } catch (err) {
+                                        alert(`❌ Failed to send: ${err.message}`);
+                                    }
+                                }}
+                                style={{
+                                    flex: 2, padding: '1rem', border: 'none', borderRadius: '10px',
+                                    background: 'linear-gradient(135deg, #1e3a8a, #3b82f6)', color: 'white',
+                                    fontSize: '1.1rem', fontWeight: '700', cursor: 'pointer',
+                                    opacity: onboardingName.trim() ? 1 : 0.5
+                                }}>
+                                Send to Brian 📧
+                            </button>
                         </div>
                     </div>
                 </div>
