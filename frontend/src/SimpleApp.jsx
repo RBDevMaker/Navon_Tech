@@ -105,6 +105,18 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [lastLoginTime, setLastLoginTime] = useState(null); // Last login timestamp for display
     const [showOnboardingModal, setShowOnboardingModal] = useState(false); // New hire onboarding modal
     const [onboardingName, setOnboardingName] = useState(''); // New hire name input
+    const [showRootReasonModal, setShowRootReasonModal] = useState(false); // Root login reason modal
+    const [rootReasonInput, setRootReasonInput] = useState(''); // Root reason text input
+    const [rootReasonCallback, setRootReasonCallback] = useState(null); // Callback after reason provided
+    
+    // Helper to get root login reason via custom modal (returns a Promise)
+    const getRootLoginReason = () => {
+        return new Promise((resolve) => {
+            setRootReasonInput('');
+            setRootReasonCallback(() => resolve);
+            setShowRootReasonModal(true);
+        });
+    };
     
     // User management states
     const [showManageUsersModal, setShowManageUsersModal] = useState(false);
@@ -17190,7 +17202,7 @@ loadBalancer.distribute(traffic);`}
                                                 const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
                                                 let loginReason = '';
                                                 if (email.toLowerCase().includes('root')) {
-                                                    loginReason = prompt('🔐 Root Account Login\n\nPlease provide a reason for this login:') || 'No reason provided';
+                                                    loginReason = await getRootLoginReason();
                                                 }
                                                 if (token) {
                                                     fetch(`${apiUrl}/audit-logs`, {
@@ -17425,7 +17437,7 @@ loadBalancer.distribute(traffic);`}
                                         const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
                                         let loginReason = '';
                                         if (email.toLowerCase().includes('root')) {
-                                            loginReason = prompt('🔐 Root Account Login\n\nPlease provide a reason for this login:') || 'No reason provided';
+                                            loginReason = await getRootLoginReason();
                                         }
                                         if (token) {
                                             fetch(`${apiUrl}/audit-logs`, {
@@ -19003,6 +19015,82 @@ Please review and approve this request.
                                 </tbody>
                             </table>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {/* New Hire Onboarding Modal */}
+
+            {/* Root Login Reason Modal */}
+            {showRootReasonModal && (
+                <div style={{
+                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                    background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    zIndex: 10001, backdropFilter: 'blur(6px)'
+                }}>
+                    <div style={{
+                        background: 'white', borderRadius: '16px', padding: '3rem', maxWidth: '500px', width: '90%',
+                        boxShadow: '0 24px 48px rgba(0,0,0,0.3)', border: '3px solid #d4af37'
+                    }}>
+                        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                            <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>🔐</div>
+                            <h2 style={{ color: '#1e3a8a', margin: '0 0 0.5rem 0', fontSize: '1.8rem', fontWeight: '800' }}>Root Account Login</h2>
+                            <p style={{ color: '#64748b', margin: 0, fontSize: '1.1rem' }}>Please provide a reason for this login</p>
+                        </div>
+                        {/* Recent reasons dropdown - always visible */}
+                        <div style={{ marginBottom: '1rem' }}>
+                            <label style={{ display: 'block', color: '#475569', fontSize: '0.85rem', marginBottom: '0.5rem', fontWeight: '600' }}>Recent reasons:</label>
+                            <select
+                                value=""
+                                onChange={(e) => { if (e.target.value) setRootReasonInput(e.target.value); }}
+                                style={{ width: '100%', padding: '0.75rem 1rem', border: '2px solid #d4af37', borderRadius: '8px', fontSize: '1rem', background: 'white', color: '#1e293b', cursor: 'pointer' }}>
+                                <option value="">Select a recent reason...</option>
+                                {(() => {
+                                    const recentReasons = JSON.parse(localStorage.getItem('rootLoginReasons') || '[]').slice(0, 3);
+                                    return recentReasons.length > 0 
+                                        ? recentReasons.map((reason, i) => <option key={i} value={reason}>{reason}</option>)
+                                        : [<option key="none" disabled value="">No recent reasons yet</option>];
+                                })()}
+                            </select>
+                        </div>
+                        <input
+                            type="text"
+                            value={rootReasonInput}
+                            onChange={(e) => setRootReasonInput(e.target.value)}
+                            placeholder="Type reason or select from above..."
+                            autoFocus
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' && rootReasonInput.trim()) {
+                                    const reason = rootReasonInput.trim();
+                                    const recent = JSON.parse(localStorage.getItem('rootLoginReasons') || '[]');
+                                    const updated = [reason, ...recent.filter(r => r !== reason)].slice(0, 3);
+                                    localStorage.setItem('rootLoginReasons', JSON.stringify(updated));
+                                    setShowRootReasonModal(false);
+                                    if (rootReasonCallback) rootReasonCallback(reason);
+                                }
+                            }}
+                            style={{
+                                width: '100%', padding: '1rem 1.25rem', border: '2px solid #d4af37', borderRadius: '10px',
+                                fontSize: '1.2rem', outline: 'none', boxSizing: 'border-box', marginBottom: '1.5rem',
+                                background: 'white', color: '#1e293b', fontWeight: '600'
+                            }}
+                        />
+                        <button
+                            onClick={() => {
+                                const reason = rootReasonInput.trim() || 'No reason provided';
+                                const recent = JSON.parse(localStorage.getItem('rootLoginReasons') || '[]');
+                                const updated = [reason, ...recent.filter(r => r !== reason)].slice(0, 3);
+                                localStorage.setItem('rootLoginReasons', JSON.stringify(updated));
+                                setShowRootReasonModal(false);
+                                if (rootReasonCallback) rootReasonCallback(reason);
+                            }}
+                            style={{
+                                width: '100%', padding: '1rem', border: 'none', borderRadius: '10px',
+                                background: 'linear-gradient(135deg, #1e3a8a, #3b82f6)', color: 'white',
+                                fontSize: '1.1rem', fontWeight: '700', cursor: 'pointer'
+                            }}>
+                            Continue Login →
+                        </button>
                     </div>
                 </div>
             )}
