@@ -96,7 +96,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [isLoadingResumes, setIsLoadingResumes] = useState(false);
     const [showUploadModal, setShowUploadModal] = useState(false);
     const [editingResume, setEditingResume] = useState(null);
-    const [showArchivedResumes, setShowArchivedResumes] = useState(false);
+    const [showArchivedResumes, setShowArchivedResumes] = useState(true);
     const [showRolePermissions, setShowRolePermissions] = useState(false);
     const [deepLinkCandidate, setDeepLinkCandidate] = useState(null); // For deep-linking to specific candidate from email
     const [complianceSearch, setComplianceSearch] = useState(''); // Search for candidate summaries
@@ -7814,7 +7814,7 @@ loadBalancer.distribute(traffic);`}
                             {/* Wizard Ranking Card - Rachelle/Root only */}
                             {(loginEmail?.toLowerCase() === 'rachelle.briscoe@navontech.com' || loginEmail?.toLowerCase().includes('root')) && (
                             <div className="hover-lift animate-scale-in" style={{
-                                background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)',
+                                background: 'white',
                                 padding: '2rem',
                                 borderRadius: '12px',
                                 border: '2px solid #d4af37',
@@ -7825,14 +7825,14 @@ loadBalancer.distribute(traffic);`}
                             }}>
                                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
                                     <div style={{ fontSize: '2.5rem', marginRight: '1rem' }}>🧙‍♂️</div>
-                                    <h3 style={{ color: '#d4af37', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
+                                    <h3 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: '700' }}>
                                         Wizard Ranking
                                     </h3>
                                 </div>
                                 <div style={{ marginBottom: '1rem', flex: 1 }}>
-                                    <p style={{ color: '#c7d2fe', marginBottom: '0.5rem' }}>• Employee engagement rankings</p>
-                                    <p style={{ color: '#c7d2fe', marginBottom: '0.5rem' }}>• Login frequency & session time</p>
-                                    <p style={{ color: '#c7d2fe', marginBottom: '0.5rem' }}>• Gold, Silver, Green, Blue, Red stars</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Employee engagement rankings</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Login frequency & session time</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Gold, Silver, Green, Blue, Red stars</p>
                                 </div>
                                 <button 
                                     onClick={() => {
@@ -7841,7 +7841,7 @@ loadBalancer.distribute(traffic);`}
                                     }}
                                     style={{
                                         background: '#d4af37',
-                                        color: '#1e1b4b',
+                                        color: '#0f172a',
                                         border: 'none',
                                         padding: '0.75rem 1.5rem',
                                         borderRadius: '6px',
@@ -9831,16 +9831,16 @@ loadBalancer.distribute(traffic);`}
 
             {/* WIZARD RANKING PAGE - Rachelle/Root only */}
             {currentPage === 'wizardranking' && (loginEmail?.toLowerCase() === 'rachelle.briscoe@navontech.com' || loginEmail?.toLowerCase().includes('root')) && (
-                <section style={{ padding: '4rem 2rem', background: 'linear-gradient(135deg, #0f0a2e 0%, #1e1b4b 100%)', minHeight: '100vh' }}>
+                <section style={{ padding: '4rem 2rem', background: '#f1f5f9', minHeight: '100vh' }}>
                     <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
                         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-                            <h2 style={{ fontSize: '3rem', marginBottom: '0.5rem', color: '#d4af37', fontWeight: '800' }}>
+                            <h2 style={{ fontSize: '3rem', marginBottom: '0.5rem', color: '#1e3a8a', fontWeight: '800' }}>
                                 🧙‍♂️ Wizard Ranking
                             </h2>
-                            <p style={{ fontSize: '1.4rem', color: '#e2e8f0', marginBottom: '0.25rem', fontWeight: '700' }}>
+                            <p style={{ fontSize: '1.4rem', color: '#1e3a8a', marginBottom: '0.25rem', fontWeight: '700' }}>
                                 {new Date().getFullYear()}
                             </p>
-                            <p style={{ fontSize: '1.1rem', color: '#94a3b8', marginBottom: '1.5rem' }}>
+                            <p style={{ fontSize: '1.1rem', color: '#475569', marginBottom: '1.5rem' }}>
                                 Employee portal engagement leaderboard — resets January 1st
                             </p>
                             <button onClick={() => { setCurrentPage('usermanagement'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
@@ -9849,14 +9849,14 @@ loadBalancer.distribute(traffic);`}
                             </button>
                         </div>
 
-                        <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '16px', border: '2px solid #d4af37', padding: '2rem', backdropFilter: 'blur(10px)' }}>
+                        <div style={{ background: 'white', borderRadius: '16px', border: '2px solid #d4af37', padding: '2rem', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
                             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.95rem' }}>
                                 <thead>
                                     <tr style={{ borderBottom: '2px solid #d4af37' }}>
-                                        <th style={{ padding: '1rem 0.75rem', color: '#d4af37', textAlign: 'left', fontWeight: '700' }}>Rank</th>
-                                        <th style={{ padding: '1rem 0.75rem', color: '#d4af37', textAlign: 'left', fontWeight: '700' }}>Employee</th>
-                                        <th style={{ padding: '1rem 0.75rem', color: '#d4af37', textAlign: 'center', fontWeight: '700' }}>Logins ({new Date().getFullYear()})</th>
-                                        <th style={{ padding: '1rem 0.75rem', color: '#d4af37', textAlign: 'center', fontWeight: '700' }}>Star</th>
+                                        <th style={{ padding: '1rem 0.75rem', color: '#1e3a8a', textAlign: 'left', fontWeight: '700' }}>Rank</th>
+                                        <th style={{ padding: '1rem 0.75rem', color: '#1e3a8a', textAlign: 'left', fontWeight: '700' }}>Employee</th>
+                                        <th style={{ padding: '1rem 0.75rem', color: '#1e3a8a', textAlign: 'center', fontWeight: '700' }}>Logins ({new Date().getFullYear()})</th>
+                                        <th style={{ padding: '1rem 0.75rem', color: '#1e3a8a', textAlign: 'center', fontWeight: '700' }}>Star</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -9905,13 +9905,13 @@ loadBalancer.distribute(traffic);`}
                                         
                                         return ranked.map((user, idx) => {
                                             const totalCount = ranked.length;
-                                            const isBottom5 = idx >= totalCount - 5;
-                                            const starIdx = user.logins === 0 || isBottom5 ? 4 : idx < 1 ? 0 : idx < 3 ? 1 : idx < 6 ? 2 : 3;
+                                            const isBottom5 = totalCount > 10 && idx >= totalCount - 5;
+                                            const starIdx = user.logins === 0 ? 4 : isBottom5 ? 4 : idx < 1 ? 0 : idx < 3 ? 1 : idx < 6 ? 2 : 3;
                                             return (
-                                                <tr key={user.email} style={{ borderBottom: '1px solid rgba(212,175,55,0.15)' }}>
-                                                    <td style={{ padding: '0.85rem 0.75rem', color: '#e2e8f0', fontWeight: '800', fontSize: '1.1rem' }}>{idx + 1}</td>
-                                                    <td style={{ padding: '0.85rem 0.75rem', color: '#f1f5f9', fontWeight: '600' }}>{user.name}</td>
-                                                    <td style={{ padding: '0.85rem 0.75rem', color: '#e2e8f0', textAlign: 'center', fontWeight: '600' }}>{user.logins}</td>
+                                                <tr key={user.email} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                                                    <td style={{ padding: '0.85rem 0.75rem', color: '#1e3a8a', fontWeight: '800', fontSize: '1.1rem' }}>{idx + 1}</td>
+                                                    <td style={{ padding: '0.85rem 0.75rem', color: '#334155', fontWeight: '600' }}>{user.name}</td>
+                                                    <td style={{ padding: '0.85rem 0.75rem', color: '#475569', textAlign: 'center', fontWeight: '600' }}>{user.logins}</td>
                                                     <td style={{ padding: '0.85rem 0.75rem', textAlign: 'center' }}>
                                                         <span style={{ fontSize: '1.5rem', color: starColors[starIdx] }}>★</span>
                                                         <span style={{ fontSize: '0.7rem', color: starColors[starIdx], display: 'block', fontWeight: '600' }}>{starLabels[starIdx]}</span>
