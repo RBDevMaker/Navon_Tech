@@ -11331,6 +11331,7 @@ loadBalancer.distribute(traffic);`}
                                     <option value="department">By Department</option>
                                     {isAdminView && <option value="employmentType">By Employment Type</option>}
                                     {isAdminView && <option value="billableStatus">By Billable Status</option>}
+                                    {isAdminView && <option value="billableNonContract">Billable Non-Contract</option>}
                                     {isAdminView && <option value="prime">By Prime</option>}
                                     {isAdminView && <option value="gender">By Gender</option>}
                                     {isAdminView && <option value="location">By Location</option>}
@@ -11339,7 +11340,7 @@ loadBalancer.distribute(traffic);`}
                                     {isAdminView && <option value="birthday">By Birthday Month</option>}
                                     {isAdminView && (userRole === 'hr' || userRole === 'security' || userRole === 'superadmin') && <option value="dietaryAllergy">By Dietary/Allergy</option>}
                                 </select>
-                                {directoryFilter !== 'all' && (
+                                {directoryFilter !== 'all' && directoryFilter !== 'billableNonContract' && (
                                     <select
                                         value={directorySearch}
                                         onChange={(e) => { setDirectorySearch(e.target.value); setDirectoryMonth(''); }}
@@ -11437,7 +11438,10 @@ loadBalancer.distribute(traffic);`}
 
                         {/* Showing count */}
                         {(() => {
-                            const youMatches = profileData.name && !loginEmail.toLowerCase().includes('root') && (isAdminView || userRole !== 'employee' || profileData.showInDirectory) ? (() => {
+                            const youMatches = profileData.name && (isAdminView || userRole !== 'employee' || profileData.showInDirectory) ? (() => {
+                                if (directoryFilter === 'billableNonContract') {
+                                    if (profileData.billableStatus !== 'Billable' || profileData.employmentType === 'Contract') return 0;
+                                }
                                 if (directoryFilter === 'startDate' && (directorySearch || directoryMonth)) {
                                     if (!profileData.startDate) return 0;
                                     const [y, mo] = profileData.startDate.split('-');
@@ -11456,7 +11460,7 @@ loadBalancer.distribute(traffic);`}
                                     const monthName = monthNum >= 1 && monthNum <= 12 ? months[monthNum - 1] : '';
                                     if (monthName.toLowerCase() !== directorySearch.toLowerCase()) return 0;
                                 }
-                                if (directoryFilter !== 'all' && directoryFilter !== 'startDate' && directoryFilter !== 'birthday' && directorySearch) {
+                                if (directoryFilter !== 'all' && directoryFilter !== 'startDate' && directoryFilter !== 'birthday' && directoryFilter !== 'billableNonContract' && directorySearch) {
                                     const fieldMap = { department: 'department', employmentType: 'employmentType', billableStatus: 'billableStatus', prime: 'contractAssignment', gender: 'gender', location: 'location', shirtSize: 'shirtSize', dietaryAllergy: 'dietaryAllergy' };
                                     const field = fieldMap[directoryFilter];
                                     if (field) {
@@ -11478,6 +11482,9 @@ loadBalancer.distribute(traffic);`}
                                 if (userRole === 'employee' && adminOnlyEmails.includes(m.email?.toLowerCase())) return false;
                                 if (hrSecurityOnlyEmails.includes(m.email?.toLowerCase()) && userRole !== 'hr' && userRole !== 'security' && userRole !== 'superadmin') return false;
                                 if (!isAdminView || userRole === 'employee') { if (!m.showInDirectory) return false; }
+                                if (directoryFilter === 'billableNonContract') {
+                                    return m.billableStatus === 'Billable' && m.employmentType !== 'Contract';
+                                }
                                 if (directoryFilter === 'startDate') {
                                     if (!directorySearch && !directoryMonth) return true;
                                     if (!m.startDate) return false;
@@ -11513,6 +11520,51 @@ loadBalancer.distribute(traffic);`}
                             );
                         })()}
 
+                        {/* Contract percentage stats when Billable Non-Contract filter is active */}
+                        {directoryFilter === 'billableNonContract' && (loginEmail?.toLowerCase().includes('root') || loginEmail?.toLowerCase() === 'rachelle.briscoe@navontech.com' || loginEmail?.toLowerCase() === 'brian.briscoe@navontech.com') && (() => {
+                            const activeMembers = teamMembers.filter(m => m.employmentType !== 'Archived');
+                            const totalActive = activeMembers.length + (profileData.name ? 1 : 0);
+                            const contractCount = activeMembers.filter(m => m.employmentType === 'Contract').length + (profileData.employmentType === 'Contract' ? 1 : 0);
+                            const billableMembers = activeMembers.filter(m => m.billableStatus === 'Billable');
+                            const totalBillable = billableMembers.length + (profileData.billableStatus === 'Billable' ? 1 : 0);
+                            const billableNonContract = billableMembers.filter(m => m.employmentType !== 'Contract').length + (profileData.billableStatus === 'Billable' && profileData.employmentType !== 'Contract' ? 1 : 0);
+                            const contractPctCompany = totalActive > 0 ? ((contractCount / totalActive) * 100).toFixed(1) : 0;
+                            const contractPctBillable = totalBillable > 0 ? (((totalBillable - billableNonContract) / totalBillable) * 100).toFixed(1) : 0;
+                            return (
+                                <div style={{
+                                    display: 'flex',
+                                    gap: '2rem',
+                                    marginBottom: '1.5rem',
+                                    flexWrap: 'wrap'
+                                }}>
+                                    <div style={{
+                                        background: '#f0f9ff',
+                                        border: '1px solid #bae6fd',
+                                        borderRadius: '10px',
+                                        padding: '1rem 1.5rem',
+                                        flex: '1',
+                                        minWidth: '200px'
+                                    }}>
+                                        <div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Contract % of Company</div>
+                                        <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#0369a1' }}>{contractPctCompany}%</div>
+                                        <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{contractCount} of {totalActive} employees</div>
+                                    </div>
+                                    <div style={{
+                                        background: '#fef3c7',
+                                        border: '1px solid #fde68a',
+                                        borderRadius: '10px',
+                                        padding: '1rem 1.5rem',
+                                        flex: '1',
+                                        minWidth: '200px'
+                                    }}>
+                                        <div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Contract % of Billable</div>
+                                        <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#92400e' }}>{contractPctBillable}%</div>
+                                        <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{totalBillable - billableNonContract} of {totalBillable} billable employees</div>
+                                    </div>
+                                </div>
+                            );
+                        })()}
+
                         {/* Employee Cards Grid */}
                         <div style={{
                             display: 'grid',
@@ -11520,8 +11572,11 @@ loadBalancer.distribute(traffic);`}
                             gap: '2rem'
                         }}>
                             {/* Current User's Profile (if they opted in) */}
-                            {profileData.name && !loginEmail.toLowerCase().includes('root') && (isAdminView || userRole !== 'employee' || profileData.showInDirectory) && (() => {
+                            {profileData.name && (isAdminView || userRole !== 'employee' || profileData.showInDirectory) && (() => {
                                 // Apply same filters to YOU card
+                                if (directoryFilter === 'billableNonContract') {
+                                    if (profileData.billableStatus !== 'Billable' || profileData.employmentType === 'Contract') return false;
+                                }
                                 if (directoryFilter === 'startDate' && (directorySearch || directoryMonth)) {
                                     if (!profileData.startDate) return false;
                                     const [y, mo] = profileData.startDate.split('-');
@@ -11540,7 +11595,7 @@ loadBalancer.distribute(traffic);`}
                                     const monthName = monthNum >= 1 && monthNum <= 12 ? months[monthNum - 1] : '';
                                     if (monthName.toLowerCase() !== directorySearch.toLowerCase()) return false;
                                 }
-                                if (directoryFilter !== 'all' && directoryFilter !== 'startDate' && directoryFilter !== 'birthday' && directorySearch) {
+                                if (directoryFilter !== 'all' && directoryFilter !== 'startDate' && directoryFilter !== 'birthday' && directoryFilter !== 'billableNonContract' && directorySearch) {
                                     const fieldMap = { department: 'department', employmentType: 'employmentType', billableStatus: 'billableStatus', prime: 'contractAssignment', gender: 'gender', location: 'location', shirtSize: 'shirtSize', dietaryAllergy: 'dietaryAllergy' };
                                     const field = fieldMap[directoryFilter];
                                     if (field) {
@@ -11867,6 +11922,10 @@ loadBalancer.distribute(traffic);`}
                                 // In employee view, only show members who opted into public directory
                                 if (!isAdminView || userRole === 'employee') {
                                     if (!member.showInDirectory) return false;
+                                }
+                                // Billable Non-Contract filter
+                                if (directoryFilter === 'billableNonContract') {
+                                    return member.billableStatus === 'Billable' && member.employmentType !== 'Contract';
                                 }
                                 if (directoryFilter === 'startDate') {
                                     if (!directorySearch && !directoryMonth) return true;
