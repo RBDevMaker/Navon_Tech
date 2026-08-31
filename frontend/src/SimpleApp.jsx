@@ -1893,6 +1893,45 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         }
     };
 
+    // Toggle favorite on a resume-doc file. If no ATS record exists, create a minimal one so it joins the favorites system.
+    const toggleFileFavorite = async (file, linkedResume, candidateName) => {
+        const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+        if (linkedResume && linkedResume.resumeId) {
+            // Already in ATS — toggle normally
+            await toggleFavorite(linkedResume.resumeId, linkedResume.isFavorite);
+            return;
+        }
+        // No ATS record — create one marked as favorite
+        try {
+            const payload = {
+                candidateName: candidateName || file.name.replace(/\.[^.]+$/, ''),
+                email: '',
+                phone: '',
+                position: 'Not specified',
+                department: 'General',
+                stage: 'New',
+                s3Key: file.id,
+                notes: 'Added via Resume Docs favorite',
+                receivedDate: file.lastModified ? String(file.lastModified).split('T')[0] : new Date().toISOString().split('T')[0],
+                isFavorite: true,
+                favoriteNotified: new Date().toISOString()
+            };
+            const res = await fetch(`${apiUrl}/resume`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (res.ok) {
+                const data = await res.json();
+                const newResume = data.resume || { ...payload, resumeId: data.resumeId };
+                setResumes(prev => [...prev, newResume]);
+                setFilteredResumes(prev => [...prev, newResume]);
+            }
+        } catch (err) {
+            console.error('Create favorite from file failed:', err);
+        }
+    };
+
     const updateResumeStage = async (resumeId, newStage) => {
         try {
             const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
@@ -14591,6 +14630,18 @@ loadBalancer.distribute(traffic);`}
                                                         {candidateDisplayName || file.name}
                                                     </h4>
                                                 </div>
+                                                {(() => {
+                                                    const linked = matchedResume || matchedByName;
+                                                    const isFav = linked ? linked.isFavorite : false;
+                                                    return (
+                                                        <button
+                                                            onClick={(e) => { e.stopPropagation(); toggleFileFavorite(file, linked, rawName); }}
+                                                            title={isFav ? 'Remove from favorites' : 'Mark as favorite'}
+                                                            style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.5rem', padding: '0 0 0 0.5rem', lineHeight: 1, color: isFav ? '#d4af37' : '#cbd5e1' }}>
+                                                            {isFav ? '★' : '☆'}
+                                                        </button>
+                                                    );
+                                                })()}
                                             </div>
                                             {candidateDisplayName && <p style={{ color: '#64748b', fontSize: '0.75rem', margin: '0 0 0.5rem 0', wordBreak: 'break-word' }}>
                                                 📎 {file.name}

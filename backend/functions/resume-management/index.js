@@ -185,6 +185,8 @@ async function createResume(data) {
             s3Key: data.s3Key || '',
             notes: data.notes || '',
             experience: data.experience || '',
+            isFavorite: data.isFavorite || false,
+            favoriteNotified: data.favoriteNotified || '',
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
         };
