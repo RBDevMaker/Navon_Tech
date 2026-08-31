@@ -149,6 +149,74 @@ exports.handler = async (event) => {
             };
         }
 
+        // Handle favorite resume review reminder to career distribution group
+        if (body.type === 'favorite-resume-review') {
+            const { favorites, notifyEmail } = body;
+            const favList = Array.isArray(favorites) ? favorites : [];
+            
+            const rows = favList.map(f => `
+                <tr style="border-bottom:1px solid #e2e8f0;">
+                    <td style="padding:10px 14px;font-weight:600;color:#1e293b;">${f.candidateName || 'Unknown'}</td>
+                    <td style="padding:10px 14px;color:#475569;">${f.position || 'Not specified'}</td>
+                    <td style="padding:10px 14px;color:#475569;">${f.department || 'Not specified'}</td>
+                    <td style="padding:10px 14px;color:#94a3b8;">${f.stage || 'New'}</td>
+                </tr>`).join('');
+            
+            const subject = `⭐ Favorite Candidates — 30-Day Review (${favList.length})`;
+            const htmlBody = `<div style="font-family:Arial,sans-serif;max-width:650px;margin:0 auto;">
+                <div style="background:linear-gradient(135deg,#1e3a8a,#3b82f6);padding:30px;text-align:center;border-radius:12px 12px 0 0;">
+                    <h1 style="color:#d4af37;margin:0;font-size:24px;">NAVON TECHNOLOGIES</h1>
+                    <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:13px;letter-spacing:2px;">FAVORITE CANDIDATES REVIEW</p>
+                </div>
+                <div style="background:#d4af37;height:4px;"></div>
+                <div style="padding:30px;background:white;border:1px solid #e2e8f0;">
+                    <h2 style="color:#1e3a8a;margin:0 0 16px;">⭐ 30-Day Favorite Candidates Review</h2>
+                    <p style="color:#334155;font-size:15px;line-height:1.6;margin:0 0 20px;">The following ${favList.length} candidate(s) have been marked as favorites in the ATS and are due for review. Please revisit their profiles to determine next steps.</p>
+                    <table style="width:100%;border-collapse:collapse;font-size:13px;border:2px solid #e2e8f0;border-radius:8px;">
+                        <thead>
+                            <tr style="background:#f8fafc;border-bottom:2px solid #d4af37;">
+                                <th style="padding:10px 14px;text-align:left;color:#1e3a8a;">Candidate</th>
+                                <th style="padding:10px 14px;text-align:left;color:#1e3a8a;">Position</th>
+                                <th style="padding:10px 14px;text-align:left;color:#1e3a8a;">Department</th>
+                                <th style="padding:10px 14px;text-align:left;color:#1e3a8a;">Stage</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                    <div style="background:#eff6ff;border:2px solid #93c5fd;border-radius:8px;padding:16px 20px;margin-top:24px;">
+                        <h3 style="color:#1e40af;font-size:15px;margin:0 0 10px;">📋 Action Items</h3>
+                        <ol style="color:#1e40af;font-size:14px;line-height:1.9;margin:0;padding-left:20px;">
+                            <li><strong>Review each resume</strong> in the ATS to reassess fit and current openings.</li>
+                            <li><strong>Follow up with the candidate</strong> for any updates to their availability, experience, or resume.</li>
+                            <li><strong>Let them know</strong> we are still looking for the best opportunity for them and value their interest in Navon Technologies.</li>
+                        </ol>
+                    </div>
+                    <div style="text-align:center;margin-top:24px;">
+                        <a href="https://navontech.com/#resumes" style="display:inline-block;background:linear-gradient(135deg,#1e3a8a,#3b82f6);color:white;text-decoration:none;padding:12px 30px;border-radius:8px;font-size:15px;font-weight:700;">Review Resume in ATS →</a>
+                    </div>
+                </div>
+                <div style="background:#1e293b;padding:20px;text-align:center;border-radius:0 0 12px 12px;">
+                    <p style="color:#d4af37;font-size:12px;margin:0;font-weight:600;">NAVON TECHNOLOGIES</p>
+                    <p style="color:#94a3b8;font-size:11px;margin:4px 0 0;">Leesburg, Virginia | navontech.com</p>
+                </div>
+            </div>`;
+
+            await sesClient.send(new SendEmailCommand({
+                Source: 'careers@navontech.com',
+                Destination: { ToAddresses: [notifyEmail || 'careers@navontech.com'] },
+                Message: {
+                    Subject: { Data: subject, Charset: 'UTF-8' },
+                    Body: { Html: { Data: htmlBody, Charset: 'UTF-8' } }
+                }
+            }));
+
+            return {
+                statusCode: 200,
+                headers: CORS_HEADERS,
+                body: JSON.stringify({ message: 'Favorite resume review sent' })
+            };
+        }
+
         // Handle new hire onboarding form notification to CEO
         if (body.type === 'new-hire-onboarding-form') {
             const { candidateName, position, hiredDate, notifyEmail } = body;

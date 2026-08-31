@@ -399,6 +399,43 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                     }
                 }
             });
+            
+            // Check favorite resumes due for 30-day review
+            (async () => {
+                const favorites = resumes.filter(r => r.isFavorite && r.resumeId !== 'sample');
+                if (favorites.length === 0) return;
+                // Determine the earliest "favoriteNotified" among favorites; send review if 30+ days have passed
+                const now = Date.now();
+                const dueForReview = favorites.filter(f => {
+                    const last = f.favoriteNotified ? new Date(f.favoriteNotified).getTime() : 0;
+                    return !last || (now - last) >= 30 * 24 * 60 * 60 * 1000;
+                });
+                if (dueForReview.length === 0) return;
+                try {
+                    const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                    // Send review email to career distribution group
+                    await fetch(`${apiUrl}/apply`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            type: 'favorite-resume-review',
+                            favorites: dueForReview.map(f => ({ candidateName: f.candidateName, position: f.position, department: f.department, stage: f.stage })),
+                            notifyEmail: 'careers@navontech.com'
+                        })
+                    });
+                    // Reset the 30-day timer on each notified favorite
+                    for (const f of dueForReview) {
+                        await fetch(`${apiUrl}/resume/${f.resumeId}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ favoriteNotified: new Date().toISOString() })
+                        });
+                    }
+                    console.log(`Sent 30-day favorite review for ${dueForReview.length} candidate(s)`);
+                } catch (err) {
+                    console.error('Favorite review notification failed:', err);
+                }
+            })();
         }
     }, [resumes]);
     
@@ -1832,6 +1869,27 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             console.error('Error uploading resume:', error);
             alert('❌ Failed to upload resume. Please try again.');
             throw error;
+        }
+    };
+
+    const toggleFavorite = async (resumeId, currentValue) => {
+        if (!resumeId || resumeId === 'sample') { alert('Demo resume — use a real resume to favorite.'); return; }
+        try {
+            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+            const newValue = !currentValue;
+            // Optimistic UI update
+            setResumes(prev => prev.map(r => r.resumeId === resumeId ? { ...r, isFavorite: newValue } : r));
+            setFilteredResumes(prev => prev.map(r => r.resumeId === resumeId ? { ...r, isFavorite: newValue } : r));
+            await fetch(`${apiUrl}/resume/${resumeId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ isFavorite: newValue, favoriteNotified: newValue ? new Date().toISOString() : '' })
+            });
+        } catch (err) {
+            console.error('Toggle favorite failed:', err);
+            // Revert on failure
+            setResumes(prev => prev.map(r => r.resumeId === resumeId ? { ...r, isFavorite: currentValue } : r));
+            setFilteredResumes(prev => prev.map(r => r.resumeId === resumeId ? { ...r, isFavorite: currentValue } : r));
         }
     };
 
@@ -7661,7 +7719,6 @@ loadBalancer.distribute(traffic);`}
                                                         startDate: normalizedDate,
                                                         phone: emp.phone,
                                                         location: emp.location,
-                                                        personalEmail: emp.personalEmail,
                                                         address: emp.address,
                                                         preferredName: emp.preferredName,
                                                         gender: emp.gender,
@@ -14697,8 +14754,16 @@ loadBalancer.distribute(traffic);`}
                                                                 }}
                                                                 onDragEnd={(e) => { e.currentTarget.style.opacity = '1'; }}
                                                                 style={{ background: 'white', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', fontSize: '0.8rem', cursor: 'grab', overflow: 'hidden', wordBreak: 'break-word' }}>
+                                                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
+                                                                    <div onClick={() => setEditingResume({...resume})} style={{ fontWeight: '700', color: '#1e3a8a', fontSize: '0.85rem', cursor: 'pointer', flex: 1 }}>{resume.candidateName || 'Unknown'}</div>
+                                                                    <button
+                                                                        onClick={(e) => { e.stopPropagation(); toggleFavorite(resume.resumeId, resume.isFavorite); }}
+                                                                        title={resume.isFavorite ? 'Remove from favorites' : 'Mark as favorite'}
+                                                                        style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem', padding: '0 0 0 0.25rem', lineHeight: 1, color: resume.isFavorite ? '#d4af37' : '#cbd5e1' }}>
+                                                                        {resume.isFavorite ? '★' : '☆'}
+                                                                    </button>
+                                                                </div>
                                                                 <div onClick={() => setEditingResume({...resume})} style={{ cursor: 'pointer' }}>
-                                                                <div style={{ fontWeight: '700', color: '#1e3a8a', marginBottom: '0.25rem', fontSize: '0.85rem' }}>{resume.candidateName || 'Unknown'}</div>
                                                                 {resume.stage === 'Archived' && (
                                                                     <div style={{ marginBottom: '0.25rem' }}>
                                                                         <span style={{ background: resume.hiredDate ? '#059669' : '#ef4444', color: 'white', padding: '0.15rem 0.4rem', borderRadius: '4px', fontSize: '0.65rem', fontWeight: '700' }}>
