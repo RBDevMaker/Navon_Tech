@@ -107,6 +107,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [onboardingName, setOnboardingName] = useState(''); // New hire name input
     const [onboardingOfferFile, setOnboardingOfferFile] = useState(null); // Uploaded offer letter file
     const [onboardingSending, setOnboardingSending] = useState(false); // Sending state
+    const [onboardingTestMode, setOnboardingTestMode] = useState(false); // Test mode: send only to me
     const [showRootReasonModal, setShowRootReasonModal] = useState(false); // Root login reason modal
     const [rootReasonInput, setRootReasonInput] = useState(''); // Root reason text input
     const [rootReasonCallback, setRootReasonCallback] = useState(null); // Callback after reason provided
@@ -19300,7 +19301,7 @@ Please review and approve this request.
                             }}
                         />
                         <label style={{ display: 'block', fontWeight: '600', color: '#334155', marginBottom: '0.4rem', fontSize: '0.9rem' }}>Offer Letter (PDF or DOCX)</label>
-                        <div style={{ marginBottom: '1.5rem' }}>
+                        <div style={{ marginBottom: '1rem' }}>
                             <label style={{
                                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
                                 padding: '0.85rem 1rem', border: '2px dashed #94a3b8', borderRadius: '10px',
@@ -19316,6 +19317,15 @@ Please review and approve this request.
                                 />
                             </label>
                         </div>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem', cursor: 'pointer', fontSize: '0.9rem', color: '#334155', fontWeight: '600' }}>
+                            <input
+                                type="checkbox"
+                                checked={onboardingTestMode}
+                                onChange={(e) => setOnboardingTestMode(e.target.checked)}
+                                style={{ width: '18px', height: '18px', accentColor: '#1e3a8a', cursor: 'pointer' }}
+                            />
+                            🧪 Test mode — send only to me ({loginEmail})
+                        </label>
                         <div style={{ display: 'flex', gap: '1rem' }}>
                             <button
                                 onClick={() => { setShowOnboardingModal(false); setOnboardingOfferFile(null); }}
@@ -19360,14 +19370,18 @@ Please review and approve this request.
                                                 offerLetterContent: base64,
                                                 offerLetterFileName: onboardingOfferFile.name,
                                                 offerLetterUrl,
-                                                resumeUrl
+                                                resumeUrl,
+                                                testEmail: onboardingTestMode ? loginEmail : undefined
                                             })
                                         });
                                         if (!res.ok) throw new Error('Server error');
                                         setShowOnboardingModal(false);
                                         setOnboardingOfferFile(null);
                                         setOnboardingName('');
-                                        alert(`✅ Onboarding summary for ${candidateName} sent to Rachelle & Yahvinah`);
+                                        alert(onboardingTestMode
+                                            ? `✅ TEST: Onboarding summary for ${candidateName} sent only to ${loginEmail}`
+                                            : `✅ Onboarding summary for ${candidateName} sent to Rachelle & Yahvinah`);
+                                        setOnboardingTestMode(false);
                                     } catch (err) {
                                         alert(`❌ Failed to send: ${err.message}`);
                                     } finally {
