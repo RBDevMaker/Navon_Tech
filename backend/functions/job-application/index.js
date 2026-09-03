@@ -326,7 +326,7 @@ exports.handler = async (event) => {
 
         // Handle new hire onboarding: parse offer letter, build summary, email Rachelle & Yahvinah
         if (body.type === 'new-hire-onboarding-form') {
-            const { candidateName, offerLetterContent, offerLetterFileName, offerLetterUrl, resumeUrl, testEmail } = body;
+            const { candidateName, personalEmailOverride, offerLetterContent, offerLetterFileName, offerLetterUrl, resumeUrl, testEmail } = body;
 
             // Extract and parse offer letter text
             let parsed = {};
@@ -340,6 +340,8 @@ exports.handler = async (event) => {
             }
             // Use provided name, or fall back to name extracted from the offer letter
             const displayName = candidateName || parsed.name || 'New Hire';
+            // Personal email: manual entry overrides parsed value
+            const personalEmailFinal = personalEmailOverride || parsed.personalEmail || '';
 
             const row = (label, value, hint) => `
                 <tr style="border-bottom:1px solid #e2e8f0;">
@@ -362,7 +364,7 @@ exports.handler = async (event) => {
                         <tr style="background:#f8fafc;"><td colspan="2" style="padding:12px 16px;font-weight:700;color:#1e3a8a;font-size:15px;border-bottom:2px solid #d4af37;">Employee Information</td></tr>
                         ${row('Full Name', displayName)}
                         ${row('Address', parsed.address)}
-                        ${row('Personal Email', parsed.personalEmail)}
+                        ${row('Personal Email', personalEmailFinal)}
                         ${row('Phone', parsed.phone)}
                         ${row('Start Date', parsed.startDate)}
                         ${sectionHead('Position &amp; Compensation')}

@@ -108,6 +108,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [onboardingOfferFile, setOnboardingOfferFile] = useState(null); // Uploaded offer letter file
     const [onboardingSending, setOnboardingSending] = useState(false); // Sending state
     const [onboardingTestMode, setOnboardingTestMode] = useState(false); // Test mode: send only to me
+    const [onboardingPersonalEmail, setOnboardingPersonalEmail] = useState(''); // Manually entered personal email
     const [showRootReasonModal, setShowRootReasonModal] = useState(false); // Root login reason modal
     const [rootReasonInput, setRootReasonInput] = useState(''); // Root reason text input
     const [rootReasonCallback, setRootReasonCallback] = useState(null); // Callback after reason provided
@@ -19300,6 +19301,18 @@ Please review and approve this request.
                                 fontWeight: '600', color: '#1e3a8a'
                             }}
                         />
+                        <label style={{ display: 'block', fontWeight: '600', color: '#334155', marginBottom: '0.4rem', fontSize: '0.9rem' }}>Personal Email (optional)</label>
+                        <input
+                            type="email"
+                            value={onboardingPersonalEmail}
+                            onChange={(e) => setOnboardingPersonalEmail(e.target.value)}
+                            placeholder="name@email.com"
+                            style={{
+                                width: '100%', padding: '0.85rem 1rem', border: '2px solid #d4af37', borderRadius: '10px',
+                                fontSize: '1.1rem', outline: 'none', boxSizing: 'border-box', marginBottom: '1.25rem',
+                                fontWeight: '600', color: '#1e3a8a'
+                            }}
+                        />
                         <label style={{ display: 'block', fontWeight: '600', color: '#334155', marginBottom: '0.4rem', fontSize: '0.9rem' }}>Offer Letter (PDF or DOCX)</label>
                         <div style={{ marginBottom: '1rem' }}>
                             <label style={{
@@ -19369,6 +19382,7 @@ Please review and approve this request.
                                             body: JSON.stringify({
                                                 type: 'new-hire-onboarding-form',
                                                 candidateName,
+                                                personalEmailOverride: onboardingPersonalEmail.trim(),
                                                 offerLetterContent: base64,
                                                 offerLetterFileName: onboardingOfferFile.name,
                                                 offerLetterUrl,
@@ -19380,6 +19394,7 @@ Please review and approve this request.
                                         setShowOnboardingModal(false);
                                         setOnboardingOfferFile(null);
                                         setOnboardingName('');
+                                        setOnboardingPersonalEmail('');
                                         alert(onboardingTestMode
                                             ? `✅ TEST: Onboarding summary sent only to ${loginEmail}`
                                             : `✅ Onboarding summary sent to Rachelle & Yahvinah`);
