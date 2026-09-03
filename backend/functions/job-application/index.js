@@ -30,6 +30,23 @@ function parseOfferLetter(text, candidateName) {
     const clean = (text || '').replace(/\r/g, '').replace(/\u00a0/g, ' ');
     const get = (re) => { const m = clean.match(re); return m ? m[1].trim().replace(/\s+/g, ' ') : ''; };
     
+    // Extract candidate name from "Dear [Name]," if not provided
+    let extractedName = candidateName || '';
+    if (!extractedName) {
+        const dearMatch = clean.match(/Dear\s+([A-Z][a-zA-Z]+(?:\s+[A-Z][a-zA-Z]+)?)\s*,/);
+        if (dearMatch) extractedName = dearMatch[1].trim();
+    }
+    // Extract personal email (any email that is NOT a navontech.com address)
+    let personalEmail = '';
+    const emails = clean.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g) || [];
+    const nonNavon = emails.filter(e => !e.toLowerCase().includes('navontech'));
+    if (nonNavon.length) personalEmail = nonNavon[0];
+    // Extract phone (skip the Brian Briscoe contact number if present)
+    let phone = '';
+    const phones = clean.match(/(?:\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/g) || [];
+    const nonBrian = phones.filter(p => !p.replace(/\D/g, '').endsWith('9155400'));
+    if (nonBrian.length) phone = nonBrian[0];
+    
     const title = get(/offer of employment with Navon Technologies as an?\s+([^.\n]+?)[.\n]/i);
     const startDate = get(/start date will be\s+([^.\n]+?)[.\n]/i);
     const annualSalary = get(/\$\s*([\d,]+(?:\.\d{2})?)\s*(?:annually|per year|\/year|annual)/i);
@@ -63,6 +80,9 @@ function parseOfferLetter(text, candidateName) {
     if (/\bpto\b|paid time off/i.test(clean)) benefits.push('PTO');
     
     return {
+        name: extractedName,
+        personalEmail,
+        phone,
         title,
         startDate,
         annualSalary: annualSalary ? `$${annualSalary}` : '',
@@ -301,6 +321,8 @@ exports.handler = async (event) => {
                 const text = await extractOfferLetterText(offerLetterContent, offerLetterFileName || '');
                 parsed = parseOfferLetter(text, candidateName);
             }
+            // Use provided name, or fall back to name extracted from the offer letter
+            const displayName = candidateName || parsed.name || 'New Hire';
 
             const row = (label, value, hint) => `
                 <tr style="border-bottom:1px solid #e2e8f0;">
@@ -309,7 +331,7 @@ exports.handler = async (event) => {
                 </tr>`;
             const sectionHead = (t) => `<tr style="background:#f8fafc;"><td colspan="2" style="padding:12px 16px;font-weight:700;color:#1e3a8a;font-size:15px;border-bottom:2px solid #d4af37;border-top:2px solid #e2e8f0;">${t}</td></tr>`;
 
-            const subject = `🎉 New Hire Onboarding Summary — ${candidateName}`;
+            const subject = `🎉 New Hire Onboarding Summary — ${displayName}`;
             const htmlBody = `<div style="font-family:Arial,sans-serif;max-width:650px;margin:0 auto;">
                 <div style="background:linear-gradient(135deg,#1e3a8a,#3b82f6);padding:30px;text-align:center;border-radius:12px 12px 0 0;">
                     <h1 style="color:#d4af37;margin:0;font-size:24px;">NAVON TECHNOLOGIES</h1>
@@ -317,12 +339,14 @@ exports.handler = async (event) => {
                 </div>
                 <div style="background:#d4af37;height:4px;"></div>
                 <div style="padding:30px;background:white;border:1px solid #e2e8f0;">
-                    <h2 style="color:#1e3a8a;margin:0 0 8px;">🎉 New Hire: ${candidateName}</h2>
+                    <h2 style="color:#1e3a8a;margin:0 0 8px;">🎉 New Hire: ${displayName}</h2>
                     <p style="color:#334155;font-size:15px;line-height:1.6;margin:0 0 20px;">The following information was extracted from the offer letter${resumeUrl ? ' and candidate record' : ''}. Please review and proceed with Rippling onboarding and company email setup.</p>
                     <table style="width:100%;border-collapse:collapse;border:2px solid #e2e8f0;border-radius:8px;">
                         <tr style="background:#f8fafc;"><td colspan="2" style="padding:12px 16px;font-weight:700;color:#1e3a8a;font-size:15px;border-bottom:2px solid #d4af37;">Employee Information</td></tr>
-                        ${row('Full Name', candidateName)}
+                        ${row('Full Name', displayName)}
                         ${row('Address', parsed.address)}
+                        ${row('Personal Email', parsed.personalEmail)}
+                        ${row('Phone', parsed.phone)}
                         ${row('Start Date', parsed.startDate)}
                         ${sectionHead('Position &amp; Compensation')}
                         ${row('Title / Position', parsed.title)}

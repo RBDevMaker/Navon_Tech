@@ -19285,9 +19285,9 @@ Please review and approve this request.
                         <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
                             <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>🎉</div>
                             <h2 style={{ color: '#1e3a8a', margin: '0 0 0.5rem 0', fontSize: '1.8rem', fontWeight: '800' }}>New Hire Onboarding</h2>
-                            <p style={{ color: '#64748b', margin: 0, fontSize: '1rem' }}>Enter the new hire's name and upload their offer letter. A summary will be emailed to Rachelle &amp; Yahvinah.</p>
+                            <p style={{ color: '#64748b', margin: 0, fontSize: '1rem' }}>Upload the offer letter (name optional — pulled from the letter). A summary will be emailed to Rachelle &amp; Yahvinah.</p>
                         </div>
-                        <label style={{ display: 'block', fontWeight: '600', color: '#334155', marginBottom: '0.4rem', fontSize: '0.9rem' }}>Full Name</label>
+                        <label style={{ display: 'block', fontWeight: '600', color: '#334155', marginBottom: '0.4rem', fontSize: '0.9rem' }}>Full Name (optional)</label>
                         <input
                             type="text"
                             value={onboardingName}
@@ -19339,14 +19339,14 @@ Please review and approve this request.
                                 data-submit="true"
                                 disabled={onboardingSending}
                                 onClick={async () => {
-                                    if (!onboardingName.trim() || !onboardingOfferFile) {
-                                        alert('Please enter a name and upload the offer letter.');
+                                    if (!onboardingOfferFile) {
+                                        alert('Please upload the offer letter.');
                                         return;
                                     }
                                     setOnboardingSending(true);
                                     try {
                                         const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
-                                        const candidateName = onboardingName.trim();
+                                        const candidateName = onboardingName.trim(); // optional; backend falls back to name in letter
                                         const base64 = await new Promise((resolve, reject) => {
                                             const reader = new FileReader();
                                             reader.onload = () => resolve(reader.result.split(',')[1]);
@@ -19358,8 +19358,10 @@ Please review and approve this request.
                                             offerLetterUrl = await uploadDocument(onboardingOfferFile, 'Offer-Letters');
                                         } catch (upErr) { console.error('Offer letter upload failed:', upErr); }
                                         let resumeUrl = '';
-                                        const match = resumes.find(r => (r.candidateName || '').toLowerCase().trim() === candidateName.toLowerCase().trim() && r.s3Key);
-                                        if (match && match.s3Key) resumeUrl = `${s3BaseUrl}/${match.s3Key}`;
+                                        if (candidateName) {
+                                            const match = resumes.find(r => (r.candidateName || '').toLowerCase().trim() === candidateName.toLowerCase().trim() && r.s3Key);
+                                            if (match && match.s3Key) resumeUrl = `${s3BaseUrl}/${match.s3Key}`;
+                                        }
                                         
                                         const res = await fetch(`${apiUrl}/apply`, {
                                             method: 'POST',
@@ -19379,8 +19381,8 @@ Please review and approve this request.
                                         setOnboardingOfferFile(null);
                                         setOnboardingName('');
                                         alert(onboardingTestMode
-                                            ? `✅ TEST: Onboarding summary for ${candidateName} sent only to ${loginEmail}`
-                                            : `✅ Onboarding summary for ${candidateName} sent to Rachelle & Yahvinah`);
+                                            ? `✅ TEST: Onboarding summary sent only to ${loginEmail}`
+                                            : `✅ Onboarding summary sent to Rachelle & Yahvinah`);
                                         setOnboardingTestMode(false);
                                     } catch (err) {
                                         alert(`❌ Failed to send: ${err.message}`);
@@ -19392,7 +19394,7 @@ Please review and approve this request.
                                     flex: 2, padding: '1rem', border: 'none', borderRadius: '10px',
                                     background: 'linear-gradient(135deg, #1e3a8a, #3b82f6)', color: 'white',
                                     fontSize: '1.1rem', fontWeight: '700', cursor: onboardingSending ? 'wait' : 'pointer',
-                                    opacity: (onboardingName.trim() && onboardingOfferFile && !onboardingSending) ? 1 : 0.5
+                                    opacity: (onboardingOfferFile && !onboardingSending) ? 1 : 0.5
                                 }}>
                                 {onboardingSending ? 'Sending...' : 'Build & Send 📧'}
                             </button>
