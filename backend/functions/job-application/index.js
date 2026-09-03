@@ -3,6 +3,80 @@ const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const { DynamoDBClient, PutItemCommand, QueryCommand } = require('@aws-sdk/client-dynamodb');
 const { DynamoDBDocumentClient, PutCommand } = require('@aws-sdk/lib-dynamodb');
 
+// Extract plain text from an offer letter (base64-encoded DOCX or PDF)
+async function extractOfferLetterText(base64Content, fileName) {
+    try {
+        const buffer = Buffer.from(base64Content, 'base64');
+        const ext = (fileName || '').toLowerCase();
+        if (ext.endsWith('.docx') || ext.endsWith('.doc')) {
+            const mammoth = require('mammoth');
+            const result = await mammoth.extractRawText({ buffer });
+            return result.value || '';
+        } else if (ext.endsWith('.pdf')) {
+            const pdfParse = require('pdf-parse');
+            const data = await pdfParse(buffer);
+            return data.text || '';
+        }
+        // Fallback: treat as plain text
+        return buffer.toString('utf-8');
+    } catch (err) {
+        console.error('Offer letter text extraction failed:', err);
+        return '';
+    }
+}
+
+// Parse structured fields from offer letter text
+function parseOfferLetter(text, candidateName) {
+    const clean = (text || '').replace(/\r/g, '').replace(/\u00a0/g, ' ');
+    const get = (re) => { const m = clean.match(re); return m ? m[1].trim().replace(/\s+/g, ' ') : ''; };
+    
+    const title = get(/offer of employment with Navon Technologies as an?\s+([^.\n]+?)[.\n]/i);
+    const startDate = get(/start date will be\s+([^.\n]+?)[.\n]/i);
+    const annualSalary = get(/\$\s*([\d,]+(?:\.\d{2})?)\s*(?:annually|per year|\/year|annual)/i);
+    const hourlyRate = get(/hourly rate of\s*\$\s*([\d,]+(?:\.\d{2})?)/i);
+    const classification = get(/classified as\s+(exempt|non-exempt|nonexempt)/i);
+    const payFrequency = get(/paid on an?\s+([a-z-]+)\s+basis/i);
+    const ptoWeeks = get(/([\d.]+)\s*weeks?\s+of\s+PTO/i);
+    const holidays = get(/(\d+)\s+Federal holidays/i);
+    const isFullTime = /full[-\s]?time employee/i.test(clean);
+    const isContractor = /contractor|1099|independent contractor/i.test(clean);
+    // Address: lines following the candidate name at top
+    let address = '';
+    if (candidateName) {
+        const nameIdx = clean.indexOf(candidateName);
+        if (nameIdx !== -1) {
+            const after = clean.substring(nameIdx + candidateName.length, nameIdx + candidateName.length + 200);
+            const addrMatch = after.match(/([\dA-Za-z][^\n]*\n[^\n]*,\s*[A-Z]{2}\s*\d{5})/);
+            if (addrMatch) address = addrMatch[1].replace(/\n/g, ', ').replace(/\s+/g, ' ').trim();
+        }
+    }
+    
+    // Benefits detection
+    const benefits = [];
+    if (/medical/i.test(clean)) benefits.push('Medical');
+    if (/dental/i.test(clean)) benefits.push('Dental');
+    if (/vision/i.test(clean)) benefits.push('Vision');
+    if (/401\s*\(?k\)?/i.test(clean)) benefits.push('401(k)');
+    if (/life insurance/i.test(clean)) benefits.push('Life');
+    if (/short[-\s]?term.*disability|long[-\s]?term.*disability|std|ltd/i.test(clean)) benefits.push('STD/LTD');
+    if (/employee assistance|eap/i.test(clean)) benefits.push('EAP');
+    if (/\bpto\b|paid time off/i.test(clean)) benefits.push('PTO');
+    
+    return {
+        title,
+        startDate,
+        annualSalary: annualSalary ? `$${annualSalary}` : '',
+        hourlyRate: hourlyRate ? `$${hourlyRate}` : '',
+        classification: classification ? (classification.charAt(0).toUpperCase() + classification.slice(1).toLowerCase()) : '',
+        payFrequency: payFrequency ? (payFrequency.charAt(0).toUpperCase() + payFrequency.slice(1).toLowerCase()) : '',
+        employmentType: isContractor ? 'Contractor' : (isFullTime ? 'Full-Time Employee' : ''),
+        ptoWeeks: ptoWeeks ? `${ptoWeeks} weeks` : '',
+        holidays: holidays ? `${holidays} Federal holidays` : '',
+        benefits: benefits.length ? benefits.join(', ') : '',
+        address
+    };
+}
+
 const sesClient = new SESClient({ region: process.env.AWS_REGION || 'us-east-1' });
 const s3Client = new S3Client({ region: process.env.AWS_REGION || 'us-east-1' });
 const dynamoClient = new DynamoDBClient({ region: process.env.AWS_REGION || 'us-east-1' });
@@ -217,124 +291,58 @@ exports.handler = async (event) => {
             };
         }
 
-        // Handle new hire onboarding form notification to CEO
+        // Handle new hire onboarding: parse offer letter, build summary, email Rachelle & Yahvinah
         if (body.type === 'new-hire-onboarding-form') {
-            const { candidateName, position, hiredDate, notifyEmail } = body;
-            
-            const subject = `🎉 New Hire Onboarding Form — ${candidateName} — Please Complete & Forward`;
+            const { candidateName, offerLetterContent, offerLetterFileName, offerLetterUrl, resumeUrl } = body;
+
+            // Extract and parse offer letter text
+            let parsed = {};
+            if (offerLetterContent) {
+                const text = await extractOfferLetterText(offerLetterContent, offerLetterFileName || '');
+                parsed = parseOfferLetter(text, candidateName);
+            }
+
+            const row = (label, value, hint) => `
+                <tr style="border-bottom:1px solid #e2e8f0;">
+                    <td style="padding:11px 16px;font-weight:600;color:#334155;width:190px;">${label}</td>
+                    <td style="padding:11px 16px;color:${value ? '#1e293b' : '#94a3b8'};">${value || '<em>Not found — please verify</em>'}${hint ? `<br><span style="font-size:12px;color:#94a3b8;">${hint}</span>` : ''}</td>
+                </tr>`;
+            const sectionHead = (t) => `<tr style="background:#f8fafc;"><td colspan="2" style="padding:12px 16px;font-weight:700;color:#1e3a8a;font-size:15px;border-bottom:2px solid #d4af37;border-top:2px solid #e2e8f0;">${t}</td></tr>`;
+
+            const subject = `🎉 New Hire Onboarding Summary — ${candidateName}`;
             const htmlBody = `<div style="font-family:Arial,sans-serif;max-width:650px;margin:0 auto;">
                 <div style="background:linear-gradient(135deg,#1e3a8a,#3b82f6);padding:30px;text-align:center;border-radius:12px 12px 0 0;">
                     <h1 style="color:#d4af37;margin:0;font-size:24px;">NAVON TECHNOLOGIES</h1>
-                    <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:13px;letter-spacing:2px;">NEW HIRE ONBOARDING FORM</p>
+                    <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:13px;letter-spacing:2px;">NEW HIRE ONBOARDING SUMMARY</p>
                 </div>
                 <div style="background:#d4af37;height:4px;"></div>
                 <div style="padding:30px;background:white;border:1px solid #e2e8f0;">
-                    <h2 style="color:#1e3a8a;margin:0 0 16px;">🎉 ${candidateName} Has Been Hired!</h2>
-                    <p style="color:#334155;font-size:15px;line-height:1.6;margin:0 0 8px;">Please fill in the blanks below, then <strong>forward this email</strong> to:</p>
-                    <p style="color:#1e3a8a;font-size:15px;font-weight:700;margin:0 0 20px;">📧 yahvinah.bryant@navontech.com</p>
-                    
+                    <h2 style="color:#1e3a8a;margin:0 0 8px;">🎉 New Hire: ${candidateName}</h2>
+                    <p style="color:#334155;font-size:15px;line-height:1.6;margin:0 0 20px;">The following information was extracted from the offer letter${resumeUrl ? ' and candidate record' : ''}. Please review and proceed with Rippling onboarding and company email setup.</p>
                     <table style="width:100%;border-collapse:collapse;border:2px solid #e2e8f0;border-radius:8px;">
-                        <tr style="background:#f8fafc;">
-                            <td colspan="2" style="padding:12px 16px;font-weight:700;color:#1e3a8a;font-size:15px;border-bottom:2px solid #d4af37;">Employee Information</td>
-                        </tr>
-                        <tr style="border-bottom:1px solid #e2e8f0;">
-                            <td style="padding:12px 16px;font-weight:600;color:#334155;width:180px;">Full Name:</td>
-                            <td style="padding:12px 16px;color:#64748b;">${candidateName || '________________________'}</td>
-                        </tr>
-                        <tr style="border-bottom:1px solid #e2e8f0;">
-                            <td style="padding:12px 16px;font-weight:600;color:#334155;">Title / Position:</td>
-                            <td style="padding:12px 16px;color:#94a3b8;">${position || '________________________'}</td>
-                        </tr>
-                        <tr style="border-bottom:1px solid #e2e8f0;">
-                            <td style="padding:12px 16px;font-weight:600;color:#334155;">Personal Email:</td>
-                            <td style="padding:12px 16px;color:#94a3b8;">________________________</td>
-                        </tr>
-                        <tr style="border-bottom:1px solid #e2e8f0;">
-                            <td style="padding:12px 16px;font-weight:600;color:#334155;">Start Date:</td>
-                            <td style="padding:12px 16px;color:#94a3b8;">${hiredDate || '________________________'}</td>
-                        </tr>
-                        <tr style="background:#f8fafc;">
-                            <td colspan="2" style="padding:12px 16px;font-weight:700;color:#1e3a8a;font-size:15px;border-bottom:2px solid #d4af37;border-top:2px solid #e2e8f0;">Position Details</td>
-                        </tr>
-                        <tr style="border-bottom:1px solid #e2e8f0;">
-                            <td style="padding:12px 16px;font-weight:600;color:#334155;">Level:</td>
-                            <td style="padding:12px 16px;color:#94a3b8;">________________________<br><span style="font-size:12px;color:#94a3b8;">(Junior / Mid / Senior / Lead / Expert / Principal / Manager / Director / VP)</span></td>
-                        </tr>
-                        <tr style="border-bottom:1px solid #e2e8f0;">
-                            <td style="padding:12px 16px;font-weight:600;color:#334155;">Team / Prime:</td>
-                            <td style="padding:12px 16px;color:#94a3b8;">________________________<br><span style="font-size:12px;color:#94a3b8;">(Arcfield / Nightwing / SAIC / GDIT / Overhead / BD / HR / Marketing)</span></td>
-                        </tr>
-                        <tr style="border-bottom:1px solid #e2e8f0;">
-                            <td style="padding:12px 16px;font-weight:600;color:#334155;">Hourly Rate:</td>
-                            <td style="padding:12px 16px;color:#94a3b8;">$ ________________________</td>
-                        </tr>
-                        <tr style="border-bottom:1px solid #e2e8f0;">
-                            <td style="padding:12px 16px;font-weight:600;color:#334155;">Job Code (optional):</td>
-                            <td style="padding:12px 16px;color:#94a3b8;">________________________<br><br>________________________<br><br>________________________</td>
-                        </tr>
-                        <tr style="background:#f8fafc;">
-                            <td colspan="2" style="padding:12px 16px;font-weight:700;color:#1e3a8a;font-size:15px;border-bottom:2px solid #d4af37;border-top:2px solid #e2e8f0;">Benefits</td>
-                        </tr>
-                        <tr style="border-bottom:1px solid #e2e8f0;">
-                            <td style="padding:12px 16px;font-weight:600;color:#334155;">Benefits Package:</td>
-                            <td style="padding:12px 16px;color:#94a3b8;">________________________<br><span style="font-size:12px;color:#94a3b8;">(Full Benefits / Partial / None)</span></td>
-                        </tr>
-                        <tr style="border-bottom:1px solid #e2e8f0;">
-                            <td style="padding:12px 16px;font-weight:600;color:#334155;">If partial, which:</td>
-                            <td style="padding:12px 16px;color:#94a3b8;">________________________<br><br>________________________<br><span style="font-size:12px;color:#94a3b8;">(Medical / Dental / Vision / 401k / PTO / Life / STD / LTD)</span></td>
-                        </tr>
-                        <tr style="background:#f8fafc;">
-                            <td colspan="2" style="padding:12px 16px;font-weight:700;color:#1e3a8a;font-size:15px;border-bottom:2px solid #d4af37;border-top:2px solid #e2e8f0;">Additional Notes</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2" style="padding:12px 16px;color:#94a3b8;">________________________<br><br>________________________<br><br>________________________<br><span style="font-size:12px;color:#94a3b8;">(Equipment needs, remote/hybrid, clearance status, etc.)</span></td>
-                        </tr>
+                        <tr style="background:#f8fafc;"><td colspan="2" style="padding:12px 16px;font-weight:700;color:#1e3a8a;font-size:15px;border-bottom:2px solid #d4af37;">Employee Information</td></tr>
+                        ${row('Full Name', candidateName)}
+                        ${row('Address', parsed.address)}
+                        ${row('Start Date', parsed.startDate)}
+                        ${sectionHead('Position &amp; Compensation')}
+                        ${row('Title / Position', parsed.title)}
+                        ${row('Annual Salary', parsed.annualSalary)}
+                        ${row('Hourly Rate', parsed.hourlyRate)}
+                        ${row('Classification', parsed.classification)}
+                        ${row('Employment Type', parsed.employmentType)}
+                        ${row('Pay Frequency', parsed.payFrequency)}
+                        ${sectionHead('Benefits &amp; Leave')}
+                        ${row('Benefits Package', parsed.benefits)}
+                        ${row('PTO', parsed.ptoWeeks)}
+                        ${row('Holidays', parsed.holidays)}
                     </table>
-
-                    <div style="background:#fef3c7;border:2px solid #fbbf24;border-radius:8px;padding:16px;margin-top:20px;">
-                        <p style="color:#92400e;font-size:14px;margin:0;font-weight:600;">📝 Instructions:</p>
-                        <ol style="color:#92400e;font-size:13px;line-height:2;margin:8px 0 0;padding-left:20px;">
-                            <li>Click in the blank areas above and type your answers</li>
-                            <li>Forward this email to <strong>yahvinah.bryant@navontech.com</strong></li>
-                            <li>Forward to <strong>rachelle.briscoe@navontech.com</strong> to create company email</li>
-                        </ol>
+                    ${(offerLetterUrl || resumeUrl) ? `<div style="text-align:center;margin-top:24px;">
+                        ${offerLetterUrl ? `<a href="${offerLetterUrl}" style="display:inline-block;background:linear-gradient(135deg,#1e3a8a,#3b82f6);color:white;text-decoration:none;padding:12px 26px;border-radius:8px;font-size:14px;font-weight:700;margin:4px;">📋 View Offer Letter</a>` : ''}
+                        ${resumeUrl ? `<a href="${resumeUrl}" style="display:inline-block;background:#059669;color:white;text-decoration:none;padding:12px 26px;border-radius:8px;font-size:14px;font-weight:700;margin:4px;">📄 View Resume</a>` : ''}
+                    </div>` : ''}
+                    <div style="background:#fef3c7;border:2px solid #fbbf24;border-radius:8px;padding:16px;margin-top:24px;">
+                        <p style="color:#92400e;font-size:13px;margin:0;line-height:1.7;"><strong>⚠️ Please verify all extracted details against the offer letter before entering into Rippling.</strong> Fields not found are marked accordingly.</p>
                     </div>
-                    <div style="text-align:center;margin-top:16px;">
-                        <a href="https://navon-tech-images.s3.us-east-1.amazonaws.com/Documents/Forms/New-Hire-Onboarding-Form.html" download="New-Hire-Onboarding-Blank-Form.html" style="display:inline-block;background:#f8fafc;color:#1e3a8a;text-decoration:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;border:2px solid #e2e8f0;">📥 Download Blank Form for Future Use</a>
-                    </div>
-                </div>
-                <div style="background:#1e293b;padding:20px;text-align:center;border-radius:0 0 12px 12px;">
-                    <p style="color:#d4af37;font-size:12px;margin:0;font-weight:600;">NAVON TECHNOLOGIES</p>
-                    <p style="color:#94a3b8;font-size:11px;margin:4px 0 0;">Confidential — For internal use only</p>
-                </div>
-            </div>`;
-
-            await sesClient.send(new SendEmailCommand({
-                Source: 'hr@navontech.com',
-                Destination: { ToAddresses: [notifyEmail] },
-                Message: {
-                    Subject: { Data: subject, Charset: 'UTF-8' },
-                    Body: { Html: { Data: htmlBody, Charset: 'UTF-8' } }
-                }
-            }));
-
-            // Send heads-up notification to Rachelle and Yahvinah
-            const headsUpSubject = `🎉 New Hire Alert: ${candidateName} — Onboarding Form Sent to Brian`;
-            const headsUpHtml = `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
-                <div style="background:linear-gradient(135deg,#1e3a8a,#3b82f6);padding:30px;text-align:center;border-radius:12px 12px 0 0;">
-                    <h1 style="color:#d4af37;margin:0;font-size:24px;">NAVON TECHNOLOGIES</h1>
-                    <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:13px;letter-spacing:2px;">NEW HIRE ALERT</p>
-                </div>
-                <div style="background:#d4af37;height:4px;"></div>
-                <div style="padding:30px;background:white;border:1px solid #e2e8f0;">
-                    <h2 style="color:#1e3a8a;margin:0 0 16px;">🎉 New Hire: ${candidateName}</h2>
-                    <p style="color:#334155;font-size:15px;line-height:1.6;margin:0 0 20px;">Brian has been sent the <strong>New Hire Onboarding Form</strong> for the employee listed below. Expect the completed form to be forwarded to you shortly.</p>
-                    <div style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:8px;padding:20px;margin-bottom:20px;">
-                        <p style="margin:4px 0;font-size:14px;"><strong>New Hire:</strong> ${candidateName}</p>
-                        <p style="margin:4px 0;font-size:14px;"><strong>Position:</strong> ${position || 'To be confirmed by Brian'}</p>
-                        <p style="margin:4px 0;font-size:14px;"><strong>Start Date:</strong> ${hiredDate || 'To be confirmed by Brian'}</p>
-                    </div>
-                    <p style="color:#64748b;font-size:13px;">Once Brian forwards the completed form, proceed with Rippling onboarding and company email creation.</p>
                 </div>
                 <div style="background:#1e293b;padding:20px;text-align:center;border-radius:0 0 12px 12px;">
                     <p style="color:#d4af37;font-size:12px;margin:0;font-weight:600;">NAVON TECHNOLOGIES</p>
@@ -347,8 +355,8 @@ exports.handler = async (event) => {
                     Source: 'hr@navontech.com',
                     Destination: { ToAddresses: [hrEmail] },
                     Message: {
-                        Subject: { Data: headsUpSubject, Charset: 'UTF-8' },
-                        Body: { Html: { Data: headsUpHtml, Charset: 'UTF-8' } }
+                        Subject: { Data: subject, Charset: 'UTF-8' },
+                        Body: { Html: { Data: htmlBody, Charset: 'UTF-8' } }
                     }
                 }));
             }
@@ -356,7 +364,7 @@ exports.handler = async (event) => {
             return {
                 statusCode: 200,
                 headers: CORS_HEADERS,
-                body: JSON.stringify({ message: 'New hire onboarding form sent to CEO' })
+                body: JSON.stringify({ message: 'Onboarding summary sent to Rachelle and Yahvinah', extracted: parsed })
             };
         }
 

@@ -105,6 +105,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [lastLoginTime, setLastLoginTime] = useState(null); // Last login timestamp for display
     const [showOnboardingModal, setShowOnboardingModal] = useState(false); // New hire onboarding modal
     const [onboardingName, setOnboardingName] = useState(''); // New hire name input
+    const [onboardingOfferFile, setOnboardingOfferFile] = useState(null); // Uploaded offer letter file
+    const [onboardingSending, setOnboardingSending] = useState(false); // Sending state
     const [showRootReasonModal, setShowRootReasonModal] = useState(false); // Root login reason modal
     const [rootReasonInput, setRootReasonInput] = useState(''); // Root reason text input
     const [rootReasonCallback, setRootReasonCallback] = useState(null); // Callback after reason provided
@@ -1997,24 +1999,8 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                     console.error('Stage notification failed:', notifyErr);
                 }
                 
-                // Send onboarding form to CEO when moved to Hired
-                if (newStage === 'Hired') {
-                    try {
-                        await fetch(`${apiUrl}/apply`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                type: 'new-hire-onboarding-form',
-                                candidateName: resume.candidateName,
-                                position: resume.position || 'Not specified',
-                                hiredDate: updateBody.hiredDate || resume.hiredDate || '',
-                                notifyEmail: 'brian.briscoe@navontech.com'
-                            })
-                        });
-                    } catch (err) {
-                        console.error('CEO onboarding form notification failed:', err);
-                    }
-                }
+                // Note: New hire onboarding is now initiated manually via the Onboarding card
+                // (requires uploading the offer letter), so no auto-send on Hired here.
 
                 // Additional referral notification if applicable
                 if (resume.notes && resume.notes.includes('Employee Referral')) {
@@ -13022,9 +13008,9 @@ loadBalancer.distribute(traffic);`}
                                     </h3>
                                 </div>
                                 <div style={{ marginBottom: '1rem', flex: 1 }}>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Send onboarding form to CEO</p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• For hires outside the ATS pipeline</p>
-                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Pre-fills candidate info for Rippling</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Upload offer letter, auto-extract details</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Emails summary to Rachelle &amp; Yahvinah</p>
+                                    <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>• Includes offer letter &amp; resume links</p>
                                 </div>
                                 <button 
                                     onClick={() => { setOnboardingName(''); setShowOnboardingModal(true); }}
@@ -19295,31 +19281,44 @@ Please review and approve this request.
                         background: 'white', borderRadius: '16px', padding: '3rem', maxWidth: '500px', width: '90%',
                         boxShadow: '0 24px 48px rgba(0,0,0,0.2)', border: '3px solid #d4af37'
                     }} onClick={(e) => e.stopPropagation()}>
-                        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
                             <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>🎉</div>
                             <h2 style={{ color: '#1e3a8a', margin: '0 0 0.5rem 0', fontSize: '1.8rem', fontWeight: '800' }}>New Hire Onboarding</h2>
-                            <p style={{ color: '#64748b', margin: 0, fontSize: '1.1rem' }}>Enter the new hire's full name</p>
+                            <p style={{ color: '#64748b', margin: 0, fontSize: '1rem' }}>Enter the new hire's name and upload their offer letter. A summary will be emailed to Rachelle &amp; Yahvinah.</p>
                         </div>
+                        <label style={{ display: 'block', fontWeight: '600', color: '#334155', marginBottom: '0.4rem', fontSize: '0.9rem' }}>Full Name</label>
                         <input
                             type="text"
                             value={onboardingName}
                             onChange={(e) => setOnboardingName(e.target.value)}
                             placeholder="First Last"
                             autoFocus
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter' && onboardingName.trim()) {
-                                    e.target.closest('div').querySelector('button[data-submit]').click();
-                                }
-                            }}
                             style={{
-                                width: '100%', padding: '1rem 1.25rem', border: '2px solid #d4af37', borderRadius: '10px',
-                                fontSize: '1.2rem', outline: 'none', boxSizing: 'border-box', marginBottom: '1.5rem',
-                                textAlign: 'center', fontWeight: '600', color: '#1e3a8a'
+                                width: '100%', padding: '0.85rem 1rem', border: '2px solid #d4af37', borderRadius: '10px',
+                                fontSize: '1.1rem', outline: 'none', boxSizing: 'border-box', marginBottom: '1.25rem',
+                                fontWeight: '600', color: '#1e3a8a'
                             }}
                         />
+                        <label style={{ display: 'block', fontWeight: '600', color: '#334155', marginBottom: '0.4rem', fontSize: '0.9rem' }}>Offer Letter (PDF or DOCX)</label>
+                        <div style={{ marginBottom: '1.5rem' }}>
+                            <label style={{
+                                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
+                                padding: '0.85rem 1rem', border: '2px dashed #94a3b8', borderRadius: '10px',
+                                cursor: 'pointer', background: onboardingOfferFile ? '#f0fdf4' : '#f8fafc',
+                                color: onboardingOfferFile ? '#166534' : '#64748b', fontWeight: '600', fontSize: '0.95rem'
+                            }}>
+                                {onboardingOfferFile ? `📎 ${onboardingOfferFile.name}` : '📤 Choose offer letter file...'}
+                                <input
+                                    type="file"
+                                    accept=".pdf,.doc,.docx"
+                                    style={{ display: 'none' }}
+                                    onChange={(e) => setOnboardingOfferFile(e.target.files?.[0] || null)}
+                                />
+                            </label>
+                        </div>
                         <div style={{ display: 'flex', gap: '1rem' }}>
                             <button
-                                onClick={() => setShowOnboardingModal(false)}
+                                onClick={() => { setShowOnboardingModal(false); setOnboardingOfferFile(null); }}
                                 style={{
                                     flex: 1, padding: '1rem', border: '2px solid #e2e8f0', borderRadius: '10px',
                                     background: 'white', color: '#64748b', fontSize: '1.1rem', fontWeight: '600', cursor: 'pointer'
@@ -19328,34 +19327,60 @@ Please review and approve this request.
                             </button>
                             <button
                                 data-submit="true"
+                                disabled={onboardingSending}
                                 onClick={async () => {
-                                    if (!onboardingName.trim()) return;
+                                    if (!onboardingName.trim() || !onboardingOfferFile) {
+                                        alert('Please enter a name and upload the offer letter.');
+                                        return;
+                                    }
+                                    setOnboardingSending(true);
                                     try {
                                         const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
-                                        await fetch(`${apiUrl}/apply`, {
+                                        const candidateName = onboardingName.trim();
+                                        const base64 = await new Promise((resolve, reject) => {
+                                            const reader = new FileReader();
+                                            reader.onload = () => resolve(reader.result.split(',')[1]);
+                                            reader.onerror = reject;
+                                            reader.readAsDataURL(onboardingOfferFile);
+                                        });
+                                        let offerLetterUrl = '';
+                                        try {
+                                            offerLetterUrl = await uploadDocument(onboardingOfferFile, 'Offer-Letters');
+                                        } catch (upErr) { console.error('Offer letter upload failed:', upErr); }
+                                        let resumeUrl = '';
+                                        const match = resumes.find(r => (r.candidateName || '').toLowerCase().trim() === candidateName.toLowerCase().trim() && r.s3Key);
+                                        if (match && match.s3Key) resumeUrl = `${s3BaseUrl}/${match.s3Key}`;
+                                        
+                                        const res = await fetch(`${apiUrl}/apply`, {
                                             method: 'POST',
                                             headers: { 'Content-Type': 'application/json' },
                                             body: JSON.stringify({
                                                 type: 'new-hire-onboarding-form',
-                                                candidateName: onboardingName.trim(),
-                                                position: '',
-                                                hiredDate: '',
-                                                notifyEmail: 'brian.briscoe@navontech.com'
+                                                candidateName,
+                                                offerLetterContent: base64,
+                                                offerLetterFileName: onboardingOfferFile.name,
+                                                offerLetterUrl,
+                                                resumeUrl
                                             })
                                         });
+                                        if (!res.ok) throw new Error('Server error');
                                         setShowOnboardingModal(false);
-                                        alert(`✅ Onboarding form sent to Brian for ${onboardingName.trim()}`);
+                                        setOnboardingOfferFile(null);
+                                        setOnboardingName('');
+                                        alert(`✅ Onboarding summary for ${candidateName} sent to Rachelle & Yahvinah`);
                                     } catch (err) {
                                         alert(`❌ Failed to send: ${err.message}`);
+                                    } finally {
+                                        setOnboardingSending(false);
                                     }
                                 }}
                                 style={{
                                     flex: 2, padding: '1rem', border: 'none', borderRadius: '10px',
                                     background: 'linear-gradient(135deg, #1e3a8a, #3b82f6)', color: 'white',
-                                    fontSize: '1.1rem', fontWeight: '700', cursor: 'pointer',
-                                    opacity: onboardingName.trim() ? 1 : 0.5
+                                    fontSize: '1.1rem', fontWeight: '700', cursor: onboardingSending ? 'wait' : 'pointer',
+                                    opacity: (onboardingName.trim() && onboardingOfferFile && !onboardingSending) ? 1 : 0.5
                                 }}>
-                                Send to Brian 📧
+                                {onboardingSending ? 'Sending...' : 'Build & Send 📧'}
                             </button>
                         </div>
                     </div>
