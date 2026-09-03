@@ -30,8 +30,31 @@ function parseOfferLetter(text, candidateName) {
     const clean = (text || '').replace(/\r/g, '').replace(/\u00a0/g, ' ');
     const get = (re) => { const m = clean.match(re); return m ? m[1].trim().replace(/\s+/g, ' ') : ''; };
     
-    // Extract candidate name from "Dear [Name]," if not provided
+    // Build a list of non-empty lines from the top of the letter
+    const lines = clean.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    
+    // The top block is: [date], [Full Name], [address line 1], [city, ST zip], then "Dear ..."
+    // Find the "Dear" line index to know where the header block ends
+    let dearIdx = lines.findIndex(l => /^Dear\b/i.test(l));
+    if (dearIdx === -1) dearIdx = Math.min(lines.length, 6);
+    
+    // Full name: first non-date line before "Dear" that looks like a person's name
     let extractedName = candidateName || '';
+    let address = '';
+    if (!extractedName || true) {
+        const headerLines = lines.slice(0, dearIdx);
+        // Skip a leading date line (e.g., 7/2/2025 or July 2, 2025)
+        const isDate = (s) => /^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(s) || /^(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d/i.test(s);
+        const nameCandidates = headerLines.filter(l => !isDate(l));
+        if (nameCandidates.length > 0 && !extractedName) {
+            // First non-date line is the full name
+            extractedName = nameCandidates[0];
+        }
+        // Address = remaining header lines after the name (joined)
+        const addrLines = nameCandidates.slice(1).filter(l => !/^Dear\b/i.test(l));
+        if (addrLines.length > 0) address = addrLines.join(', ').replace(/\s+/g, ' ').trim();
+    }
+    // Fallback: name from "Dear [Name]," (first name only) if header parse failed
     if (!extractedName) {
         const dearMatch = clean.match(/Dear\s+([A-Z][a-zA-Z]+(?:\s+[A-Z][a-zA-Z]+)?)\s*,/);
         if (dearMatch) extractedName = dearMatch[1].trim();
@@ -44,7 +67,7 @@ function parseOfferLetter(text, candidateName) {
     // Extract phone (skip the Brian Briscoe contact number if present)
     let phone = '';
     const phones = clean.match(/(?:\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/g) || [];
-    const nonBrian = phones.filter(p => !p.replace(/\D/g, '').endsWith('9155400'));
+    const nonBrian = phones.filter(p => !p.replace(/\D/g, '').endsWith('9155400') && !p.replace(/\D/g, '').endsWith('3019155400'));
     if (nonBrian.length) phone = nonBrian[0];
     
     const title = get(/offer of employment with Navon Technologies as an?\s+([^.\n]+?)[.\n]/i);
@@ -57,16 +80,6 @@ function parseOfferLetter(text, candidateName) {
     const holidays = get(/(\d+)\s+Federal holidays/i);
     const isFullTime = /full[-\s]?time employee/i.test(clean);
     const isContractor = /contractor|1099|independent contractor/i.test(clean);
-    // Address: lines following the candidate name at top
-    let address = '';
-    if (candidateName) {
-        const nameIdx = clean.indexOf(candidateName);
-        if (nameIdx !== -1) {
-            const after = clean.substring(nameIdx + candidateName.length, nameIdx + candidateName.length + 200);
-            const addrMatch = after.match(/([\dA-Za-z][^\n]*\n[^\n]*,\s*[A-Z]{2}\s*\d{5})/);
-            if (addrMatch) address = addrMatch[1].replace(/\n/g, ', ').replace(/\s+/g, ' ').trim();
-        }
-    }
     
     // Benefits detection
     const benefits = [];
@@ -319,7 +332,11 @@ exports.handler = async (event) => {
             let parsed = {};
             if (offerLetterContent) {
                 const text = await extractOfferLetterText(offerLetterContent, offerLetterFileName || '');
+                console.log('=== OFFER LETTER EXTRACTED TEXT START ===');
+                console.log(text);
+                console.log('=== OFFER LETTER EXTRACTED TEXT END ===');
                 parsed = parseOfferLetter(text, candidateName);
+                console.log('=== PARSED FIELDS ===', JSON.stringify(parsed));
             }
             // Use provided name, or fall back to name extracted from the offer letter
             const displayName = candidateName || parsed.name || 'New Hire';
