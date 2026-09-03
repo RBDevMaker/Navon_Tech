@@ -293,7 +293,7 @@ exports.handler = async (event) => {
 
         // Handle new hire onboarding: parse offer letter, build summary, email Rachelle & Yahvinah
         if (body.type === 'new-hire-onboarding-form') {
-            const { candidateName, offerLetterContent, offerLetterFileName, offerLetterUrl, resumeUrl } = body;
+            const { candidateName, offerLetterContent, offerLetterFileName, offerLetterUrl, resumeUrl, testEmail } = body;
 
             // Extract and parse offer letter text
             let parsed = {};
@@ -350,12 +350,14 @@ exports.handler = async (event) => {
                 </div>
             </div>`;
 
-            for (const hrEmail of ['yahvinah.bryant@navontech.com', 'rachelle.briscoe@navontech.com']) {
+            // If testEmail provided, send only to that address (for testing); otherwise send to both HR recipients
+            const recipients = testEmail ? [testEmail] : ['yahvinah.bryant@navontech.com', 'rachelle.briscoe@navontech.com'];
+            for (const hrEmail of recipients) {
                 await sesClient.send(new SendEmailCommand({
                     Source: 'hr@navontech.com',
                     Destination: { ToAddresses: [hrEmail] },
                     Message: {
-                        Subject: { Data: subject, Charset: 'UTF-8' },
+                        Subject: { Data: (testEmail ? '[TEST] ' : '') + subject, Charset: 'UTF-8' },
                         Body: { Html: { Data: htmlBody, Charset: 'UTF-8' } }
                     }
                 }));
@@ -364,7 +366,7 @@ exports.handler = async (event) => {
             return {
                 statusCode: 200,
                 headers: CORS_HEADERS,
-                body: JSON.stringify({ message: 'Onboarding summary sent to Rachelle and Yahvinah', extracted: parsed })
+                body: JSON.stringify({ message: testEmail ? `Test onboarding summary sent to ${testEmail}` : 'Onboarding summary sent to Rachelle and Yahvinah', extracted: parsed })
             };
         }
 
