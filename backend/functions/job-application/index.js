@@ -342,6 +342,16 @@ exports.handler = async (event) => {
             const displayName = candidateName || parsed.name || 'New Hire';
             // Personal email: manual entry overrides parsed value
             const personalEmailFinal = personalEmailOverride || parsed.personalEmail || '';
+            // URL-encode the file portion of the offer letter URL so spaces don't break the link
+            const encodeUrl = (u) => {
+                if (!u) return '';
+                try {
+                    const idx = u.lastIndexOf('/') + 1;
+                    return u.substring(0, idx) + encodeURIComponent(u.substring(idx));
+                } catch (e) { return u; }
+            };
+            const offerLetterLink = encodeUrl(offerLetterUrl);
+            const resumeLink = encodeUrl(resumeUrl);
 
             const row = (label, value, hint) => `
                 <tr style="border-bottom:1px solid #e2e8f0;">
@@ -379,9 +389,9 @@ exports.handler = async (event) => {
                         ${row('PTO', parsed.ptoWeeks)}
                         ${row('Holidays', parsed.holidays)}
                     </table>
-                    ${(offerLetterUrl || resumeUrl) ? `<div style="text-align:center;margin-top:24px;">
-                        ${offerLetterUrl ? `<a href="${offerLetterUrl}" style="display:inline-block;background:linear-gradient(135deg,#1e3a8a,#3b82f6);color:white;text-decoration:none;padding:12px 26px;border-radius:8px;font-size:14px;font-weight:700;margin:4px;">📋 View Offer Letter</a>` : ''}
-                        ${resumeUrl ? `<a href="${resumeUrl}" style="display:inline-block;background:#059669;color:white;text-decoration:none;padding:12px 26px;border-radius:8px;font-size:14px;font-weight:700;margin:4px;">📄 View Resume</a>` : ''}
+                    ${(offerLetterLink || resumeLink) ? `<div style="text-align:center;margin-top:24px;">
+                        ${offerLetterLink ? `<a href="${offerLetterLink}" style="display:inline-block;background:linear-gradient(135deg,#1e3a8a,#3b82f6);color:white;text-decoration:none;padding:12px 26px;border-radius:8px;font-size:14px;font-weight:700;margin:4px;">📋 View Offer Letter</a>` : ''}
+                        ${resumeLink ? `<a href="${resumeLink}" style="display:inline-block;background:#059669;color:white;text-decoration:none;padding:12px 26px;border-radius:8px;font-size:14px;font-weight:700;margin:4px;">📄 View Resume</a>` : ''}
                     </div>` : ''}
                     <div style="background:#fef3c7;border:2px solid #fbbf24;border-radius:8px;padding:16px;margin-top:24px;">
                         <p style="color:#92400e;font-size:13px;margin:0;line-height:1.7;"><strong>⚠️ Please verify all extracted details against the offer letter before entering into Rippling.</strong> Fields not found are marked accordingly.</p>
