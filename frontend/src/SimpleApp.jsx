@@ -18111,7 +18111,7 @@ loadBalancer.distribute(traffic);`}
                             fontSize: '0.85rem', 
                             color: '#94a3b8'
                         }}>
-                            Copyright © 2025 Navon Technologies - All Rights Reserved | <span style={{ color: '#d4af37' }}>Secure by Design</span> | Built with AWS
+                            Copyright © {new Date().getFullYear()} Navon Technologies - All Rights Reserved | <span style={{ color: '#d4af37' }}>Secure by Design</span> | Built with AWS
                         </p>
                         <p style={{ 
                             margin: 0, 
