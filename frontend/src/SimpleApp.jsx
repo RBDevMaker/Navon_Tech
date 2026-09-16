@@ -11446,14 +11446,14 @@ loadBalancer.distribute(traffic);`}
                                             .filter(m => m.employmentType !== 'Archived')
                                             .flatMap(m => {
                                                 if (directoryFilter === 'department') return (m.department || '').split(',').map(d => d.trim()).filter(Boolean);
+                                                if (directoryFilter === 'prime') {
+                                                    const validPrimes = ['Arcfield', 'Nightwing', 'SAIC', 'GDIT'];
+                                                    const parts = (m.contractAssignment || '').split(',').map(p => p.trim()).filter(Boolean);
+                                                    return parts.filter(p => validPrimes.some(vp => p.toLowerCase().includes(vp.toLowerCase())));
+                                                }
                                                 const val = (() => {
                                                     if (directoryFilter === 'employmentType') return m.employmentType;
                                                     if (directoryFilter === 'billableStatus') return m.billableStatus;
-                                                    if (directoryFilter === 'prime') {
-                                                        const validPrimes = ['Arcfield', 'Nightwing', 'SAIC', 'GDIT'];
-                                                        const parts = (m.contractAssignment || '').split(',').map(p => p.trim()).filter(Boolean);
-                                                        return parts.filter(p => validPrimes.some(vp => p.toLowerCase().includes(vp.toLowerCase())));
-                                                    }
                                                     if (directoryFilter === 'gender') return m.gender;
                                                     if (directoryFilter === 'location') return m.location;
                                                     if (directoryFilter === 'shirtSize') return m.shirtSize;
@@ -11548,7 +11548,7 @@ loadBalancer.distribute(traffic);`}
                                     const fieldMap = { department: 'department', employmentType: 'employmentType', billableStatus: 'billableStatus', prime: 'contractAssignment', gender: 'gender', location: 'location', shirtSize: 'shirtSize', dietaryAllergy: 'dietaryAllergy' };
                                     const field = fieldMap[directoryFilter];
                                     if (field) {
-                                        if (directoryFilter === 'department') {
+                                        if (directoryFilter === 'department' || directoryFilter === 'prime') {
                                             if (!(profileData[field] || '').split(',').map(d => d.trim().toLowerCase()).includes(directorySearch.toLowerCase())) return 0;
                                         } else if ((profileData[field] || '').toLowerCase() !== directorySearch.toLowerCase()) return 0;
                                     }
@@ -11592,7 +11592,7 @@ loadBalancer.distribute(traffic);`}
                                 const s = directorySearch.toLowerCase();
                                 if (directoryFilter !== 'all') {
                                     const fieldMap = { department: 'department', employmentType: 'employmentType', billableStatus: 'billableStatus', prime: 'contractAssignment', gender: 'gender', location: 'location', shirtSize: 'shirtSize', dietaryAllergy: 'dietaryAllergy' };
-                                    if (directoryFilter === 'department') return (m[fieldMap[directoryFilter]] || '').split(',').map(d => d.trim().toLowerCase()).includes(s);
+                                    if (directoryFilter === 'department' || directoryFilter === 'prime') return (m[fieldMap[directoryFilter]] || '').split(',').map(d => d.trim().toLowerCase()).includes(s);
                                     return (m[fieldMap[directoryFilter]] || '').toLowerCase() === s;
                                 }
                                 return (m.name||'').toLowerCase().includes(s)||(m.department||'').toLowerCase().includes(s)||(m.title||'').toLowerCase().includes(s)||(m.email||'').toLowerCase().includes(s)||(m.location||'').toLowerCase().includes(s);
@@ -11683,7 +11683,7 @@ loadBalancer.distribute(traffic);`}
                                     const fieldMap = { department: 'department', employmentType: 'employmentType', billableStatus: 'billableStatus', prime: 'contractAssignment', gender: 'gender', location: 'location', shirtSize: 'shirtSize', dietaryAllergy: 'dietaryAllergy' };
                                     const field = fieldMap[directoryFilter];
                                     if (field) {
-                                        if (directoryFilter === 'department') {
+                                        if (directoryFilter === 'department' || directoryFilter === 'prime') {
                                             if (!(profileData[field] || '').split(',').map(d => d.trim().toLowerCase()).includes(directorySearch.toLowerCase())) return false;
                                         } else if ((profileData[field] || '').toLowerCase() !== directorySearch.toLowerCase()) return false;
                                     }
@@ -12038,7 +12038,7 @@ loadBalancer.distribute(traffic);`}
                                 if (directoryFilter !== 'all') {
                                     const fieldMap = { department: 'department', employmentType: 'employmentType', billableStatus: 'billableStatus', prime: 'contractAssignment', gender: 'gender', location: 'location', shirtSize: 'shirtSize', dietaryAllergy: 'dietaryAllergy' };
                                     const field = fieldMap[directoryFilter];
-                                    if (directoryFilter === 'department') return (member[field] || '').split(',').map(d => d.trim().toLowerCase()).includes(search.toLowerCase());
+                                    if (directoryFilter === 'department' || directoryFilter === 'prime') return (member[field] || '').split(',').map(d => d.trim().toLowerCase()).includes(search.toLowerCase());
                                     return (member[field] || '').toLowerCase() === search.toLowerCase();
                                 }
                                 // Text search mode
