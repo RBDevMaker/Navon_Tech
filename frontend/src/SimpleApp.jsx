@@ -162,7 +162,91 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [isLoadingResumeDocs, setIsLoadingResumeDocs] = useState(false);
     const [resumeDocSort, setResumeDocSort] = useState('newest');
     const [referralSort, setReferralSort] = useState('hired-oldest');
-    
+
+    // ── Navona AI assistant state ──
+    const [navonaOpen, setNavonaOpen] = useState(false);
+    const [navonaInput, setNavonaInput] = useState('');
+    const [navonaLoading, setNavonaLoading] = useState(false);
+    // Public chat: array of { role: 'user'|'assistant', text }
+    const [navonaMessages, setNavonaMessages] = useState([]);
+    // Portal matching results: { summary, employeeMatches, candidateMatches, followUp } | null
+    const [navonaMatch, setNavonaMatch] = useState(null);
+    const [navonaError, setNavonaError] = useState('');
+    // Navona avatar image (drop her image at frontend/public/navona.png)
+    const navonaAvatar = '/navona.png';
+
+    // Whether Navona should run in portal (candidate-matching) mode vs public Q&A mode.
+    // Portal mode only for Security-level staff while inside the portal (not on public pages).
+    const navonaPortalMode = (
+        !!loginEmail &&
+        (userRole === 'security' || userRole === 'superadmin' || userGroups.includes('security') || loginEmail?.toLowerCase().includes('root'))
+    );
+
+    // Send a message/request to Navona (routes to portal matching or public chat)
+    const sendToNavona = async () => {
+        const text = navonaInput.trim();
+        if (!text || navonaLoading) return;
+        setNavonaError('');
+        const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+
+        if (navonaPortalMode) {
+            // Candidate/employee matching mode
+            setNavonaLoading(true);
+            setNavonaMatch(null);
+            try {
+                const session = await fetchAuthSession();
+                const token = session.tokens?.idToken?.toString();
+                // Only send fields useful for matching; exclude sensitive PII like salary/SSN-type fields
+                const employees = (teamMembers || [])
+                    .filter(m => m.employmentType !== 'Archived')
+                    .map(m => ({
+                        name: m.name, title: m.title, department: m.department,
+                        certifications: m.certifications || '', skills: m.skills || m.expertise || '',
+                        clearance: m.clearance || '', contractAssignment: m.contractAssignment || '',
+                        experience: m.experience || ''
+                    }));
+                const candidates = (resumes || [])
+                    .filter(r => r.stage !== 'Rejected')
+                    .map(r => ({
+                        candidateName: r.candidateName, position: r.position, department: r.department,
+                        stage: r.stage, experience: r.experience || '', notes: r.notes || ''
+                    }));
+                const res = await fetch(`${apiUrl}/navona/match`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+                    body: JSON.stringify({ mode: 'portal', jobDescription: text, employees, candidates })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.detail || data.error || data.message || 'Request failed');
+                setNavonaMatch(data);
+            } catch (err) {
+                setNavonaError(err.message || 'Navona could not complete the search.');
+            } finally {
+                setNavonaLoading(false);
+            }
+        } else {
+            // Public general-assistant mode
+            const history = navonaMessages.map(m => ({ role: m.role === 'assistant' ? 'assistant' : 'user', content: m.text }));
+            setNavonaMessages(prev => [...prev, { role: 'user', text }]);
+            setNavonaInput('');
+            setNavonaLoading(true);
+            try {
+                const res = await fetch(`${apiUrl}/navona/public`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mode: 'public', message: text, history })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.detail || data.error || 'Request failed');
+                setNavonaMessages(prev => [...prev, { role: 'assistant', text: data.reply || "I'm sorry, I didn't catch that." }]);
+            } catch (err) {
+                setNavonaMessages(prev => [...prev, { role: 'assistant', text: "I'm having trouble connecting right now. Please try again shortly, or reach us at careers@navontech.com." }]);
+            } finally {
+                setNavonaLoading(false);
+            }
+        }
+    };
+
     // Referral tracking - derived from ATS resumes with "Employee Referral" in notes
     const getReferralsFromATS = () => {
         const atsReferrals = resumes.filter(r => r.notes && r.notes.includes('Employee Referral')).map(r => {
@@ -20063,6 +20147,181 @@ Please review and approve this request.
                     🔒 Logout
                 </button>
             )}
+
+            {/* ── Navona AI Assistant ── */}
+            {/* Show on public marketing pages (logged out) and inside the portal for Security-level staff */}
+            {(() => {
+                const publicPages = ['home', 'about', 'capabilities', 'careers', 'contact', 'solutions', 'partners'];
+                const showPublic = !loginEmail && publicPages.includes(currentPage);
+                const showPortal = navonaPortalMode;
+                if (!showPublic && !showPortal) return null;
+
+                const NavonaAvatar = ({ size }) => (
+                    <img
+                        src={navonaAvatar}
+                        alt="Navona"
+                        onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
+                        style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover' }}
+                    />
+                );
+                const AvatarFallback = ({ size, font }) => (
+                    <div style={{ width: size, height: size, borderRadius: '50%', display: 'none', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg,#395479,#94A3B8)', color: '#D4AF37', fontWeight: 800, fontSize: font }}>N</div>
+                );
+
+                return (
+                    <div style={{ position: 'fixed', bottom: '1.5rem', left: '1.5rem', zIndex: 10000, fontFamily: '"Inter", "Segoe UI", sans-serif' }}>
+                        {!navonaOpen && (
+                            <button
+                                onClick={() => {
+                                    setNavonaOpen(true);
+                                    setNavonaError('');
+                                    // Seed a greeting for public mode
+                                    if (!navonaPortalMode && navonaMessages.length === 0) {
+                                        setNavonaMessages([{ role: 'assistant', text: "Hi, I'm Navona, the Navon Technologies assistant. I'm here to answer your questions. How can I help you today?" }]);
+                                    }
+                                    // Ensure matching data is loaded in portal mode
+                                    if (navonaPortalMode) {
+                                        if (!teamMembers || teamMembers.length === 0) { try { fetchTeamMembers(); } catch (e) {} }
+                                        if (!resumes || resumes.length === 0) { try { fetchResumes('all', 'all', 'newest'); } catch (e) {} }
+                                    }
+                                }}
+                                aria-label="Open Navona assistant"
+                                style={{
+                                    display: 'flex', alignItems: 'center', gap: '0.6rem',
+                                    background: '#395479', color: 'white', border: '2px solid #D4AF37',
+                                    padding: '0.5rem 1rem 0.5rem 0.5rem', borderRadius: '999px', cursor: 'pointer',
+                                    boxShadow: '0 6px 18px rgba(57,84,121,0.45)', fontWeight: 700, fontSize: '0.95rem'
+                                }}>
+                                <span style={{ position: 'relative', width: '40px', height: '40px', display: 'inline-block' }}>
+                                    <NavonaAvatar size="40px" />
+                                    <AvatarFallback size="40px" font="1.2rem" />
+                                </span>
+                                Ask Navona
+                            </button>
+                        )}
+
+                        {navonaOpen && (
+                            <div style={{
+                                width: 'min(94vw, 380px)', height: 'min(80vh, 560px)', display: 'flex', flexDirection: 'column',
+                                background: '#FFFFFF', borderRadius: '16px', overflow: 'hidden',
+                                boxShadow: '0 12px 40px rgba(15,23,42,0.35)', border: '1px solid #CBD5E1'
+                            }}>
+                                {/* Header */}
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', background: 'linear-gradient(135deg,#395479,#2c405c)', padding: '0.85rem 1rem' }}>
+                                    <span style={{ position: 'relative', width: '38px', height: '38px', display: 'inline-block' }}>
+                                        <NavonaAvatar size="38px" />
+                                        <AvatarFallback size="38px" font="1.1rem" />
+                                    </span>
+                                    <div style={{ flex: 1 }}>
+                                        <div style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '1.05rem', lineHeight: 1.1 }}>Navona</div>
+                                        <div style={{ color: '#CBD5E1', fontSize: '0.72rem' }}>{navonaPortalMode ? 'Candidate Match Assistant' : "I'm here to answer your questions"}</div>
+                                    </div>
+                                    <button onClick={() => setNavonaOpen(false)} aria-label="Close" style={{ background: 'transparent', border: 'none', color: '#CBD5E1', fontSize: '1.4rem', cursor: 'pointer', lineHeight: 1 }}>×</button>
+                                </div>
+
+                                {/* Body */}
+                                <div style={{ flex: 1, overflowY: 'auto', padding: '1rem', background: '#F9F9F9' }}>
+                                    {navonaPortalMode ? (
+                                        <>
+                                            <p style={{ color: '#395479', fontSize: '0.85rem', margin: '0 0 0.75rem', lineHeight: 1.5 }}>
+                                                Paste a job description or list the requirements, certifications, and skills you're looking for. I'll search the <strong>employee directory</strong> and <strong>resumes on file</strong> and list the best matches separately.
+                                            </p>
+                                            {navonaError && (
+                                                <div style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '0.6rem 0.75rem', borderRadius: '8px', fontSize: '0.8rem', marginBottom: '0.75rem' }}>{navonaError}</div>
+                                            )}
+                                            {navonaLoading && (
+                                                <div style={{ color: '#64748b', fontSize: '0.85rem', textAlign: 'center', padding: '1rem' }}>🔎 Navona is reviewing candidates…</div>
+                                            )}
+                                            {navonaMatch && !navonaLoading && (
+                                                <div>
+                                                    {navonaMatch.summary && (
+                                                        <p style={{ color: '#334155', fontSize: '0.82rem', fontStyle: 'italic', marginBottom: '1rem' }}>{navonaMatch.summary}</p>
+                                                    )}
+                                                    {/* Employee matches */}
+                                                    <div style={{ marginBottom: '1.1rem' }}>
+                                                        <div style={{ fontWeight: 800, color: '#395479', fontSize: '0.85rem', marginBottom: '0.5rem', borderBottom: '2px solid #D4AF37', paddingBottom: '0.25rem' }}>👥 Employees ({(navonaMatch.employeeMatches || []).length})</div>
+                                                        {(navonaMatch.employeeMatches || []).length === 0 && <div style={{ color: '#94A3B8', fontSize: '0.8rem' }}>No strong employee matches.</div>}
+                                                        {(navonaMatch.employeeMatches || []).map((m, i) => (
+                                                            <div key={i} style={{ background: 'white', border: '1px solid #E2E8F0', borderRadius: '8px', padding: '0.6rem 0.75rem', marginBottom: '0.5rem' }}>
+                                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                                                                    <strong style={{ color: '#1e293b', fontSize: '0.85rem' }}>{m.name}</strong>
+                                                                    <span style={{ color: '#395479', fontWeight: 700, fontSize: '0.78rem' }}>{m.score}%</span>
+                                                                </div>
+                                                                {m.title && <div style={{ color: '#64748b', fontSize: '0.76rem' }}>{m.title}</div>}
+                                                                {m.reasons && <div style={{ color: '#475569', fontSize: '0.76rem', marginTop: '0.25rem' }}>{m.reasons}</div>}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                    {/* Candidate (resume) matches */}
+                                                    <div style={{ marginBottom: '0.5rem' }}>
+                                                        <div style={{ fontWeight: 800, color: '#395479', fontSize: '0.85rem', marginBottom: '0.5rem', borderBottom: '2px solid #D4AF37', paddingBottom: '0.25rem' }}>📄 Resume Candidates ({(navonaMatch.candidateMatches || []).length})</div>
+                                                        {(navonaMatch.candidateMatches || []).length === 0 && <div style={{ color: '#94A3B8', fontSize: '0.8rem' }}>No strong resume matches.</div>}
+                                                        {(navonaMatch.candidateMatches || []).map((m, i) => (
+                                                            <div key={i} style={{ background: 'white', border: '1px solid #E2E8F0', borderRadius: '8px', padding: '0.6rem 0.75rem', marginBottom: '0.5rem' }}>
+                                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                                                                    <strong style={{ color: '#1e293b', fontSize: '0.85rem' }}>{m.name}</strong>
+                                                                    <span style={{ color: '#395479', fontWeight: 700, fontSize: '0.78rem' }}>{m.score}%</span>
+                                                                </div>
+                                                                {m.position && <div style={{ color: '#64748b', fontSize: '0.76rem' }}>{m.position}</div>}
+                                                                {m.reasons && <div style={{ color: '#475569', fontSize: '0.76rem', marginTop: '0.25rem' }}>{m.reasons}</div>}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                    {navonaMatch.followUp && (
+                                                        <p style={{ color: '#395479', fontSize: '0.78rem', marginTop: '0.75rem' }}>{navonaMatch.followUp}</p>
+                                                    )}
+                                                </div>
+                                            )}
+                                            {!navonaMatch && !navonaLoading && !navonaError && (
+                                                <div style={{ color: '#94A3B8', fontSize: '0.82rem', textAlign: 'center', padding: '1.5rem 0.5rem' }}>
+                                                    Example: “Network Engineer with Security+ and active TS/SCI clearance, 5+ years experience.”
+                                                </div>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <>
+                                            {navonaMessages.map((m, i) => (
+                                                <div key={i} style={{ display: 'flex', justifyContent: m.role === 'user' ? 'flex-end' : 'flex-start', marginBottom: '0.6rem' }}>
+                                                    <div style={{
+                                                        maxWidth: '80%', padding: '0.55rem 0.8rem', borderRadius: '12px', fontSize: '0.85rem', lineHeight: 1.45,
+                                                        background: m.role === 'user' ? '#395479' : '#FFFFFF',
+                                                        color: m.role === 'user' ? '#FFFFFF' : '#1e293b',
+                                                        border: m.role === 'user' ? 'none' : '1px solid #E2E8F0',
+                                                        whiteSpace: 'pre-wrap'
+                                                    }}>{m.text}</div>
+                                                </div>
+                                            ))}
+                                            {navonaLoading && (
+                                                <div style={{ color: '#94A3B8', fontSize: '0.82rem', padding: '0.25rem 0.2rem' }}>Navona is typing…</div>
+                                            )}
+                                        </>
+                                    )}
+                                </div>
+
+                                {/* Input */}
+                                <div style={{ borderTop: '1px solid #E2E8F0', padding: '0.6rem', background: 'white' }}>
+                                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-end' }}>
+                                        <textarea
+                                            value={navonaInput}
+                                            onChange={(e) => setNavonaInput(e.target.value)}
+                                            onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendToNavona(); } }}
+                                            placeholder={navonaPortalMode ? 'Describe the role or requirements…' : 'Type your question…'}
+                                            rows={navonaPortalMode ? 2 : 1}
+                                            style={{ flex: 1, resize: 'none', border: '1px solid #CBD5E1', borderRadius: '10px', padding: '0.55rem 0.7rem', fontSize: '0.85rem', fontFamily: 'inherit', outline: 'none', color: '#1e293b' }}
+                                        />
+                                        <button
+                                            onClick={sendToNavona}
+                                            disabled={navonaLoading || !navonaInput.trim()}
+                                            style={{ background: navonaLoading || !navonaInput.trim() ? '#94A3B8' : '#D4AF37', color: '#1e1b4b', border: 'none', borderRadius: '10px', padding: '0.55rem 0.9rem', fontWeight: 800, fontSize: '0.85rem', cursor: navonaLoading || !navonaInput.trim() ? 'default' : 'pointer' }}>
+                                            {navonaPortalMode ? 'Find' : 'Send'}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                );
+            })()}
         </div>
     );
 }

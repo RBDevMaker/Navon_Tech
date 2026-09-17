@@ -455,6 +455,47 @@ Resources:
             Auth:
               Authorizer: NONE
 
+  # Navona AI Assistant (Amazon Bedrock / Claude)
+  NavonaChatFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/navona-chat/
+      Handler: index.handler
+      Description: Navona AI assistant - public Q&A and portal candidate matching via Bedrock Claude
+      MemorySize: 512
+      Timeout: 60
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - bedrock:InvokeModel
+              Resource:
+                - !Sub "arn:aws:bedrock:${AWS::Region}::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0"
+                - !Sub "arn:aws:bedrock:${AWS::Region}::foundation-model/anthropic.claude-3-*"
+            - Effect: Allow
+              Action:
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+              Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"
+      Events:
+        PublicChat:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/navona/public
+            Method: POST
+            Auth:
+              Authorizer: NONE
+        PortalMatch:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CompanyApi
+            Path: /api/navona/match
+            Method: POST
+            Auth:
+              Authorizer: CognitoAuthorizer
+
   # PDF to DOCX Conversion Function (Python)
   PdfToDocxFunction:
     Type: AWS::Serverless::Function
@@ -796,6 +837,12 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub "/aws/lambda/${AWS::StackName}-ResumeManagementFunction"
+      RetentionInDays: 30
+
+  NavonaChatLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${AWS::StackName}-NavonaChatFunction"
       RetentionInDays: 30
 
 Outputs:

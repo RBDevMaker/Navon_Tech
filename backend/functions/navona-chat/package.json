@@ -1,0 +1,9 @@
+{
+  "name": "navona-chat",
+  "version": "1.0.0",
+  "description": "Navona AI assistant Lambda (Amazon Bedrock / Claude)",
+  "main": "index.js",
+  "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.632.0"
+  }
+}
