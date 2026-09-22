@@ -5095,76 +5095,44 @@ loadBalancer.distribute(traffic);`}
                                         textAlign: 'center',
                                         fontWeight: '800'
                                     }}>
-                                        🌐 Real-Time AWS Service Status
+                                        🌐 Track your AWS Health
                                     </h4>
                                     <p style={{
                                         textAlign: 'center',
                                         color: '#cbd5e1',
                                         marginBottom: '2rem'
                                     }}>
-                                        Monitor the health of AWS services in real-time
+                                        Take advantage of the AWS Health Dashboard to view service status and check your account health at a glance.
                                     </p>
-                                    
-                                    <div style={{
-                                        display: 'grid',
-                                        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                                        gap: '1rem'
-                                    }}>
-                                        {[
-                                            { service: 'EC2', region: 'US-East-1', status: 'operational' },
-                                            { service: 'S3', region: 'US-East-1', status: 'operational' },
-                                            { service: 'Lambda', region: 'US-East-1', status: 'operational' },
-                                            { service: 'RDS', region: 'US-East-1', status: 'operational' },
-                                            { service: 'DynamoDB', region: 'US-East-1', status: 'operational' },
-                                            { service: 'CloudFront', region: 'Global', status: 'operational' },
-                                            { service: 'API Gateway', region: 'US-East-1', status: 'operational' },
-                                            { service: 'CloudWatch', region: 'US-East-1', status: 'operational' },
-                                            { service: 'SES', region: 'US-East-1', status: 'operational' },
-                                            { service: 'Cognito', region: 'US-East-1', status: 'operational' }
-                                        ].map((item, index) => (
-                                            <div key={index} style={{
-                                                background: 'rgba(15, 23, 42, 0.6)',
-                                                padding: '1.5rem',
+
+                                    <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                                        <a
+                                            href="https://health.aws.amazon.com/health/home"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{
+                                                background: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
+                                                color: 'white',
+                                                textDecoration: 'none',
+                                                padding: '1rem 2.5rem',
+                                                fontSize: '1.1rem',
                                                 borderRadius: '12px',
-                                                border: '1px solid rgba(212, 175, 55, 0.3)',
-                                                display: 'flex',
-                                                justifyContent: 'space-between',
-                                                alignItems: 'center'
-                                            }}>
-                                                <div>
-                                                    <div style={{ color: '#f1f5f9', fontWeight: '700', marginBottom: '0.25rem' }}>
-                                                        {item.service}
-                                                    </div>
-                                                    <div style={{ color: '#94a3b8', fontSize: '0.9rem' }}>
-                                                        {item.region}
-                                                    </div>
-                                                </div>
-                                                <div style={{
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    gap: '0.5rem'
-                                                }}>
-                                                    <div style={{
-                                                        width: '10px',
-                                                        height: '10px',
-                                                        borderRadius: '50%',
-                                                        background: item.status === 'operational' ? '#22c55e' : '#ef4444',
-                                                        boxShadow: `0 0 10px ${item.status === 'operational' ? '#22c55e' : '#ef4444'}`
-                                                    }}></div>
-                                                    <span style={{
-                                                        color: item.status === 'operational' ? '#22c55e' : '#ef4444',
-                                                        fontSize: '0.9rem',
-                                                        fontWeight: '600'
-                                                    }}>
-                                                        {item.status === 'operational' ? 'Operational' : 'Issues'}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        ))}
+                                                fontWeight: '700',
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                gap: '0.5rem',
+                                                boxShadow: '0 8px 20px rgba(212, 175, 55, 0.25)',
+                                                transition: 'all 0.3s ease'
+                                            }}
+                                            onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 28px rgba(212, 175, 55, 0.35)'; }}
+                                            onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 20px rgba(212, 175, 55, 0.25)'; }}
+                                        >
+                                            Check Your Account Health →
+                                        </a>
                                     </div>
-                                    
+
                                     <div style={{
-                                        marginTop: '2rem',
+                                        marginTop: '1rem',
                                         textAlign: 'center'
                                     }}>
                                         <a 
