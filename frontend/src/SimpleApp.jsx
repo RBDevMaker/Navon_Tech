@@ -5130,29 +5130,6 @@ loadBalancer.distribute(traffic);`}
                                             Check Your Account Health →
                                         </a>
                                     </div>
-
-                                    <div style={{
-                                        marginTop: '1rem',
-                                        textAlign: 'center'
-                                    }}>
-                                        <a 
-                                            href="https://health.aws.amazon.com/health/status" 
-                                            target="_blank" 
-                                            rel="noopener noreferrer"
-                                            style={{
-                                                color: '#d4af37',
-                                                textDecoration: 'none',
-                                                fontSize: '1rem',
-                                                fontWeight: '600',
-                                                display: 'inline-flex',
-                                                alignItems: 'center',
-                                                gap: '0.5rem',
-                                                transition: 'all 0.3s ease'
-                                            }}
-                                        >
-                                            View Full AWS Status Dashboard →
-                                        </a>
-                                    </div>
                                 </div>
                             </div>
                         </section>
