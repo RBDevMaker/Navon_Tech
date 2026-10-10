@@ -38,6 +38,7 @@ USERS=(
   "naquishba.porter@navontech.com:Naquishba Porter"
   "steffen.thomas@navontech.com:Steffen Thomas"
   "tammy.thompson@navontech.com:Tammy Thompson"
+  "erskine.lightfoot@navontech.com:Erskine Lightfoot"
 )
 
 for entry in "${USERS[@]}"; do
@@ -78,6 +79,13 @@ aws cognito-idp admin-add-user-to-group \
   --group-name "HR"
 echo "  ✅ Yahvinah Bryant → HR"
 
+# Erskine → HR
+aws cognito-idp admin-add-user-to-group \
+  --user-pool-id $USER_POOL_ID \
+  --username "erskine.lightfoot@navontech.com" \
+  --group-name "HR"
+echo "  ✅ Erskine Lightfoot → HR"
+
 # Gregory → Admin
 aws cognito-idp admin-add-user-to-group \
   --user-pool-id $USER_POOL_ID \
@@ -108,8 +116,8 @@ echo "Temporary password for all users: $TEMP_PASSWORD"
 echo "Users will be prompted to change password on first login."
 echo ""
 echo "Group Assignments:"
-echo "  Navon_Employees: ALL 15 users"
-echo "  HR:              Yahvinah Bryant"
+echo "  Navon_Employees: ALL 16 users"
+echo "  HR:              Yahvinah Bryant, Erskine Lightfoot"
 echo "  Admin:           Gregory Bryant"
 echo "  SuperAdmin:      Rachelle Briscoe, Brian Briscoe"
 echo ""
