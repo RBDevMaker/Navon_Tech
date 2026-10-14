@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="Navona">
+  <defs>
+    <linearGradient id="navonaBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a688f" />
+      <stop offset="1" stop-color="#2c405c" />
+    </linearGradient>
+    <linearGradient id="navonaMark" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8fb0d6" />
+      <stop offset="1" stop-color="#395479" />
+    </linearGradient>
+  </defs>
+
+  <!-- Circular badge background with gold ring -->
+  <circle cx="60" cy="60" r="58" fill="url(#navonaBg)" stroke="#D4AF37" stroke-width="3" />
+
+  <!-- Navon arrow / chevron mark (stylized from the logo) -->
+  <g transform="translate(60 62)">
+    <!-- upper wings -->
+    <path d="M0 -34 L34 6 L20 6 L0 -14 L-20 6 L-34 6 Z" fill="url(#navonaMark)" />
+    <!-- lower tail -->
+    <path d="M0 -2 L20 24 L0 12 L-20 24 Z" fill="url(#navonaMark)" />
+    <!-- gold diamond core -->
+    <path d="M0 -18 L9 -6 L0 6 L-9 -6 Z" fill="#D4AF37" />
+  </g>
+</svg>

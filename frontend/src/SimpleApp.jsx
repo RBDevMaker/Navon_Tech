@@ -17968,7 +17968,7 @@ loadBalancer.distribute(traffic);`}
                             </ul>
                             
                             <p style={{ marginTop: '2rem', fontSize: '0.9rem', color: '#64748b' }}>
-                                Last updated: February 2025
+                                Last updated: October 2026
                             </p>
                         </div>
                     </div>
