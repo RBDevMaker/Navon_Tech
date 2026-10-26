@@ -77,6 +77,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [loginError, setLoginError] = useState('');
     const [isAuthenticating, setIsAuthenticating] = useState(false);
     const [requiresNewPassword, setRequiresNewPassword] = useState(false);
+    const [existingSessionEmail, setExistingSessionEmail] = useState(''); // set if a valid session exists on the login page
     const [newPassword, setNewPassword] = useState('');
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
     const [showWelcomeGuide, setShowWelcomeGuide] = useState(false);
@@ -288,10 +289,55 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 notes: r.notes,
                 resumeId: r.resumeId,
                 bonusNotified: r.bonusNotified || null,
-                bonus180Notified: r.bonus180Notified || null
+                bonus180Notified: r.bonus180Notified || null,
+                bonusPaid90: r.bonusPaid90 || null,
+                bonusPaid180: r.bonusPaid180 || null
             };
         });
         return atsReferrals;
+    };
+
+    // Compute a payout due date = hired date + N days, formatted for display
+    const payoutDueDate = (hiredDate, addDays) => {
+        if (!hiredDate) return '';
+        const p = hiredDate.split('-');
+        if (p.length !== 3) return '';
+        const d = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
+        d.setDate(d.getDate() + addDays);
+        return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    };
+
+    // Mark a referral bonus milestone as paid (90 or 180), persisting to the resume record
+    const markBonusPaid = async (resumeId, milestone) => {
+        const field = milestone === 180 ? 'bonusPaid180' : 'bonusPaid90';
+        const label = milestone === 180 ? 'full balance (180-day)' : 'half (90-day)';
+        if (!confirm(`Mark the ${label} referral bonus as PAID? This records today's date and stops reminder emails for this payout.`)) return;
+        try {
+            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+            const today = new Date().toISOString().split('T')[0];
+            const res = await fetch(`${apiUrl}/resume/${resumeId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ [field]: today })
+            });
+            if (!res.ok) throw new Error('Update failed');
+            fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
+        } catch (err) {
+            alert('❌ Could not mark as paid. Please try again.');
+        }
+    };
+
+    // Delete a referral/candidate record entirely
+    const deleteReferralCandidate = async (resumeId, candidateName) => {
+        if (!confirm(`Delete ${candidateName || 'this candidate'}? This permanently removes the candidate/referral record and cannot be undone.`)) return;
+        try {
+            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+            const res = await fetch(`${apiUrl}/resume/${resumeId}`, { method: 'DELETE' });
+            if (!res.ok) throw new Error('Delete failed');
+            fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
+        } catch (err) {
+            alert('❌ Could not delete the candidate. Please try again.');
+        }
     };
 
     // Handle hash changes for navigation
@@ -300,6 +346,9 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             const fullHash = window.location.hash.slice(1) || 'home';
             // Parse query params from hash (e.g., #resumes?candidate=John%20Doe)
             const [hash, queryString] = fullHash.split('?');
+
+
+
             setCurrentPage(hash);
             
             if (queryString) {
@@ -338,6 +387,62 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
 
         return () => window.removeEventListener('hashchange', handleHashChange);
     }, []);
+
+    // Keep the URL hash in sync with the current page so every in-portal navigation
+    // creates a browser history entry. This makes the Back button step back through the
+    // actual pages the user visited instead of jumping all the way out of the portal.
+    useEffect(() => {
+        if (!currentPage) return;
+        const currentHash = window.location.hash.replace('#', '').split('?')[0];
+        if (currentHash !== currentPage) {
+            window.location.hash = currentPage;
+        }
+    }, [currentPage]);
+
+    // On the login page, detect an existing valid session so we can offer a
+    // one-click "Continue to portal" instead of forcing the user to re-type credentials.
+    useEffect(() => {
+        if (currentPage !== 'login') { setExistingSessionEmail(''); return; }
+        (async () => {
+            try {
+                const session = await fetchAuthSession();
+                const email = session.tokens?.idToken?.payload?.email;
+                if (session.tokens?.idToken && email) {
+                    setExistingSessionEmail(email);
+                } else {
+                    setExistingSessionEmail('');
+                }
+            } catch (e) {
+                setExistingSessionEmail('');
+            }
+        })();
+    }, [currentPage]);
+
+    // Resume an existing session from the login page without re-entering credentials.
+    const continueExistingSession = async () => {
+        try {
+            const session = await fetchAuthSession();
+            const payload = session.tokens?.idToken?.payload;
+            const email = payload?.email || existingSessionEmail;
+            const groups = session.tokens?.accessToken?.payload['cognito:groups'] || [];
+            let role = 'employee';
+            if (groups.includes('SuperAdmin')) role = 'superadmin';
+            else if (groups.includes('security')) role = 'security';
+            else if (groups.includes('HR')) role = 'hr';
+            else if (groups.includes('Admin')) role = 'admin';
+            setUserRole(role);
+            setUserGroups(groups.map(g => g.toLowerCase()));
+            if (email) {
+                setLoginEmail(email);
+                setSessionStartTime(Date.now());
+            }
+            setCurrentPage('secureportal');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } catch (e) {
+            // Session expired between render and click — leave them on the login form.
+            setExistingSessionEmail('');
+        }
+    };
 
     // Update userRole when authenticated role changes
     useEffect(() => {
@@ -16327,6 +16432,48 @@ loadBalancer.distribute(traffic);`}
                                                 <span key={s} style={{ flex: 1, textAlign: 'center', color: i <= stageIndex ? stageColors[referral.stage] : '#94a3b8', fontWeight: i === stageIndex ? '700' : '400' }}>{s}</span>
                                             ))}
                                         </div>
+
+                                        {/* Bonus payout tracking + actions */}
+                                        {referral.hiredDate && (
+                                            <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid #e2e8f0' }}>
+                                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+                                                    {/* 90-day half payout */}
+                                                    <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '8px', padding: '0.85rem' }}>
+                                                        <div style={{ fontWeight: '700', color: '#92400e', fontSize: '0.85rem', marginBottom: '0.25rem' }}>💸 90-Day Payout (Half)</div>
+                                                        <div style={{ fontSize: '0.78rem', color: '#78716c', marginBottom: '0.5rem' }}>Pay date: {payoutDueDate(referral.hiredDate, 90)}</div>
+                                                        {referral.bonusPaid90 ? (
+                                                            <div style={{ color: '#059669', fontWeight: '700', fontSize: '0.82rem' }}>✅ Paid on {(() => { const p = referral.bonusPaid90.split('-'); return p.length === 3 ? new Date(Number(p[0]), Number(p[1])-1, Number(p[2])).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : referral.bonusPaid90; })()}</div>
+                                                        ) : (
+                                                            <button onClick={() => markBonusPaid(referral.resumeId, 90)}
+                                                                style={{ background: '#d4af37', color: '#1e1b4b', border: 'none', borderRadius: '6px', padding: '0.5rem 1rem', fontWeight: '700', fontSize: '0.82rem', cursor: 'pointer' }}>
+                                                                Mark Half Paid
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                    {/* 180-day full balance payout */}
+                                                    <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '0.85rem' }}>
+                                                        <div style={{ fontWeight: '700', color: '#166534', fontSize: '0.85rem', marginBottom: '0.25rem' }}>💸💸 180-Day Payout (Full Balance)</div>
+                                                        <div style={{ fontSize: '0.78rem', color: '#4b5563', marginBottom: '0.5rem' }}>Pay date: {payoutDueDate(referral.hiredDate, 180)}</div>
+                                                        {referral.bonusPaid180 ? (
+                                                            <div style={{ color: '#059669', fontWeight: '700', fontSize: '0.82rem' }}>✅ Paid on {(() => { const p = referral.bonusPaid180.split('-'); return p.length === 3 ? new Date(Number(p[0]), Number(p[1])-1, Number(p[2])).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : referral.bonusPaid180; })()}</div>
+                                                        ) : (
+                                                            <button onClick={() => markBonusPaid(referral.resumeId, 180)}
+                                                                style={{ background: '#16a34a', color: 'white', border: 'none', borderRadius: '6px', padding: '0.5rem 1rem', fontWeight: '700', fontSize: '0.82rem', cursor: 'pointer' }}>
+                                                                Mark Full Balance Paid
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Delete candidate (always available) */}
+                                        <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
+                                            <button onClick={() => deleteReferralCandidate(referral.resumeId, referral.candidateName)}
+                                                style={{ background: 'white', color: '#dc2626', border: '1px solid #fecaca', borderRadius: '6px', padding: '0.45rem 0.9rem', fontWeight: '600', fontSize: '0.8rem', cursor: 'pointer' }}>
+                                                🗑️ Delete Candidate
+                                            </button>
+                                        </div>
                                     </div>
                                 );
                             })}
@@ -17371,7 +17518,34 @@ loadBalancer.distribute(traffic);`}
 
                         {/* Login Form */}
                         <div style={{ padding: '1.5rem' }}>
-                            {requiresNewPassword ? (
+                            {/* Already signed in — show Continue + Sign Out instead of the sign-in form */}
+                            {existingSessionEmail && !requiresNewPassword ? (
+                                <div style={{ textAlign: 'center' }}>
+                                    <div style={{ background: 'rgba(212,175,55,0.15)', border: '1px solid rgba(212,175,55,0.5)', borderRadius: '8px', padding: '1.25rem', marginBottom: '1rem' }}>
+                                        <p style={{ color: 'white', fontSize: '0.95rem', margin: '0 0 1rem' }}>
+                                            You're still signed in as<br /><strong>{existingSessionEmail}</strong>
+                                        </p>
+                                        <button type="button" onClick={continueExistingSession}
+                                            style={{ width: '100%', background: '#d4af37', color: '#1e1b4b', border: 'none', padding: '0.85rem', borderRadius: '8px', fontWeight: '700', fontSize: '1rem', cursor: 'pointer', marginBottom: '0.75rem' }}>
+                                            Continue to Portal →
+                                        </button>
+                                        <button type="button" onClick={async () => {
+                                            try { await signOut(); } catch (e) {}
+                                            setExistingSessionEmail('');
+                                            setLoginEmail('');
+                                            setLoginPassword('');
+                                            setUserRole('employee');
+                                            setUserGroups([]);
+                                        }}
+                                            style={{ width: '100%', background: '#ef4444', color: 'white', border: 'none', padding: '0.85rem', borderRadius: '8px', fontWeight: '700', fontSize: '1rem', cursor: 'pointer' }}>
+                                            🔒 Sign Out
+                                        </button>
+                                    </div>
+                                    <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.8rem', margin: 0 }}>
+                                        Sign out to log in as a different user.
+                                    </p>
+                                </div>
+                            ) : requiresNewPassword ? (
                                 /* New Password Form */
                                 <form onSubmit={async (e) => {
                                     e.preventDefault();

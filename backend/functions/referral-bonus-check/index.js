@@ -13,9 +13,10 @@ exports.handler = async (event) => {
     console.log('Running daily referral bonus check...');
     
     try {
+        const now = new Date();
+
         // Monthly reminder on 1st of each month
-        const today = new Date();
-        if (today.getDate() === 1) {
+        if (now.getDate() === 1) {
             console.log('First of month — sending monthly review reminder to Brian');
             await sesClient.send(new SendEmailCommand({
                 Source: 'noreply@navontech.com',
@@ -26,6 +27,7 @@ exports.handler = async (event) => {
                 }
             }));
         }
+
         // First: Auto-move Pending candidates to Hired when start date arrives
         const pendingResult = await docClient.send(new ScanCommand({
             TableName: TABLE_NAME,
