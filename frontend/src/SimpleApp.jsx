@@ -347,6 +347,28 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             const today = new Date().toISOString().split('T')[0];
             const todayMs = new Date(today).getTime();
             resumes.forEach(async (r) => {
+                // Auto-strip stale "Pending hire." note once the start date has passed
+                if (r.notes && /pending hire\.?/i.test(r.notes) && r.hiredDate) {
+                    const hp = r.hiredDate.split('-');
+                    const startDate = `${hp[0]}-${hp[1]}-${hp[2]}`;
+                    if (startDate <= today) {
+                        const cleanedNotes = r.notes.replace(/\s*pending hire\.?/i, '').replace(/\s+/g, ' ').trim();
+                        if (cleanedNotes !== r.notes) {
+                            try {
+                                const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+                                await fetch(`${apiUrl}/resume/${r.resumeId}`, {
+                                    method: 'PUT',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ notes: cleanedNotes })
+                                });
+                                console.log(`Auto-stripped "Pending hire" note for ${r.candidateName} (started ${startDate})`);
+                            } catch (err) {
+                                console.error('Auto-strip pending-hire note failed:', err);
+                            }
+                        }
+                    }
+                }
+
                 // Auto-move Pending to Hired when start date arrives
                 if (r.stage === 'Pending' && r.hiredDate) {
                     const hp = r.hiredDate.split('-');
