@@ -5852,7 +5852,7 @@ loadBalancer.distribute(traffic);`}
                                     { icon: '🛡️', title: 'Long-Term Disability - 100% Company Paid', desc: '60% of monthly earnings up to $12,000/month. Benefits begin on 91st day and continue through disability' },
                                     { icon: '📚', title: 'Training & Development', desc: 'Annual training budget, tuition assistance, and online learning resources' },
                                     { icon: '💪', title: 'Health & Wellness', desc: 'Health and wellness allowance for gym memberships or fitness reimbursement' },
-                                    { icon: '🎁', title: 'Bonuses', desc: 'Bonuses awarded for personal milestones and professional excellence' },
+                                    { icon: '🎁', title: 'Bonuses', desc: 'Bonuses awarded for personal milestones, referrals and professional excellence' },
                                     { icon: '🚀', title: 'Beyond the Horizon Bonus', desc: 'Performance-based bonus rewarding employees who go above and beyond. See HR for details' }
                                 ].map((benefit, index) => (
                                     <div key={index} className="hover-lift" style={{
