@@ -204,10 +204,55 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                 notes: r.notes,
                 resumeId: r.resumeId,
                 bonusNotified: r.bonusNotified || null,
-                bonus180Notified: r.bonus180Notified || null
+                bonus180Notified: r.bonus180Notified || null,
+                bonusPaid90: r.bonusPaid90 || null,
+                bonusPaid180: r.bonusPaid180 || null
             };
         });
         return atsReferrals;
+    };
+
+    // Compute a payout due date = hired date + N days, formatted for display
+    const payoutDueDate = (hiredDate, addDays) => {
+        if (!hiredDate) return '';
+        const p = hiredDate.split('-');
+        if (p.length !== 3) return '';
+        const d = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
+        d.setDate(d.getDate() + addDays);
+        return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    };
+
+    // Mark a referral bonus milestone as paid (90 or 180), persisting to the resume record
+    const markBonusPaid = async (resumeId, milestone) => {
+        const field = milestone === 180 ? 'bonusPaid180' : 'bonusPaid90';
+        const label = milestone === 180 ? 'full balance (180-day)' : 'half (90-day)';
+        if (!confirm(`Mark the ${label} referral bonus as PAID? This records today's date and stops reminder emails for this payout.`)) return;
+        try {
+            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+            const today = new Date().toISOString().split('T')[0];
+            const res = await fetch(`${apiUrl}/resume/${resumeId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ [field]: today })
+            });
+            if (!res.ok) throw new Error('Update failed');
+            fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
+        } catch (err) {
+            alert('❌ Could not mark as paid. Please try again.');
+        }
+    };
+
+    // Delete a referral/candidate record entirely
+    const deleteReferralCandidate = async (resumeId, candidateName) => {
+        if (!confirm(`Delete ${candidateName || 'this candidate'}? This permanently removes the candidate/referral record and cannot be undone.`)) return;
+        try {
+            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api';
+            const res = await fetch(`${apiUrl}/resume/${resumeId}`, { method: 'DELETE' });
+            if (!res.ok) throw new Error('Delete failed');
+            fetchResumes(resumeFilter.department, resumeFilter.stage, resumeFilter.sort);
+        } catch (err) {
+            alert('❌ Could not delete the candidate. Please try again.');
+        }
     };
 
     // Handle hash changes for navigation
@@ -216,6 +261,22 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             const fullHash = window.location.hash.slice(1) || 'home';
             // Parse query params from hash (e.g., #resumes?candidate=John%20Doe)
             const [hash, queryString] = fullHash.split('?');
+
+            // If navigating to the login page (e.g. via the browser Back button) while
+            // still authenticated, don't show the login screen — send them into the portal.
+            if (hash === 'login') {
+                try {
+                    const session = await fetchAuthSession();
+                    if (session.tokens?.idToken) {
+                        setCurrentPage('secureportal');
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        return;
+                    }
+                } catch (e) {
+                    // No active session — fall through and show the login page normally.
+                }
+            }
+
             setCurrentPage(hash);
             
             if (queryString) {
@@ -16242,6 +16303,48 @@ loadBalancer.distribute(traffic);`}
                                             {stages.map((s, i) => (
                                                 <span key={s} style={{ flex: 1, textAlign: 'center', color: i <= stageIndex ? stageColors[referral.stage] : '#94a3b8', fontWeight: i === stageIndex ? '700' : '400' }}>{s}</span>
                                             ))}
+                                        </div>
+
+                                        {/* Bonus payout tracking + actions */}
+                                        {referral.hiredDate && (
+                                            <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid #e2e8f0' }}>
+                                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+                                                    {/* 90-day half payout */}
+                                                    <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '8px', padding: '0.85rem' }}>
+                                                        <div style={{ fontWeight: '700', color: '#92400e', fontSize: '0.85rem', marginBottom: '0.25rem' }}>💸 90-Day Payout (Half)</div>
+                                                        <div style={{ fontSize: '0.78rem', color: '#78716c', marginBottom: '0.5rem' }}>Pay date: {payoutDueDate(referral.hiredDate, 90)}</div>
+                                                        {referral.bonusPaid90 ? (
+                                                            <div style={{ color: '#059669', fontWeight: '700', fontSize: '0.82rem' }}>✅ Paid on {(() => { const p = referral.bonusPaid90.split('-'); return p.length === 3 ? new Date(Number(p[0]), Number(p[1])-1, Number(p[2])).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : referral.bonusPaid90; })()}</div>
+                                                        ) : (
+                                                            <button onClick={() => markBonusPaid(referral.resumeId, 90)}
+                                                                style={{ background: '#d4af37', color: '#1e1b4b', border: 'none', borderRadius: '6px', padding: '0.5rem 1rem', fontWeight: '700', fontSize: '0.82rem', cursor: 'pointer' }}>
+                                                                Mark Half Paid
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                    {/* 180-day full balance payout */}
+                                                    <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '0.85rem' }}>
+                                                        <div style={{ fontWeight: '700', color: '#166534', fontSize: '0.85rem', marginBottom: '0.25rem' }}>💸💸 180-Day Payout (Full Balance)</div>
+                                                        <div style={{ fontSize: '0.78rem', color: '#4b5563', marginBottom: '0.5rem' }}>Pay date: {payoutDueDate(referral.hiredDate, 180)}</div>
+                                                        {referral.bonusPaid180 ? (
+                                                            <div style={{ color: '#059669', fontWeight: '700', fontSize: '0.82rem' }}>✅ Paid on {(() => { const p = referral.bonusPaid180.split('-'); return p.length === 3 ? new Date(Number(p[0]), Number(p[1])-1, Number(p[2])).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : referral.bonusPaid180; })()}</div>
+                                                        ) : (
+                                                            <button onClick={() => markBonusPaid(referral.resumeId, 180)}
+                                                                style={{ background: '#16a34a', color: 'white', border: 'none', borderRadius: '6px', padding: '0.5rem 1rem', fontWeight: '700', fontSize: '0.82rem', cursor: 'pointer' }}>
+                                                                Mark Full Balance Paid
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Delete candidate (always available) */}
+                                        <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
+                                            <button onClick={() => deleteReferralCandidate(referral.resumeId, referral.candidateName)}
+                                                style={{ background: 'white', color: '#dc2626', border: '1px solid #fecaca', borderRadius: '6px', padding: '0.45rem 0.9rem', fontWeight: '600', fontSize: '0.8rem', cursor: 'pointer' }}>
+                                                🗑️ Delete Candidate
+                                            </button>
                                         </div>
                                     </div>
                                 );
