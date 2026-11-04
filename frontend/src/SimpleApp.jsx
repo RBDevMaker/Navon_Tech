@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { uploadProfilePicture, uploadDocument, canUpload, deleteFromS3, uploadToS3, listS3Contents } from './services/s3Upload';
 import { Amplify } from 'aws-amplify';
 import { signIn, signOut, getCurrentUser, fetchAuthSession, confirmSignIn } from 'aws-amplify/auth';
@@ -256,6 +256,10 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         }
     };
 
+    // Tracks whether the current page change came FROM the hash (Back/Forward or deep link),
+    // so the hash-sync effect below doesn't fight it and create a navigation loop.
+    const pageChangeFromHash = useRef(false);
+
     // Handle hash changes for navigation
     useEffect(() => {
         const handleHashChange = async () => {
@@ -263,8 +267,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
             // Parse query params from hash (e.g., #resumes?candidate=John%20Doe)
             const [hash, queryString] = fullHash.split('?');
 
-
-
+            pageChangeFromHash.current = true;
             setCurrentPage(hash);
             
             if (queryString) {
@@ -304,11 +307,17 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         return () => window.removeEventListener('hashchange', handleHashChange);
     }, []);
 
-    // Keep the URL hash in sync with the current page so every in-portal navigation
-    // creates a browser history entry. This makes the Back button step back through the
-    // actual pages the user visited instead of jumping all the way out of the portal.
+    // Keep the URL hash in sync with the current page so in-portal navigation creates
+    // browser history entries (lets the Back button step back through visited pages).
+    // Loop-proof: when the page change originated from the hash itself (Back/Forward or a
+    // deep link), we skip updating the hash so the two handlers never fight each other.
     useEffect(() => {
         if (!currentPage) return;
+        if (pageChangeFromHash.current) {
+            // This change came from a hashchange/popstate — don't write the hash back.
+            pageChangeFromHash.current = false;
+            return;
+        }
         const currentHash = window.location.hash.replace('#', '').split('?')[0];
         if (currentHash !== currentPage) {
             window.location.hash = currentPage;
@@ -690,12 +699,19 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                     const res = await fetch(`${apiUrl}/profiles/${loginEmail}`);
                     if (res.ok) {
                         const data = await res.json();
-                        if (data && data.name) {
-                            setProfileData(prev => ({
-                                ...prev,
+                        // Only accept the record if it actually belongs to the logged-in user —
+                        // guards against showing a previously-edited employee's profile as "you".
+                        const belongsToMe = data && (
+                            (data.employeeId && data.employeeId.toLowerCase() === loginEmail.toLowerCase()) ||
+                            (data.email && data.email.toLowerCase() === loginEmail.toLowerCase()) ||
+                            (data.id && data.id.toLowerCase() === loginEmail.toLowerCase())
+                        );
+                        if (data && data.name && belongsToMe) {
+                            // Replace (not merge) so stale fields from a previously-viewed profile can't linger
+                            setProfileData({
                                 ...data,
-                                employeeId: data.employeeId || data.email
-                            }));
+                                employeeId: data.employeeId || data.email || loginEmail
+                            });
                             
                             // Auto-link profile picture from S3 if not set
                             if (!data.profilePicture && data.name) {
@@ -733,11 +749,22 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         }
     }, [loginEmail, isAddingEmployee, editingEmployeeEmail]);
 
-    // 10-minute inactivity auto-logout
+    // Self-heal: when we land on the Team Directory, clear any leftover "editing another
+    // employee" state so the logged-in user's own profile is shown — prevents the
+    // "you appear as someone else" bug. Scoped to teamdirectory only so it never interferes
+    // with the profile edit pages.
+    useEffect(() => {
+        if (currentPage === 'teamdirectory') {
+            if (editingEmployeeEmail) setEditingEmployeeEmail(null);
+            if (savedOwnProfile) setSavedOwnProfile(null);
+        }
+    }, [currentPage]);
+
+    // 8-minute inactivity auto-logout
     useEffect(() => {
         if (!loginEmail) return; // Only track when logged in
         let timeout;
-        const INACTIVITY_LIMIT = 10 * 60 * 1000; // 10 minutes
+        const INACTIVITY_LIMIT = 8 * 60 * 1000; // 8 minutes
         const resetTimer = () => {
             clearTimeout(timeout);
             timeout = setTimeout(async () => {
@@ -760,7 +787,7 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
                         } catch (e) {}
                     }
                     await signOut();
-                    alert('⏱️ You have been logged out due to 10 minutes of inactivity.');
+                    alert('⏱️ You have been logged out due to 8 minutes of inactivity.');
                     window.location.hash = 'home';
                     window.location.reload();
                 } catch (err) {
@@ -11916,54 +11943,6 @@ loadBalancer.distribute(traffic);`}
                                         </div>
                                         {(userRole === 'hr' || userRole === 'admin' || userRole === 'security' || userRole === 'superadmin') && isAdminView && profileData.title && (
                                             <div style={{ fontSize: '0.85rem' }}>
-                                                <div style={{
-                                                    background: '#dcfce7',
-                                                    color: '#166534',
-                                                    padding: '0.5rem',
-                                                    borderRadius: '6px',
-                                                    textAlign: 'center',
-                                                    fontWeight: '600',
-                                                    marginBottom: '0.5rem'
-                                                }}>
-                                                    Profile Updated
-                                                </div>
-                                                <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                                                    <button
-                                                        onClick={() => {
-                                                            setCurrentPage('employeeprofile');
-                                                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                                                        }}
-                                                        style={{
-                                                            flex: 1,
-                                                            background: '#1e3a8a',
-                                                            color: 'white',
-                                                            border: 'none',
-                                                            padding: '0.5rem',
-                                                            borderRadius: '6px',
-                                                            cursor: 'pointer',
-                                                            fontWeight: '600',
-                                                            textAlign: 'center'
-                                                        }}>
-                                                        ✏️ Edit Profile
-                                                    </button>
-                                                    <a
-                                                        href="mailto:rachelle.briscoe@navontech.com?subject=Password Reset Request&body=Hi,%0A%0AI would like to request a password reset for my account.%0A%0AEmail: "
-                                                        style={{
-                                                            flex: 1,
-                                                            background: '#64748b',
-                                                            color: 'white',
-                                                            border: 'none',
-                                                            padding: '0.5rem',
-                                                            borderRadius: '6px',
-                                                            cursor: 'pointer',
-                                                            fontWeight: '600',
-                                                            textAlign: 'center',
-                                                            textDecoration: 'none',
-                                                            display: 'block'
-                                                        }}>
-                                                        🔑 Reset Password
-                                                    </a>
-                                                </div>
                                                 {(userRole === 'hr' || userRole === 'admin') && (
                                                     <button
                                                         onClick={async () => {
@@ -12032,12 +12011,14 @@ loadBalancer.distribute(traffic);`}
                                                 )}
                                             </div>
                                         )}
-                                        {/* Edit Profile & Password Reset - visible to all users */}
-                                        {!(isAdminView && (userRole === 'hr' || userRole === 'admin' || userRole === 'security' || userRole === 'superadmin') && profileData.title) && (
+                                        {/* Edit Profile & Password Reset - always visible so every user can edit their own profile */}
+                                        {true && (
                                             <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
                                                 <button
                                                     onClick={() => {
-                                                        setCurrentPage('employeeprofile');
+                                                        setIsAddingEmployee(false);
+                                                        setEditingEmployeeEmail(null);
+                                                        setCurrentPage('myprofile');
                                                         window.scrollTo({ top: 0, behavior: 'smooth' });
                                                     }}
                                                     style={{
