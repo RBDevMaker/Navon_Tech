@@ -86,13 +86,6 @@ aws cognito-idp admin-add-user-to-group \
   --group-name "HR"
 echo "  ✅ Erskine Lightfoot → HR"
 
-# Gregory → Admin
-aws cognito-idp admin-add-user-to-group \
-  --user-pool-id $USER_POOL_ID \
-  --username "gregory.bryant@navontech.com" \
-  --group-name "Admin"
-echo "  ✅ Gregory Bryant → Admin"
-
 # Rachelle → SuperAdmin
 aws cognito-idp admin-add-user-to-group \
   --user-pool-id $USER_POOL_ID \
@@ -118,7 +111,7 @@ echo ""
 echo "Group Assignments:"
 echo "  Navon_Employees: ALL 16 users"
 echo "  HR:              Yahvinah Bryant, Erskine Lightfoot"
-echo "  Admin:           Gregory Bryant"
+echo "  Admin:           (none)"
 echo "  SuperAdmin:      Rachelle Briscoe, Brian Briscoe"
 echo ""
 echo "Role Priority: SuperAdmin > Security > HR > Admin > Employee"
