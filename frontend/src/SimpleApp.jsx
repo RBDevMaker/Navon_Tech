@@ -18026,13 +18026,20 @@ loadBalancer.distribute(traffic);`}
                             <h2 style={{ color: '#d4af37', marginTop: '1.5rem' }}>Our Security Commitment</h2>
                             <p>At Navon Technologies, security is not just a feature—it's the foundation of everything we do. We are committed to protecting your data and maintaining the highest standards of security and compliance.</p>
                             
-                            <h2 style={{ color: '#d4af37', marginTop: '1.5rem' }}>Security Measures</h2>
+                            <h2 style={{ color: '#d4af37', marginTop: '1.5rem' }}>How Your Account Is Protected</h2>
                             <ul style={{ marginLeft: '2rem' }}>
-                                <li><strong>Data Encryption:</strong> All data is encrypted in transit and at rest using industry-standard encryption protocols</li>
-                                <li><strong>Access Controls:</strong> Multi-factor authentication and role-based access controls protect sensitive information</li>
-                                <li><strong>Regular Audits:</strong> We conduct regular security audits and vulnerability assessments</li>
-                                <li><strong>Secure Infrastructure:</strong> Our systems are hosted on AWS with enterprise-grade security</li>
-                                <li><strong>Incident Response:</strong> 24/7 monitoring and rapid incident response procedures</li>
+                                <li><strong>Your own password:</strong> Each member signs in with their own email and password. There is no shared password.</li>
+                                <li><strong>Employees only:</strong> There is no public sign-up. Accounts are created by Navon Technologies administrators for employees only.</li>
+                                <li><strong>Temporary password, then your own:</strong> New accounts receive a temporary password and must set a personal password at first sign-in. If you forget your password, an administrator issues a new temporary password.</li>
+                                <li><strong>Passwords are never stored in readable form:</strong> Sign-in is handled by Amazon Cognito. Navon Technologies and its administrators cannot see your password.</li>
+                                <li><strong>Automatic sign-out:</strong> You are signed out automatically after 8 minutes of inactivity, and sign-in sessions expire on their own.</li>
+                                <li><strong>Administration-only tools:</strong> Sensitive tools and records are limited to administration.</li>
+                            </ul>
+
+                            <h2 style={{ color: '#d4af37', marginTop: '1.5rem' }}>How Your Information Is Protected</h2>
+                            <ul style={{ marginLeft: '2rem' }}>
+                                <li><strong>Encrypted connections:</strong> All traffic between your browser and the portal uses HTTPS.</li>
+                                <li><strong>Encrypted storage:</strong> Records and files are stored on Amazon Web Services (AWS) with encryption at rest.</li>
                             </ul>
                             
                             <h2 style={{ color: '#d4af37', marginTop: '1.5rem' }}>Compliance Standards</h2>
@@ -18045,16 +18052,17 @@ loadBalancer.distribute(traffic);`}
                             </ul>
                             
                             <h2 style={{ color: '#d4af37', marginTop: '1.5rem' }}>Data Privacy</h2>
-                            <p>Your privacy is paramount. We:</p>
+                            <p>We:</p>
                             <ul style={{ marginLeft: '2rem' }}>
                                 <li>Never sell or share your personal information</li>
-                                <li>Collect only necessary data for service delivery</li>
-                                <li>Provide transparent data handling practices</li>
-                                <li>Honor all data deletion and access requests</li>
+                                <li>Honor requests to remove your information. You can remove yourself from the directory at any time, or contact us for help.</li>
                             </ul>
-                            
+
+                            <h2 style={{ color: '#d4af37', marginTop: '1.5rem' }}>Authorized Use</h2>
+                            <p>This system is for authorized use by Navon Technologies employees only. Activity on this system may be monitored and recorded. By continuing, you acknowledge that you have no expectation of privacy and that unauthorized use may result in loss of access and other disciplinary action.</p>
+
                             <h2 style={{ color: '#d4af37', marginTop: '1.5rem' }}>Report a Security Concern</h2>
-                            <p>If you discover a security vulnerability or have concerns about our security practices, please contact us immediately:</p>
+                            <p>If you notice something that doesn't look right, or have a question about how your information is handled, please contact us:</p>
                             <ul style={{ marginLeft: '2rem' }}>
                                 <li>Email: info@navontech.com</li>
                                 <li>Phone: 571-477-2727</li>
