@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { uploadProfilePicture, uploadDocument, canUpload, deleteFromS3, uploadToS3, listS3Contents } from './services/s3Upload';
 import { Amplify } from 'aws-amplify';
-import { signIn, signOut, getCurrentUser, fetchAuthSession, confirmSignIn } from 'aws-amplify/auth';
+import { signIn, signOut, getCurrentUser, fetchAuthSession, confirmSignIn, resetPassword, confirmResetPassword } from 'aws-amplify/auth';
 import awsConfig from './aws-config';
 import * as XLSX from 'xlsx';
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, BorderStyle, Table, TableRow, TableCell, WidthType, CheckBox } from 'docx';
@@ -78,6 +78,15 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
     const [isAuthenticating, setIsAuthenticating] = useState(false);
     const [requiresNewPassword, setRequiresNewPassword] = useState(false);
     const [existingSessionEmail, setExistingSessionEmail] = useState(''); // set if a valid session exists on the login page
+    // Forgot-password (emailed verification code) flow
+    const [forgotStep, setForgotStep] = useState(''); // '' | 'request' | 'confirm'
+    const [forgotEmail, setForgotEmail] = useState('');
+    const [forgotCode, setForgotCode] = useState('');
+    const [forgotNewPassword, setForgotNewPassword] = useState('');
+    const [forgotConfirmPassword, setForgotConfirmPassword] = useState('');
+    const [forgotMessage, setForgotMessage] = useState('');
+    const [forgotError, setForgotError] = useState('');
+    const [forgotBusy, setForgotBusy] = useState(false);
     const [newPassword, setNewPassword] = useState('');
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
     const [showWelcomeGuide, setShowWelcomeGuide] = useState(false);
@@ -366,6 +375,68 @@ function SimpleApp({ authenticatedUser, authenticatedUserRole, onSignOut }) {
         } catch (e) {
             // Session expired between render and click — leave them on the login form.
             setExistingSessionEmail('');
+        }
+    };
+
+    // ── Forgot password: Cognito emails a one-time verification code ──
+    const normalizePortalUsername = (value) => {
+        const t = (value || '').trim().toLowerCase();
+        return t.includes('@') ? t : `${t}@navontech.com`;
+    };
+
+    const closeForgotPassword = () => {
+        setForgotStep('');
+        setForgotCode('');
+        setForgotNewPassword('');
+        setForgotConfirmPassword('');
+        setForgotMessage('');
+        setForgotError('');
+    };
+
+    const requestForgotCode = async (e) => {
+        if (e) e.preventDefault();
+        setForgotError('');
+        setForgotMessage('');
+        if (!forgotEmail.trim()) { setForgotError('Please enter your portal email address.'); return; }
+        setForgotBusy(true);
+        try {
+            await resetPassword({ username: normalizePortalUsername(forgotEmail) });
+            setForgotStep('confirm');
+            setForgotMessage('If this account exists, a verification code has been emailed to it. Enter the code and choose a new password.');
+        } catch (err) {
+            if (err.name === 'LimitExceededException') {
+                setForgotError('Too many attempts. Please wait a while and try again.');
+            } else if (err.name === 'NotAuthorizedException' || err.name === 'InvalidParameterException') {
+                setForgotError('This account has not been activated yet. Use the temporary password from your invitation email to sign in, or contact an administrator.');
+            } else {
+                setForgotError(err.message || 'Could not send a verification code. Please contact an administrator.');
+            }
+        } finally {
+            setForgotBusy(false);
+        }
+    };
+
+    const submitForgotPassword = async (e) => {
+        if (e) e.preventDefault();
+        setForgotError('');
+        if (!forgotCode.trim()) { setForgotError('Please enter the verification code from your email.'); return; }
+        if (forgotNewPassword.length < 8) { setForgotError('Password must be at least 8 characters.'); return; }
+        if (forgotNewPassword !== forgotConfirmPassword) { setForgotError('Passwords do not match.'); return; }
+        setForgotBusy(true);
+        try {
+            const username = normalizePortalUsername(forgotEmail);
+            await confirmResetPassword({ username, confirmationCode: forgotCode.trim(), newPassword: forgotNewPassword });
+            closeForgotPassword();
+            setLoginEmail(username);
+            setLoginPassword('');
+            alert('✅ Your password has been updated. Please sign in with your new password.');
+        } catch (err) {
+            if (err.name === 'CodeMismatchException') setForgotError('That code is not correct. Please check your email and try again.');
+            else if (err.name === 'ExpiredCodeException') setForgotError('That code has expired. Go back and request a new one.');
+            else if (err.name === 'LimitExceededException') setForgotError('Too many attempts. Please wait a while and try again.');
+            else setForgotError(err.message || 'Could not reset your password. Please try again.');
+        } finally {
+            setForgotBusy(false);
         }
     };
 
@@ -17442,6 +17513,54 @@ loadBalancer.distribute(traffic);`}
                                         Sign out to log in as a different user.
                                     </p>
                                 </div>
+                            ) : forgotStep ? (
+                                /* Forgot Password: emailed verification code */
+                                <form onSubmit={forgotStep === 'request' ? requestForgotCode : submitForgotPassword}>
+                                    <h3 style={{ color: 'white', fontSize: '1.2rem', margin: '0 0 0.5rem', textAlign: 'center' }}>Reset Your Password</h3>
+                                    <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.85rem', margin: '0 0 1rem', textAlign: 'center', lineHeight: 1.5 }}>
+                                        {forgotStep === 'request'
+                                            ? 'Enter your portal email. We will email you a one-time verification code.'
+                                            : 'Enter the code from your email and choose a new password.'}
+                                    </p>
+                                    {forgotMessage && (
+                                        <div style={{ background: 'rgba(212,175,55,0.2)', border: '1px solid rgba(212,175,55,0.5)', color: 'white', padding: '0.6rem 0.75rem', borderRadius: '8px', fontSize: '0.82rem', marginBottom: '1rem' }}>{forgotMessage}</div>
+                                    )}
+                                    {forgotError && (
+                                        <div style={{ background: '#fee2e2', border: '1px solid #fecaca', color: '#991b1b', padding: '0.6rem 0.75rem', borderRadius: '8px', fontSize: '0.82rem', marginBottom: '1rem' }}>{forgotError}</div>
+                                    )}
+                                    <label htmlFor="forgotEmail" style={{ display: 'block', marginBottom: '0.4rem', color: 'white', fontWeight: '600', fontSize: '0.85rem' }}>Email</label>
+                                    <input id="forgotEmail" type="email" value={forgotEmail} onChange={(e) => setForgotEmail(e.target.value)}
+                                        disabled={forgotStep === 'confirm'} required
+                                        style={{ width: '100%', padding: '0.65rem', border: '2px solid rgba(255,255,255,0.3)', borderRadius: '8px', fontSize: '0.95rem', background: 'rgba(255,255,255,0.9)', color: '#1e293b', marginBottom: '1rem', outline: 'none' }} />
+                                    {forgotStep === 'confirm' && (
+                                        <>
+                                            <label htmlFor="forgotCode" style={{ display: 'block', marginBottom: '0.4rem', color: 'white', fontWeight: '600', fontSize: '0.85rem' }}>Verification code</label>
+                                            <input id="forgotCode" type="text" inputMode="numeric" autoComplete="one-time-code" value={forgotCode} onChange={(e) => setForgotCode(e.target.value)} required
+                                                style={{ width: '100%', padding: '0.65rem', border: '2px solid rgba(255,255,255,0.3)', borderRadius: '8px', fontSize: '0.95rem', background: 'rgba(255,255,255,0.9)', color: '#1e293b', marginBottom: '1rem', outline: 'none' }} />
+                                            <label htmlFor="forgotNewPassword" style={{ display: 'block', marginBottom: '0.4rem', color: 'white', fontWeight: '600', fontSize: '0.85rem' }}>New password</label>
+                                            <input id="forgotNewPassword" type="password" autoComplete="new-password" value={forgotNewPassword} onChange={(e) => setForgotNewPassword(e.target.value)} required
+                                                style={{ width: '100%', padding: '0.65rem', border: '2px solid rgba(255,255,255,0.3)', borderRadius: '8px', fontSize: '0.95rem', background: 'rgba(255,255,255,0.9)', color: '#1e293b', marginBottom: '1rem', outline: 'none' }} />
+                                            <label htmlFor="forgotConfirmPassword" style={{ display: 'block', marginBottom: '0.4rem', color: 'white', fontWeight: '600', fontSize: '0.85rem' }}>Confirm new password</label>
+                                            <input id="forgotConfirmPassword" type="password" autoComplete="new-password" value={forgotConfirmPassword} onChange={(e) => setForgotConfirmPassword(e.target.value)} required
+                                                style={{ width: '100%', padding: '0.65rem', border: '2px solid rgba(255,255,255,0.3)', borderRadius: '8px', fontSize: '0.95rem', background: 'rgba(255,255,255,0.9)', color: '#1e293b', marginBottom: '0.5rem', outline: 'none' }} />
+                                            <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.75rem', margin: '0 0 1rem' }}>At least 8 characters with upper and lower case letters and a number.</p>
+                                        </>
+                                    )}
+                                    <button type="submit" disabled={forgotBusy}
+                                        style={{ width: '100%', background: forgotBusy ? '#94a3b8' : '#d4af37', color: '#0f172a', border: 'none', padding: '0.85rem', borderRadius: '8px', fontWeight: '700', fontSize: '1rem', cursor: forgotBusy ? 'not-allowed' : 'pointer', marginBottom: '0.75rem' }}>
+                                        {forgotBusy ? 'Please wait...' : forgotStep === 'request' ? 'Email Me a Code' : 'Update Password'}
+                                    </button>
+                                    {forgotStep === 'confirm' && (
+                                        <button type="button" onClick={requestForgotCode} disabled={forgotBusy}
+                                            style={{ width: '100%', background: 'transparent', color: 'white', border: '1px solid rgba(255,255,255,0.4)', padding: '0.6rem', borderRadius: '8px', fontWeight: '600', fontSize: '0.85rem', cursor: 'pointer', marginBottom: '0.75rem' }}>
+                                            Send a new code
+                                        </button>
+                                    )}
+                                    <button type="button" onClick={closeForgotPassword}
+                                        style={{ width: '100%', background: 'transparent', color: 'rgba(255,255,255,0.85)', border: 'none', fontSize: '0.85rem', cursor: 'pointer', textDecoration: 'underline' }}>
+                                        ← Back to Sign In
+                                    </button>
+                                </form>
                             ) : requiresNewPassword ? (
                                 /* New Password Form */
                                 <form onSubmit={async (e) => {
@@ -17876,7 +17995,11 @@ loadBalancer.distribute(traffic);`}
                                     <a href="#" 
                                     onClick={(e) => {
                                         e.preventDefault();
-                                        alert('Please contact rachelle.briscoe@navontech.com to reset your password.');
+                                        setLoginError('');
+                                        setForgotEmail(loginEmail && loginEmail.includes('@') ? loginEmail : '');
+                                        setForgotError('');
+                                        setForgotMessage('');
+                                        setForgotStep('request');
                                     }}
                                     style={{
                                         color: 'white',
@@ -18030,7 +18153,8 @@ loadBalancer.distribute(traffic);`}
                             <ul style={{ marginLeft: '2rem' }}>
                                 <li><strong>Your own password:</strong> Each member signs in with their own email and password. There is no shared password.</li>
                                 <li><strong>Employees only:</strong> There is no public sign-up. Accounts are created by Navon Technologies administrators for employees only.</li>
-                                <li><strong>Temporary password, then your own:</strong> New accounts receive a temporary password and must set a personal password at first sign-in. If you forget your password, an administrator issues a new temporary password.</li>
+                                <li><strong>Temporary password, then your own:</strong> New accounts receive a temporary password and must set a personal password at first sign-in.</li>
+                                <li><strong>Emailed verification code:</strong> Resetting a forgotten password requires a one-time code emailed to you, so only someone with access to your email can change your password.</li>
                                 <li><strong>Passwords are never stored in readable form:</strong> Sign-in is handled by Amazon Cognito. Navon Technologies and its administrators cannot see your password.</li>
                                 <li><strong>Automatic sign-out:</strong> You are signed out automatically after 8 minutes of inactivity, and sign-in sessions expire on their own.</li>
                                 <li><strong>Administration-only tools:</strong> Sensitive tools and records are limited to administration.</li>
@@ -18069,7 +18193,7 @@ loadBalancer.distribute(traffic);`}
                             </ul>
                             
                             <p style={{ marginTop: '2rem', fontSize: '0.9rem', color: '#64748b' }}>
-                                Last updated: October 2026
+                                Last updated: November 2026
                             </p>
                         </div>
                     </div>
