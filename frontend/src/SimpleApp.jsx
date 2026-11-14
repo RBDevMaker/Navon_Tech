@@ -6992,6 +6992,15 @@ loadBalancer.distribute(traffic);`}
                                     Last Login: {lastLoginTime ? new Date(lastLoginTime).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}
                                 </p>
                             )}
+                            {loginEmail && (
+                                <div style={{ textAlign: 'left', marginTop: '0.75rem' }}>
+                                    <button
+                                        onClick={() => { setCurrentPage('portalsecurity'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                                        style={{ background: 'transparent', color: '#d4af37', border: '1px solid rgba(212,175,55,0.6)', padding: '0.4rem 0.9rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem' }}>
+                                        🔐 How Your Account Is Protected
+                                    </button>
+                                </div>
+                            )}
                         </div>
 
                         {/* Administration View / Employee View Toggle */}
@@ -18149,7 +18158,80 @@ loadBalancer.distribute(traffic);`}
                             <h2 style={{ color: '#d4af37', marginTop: '1.5rem' }}>Our Security Commitment</h2>
                             <p>At Navon Technologies, security is not just a feature—it's the foundation of everything we do. We are committed to protecting your data and maintaining the highest standards of security and compliance.</p>
                             
-                            <h2 style={{ color: '#d4af37', marginTop: '1.5rem' }}>How Your Account Is Protected</h2>
+                            <h2 style={{ color: '#d4af37', marginTop: '1.5rem' }}>Security Measures</h2>
+                            <ul style={{ marginLeft: '2rem' }}>
+                                <li><strong>Data Encryption:</strong> All data is encrypted in transit and at rest using industry-standard encryption protocols</li>
+                                <li><strong>Access Controls:</strong> Multi-factor authentication and role-based access controls protect sensitive information</li>
+                                <li><strong>Regular Audits:</strong> We conduct regular security audits and vulnerability assessments</li>
+                                <li><strong>Secure Infrastructure:</strong> Our systems are hosted on AWS with enterprise-grade security</li>
+                                <li><strong>Incident Response:</strong> 24/7 monitoring and rapid incident response procedures</li>
+                            </ul>
+                            
+                            <h2 style={{ color: '#d4af37', marginTop: '1.5rem' }}>Compliance Standards</h2>
+                            <p>We maintain compliance with relevant industry standards and regulations:</p>
+                            <ul style={{ marginLeft: '2rem' }}>
+                                <li>SOC 2 Type II compliance practices</li>
+                                <li>NIST Cybersecurity Framework alignment</li>
+                                <li>GDPR and data privacy regulations</li>
+                                <li>Federal security requirements for government contractors</li>
+                            </ul>
+                            
+                            <h2 style={{ color: '#d4af37', marginTop: '1.5rem' }}>Data Privacy</h2>
+                            <p>Your privacy is paramount. We:</p>
+                            <ul style={{ marginLeft: '2rem' }}>
+                                <li>Never sell or share your personal information</li>
+                                <li>Collect only necessary data for service delivery</li>
+                                <li>Provide transparent data handling practices</li>
+                                <li>Honor all data deletion and access requests</li>
+                            </ul>
+                            
+                            <h2 style={{ color: '#d4af37', marginTop: '1.5rem' }}>Report a Security Concern</h2>
+                            <p>If you discover a security vulnerability or have concerns about our security practices, please contact us immediately:</p>
+                            <ul style={{ marginLeft: '2rem' }}>
+                                <li>Email: info@navontech.com</li>
+                                <li>Phone: 571-477-2727</li>
+                            </ul>
+                            
+                            <p style={{ marginTop: '2rem', fontSize: '0.9rem', color: '#64748b' }}>
+                                Last updated: November 2026
+                            </p>
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {/* PORTAL SECURITY PAGE - signed-in employees: how accounts and information are protected */}
+            {currentPage === 'portalsecurity' && loginEmail && (
+                <section style={{ 
+                    padding: '4rem 2rem', 
+                    background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+                    minHeight: '100vh'
+                }}>
+                    <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+                        <h1 style={{ 
+                            fontSize: '2.5rem', 
+                            marginBottom: '1rem', 
+                            color: '#0f172a',
+                            borderBottom: '3px solid #d4af37',
+                            paddingBottom: '1rem'
+                        }}>
+                            🔐 Portal Security
+                        </h1>
+                        <button
+                            onClick={() => { setCurrentPage('secureportal'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                            style={{ background: '#d4af37', color: '#0f172a', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '8px', cursor: 'pointer', fontWeight: '700', fontSize: '1rem', marginBottom: '1.5rem' }}>
+                            ← Back to Portal
+                        </button>
+
+                        <div style={{ 
+                            background: 'white', 
+                            padding: '2rem', 
+                            borderRadius: '8px',
+                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                            lineHeight: '1.8',
+                            color: '#1e293b'
+                        }}>
+                            <h2 style={{ color: '#d4af37', marginTop: '0.5rem' }}>How Your Account Is Protected</h2>
                             <ul style={{ marginLeft: '2rem' }}>
                                 <li><strong>Your own password:</strong> Each member signs in with their own email and password. There is no shared password.</li>
                                 <li><strong>Employees only:</strong> There is no public sign-up. Accounts are created by Navon Technologies administrators for employees only.</li>
@@ -18165,16 +18247,7 @@ loadBalancer.distribute(traffic);`}
                                 <li><strong>Encrypted connections:</strong> All traffic between your browser and the portal uses HTTPS.</li>
                                 <li><strong>Encrypted storage:</strong> Records and files are stored on Amazon Web Services (AWS) with encryption at rest.</li>
                             </ul>
-                            
-                            <h2 style={{ color: '#d4af37', marginTop: '1.5rem' }}>Compliance Standards</h2>
-                            <p>We maintain compliance with relevant industry standards and regulations:</p>
-                            <ul style={{ marginLeft: '2rem' }}>
-                                <li>SOC 2 Type II compliance practices</li>
-                                <li>NIST Cybersecurity Framework alignment</li>
-                                <li>GDPR and data privacy regulations</li>
-                                <li>Federal security requirements for government contractors</li>
-                            </ul>
-                            
+
                             <h2 style={{ color: '#d4af37', marginTop: '1.5rem' }}>Data Privacy</h2>
                             <p>We:</p>
                             <ul style={{ marginLeft: '2rem' }}>
@@ -18191,7 +18264,7 @@ loadBalancer.distribute(traffic);`}
                                 <li>Email: info@navontech.com</li>
                                 <li>Phone: 571-477-2727</li>
                             </ul>
-                            
+
                             <p style={{ marginTop: '2rem', fontSize: '0.9rem', color: '#64748b' }}>
                                 Last updated: November 2026
                             </p>
