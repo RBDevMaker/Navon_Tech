@@ -10306,7 +10306,7 @@ loadBalancer.distribute(traffic);`}
                                                     const res = await fetch(`https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api/users/${username}`, {
                                                         method: 'POST',
                                                         headers: { 'Content-Type': 'application/json', 'Authorization': token },
-                                                        body: JSON.stringify({ action: 'resetPassword', tempPassword: 'NavonTemp2024!' })
+                                                        body: JSON.stringify({ action: 'resetPassword' })
                                                     });
                                                     const data = await res.json();
                                                     if (res.ok) {
@@ -19925,7 +19925,7 @@ Please review and approve this request.
                                                                         const res = await fetch(`https://js6xgi3x7e.execute-api.us-east-1.amazonaws.com/dev/api/users/${user.username}`, {
                                                                             method: 'POST',
                                                                             headers: { 'Content-Type': 'application/json', 'Authorization': token },
-                                                                            body: JSON.stringify({ action: 'invite', tempPassword: 'NavonTemp2024!' })
+                                                                            body: JSON.stringify({ action: 'invite' })
                                                                         });
                                                                         const data = await res.json();
                                                                         if (res.ok) {

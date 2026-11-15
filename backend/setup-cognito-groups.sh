@@ -3,7 +3,8 @@
 # User Pool ID: us-east-1_ku7FhV68P
 
 USER_POOL_ID="us-east-1_ku7FhV68P"
-TEMP_PASSWORD="NavonTemp2024!"
+# Never hardcode a password here (this repo is public). Pass one in, or a random one is generated.
+TEMP_PASSWORD="${TEMP_PASSWORD:-$(openssl rand -base64 24 | tr -dc 'A-Za-z0-9' | head -c 12)Aa1!}"
 
 echo "========================================="
 echo "Navon Technologies - Cognito Setup Script"
