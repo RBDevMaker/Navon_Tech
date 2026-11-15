@@ -3,6 +3,26 @@ const { SESClient, SendEmailCommand } = require('@aws-sdk/client-ses');
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
 const { DynamoDBDocumentClient, PutCommand, GetCommand } = require('@aws-sdk/lib-dynamodb');
 const { v4: uuidv4 } = require('uuid');
+const crypto = require('crypto');
+
+// Generate a random one-time temporary password (never hardcoded, never accepted from the browser).
+// Meets the user pool policy: upper, lower, number, symbol. Avoids look-alike characters (I/l/O/0/1)
+// so it is easy to read in an email.
+function generateTempPassword(length = 14) {
+    const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+    const lower = 'abcdefghijkmnopqrstuvwxyz';
+    const digits = '23456789';
+    const symbols = '!@#$%&*';
+    const all = upper + lower + digits + symbols;
+    const pick = (set) => set[crypto.randomInt(set.length)];
+    const chars = [pick(upper), pick(lower), pick(digits), pick(symbols)];
+    while (chars.length < length) chars.push(pick(all));
+    for (let i = chars.length - 1; i > 0; i--) { // Fisher-Yates shuffle
+        const j = crypto.randomInt(i + 1);
+        [chars[i], chars[j]] = [chars[j], chars[i]];
+    }
+    return chars.join('');
+}
 
 const cognitoClient = new CognitoIdentityProviderClient({ region: process.env.AWS_REGION || 'us-east-1' });
 const sesClient = new SESClient({ region: process.env.AWS_REGION || 'us-east-1' });
@@ -523,9 +543,7 @@ async function inviteUser(username, data, requesterRole) {
         // Look up employee name for initials-based temp password
         const empEmail = userDetails.email || username;
         const employeeName = userDetails.attributes?.name || username.split('@')[0];
-        const initials = employeeName.split(/\s+/).map(w => w.charAt(0).toUpperCase()).join('');
-        const currentYear = new Date().getFullYear();
-        const tempPassword = data.tempPassword || `Navon${initials}${currentYear}!`;
+        const tempPassword = generateTempPassword();
         const portalUrl = data.portalUrl || 'https://navontech.com/#login';
 
         // Set a new temporary password so user is forced to change on login
@@ -697,11 +715,9 @@ async function resetUserPassword(username, data, requesterRole) {
 
         const userDetails = await getUserDetails(username);
         
-        // Generate temp password with initials pattern
+        // Generate a random temporary password
         const employeeName = userDetails.attributes?.name || username.split('@')[0];
-        const initials = employeeName.split(/\s+/).map(w => w.charAt(0).toUpperCase()).join('');
-        const currentYear = new Date().getFullYear();
-        const tempPassword = data.tempPassword || `Navon${initials}${currentYear}!`;
+        const tempPassword = generateTempPassword();
         const portalUrl = data.portalUrl || 'https://navontech.com/#login';
 
         // Set a new temporary password
